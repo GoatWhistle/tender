@@ -19,8 +19,10 @@ from app.usecase.interface import (
     DecisionBackend,
     Embeddings,
     FactExtractor,
+    GroupSearcher,
     LexicalIndex,
     SearchVectorsRepository,
+    SessionsRepository,
     UnitOfWork,
     VectorIndex,
 )
@@ -31,6 +33,7 @@ from app.usecase.model_checks import (
 )
 from app.usecase.search import GroupSearch, SearchSnapshot
 from app.usecase.search_vectors import BuildSearchVectors
+from app.usecase.sessions import Sessions
 
 
 @dataclass(frozen=True)
@@ -41,6 +44,7 @@ class Repositories[U: UnitOfWork]:
     catalog: Callable[[U], CatalogRepository]
     aliases: Callable[[U], AliasesRepository] | None = None
     saved_vectors: Callable[[U], SearchVectorsRepository] | None = None
+    sessions: Callable[[U], SessionsRepository] | None = None
 
 
 @dataclass(frozen=True)
@@ -49,6 +53,7 @@ class Usecases[U: UnitOfWork]:
     catalog_sync: Callable[[U], CatalogSync]
     group_search: Callable[[U], GroupSearch]
     build_search_vectors: Callable[[U], BuildSearchVectors] | None
+    sessions: Callable[[U], Sessions] | None
 
 
 def build_usecases[U: UnitOfWork](
@@ -59,26 +64,39 @@ def build_usecases[U: UnitOfWork](
     vector: VectorIndex | None = None,
     embeddings: Embeddings | None = None,
     aliases_source: AliasesSource | None = None,
+    searcher: GroupSearcher | None = None,
 ) -> Usecases[U]:
     r = repositories
     vectors_factory = r.saved_vectors
     snapshot = SearchSnapshot()
-    return Usecases(
-        build_search_vectors=(
-            lambda uow: BuildSearchVectors(uow, r.catalog(uow), vectors_factory(uow), embeddings)
-        )
-        if vectors_factory is not None and embeddings is not None
-        else None,
-        group_search=lambda uow: GroupSearch(
+    sessions_factory = r.sessions
+
+    def group_search(uow: U) -> GroupSearch:
+        return GroupSearch(
             uow,
             r.catalog(uow),
             snapshot,
             lexical,
             vector,
             embeddings,
-            r.aliases(uow) if r.aliases is not None else None,
-            r.saved_vectors(uow) if r.saved_vectors is not None else None,
-        ),
+            r.aliases(uow) if r.aliases else None,
+            r.saved_vectors(uow) if r.saved_vectors else None,
+        )
+
+    return Usecases(
+        sessions=(
+            lambda uow: Sessions(
+                uow, sessions_factory(uow), searcher or group_search(uow), r.catalog(uow)
+            )
+        )
+        if sessions_factory
+        else None,
+        build_search_vectors=(
+            lambda uow: BuildSearchVectors(uow, r.catalog(uow), vectors_factory(uow), embeddings)
+        )
+        if vectors_factory is not None and embeddings is not None
+        else None,
+        group_search=group_search,
         catalog_queries=lambda uow: CatalogQueries(uow, r.catalog(uow)),
         catalog_sync=lambda uow: CatalogSync(
             uow,

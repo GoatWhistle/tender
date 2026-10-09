@@ -23,10 +23,12 @@ from app.controller.catalog import router as catalog_router
 from app.controller.errors import install_error_handlers
 from app.controller.health import router as health_router
 from app.controller.search import router as search_router
+from app.controller.sessions import router as sessions_router
 from app.repository.aliases import SqlAliases
 from app.repository.catalog import SqlCatalog
 from app.repository.database import create_db_engine
 from app.repository.search_vectors import SqlSearchVectors
+from app.repository.sessions import SqlSessions
 from app.repository.unit_of_work import SqlUnitOfWork
 from app.usecase.catalog import SyncReport
 from app.usecase.interface import CatalogSource, Embeddings
@@ -37,6 +39,7 @@ from settings import Settings
 def sql_repositories() -> Repositories[SqlUnitOfWork]:
     return Repositories[SqlUnitOfWork](
         catalog=lambda uow: SqlCatalog(uow.session),
+        sessions=lambda uow: SqlSessions(uow.session),
         aliases=lambda uow: SqlAliases(uow.session),
         saved_vectors=lambda uow: SqlSearchVectors(uow.session),
     )
@@ -100,6 +103,7 @@ def create_app(
     app.include_router(catalog_router)
     app.include_router(groups_router)
     app.include_router(search_router)
+    app.include_router(sessions_router)
     return app
 
 

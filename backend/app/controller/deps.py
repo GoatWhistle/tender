@@ -12,6 +12,7 @@ from fastapi import Depends, Request
 from app.usecase.catalog import CatalogQueries
 from app.usecase.interface import RequestUnitOfWork
 from app.usecase.search import GroupSearch
+from app.usecase.sessions import Sessions
 
 
 def unit_of_work(request: Request) -> Iterator[RequestUnitOfWork]:
@@ -35,3 +36,6 @@ def _usecase(name: str) -> Callable[[Request, RequestUnitOfWork], Any]:
 CatalogQueriesDep = Annotated[CatalogQueries, Depends(_usecase("catalog_queries"))]
 
 GroupSearchDep = Annotated[GroupSearch, Depends(_usecase("group_search"))]
+
+
+SessionsDep = Annotated[Sessions, Depends(_usecase("sessions"))]

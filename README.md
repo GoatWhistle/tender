@@ -41,6 +41,9 @@ services/qwen/           Qwen3 embeddings и Qwen3.5 strict extractor, Docker и
 Готовая база трёх категорий, запуск без векторизации документов, настройки сервиса,
 команда сборки и smoke-замер — [`docs/search.md`](docs/search.md).
 
+Сессии анализа: создание, история сообщений и сохранённые ревизии через
+`/api/v1/sessions`. Контракт, идемпотентность и примеры — [`docs/sessions.md`](docs/sessions.md).
+
 GPU decision-сервис запускается отдельно: `docker compose --profile gpu up --build -d openjev`.
 Условия запуска, API/curl, переменные окружения и CPU-проверки —
 [`services/openjev/README.md`](services/openjev/README.md).
