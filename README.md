@@ -27,6 +27,7 @@ data/yandex_disk/        данные организаторов: XML КТРУ, 
 evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
 services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
+services/qwen/           Qwen3 embeddings и Qwen3.5 strict extractor, Docker и GPU-проверки
 ```
 
 Зависимости слоёв идут внутрь, к `domain`; `backend/tests/test_layers.py` это проверяет.
@@ -38,6 +39,10 @@ services/openjev/        самостоятельный GPU-сервис OpenJev
 GPU decision-сервис запускается отдельно: `docker compose --profile gpu up --build -d openjev`.
 Условия запуска, API/curl, переменные окружения и CPU-проверки —
 [`services/openjev/README.md`](services/openjev/README.md).
+
+Embeddings и strict экстрактор запускаются рядом с OpenJev через
+`compose.qwen.yaml`: подготовка весов, запуск на чистой машине, API и проверки —
+[`services/qwen/README.md`](services/qwen/README.md).
 
 ```bash
 cd backend

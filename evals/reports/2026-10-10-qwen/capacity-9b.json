@@ -1,0 +1,293 @@
+{
+  "clients": 16,
+  "prompt_tokens": [
+    7425,
+    7425,
+    7425,
+    7425,
+    7425,
+    7425,
+    7425,
+    7425,
+    7425,
+    7425,
+    7426,
+    7426,
+    7426,
+    7426,
+    7426,
+    7426
+  ],
+  "engine_usage": [
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7425,
+      "total_tokens": 7437,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7426,
+      "total_tokens": 7438,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7426,
+      "total_tokens": 7438,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7426,
+      "total_tokens": 7438,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7426,
+      "total_tokens": 7438,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7426,
+      "total_tokens": 7438,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    },
+    {
+      "prompt_tokens": 7426,
+      "total_tokens": 7438,
+      "completion_tokens": 12,
+      "prompt_tokens_details": null
+    }
+  ],
+  "wall_seconds": 10.352418638998643,
+  "strict_passed": 16,
+  "parallel_embedding_and_openjev_passed": true,
+  "samples_ms": [
+    4802.021943993168,
+    5990.115808002884,
+    5393.188232003013,
+    7177.71458401694,
+    8958.43723102007,
+    10194.38774100854,
+    10283.09162298683,
+    10251.157599996077,
+    10305.850359000033,
+    10331.405342993094,
+    6567.883659008658,
+    7755.700685986085,
+    8348.166016017785,
+    9539.00891399826,
+    10134.864313004073,
+    10206.68071898399
+  ],
+  "p50_ms": 9248.723072509165,
+  "p95_ms": 10331.405342993094,
+  "gpu_samples": [
+    {
+      "time": 1791587984.6594274,
+      "used_mib": 35740
+    },
+    {
+      "time": 1791587984.949243,
+      "used_mib": 35916
+    },
+    {
+      "time": 1791587985.2353354,
+      "used_mib": 35916
+    },
+    {
+      "time": 1791587985.5495012,
+      "used_mib": 36386
+    },
+    {
+      "time": 1791587985.8357193,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587986.1210248,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587986.4069707,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587986.6938002,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587986.9782426,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587987.2640128,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587987.5470636,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587987.8329349,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587988.1188812,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587988.4049046,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587988.694301,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587988.9801676,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587989.2653403,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587989.5517297,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587989.8376408,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587990.124013,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587990.409604,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587990.6967125,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587990.9832454,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587991.2667089,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587991.5517924,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587991.837676,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587992.1241636,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587992.4156427,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587992.7021458,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587992.9856672,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587993.2714217,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587993.5572867,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587993.8429613,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587994.1271884,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587994.4117072,
+      "used_mib": 36562
+    },
+    {
+      "time": 1791587994.7005641,
+      "used_mib": 36564
+    },
+    {
+      "time": 1791587994.9854417,
+      "used_mib": 36564
+    }
+  ],
+  "peak_used_mib": 36564
+}

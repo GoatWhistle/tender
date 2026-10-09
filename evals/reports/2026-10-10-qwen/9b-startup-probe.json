@@ -1,0 +1,8 @@
+{
+  "profile": "9b",
+  "http_proxy": "http://127.0.0.1:9",
+  "no_proxy": "127.0.0.1,localhost,::1",
+  "hf_hub_offline": true,
+  "transformers_offline": true,
+  "vllm_no_usage_stats": true
+}

@@ -1,0 +1,25 @@
+# Optional 9B profile: append after compose.yaml and compose.qwen.yaml.
+services:
+  qwen-download:
+    environment:
+      QWEN_MANIFEST_DIR: /app/qwen/profiles/9b
+    volumes:
+      - qwen-9b-weights:/models/qwen
+  qwen-embedding:
+    environment:
+      QWEN_MANIFEST_DIR: /app/qwen/profiles/9b
+    volumes:
+      - qwen-9b-weights:/models/qwen:ro
+  qwen-engine:
+    environment:
+      QWEN_MANIFEST_DIR: /app/qwen/profiles/9b
+      EXTRACTOR_GPU_MEMORY_UTILIZATION: ${EXTRACTOR_GPU_MEMORY_UTILIZATION:-0.60}
+    volumes:
+      - qwen-9b-weights:/models/qwen:ro
+      - qwen-9b-extractor-cache:/root/.cache
+  qwen-extractor:
+    environment:
+      QWEN_MANIFEST_DIR: /app/qwen/profiles/9b
+volumes:
+  qwen-9b-weights:
+  qwen-9b-extractor-cache:
