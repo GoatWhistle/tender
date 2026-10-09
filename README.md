@@ -81,3 +81,27 @@ cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy
   ошибки в `responses=error_responses(...)`.
 - **Замер** — скрипт в `evals/`, продукт берёт через `composition.py` и адаптеры; `app`, `main`
   и `composition` `evals` не импортируют.
+
+
+### Оценка русских ошибок
+
+Fixtures четырёх классов: `evals/datasets/errors_ru_v1.json`; правила и демонстрации —
+`docs/Предлагаемое решение.md`, §§8.8, 9.3, 15.6, 16.1, 20.2. Метрики считаются из JSONL
+ответов приложения, не из подставленного эталона:
+
+```bash
+python3 evals/errors/score.py --predictions /path/to/predictions.jsonl
+python3 -m unittest discover -s tests/evals -v
+ruff check evals/errors tests/evals evals/server/bench_typos_api.py evals/server/bench_llm_typos_api.py
+```
+
+Прогоны орфографии через API (модель уже должна быть запущена):
+
+```bash
+python3 evals/server/bench_typos_api.py --help
+python3 evals/server/bench_llm_typos_api.py --help
+```
+
+Измеренные отчёты: `evals/reports/2026-10-10-openjev-typos-api.md` и
+`evals/reports/2026-10-10-qwen4b-typos-api.md`. Это development-оценка опечаток;
+качество остальных классов на приложении ещё не измерено.
