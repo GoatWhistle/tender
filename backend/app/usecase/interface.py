@@ -3,11 +3,21 @@
 Pydantic и типов библиотек. Реализации — в `app.adapter` и `app.repository`.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from types import TracebackType
 from typing import Protocol, Self
 
 from app.domain.catalog import Position
+from app.domain.inference import (
+    ChoiceBatch,
+    ChoiceQuestion,
+    Claim,
+    ClaimBatch,
+    EmbeddingBatch,
+    Extraction,
+    ExtractionRequest,
+    ModelHealth,
+)
 
 
 class UnitOfWork(Protocol):
@@ -63,3 +73,42 @@ class CatalogRepository(Protocol):
         """Справочник целиком заменяется переданным: повторный вызов с тем же набором ничего не
         меняет."""
         ...
+
+
+class Embeddings(Protocol):
+    """Тексты → векторы размерности `dimension` единичной длины: нормализация — часть контракта,
+    вызывающий её не делает. Сейчас — заглушка `app.adapter.stub`."""
+
+    @property
+    def dimension(self) -> int: ...
+
+    def embed(self, texts: Sequence[str]) -> EmbeddingBatch:
+        """По вектору на текст, в порядке текстов."""
+        ...
+
+    def health(self) -> ModelHealth: ...
+
+
+class DecisionBackend(Protocol):
+    """Decision-модель (раздел 7.4 плана): выбор из вариантов и проверка утверждений (раздел
+    8.5). Отвечает распределениями, порог принятия — в сценарии. Сейчас — заглушка
+    `app.adapter.stub`."""
+
+    def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
+        """По ответу на каждый вопрос пакета: распределение по `option_ids`, выбор или отказ."""
+        ...
+
+    def verify(self, context: str, claims: Sequence[Claim]) -> ClaimBatch:
+        """По каждому утверждению — распределение по `Verdict`: следует ли оно из контекста."""
+        ...
+
+    def health(self) -> ModelHealth: ...
+
+
+class FactExtractor(Protocol):
+    """Генеративный извлекатель фактов (разделы 8.2–8.3 плана): ищет значения только
+    переданных характеристик в переданных сообщениях. Сейчас — заглушка `app.adapter.stub`."""
+
+    def extract(self, request: ExtractionRequest) -> Extraction: ...
+
+    def health(self) -> ModelHealth: ...
