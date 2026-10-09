@@ -3,10 +3,10 @@
 from collections.abc import Iterable
 from typing import Any
 
-from sqlalchemy import delete, func, insert, select
+from sqlalchemy import delete, func, insert, or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.domain.catalog import Bound, Characteristic, Position, Value
+from app.domain.catalog import Bound, Characteristic, CharacteristicKind, Position, Value
 from app.repository.orm.catalog import AllowedValue, CatalogPosition, PositionCharacteristic
 
 _LOAD = selectinload(CatalogPosition.characteristics).selectinload(PositionCharacteristic.values)
@@ -26,6 +26,27 @@ class SqlCatalog:
         query = select(CatalogPosition).options(_LOAD).order_by(CatalogPosition.code)
         if category is not None:
             query = query.where(CatalogPosition.category == category)
+        return [_position(r) for r in self._session.scalars(query)]
+
+    def groups(self, category: str | None = None) -> list[Position]:
+        # Определение группы — `Position.is_group`: шаблон или позиция без родителя.
+        query = (
+            select(CatalogPosition)
+            .where(or_(CatalogPosition.is_template, CatalogPosition.parent.is_(None)))
+            .options(_LOAD)
+            .order_by(CatalogPosition.code)
+        )
+        if category is not None:
+            query = query.where(CatalogPosition.category == category)
+        return [_position(r) for r in self._session.scalars(query)]
+
+    def children(self, code: str) -> list[Position]:
+        query = (
+            select(CatalogPosition)
+            .where(CatalogPosition.parent == code)
+            .options(_LOAD)
+            .order_by(CatalogPosition.code)
+        )
         return [_position(r) for r in self._session.scalars(query)]
 
     def count(self) -> int:
@@ -64,7 +85,7 @@ class SqlCatalog:
                         "name": c.name,
                         "quantitative": c.quantitative,
                         "required": c.required,
-                        "multi": c.multi,
+                        "kind": c.kind,
                     }
                 )
                 values.extend(
@@ -123,7 +144,7 @@ def _position(row: CatalogPosition) -> Position:
                 name=c.name,
                 quantitative=c.quantitative,
                 required=c.required,
-                multi=c.multi,
+                kind=CharacteristicKind(c.kind),
                 values=tuple(_value(v) for v in c.values),
             )
             for c in row.characteristics

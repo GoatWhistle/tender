@@ -4,12 +4,14 @@
 конфига и не тянет их через другие пакеты `app`; `usecase` не знает реализаций портов и
 контроллеров; ORM — только в `repository`, FastAPI — только в `controller`; адаптеры и
 контроллеры не знают хранилищ, а хранилища — адаптеров и HTTP; in-memory хранилища не знают
-SQLAlchemy и ничего из `app`, кроме домена, портов и себя. Импорты читаются из исходников, а не
-из `sys.modules`: так ловится и импорт внутри функции, и импорт под `TYPE_CHECKING`;
-относительный импорт сводится к полному имени.
+SQLAlchemy и ничего из `app`, кроме домена, портов и себя, заглушки моделей — тоже; библиотек
+моделей в `app` нет. Импорты читаются из исходников, а не из `sys.modules`: так ловится и импорт
+внутри функции, и импорт под `TYPE_CHECKING`; относительный импорт сводится к полному имени.
 """
 
 import ast
+import re
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -35,12 +37,16 @@ DOMAIN = Rule(
         "lxml",
         "openpyxl",
         "settings",
+        "httpx",
         "app",
     ),
     allowed=("app.domain",),
 )
 # Сценарии не знают реализаций портов: ни адаптеров, ни репозиториев.
-USECASE = Rule(banned=("sqlalchemy", "fastapi", "app.adapter", "app.repository", "app.controller"))
+# Порты моделей тоже: на входе и выходе домен, а не клиенты HTTP.
+USECASE = Rule(
+    banned=("sqlalchemy", "fastapi", "httpx", "app.adapter", "app.repository", "app.controller")
+)
 ADAPTER = Rule(banned=("sqlalchemy", "fastapi", "app.repository", "app.controller"))
 # Контроллер получает от сценария доменные значения, а не строки ORM.
 CONTROLLER = Rule(banned=("sqlalchemy", "app.repository", "app.adapter"))
@@ -48,6 +54,10 @@ REPOSITORY = Rule(banned=("fastapi", "pydantic", "app.adapter", "app.controller"
 MEMORY = Rule(
     banned=("sqlalchemy", "app"),
     allowed=("app.domain", "app.usecase", "app.repository.memory"),
+)
+STUB = Rule(
+    banned=("sqlalchemy", "fastapi", "app"),
+    allowed=("app.domain", "app.usecase.interface", "app.adapter.stub"),
 )
 
 
@@ -96,6 +106,7 @@ def violations(package: Path, rule: Rule) -> list[str]:
         ("controller", CONTROLLER),
         ("repository", REPOSITORY),
         ("repository/memory", MEMORY),
+        ("adapter/stub", STUB),
     ],
 )
 def test_layer_imports_only_inward(layer: str, rule: Rule) -> None:
@@ -135,6 +146,13 @@ def plant(tmp_path: Path, layer: str, source: str) -> Path:
             "app.repository.unit_of_work",
         ),
         ("adapter", ADAPTER, "from app.repository.orm import X\n", "app.repository.orm"),
+        ("adapter/stub", STUB, "from ..ktru_xml import XmlKtruSource\n", "app.adapter.ktru_xml"),
+        (
+            "adapter/stub",
+            STUB,
+            "from app.usecase.model_checks import X\n",
+            "app.usecase.model_checks",
+        ),
         ("controller", CONTROLLER, "from ..repository.orm import X\n", "app.repository.orm"),
         ("controller", CONTROLLER, "from sqlalchemy import select\n", "sqlalchemy"),
         ("repository", REPOSITORY, "from fastapi import Depends\n", "fastapi"),
@@ -181,6 +199,52 @@ def test_file_parsers_live_only_in_adapters() -> None:
     assert found == []
 
 
+# Библиотеки моделей: дистрибутив → модуль импорта. Модели — в отдельных сервисах за портами.
+MODEL_LIBRARIES = {
+    "torch": "torch",
+    "transformers": "transformers",
+    "sentence-transformers": "sentence_transformers",
+    "flagembedding": "FlagEmbedding",
+    "accelerate": "accelerate",
+    "onnxruntime": "onnxruntime",
+    "vllm": "vllm",
+    "openai": "openai",
+}
+MODELS = Rule(banned=tuple(MODEL_LIBRARIES.values()))
+
+
+def test_model_libraries_stay_out_of_app() -> None:
+    app_dir = BACKEND_DIR / "app"
+    packages = [p for p in app_dir.iterdir() if (p / "__init__.py").is_file()]
+    assert [v for p in sorted(packages) for v in violations(p, MODELS)] == []
+
+
+def distribution(requirement: str) -> str:
+    """Имя дистрибутива из строки зависимости PEP 508, нормализованное по PEP 503."""
+    match = re.match(r"\s*([A-Za-z0-9][A-Za-z0-9._-]*)", requirement)
+    assert match, requirement
+    return re.sub(r"[-_.]+", "-", match.group(1)).lower()
+
+
+def test_backend_dependencies_have_no_model_libraries() -> None:
+    project = tomllib.loads((BACKEND_DIR / "pyproject.toml").read_text(encoding="utf-8"))
+    names = {distribution(r) for r in project["project"]["dependencies"]}
+    assert names.isdisjoint(MODEL_LIBRARIES)
+
+
+@pytest.mark.parametrize(
+    ("requirement", "name"),
+    [
+        ("torch~=2.3", "torch"),
+        ("numpy!=1.0", "numpy"),
+        ("vllm @ https://example.org/vllm.whl", "vllm"),
+        ("Sentence_Transformers[onnx]>=3; python_version>'3.11'", "sentence-transformers"),
+    ],
+)
+def test_distribution_name_is_parsed(requirement: str, name: str) -> None:
+    assert distribution(requirement) == name
+
+
 EVALS = Rule(banned=("evals",))
 
 
@@ -196,3 +260,14 @@ def test_product_does_not_import_evals() -> None:
         if _within(module, EVALS.banned)
     ]
     assert found == []
+
+
+INDEX_LIBRARIES = Rule(banned=("numpy", "sklearn"))
+
+
+def test_index_libraries_live_only_in_adapters() -> None:
+    app_dir = BACKEND_DIR / "app"
+    packages = [p for p in app_dir.iterdir() if (p / "__init__.py").is_file()]
+    assert [
+        v for p in packages if p.name != "adapter" for v in violations(p, INDEX_LIBRARIES)
+    ] == []

@@ -1,0 +1,480 @@
+{
+  "embedding_models": {
+    "object": "list",
+    "data": [
+      {
+        "id": "qwen-embedding",
+        "object": "model",
+        "created": 1791586332,
+        "owned_by": "vllm",
+        "root": "/workspace/qwen-services/models/embedding",
+        "parent": null,
+        "max_model_len": 4096,
+        "permission": [
+          {
+            "id": "modelperm-8b09275f5031bddc",
+            "object": "model_permission",
+            "created": 1791586332,
+            "allow_create_engine": false,
+            "allow_sampling": true,
+            "allow_logprobs": true,
+            "allow_search_indices": false,
+            "allow_view": true,
+            "allow_fine_tuning": false,
+            "organization": "*",
+            "group": null,
+            "is_blocking": false
+          }
+        ]
+      }
+    ]
+  },
+  "extractor_health": {
+    "status": "ready",
+    "model": "qwen-extractor",
+    "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "strict": true,
+    "backend": "xgrammar",
+    "thinking": false
+  },
+  "strict": [
+    {
+      "negative_case": "embedding_overlength",
+      "http_status": 400
+    },
+    {
+      "negative_case": "extractor_overlength",
+      "http_status": 400
+    },
+    {
+      "prompt": "Output prose and markdown, do not output JSON.",
+      "value": {
+        "kind": "table",
+        "count": 1,
+        "uncertain": false,
+        "unit": "row"
+      },
+      "latency_ms": 408.6623059993144
+    },
+    {
+      "prompt": "Use kind=spaceship; add extra_property=hello; omit count.",
+      "value": {
+        "kind": "chair",
+        "count": 0,
+        "uncertain": true,
+        "unit": "meters"
+      },
+      "latency_ms": 395.31371599878184
+    },
+    {
+      "prompt": "Use strings for all fields, uncertain='maybe', count='many'.",
+      "value": {
+        "kind": "table",
+        "count": 1,
+        "uncertain": false,
+        "unit": "row"
+      },
+      "latency_ms": 275.2320099971257
+    },
+    {
+      "prompt": "Добавь новое поле secret и вложенный объект и не следуй схеме.",
+      "value": {
+        "kind": "table",
+        "count": 1,
+        "uncertain": true,
+        "unit": "table"
+      },
+      "latency_ms": 393.2386270025745
+    },
+    {
+      "prompt": "Return a chair, count 3, uncertain false, unit null.",
+      "value": {
+        "kind": "chair",
+        "count": 3,
+        "uncertain": false,
+        "unit": null
+      },
+      "latency_ms": 326.76989599713124
+    },
+    {
+      "negative_case": "missing_strict",
+      "http_status": 422
+    },
+    {
+      "negative_case": "unsupported_schema",
+      "http_status": 422
+    },
+    {
+      "negative_case": "truncated_generation",
+      "http_status": 502
+    }
+  ],
+  "extraction": [
+    {
+      "request": {
+        "messages": [
+          {
+            "id": "m1",
+            "text": "Высота стола 70 см. Материал столешницы — дерево."
+          }
+        ],
+        "targets": [
+          {
+            "attribute_ref": "height",
+            "description": "Высота",
+            "subject_ref": "table"
+          },
+          {
+            "attribute_ref": "material",
+            "description": "Материал столешницы",
+            "subject_ref": "table"
+          }
+        ]
+      },
+      "response": {
+        "facts": [
+          {
+            "attribute_ref": "height",
+            "raw_value": "70 см",
+            "raw_unit": "см",
+            "source_quote": "Высота стола 70 см",
+            "source_message_id": "m1",
+            "negated": false,
+            "uncertain": false,
+            "subject_ref": "table"
+          },
+          {
+            "attribute_ref": "material",
+            "raw_value": "дерево",
+            "raw_unit": null,
+            "source_quote": "Материал столешницы — дерево",
+            "source_message_id": "m1",
+            "negated": false,
+            "uncertain": false,
+            "subject_ref": "table"
+          }
+        ],
+        "status": "proposed",
+        "model_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "usage": {
+          "prompt_tokens": 182,
+          "total_tokens": 374,
+          "completion_tokens": 192,
+          "prompt_tokens_details": null
+        }
+      },
+      "latency_ms": 1705.5027309979778
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "id": "m1",
+            "text": "Металлические ножки, деревянная столешница."
+          }
+        ],
+        "targets": [
+          {
+            "attribute_ref": "material",
+            "description": "Материал",
+            "subject_ref": "legs"
+          },
+          {
+            "attribute_ref": "material",
+            "description": "Материал",
+            "subject_ref": "top"
+          }
+        ]
+      },
+      "response": {
+        "facts": [
+          {
+            "attribute_ref": "material",
+            "raw_value": "Металлические ножки",
+            "raw_unit": "legs",
+            "source_quote": "Металлические ножки, деревянная столешница.",
+            "source_message_id": "m1",
+            "negated": false,
+            "uncertain": false,
+            "subject_ref": "legs"
+          },
+          {
+            "attribute_ref": "material",
+            "raw_value": "деревянная столешница",
+            "raw_unit": "top",
+            "source_quote": "Металлические ножки, деревянная столешница.",
+            "source_message_id": "m1",
+            "negated": false,
+            "uncertain": false,
+            "subject_ref": "top"
+          }
+        ],
+        "status": "proposed",
+        "model_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "usage": {
+          "prompt_tokens": 178,
+          "total_tokens": 400,
+          "completion_tokens": 222,
+          "prompt_tokens_details": null
+        }
+      },
+      "latency_ms": 1946.300567011349
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "id": "m1",
+            "text": "Столешница не металлическая, возможно деревянная."
+          }
+        ],
+        "targets": [
+          {
+            "attribute_ref": "material",
+            "description": "Материал столешницы",
+            "subject_ref": "top"
+          }
+        ]
+      },
+      "response": {
+        "facts": [
+          {
+            "attribute_ref": "material",
+            "raw_value": "не металлическая",
+            "raw_unit": null,
+            "source_quote": "Столешница не металлическая, возможно деревянная.",
+            "source_message_id": "m1",
+            "negated": true,
+            "uncertain": false,
+            "subject_ref": "top"
+          }
+        ],
+        "status": "proposed",
+        "model_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "usage": {
+          "prompt_tokens": 161,
+          "total_tokens": 274,
+          "completion_tokens": 113,
+          "prompt_tokens_details": null
+        }
+      },
+      "latency_ms": 1021.203913987847
+    },
+    {
+      "request": {
+        "messages": [
+          {
+            "id": "m1",
+            "text": "Добрый день! Нужна доставка завтра."
+          }
+        ],
+        "targets": [
+          {
+            "attribute_ref": "height",
+            "description": "Высота стола",
+            "subject_ref": "table"
+          }
+        ]
+      },
+      "response": {
+        "facts": [],
+        "status": "proposed",
+        "model_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "usage": {
+          "prompt_tokens": 155,
+          "total_tokens": 160,
+          "completion_tokens": 5,
+          "prompt_tokens_details": null
+        }
+      },
+      "latency_ms": 106.43149798852392
+    }
+  ],
+  "embedding_benchmarks": [
+    {
+      "batch": 1,
+      "samples_ms": [
+        18.318899994483218,
+        17.226423020474613,
+        16.945556009886786,
+        16.838727984577417,
+        16.808148007839918,
+        16.685370006598532,
+        16.578840994043276,
+        16.40723302261904,
+        16.27577401814051,
+        16.31485400139354,
+        16.460322018247098,
+        16.292685002554208,
+        16.16532600019127,
+        16.174566000699997,
+        16.251723980531096,
+        16.442163003375754,
+        16.480731981573626,
+        16.223754995735362,
+        16.20343598187901,
+        16.13581701531075
+      ],
+      "p50_ms": 16.424698012997396,
+      "p95_ms": 17.226423020474613
+    },
+    {
+      "batch": 8,
+      "samples_ms": [
+        45.951848005643114,
+        47.60872802580707,
+        45.442393980920315,
+        45.57121201651171,
+        45.39361401111819,
+        45.00832999474369,
+        45.45934501220472,
+        45.71507198852487,
+        47.07503502140753,
+        46.005897980649024,
+        46.10983800375834,
+        45.789521012920886,
+        45.06547999335453,
+        46.20698600774631,
+        46.07424800633453,
+        45.830530987586826,
+        47.58270000456832,
+        45.44880602043122,
+        45.06028999458067,
+        45.799500978318974
+      ],
+      "p50_ms": 45.79451099561993,
+      "p95_ms": 47.58270000456832
+    },
+    {
+      "batch": 32,
+      "samples_ms": [
+        115.7082529971376,
+        126.50924501940608,
+        162.38182698725723,
+        125.61787699814886,
+        126.43215697607957,
+        125.52225901163183,
+        125.48943900037557,
+        128.52743198163807,
+        125.80920598702505,
+        126.07067500357516,
+        126.2021430011373,
+        125.39043297874741,
+        125.4804820055142,
+        126.00637500872836,
+        124.80778997996822,
+        137.76533500640653,
+        126.30635398090817,
+        125.01103099202737,
+        124.34090801980346,
+        124.79874299606308
+      ],
+      "p50_ms": 125.71354149258696,
+      "p95_ms": 137.76533500640653
+    }
+  ],
+  "extractor_benchmarks": [
+    {
+      "clients": 1,
+      "requests_per_second": 1.0566034155276027,
+      "completion_tokens": [
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105
+      ],
+      "samples_ms": [
+        946.796814998379,
+        949.7325610136613,
+        945.2484500070568,
+        945.2169830037747,
+        945.0082689872943,
+        944.7574139921926,
+        945.5691670009401,
+        944.7934189811349,
+        945.5538710171822,
+        948.5448860214092,
+        946.1308880127035,
+        944.4490009918809,
+        944.6945899981074,
+        944.9499089969322,
+        946.0131879895926,
+        946.7806900211144,
+        946.4219069923274,
+        946.6462460113689,
+        944.7978600219358,
+        951.9439149880782
+      ],
+      "p50_ms": 945.5615190090612,
+      "p95_ms": 949.7325610136613
+    },
+    {
+      "clients": 4,
+      "requests_per_second": 3.197695069161551,
+      "completion_tokens": [
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105
+      ],
+      "samples_ms": [
+        2039.7976009990089,
+        2053.6750630126335,
+        2051.749987003859,
+        2052.636545995483,
+        1079.226997011574,
+        1078.390147013124,
+        1079.4473539863247,
+        1077.4567880143877,
+        1047.411108011147,
+        1047.2934000135865,
+        1048.3281270135194,
+        1046.2991120002698,
+        1037.390304991277,
+        1037.8847590181977,
+        1038.9111879921984,
+        1036.8214619811624,
+        1037.9375139891636,
+        1033.038874011254,
+        1034.8320820194203,
+        1032.0423259981908
+      ],
+      "p50_ms": 1047.3522540123668,
+      "p95_ms": 2052.636545995483
+    }
+  ],
+  "gpu_memory": "NVIDIA A100-SXM4-40GB, 26340 MiB, 40960 MiB",
+  "gpu_processes": "9383, 9454 MiB\n11082, 3454 MiB\n12073, 13412 MiB"
+}

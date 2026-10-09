@@ -14,8 +14,12 @@ from app.domain import errors as e
 
 STATUS: dict[type[e.DomainError], int] = {
     e.DomainError: 400,
+    e.SessionNotFound: 404,
+    e.IdempotencyConflict: 409,
     e.PositionNotFound: 404,
+    e.GroupNotFound: 404,
     e.CatalogEmpty: 503,
+    e.ModelFailure: 503,
 }
 
 

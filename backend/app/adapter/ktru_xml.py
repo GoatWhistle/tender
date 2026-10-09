@@ -5,9 +5,30 @@ from pathlib import Path
 
 from lxml import etree
 
-from app.domain.catalog import CATEGORIES, Bound, Characteristic, Position, Value
+from app.domain.catalog import (
+    CATEGORIES,
+    Bound,
+    Characteristic,
+    CharacteristicKind,
+    Position,
+    Value,
+)
 
 NS = {"oos": "http://zakupki.gov.ru/oos/types/1"}
+
+KIND = {
+    "1": CharacteristicKind.fixed,
+    "2": CharacteristicKind.single,
+    "3": CharacteristicKind.multiple,
+}
+# `choiceType` — только для старых выгрузок без `kind`: по описанию структуры он «используется в
+# ведении КТРУ, не используется в применении», и в выгрузках организаторов `choiceType=2` стоит
+# и у характеристик с выбором одного значения.
+CHOICE_TYPE = {
+    "1": CharacteristicKind.single,
+    "2": CharacteristicKind.multiple,
+    "3": CharacteristicKind.fixed,
+}
 
 
 class XmlKtruSource:
@@ -40,7 +61,7 @@ def parse_xml(path: Path, category: str) -> list[Position]:
                     name=_t(c, "oos:name") or "",
                     quantitative=_t(c, "oos:type") == "2",
                     required=_t(c, "oos:isRequired") == "true",
-                    multi=_t(c, "oos:choiceType") == "2",
+                    kind=_kind(c),
                     values=tuple(_value(v) for v in c.findall("oos:values/oos:value", NS)),
                 )
             )
@@ -61,6 +82,13 @@ def parse_xml(path: Path, category: str) -> list[Position]:
         )
         pos.clear()
     return out
+
+
+def _kind(c: etree._Element) -> CharacteristicKind:
+    kind = KIND.get(_t(c, "oos:kind") or "")
+    if kind is not None:
+        return kind
+    return CHOICE_TYPE.get(_t(c, "oos:choiceType") or "", CharacteristicKind.single)
 
 
 def _t(el: etree._Element, path: str) -> str | None:

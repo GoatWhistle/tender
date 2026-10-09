@@ -1,0 +1,30 @@
+{
+  "modeling_openjev.py": {
+    "sha256": "071670d0879963ee69600ed31f0f3d5a37bee314461709477e8ac0e25f33fd97",
+    "size": 13789
+  },
+  "code/openjev_decide.py": {
+    "sha256": "c3db644745db0a756b7779ef0603e560adf2640f4fd12af3dd7fb2b28492609d",
+    "size": 4912
+  },
+  "qwen3.5-4b-nli-v5/config.json": {
+    "sha256": "2fb08b5484dc21cb8e6db9b1fef8437b365f7fa0ef877055cf2bc0f8063a65a2",
+    "size": 3255
+  },
+  "qwen3.5-4b-nli-v5/tokenizer.json": {
+    "sha256": "f399b3cd12fa270d51457bb749fb30863521e8359b8a27059c71b6c2f7d6dd6c",
+    "size": 19989424
+  },
+  "qwen3.5-4b-nli-v5/tokenizer_config.json": {
+    "sha256": "e6f32d049fd16bd0e49604e9173193213fe260984de4629a85d551d85e566020",
+    "size": 1233
+  },
+  "qwen3.5-4b-nli-v5/chat_template.jinja": {
+    "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+    "size": 7756
+  },
+  "qwen3.5-4b-nli-v5/model.safetensors": {
+    "sha256": "2b5f6e0691a5ed0c5d0f5f3e49bb26abe2d8efd7c14fda4431cd803c12b78f68",
+    "size": 9078635984
+  }
+}

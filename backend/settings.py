@@ -7,6 +7,7 @@
 
 from pathlib import Path
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent
@@ -24,3 +25,14 @@ class Settings(BaseSettings):
 
     database_url: str = f"sqlite:///{VAR_DIR / 'tender.db'}"
     ktru_xml_dir: Path = KTRU_XML_DIR
+    aliases_path: Path = REPO_DIR / "data" / "aliases.csv"
+
+    embeddings_url: str | None = None
+    embeddings_api_key: SecretStr | None = None
+    embeddings_model: str = "qwen-embedding"
+    embeddings_repository: str = "Qwen/Qwen3-Embedding-0.6B"
+    embeddings_dimension: int = Field(default=1024, ge=1)
+    embeddings_revision: str = "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3"
+    embeddings_query_instruction: str = (
+        "Given a product description, retrieve the matching product group"
+    )

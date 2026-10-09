@@ -7,48 +7,84 @@
 и старт контейнера, и командная строка (`python -c 'import main; main.sync_catalog()'`).
 """
 
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, closing
 
 from fastapi import FastAPI
 from sqlalchemy.orm import Session, sessionmaker
 
+from app.adapter.aliases import CsvAliasesSource
+from app.adapter.embeddings import OpenAIEmbeddings
 from app.adapter.ktru_xml import XmlKtruSource
+from app.adapter.search import MatrixIndex, TfidfIndex
+from app.controller.catalog import groups_router
 from app.controller.catalog import router as catalog_router
 from app.controller.errors import install_error_handlers
 from app.controller.health import router as health_router
+from app.controller.search import router as search_router
+from app.controller.sessions import router as sessions_router
+from app.repository.aliases import SqlAliases
 from app.repository.catalog import SqlCatalog
 from app.repository.database import create_db_engine
+from app.repository.search_vectors import SqlSearchVectors
+from app.repository.sessions import SqlSessions
 from app.repository.unit_of_work import SqlUnitOfWork
-from app.usecase.interface import CatalogSource
-from composition import Repositories, Usecases, build_usecases
+from app.usecase.catalog import SyncReport
+from app.usecase.interface import CatalogSource, Embeddings
+from composition import Repositories, Usecases, build_usecases, checked_embeddings
 from settings import Settings
 
 
 def sql_repositories() -> Repositories[SqlUnitOfWork]:
-    return Repositories[SqlUnitOfWork](catalog=lambda uow: SqlCatalog(uow.session))
+    return Repositories[SqlUnitOfWork](
+        catalog=lambda uow: SqlCatalog(uow.session),
+        sessions=lambda uow: SqlSessions(uow.session),
+        aliases=lambda uow: SqlAliases(uow.session),
+        saved_vectors=lambda uow: SqlSearchVectors(uow.session),
+    )
 
 
 def production_usecases(
-    settings: Settings, catalog_source: CatalogSource | None = None
+    settings: Settings,
+    catalog_source: CatalogSource | None = None,
+    embeddings: Embeddings | None = None,
 ) -> Usecases[SqlUnitOfWork]:
+    embeddings = checked_embeddings(embeddings) if embeddings is not None else None
     return build_usecases(
         sql_repositories(),
+        lexical=TfidfIndex() if embeddings is not None else None,
+        vector=MatrixIndex(
+            embeddings, model=settings.embeddings_model, revision=settings.embeddings_revision
+        )
+        if embeddings is not None
+        else None,
+        embeddings=embeddings,
+        aliases_source=CsvAliasesSource(settings.aliases_path),
         catalog_source=catalog_source or XmlKtruSource(settings.ktru_xml_dir),
     )
 
 
 def create_app(
-    settings: Settings | None = None, catalog_source: CatalogSource | None = None
+    settings: Settings | None = None,
+    catalog_source: CatalogSource | None = None,
+    *,
+    embeddings: Embeddings | None = None,
 ) -> FastAPI:
     settings = settings or Settings()
+    if embeddings is None:
+        embeddings = configured_embeddings(settings)
     engine = create_db_engine(settings.database_url)
     session_factory = sessionmaker(engine)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-        yield
-        engine.dispose()
+        try:
+            with closing(SqlUnitOfWork(session_factory())) as uow:
+                app.state.usecases.group_search(uow).build()
+            yield
+        finally:
+            engine.dispose()
 
     app = FastAPI(
         title="Автозаполнение СТЕ и подбор КТРУ",
@@ -60,24 +96,52 @@ def create_app(
     )
     app.state.engine = engine
     app.state.unit_of_work = lambda: SqlUnitOfWork(session_factory())
-    app.state.usecases = production_usecases(settings, catalog_source)
+    app.state.usecases = production_usecases(settings, catalog_source, embeddings)
 
     install_error_handlers(app)
     app.include_router(health_router)
     app.include_router(catalog_router)
+    app.include_router(groups_router)
+    app.include_router(search_router)
+    app.include_router(sessions_router)
     return app
+
+
+def configured_embeddings(settings: Settings) -> Embeddings | None:
+    if settings.embeddings_url:
+        return OpenAIEmbeddings(
+            settings.embeddings_url,
+            model=settings.embeddings_model,
+            api_key=settings.embeddings_api_key.get_secret_value()
+            if settings.embeddings_api_key
+            else None,
+            dimension=settings.embeddings_dimension,
+            revision=settings.embeddings_revision,
+            query_instruction=settings.embeddings_query_instruction,
+        )
+    return None
 
 
 def sync_catalog(
     settings: Settings | None = None, catalog_source: CatalogSource | None = None
-) -> int:
-    """Кладёт справочник КТРУ в базу; возвращает число позиций. Схема должна быть на месте —
-    `alembic upgrade head`."""
+) -> SyncReport:
+    """Кладёт справочник КТРУ в базу. Схема должна быть на месте — `alembic upgrade head`.
+    Позиции вне дерева групп пишутся в лог предупреждением."""
     settings = settings or Settings()
     engine = create_db_engine(settings.database_url)
     try:
         usecases = production_usecases(settings, catalog_source)
         with closing(SqlUnitOfWork(Session(engine))) as uow:
-            return usecases.catalog_sync(uow).run()
+            report = usecases.catalog_sync(uow).run()
     finally:
         engine.dispose()
+    log = logging.getLogger(__name__)
+    for p in report.outside_tree:
+        log.warning(
+            "Позиция КТРУ %s вне групп: родитель %s не найден или не группа", p.code, p.parent
+        )
+    for alias in report.invalid_aliases:
+        log.warning(
+            "Синоним %s ссылается на отсутствующую группу %s", alias.alias, alias.group_code
+        )
+    return report

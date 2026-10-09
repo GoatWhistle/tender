@@ -20,3 +20,31 @@ class PositionNotFound(DomainError):
 class CatalogEmpty(DomainError):
     code = "catalog_empty"
     message = "Справочник КТРУ не загружен"
+
+
+class GroupNotFound(DomainError):
+    code = "group_not_found"
+    message = "Группа КТРУ не найдена"
+
+
+class ModelFailure(DomainError):
+    """Модель не ответила, ответила с ошибкой или невалидно: это технический сбой, а не
+    решение. Исходное исключение адаптера — в `__cause__`."""
+
+    code = "technical_error"
+    message = "Модель недоступна или вернула невалидный ответ"
+
+
+class ModelNotConfigured(ModelFailure):
+    code = "model_not_configured"
+    message = "Модель эмбеддингов не настроена: задайте EMBEDDINGS_URL"
+
+
+class SessionNotFound(DomainError):
+    code = "session_not_found"
+    message = "Сессия не найдена"
+
+
+class IdempotencyConflict(DomainError):
+    code = "idempotency_conflict"
+    message = "Ключ идемпотентности уже использован с другим текстом"

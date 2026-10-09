@@ -1,0 +1,3578 @@
+{
+  "kind": "synthetic_development_typo_detection",
+  "started_at": "2026-10-09T22:35:05.531756+00:00",
+  "dataset_sha256": "f716612b4ab574e41b3c84b8c542dec3c880f64dcdea057de8ea23eb261bc42e",
+  "endpoint": "/v1/choice",
+  "use_cache": false,
+  "health": {
+    "status": "ready",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "attention": "sdpa",
+    "runtime": "fla-only",
+    "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+  },
+  "runs": [
+    {
+      "variant": {
+        "id": "ru_short",
+        "instructions": "Есть ли в тексте описания товара орфографическая ошибка или опечатка?",
+        "options": [
+          {
+            "id": "typo",
+            "criterion": "В тексте есть хотя бы одна орфографическая ошибка или опечатка."
+          },
+          {
+            "id": "clean",
+            "criterion": "В тексте нет орфографических ошибок и опечаток."
+          }
+        ]
+      },
+      "warmup_http_ms": 908.833792025689,
+      "rows": [
+        {
+          "id": "p01_typo",
+          "pair_id": "p01",
+          "domain": "product_description",
+          "text": "Куртка зимня мужская, размер 50.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "зимня",
+              "correct": "зимняя"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 945.3600000124425,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3692824212494111,
+              "clean": 0.630717578750589
+            },
+            "support_probabilities": {
+              "typo": 0.3557606339454651,
+              "clean": 0.6076229810714722
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p01_clean",
+          "pair_id": "p01",
+          "domain": "product_description",
+          "text": "Куртка зимняя мужская, размер 50.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 871.6908330097795,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.33576501504939155,
+              "clean": 0.6642349849506084
+            },
+            "support_probabilities": {
+              "typo": 0.3345756232738495,
+              "clean": 0.6618820428848267
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p02_typo",
+          "pair_id": "p02",
+          "domain": "product_description",
+          "text": "Куртка кожанная с капюшоном.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "кожанная",
+              "correct": "кожаная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 838.1948339520022,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.31235089669853744,
+              "clean": 0.6876491033014626
+            },
+            "support_probabilities": {
+              "typo": 0.34156808257102966,
+              "clean": 0.7519715428352356
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p02_clean",
+          "pair_id": "p02",
+          "domain": "product_description",
+          "text": "Куртка кожаная с капюшоном.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 892.9623329895549,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3140382065944795,
+              "clean": 0.6859617934055205
+            },
+            "support_probabilities": {
+              "typo": 0.34156808257102966,
+              "clean": 0.7460960149765015
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p03_typo",
+          "pair_id": "p03",
+          "domain": "product_description",
+          "text": "Табуретка деревяная для кухни.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "деревяная",
+              "correct": "деревянная"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 838.4479160304181,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.9202235953590869,
+              "clean": 0.07977640464091308
+            },
+            "support_probabilities": {
+              "typo": 0.9136683344841003,
+              "clean": 0.07920811325311661
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p03_clean",
+          "pair_id": "p03",
+          "domain": "product_description",
+          "text": "Табуретка деревянная для кухни.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 836.6631669923663,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.48947590445349487,
+              "clean": 0.5105240955465051
+            },
+            "support_probabilities": {
+              "typo": 0.5389667749404907,
+              "clean": 0.5621431469917297
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p04_typo",
+          "pair_id": "p04",
+          "domain": "product_description",
+          "text": "Стол письменый белый, 1200×600×750 мм.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "письменый",
+              "correct": "письменный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 837.8030000021681,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.7439585464397661,
+              "clean": 0.25604145356023383
+            },
+            "support_probabilities": {
+              "typo": 0.7549002766609192,
+              "clean": 0.25980716943740845
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p04_clean",
+          "pair_id": "p04",
+          "domain": "product_description",
+          "text": "Стол письменный белый, 1200×600×750 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 869.9114579940215,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4415872992246016,
+              "clean": 0.5584127007753984
+            },
+            "support_probabilities": {
+              "typo": 0.5234066843986511,
+              "clean": 0.6618780493736267
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p05_typo",
+          "pair_id": "p05",
+          "domain": "product_description",
+          "text": "Шкаф металический двухсекционный.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "металический",
+              "correct": "металлический"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 976.2827079975978,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5317061921631129,
+              "clean": 0.4682938078368871
+            },
+            "support_probabilities": {
+              "typo": 0.5234004855155945,
+              "clean": 0.4609786570072174
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p05_clean",
+          "pair_id": "p05",
+          "domain": "product_description",
+          "text": "Шкаф металлический двухсекционный.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 858.0787500250153,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3246969914337855,
+              "clean": 0.6753030085662145
+            },
+            "support_probabilities": {
+              "typo": 0.36295393109321594,
+              "clean": 0.7548695802688599
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p06_typo",
+          "pair_id": "p06",
+          "domain": "product_description",
+          "text": "Шуруповерт акумуляторный, 18 В.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "акумуляторный",
+              "correct": "аккумуляторный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 837.3587499954738,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.6696488494365942,
+              "clean": 0.33035115056340575
+            },
+            "support_probabilities": {
+              "typo": 0.6297541856765747,
+              "clean": 0.31067031621932983
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p06_clean",
+          "pair_id": "p06",
+          "domain": "product_description",
+          "text": "Шуруповерт аккумуляторный, 18 В.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "typo",
+          "correct": false,
+          "http_ms": 837.6846250030212,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.6864969317797782,
+              "clean": 0.31350306822022184
+            },
+            "support_probabilities": {
+              "typo": 0.6513367891311646,
+              "clean": 0.29744645953178406
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p07_typo",
+          "pair_id": "p07",
+          "domain": "product_description",
+          "text": "Перфаратор электрический, 800 Вт.",
+          "gold": "typo",
+          "error_type": "substitution",
+          "errors": [
+            {
+              "wrong": "Перфаратор",
+              "correct": "Перфоратор"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 874.5447919936851,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.7428687858676576,
+              "clean": 0.25713121413234236
+            },
+            "support_probabilities": {
+              "typo": 0.7248528003692627,
+              "clean": 0.25089529156684875
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p07_clean",
+          "pair_id": "p07",
+          "domain": "product_description",
+          "text": "Перфоратор электрический, 800 Вт.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1206.2514169956557,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.42842310268708433,
+              "clean": 0.5715768973129156
+            },
+            "support_probabilities": {
+              "typo": 0.4609993100166321,
+              "clean": 0.6150381565093994
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p08_typo",
+          "pair_id": "p08",
+          "domain": "product_description",
+          "text": "Штангенцирклуь, длина 125 мм.",
+          "gold": "typo",
+          "error_type": "transposition",
+          "errors": [
+            {
+              "wrong": "Штангенцирклуь",
+              "correct": "Штангенциркуль"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 856.9812080240808,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.9681636599544404,
+              "clean": 0.031836340045559526
+            },
+            "support_probabilities": {
+              "typo": 0.9615271687507629,
+              "clean": 0.031618110835552216
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p08_clean",
+          "pair_id": "p08",
+          "domain": "product_description",
+          "text": "Штангенциркуль, длина 125 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 889.3117919797078,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.48820489966542424,
+              "clean": 0.5117951003345758
+            },
+            "support_probabilities": {
+              "typo": 0.4843650460243225,
+              "clean": 0.5077697038650513
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p09_typo",
+          "pair_id": "p09",
+          "domain": "product_description",
+          "text": "Изоллента синяя, ширина 19 мм.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "Изоллента",
+              "correct": "Изолента"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 836.7520840256475,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.6584900379362911,
+              "clean": 0.3415099620637088
+            },
+            "support_probabilities": {
+              "typo": 0.6859273910522461,
+              "clean": 0.35573968291282654
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p09_clean",
+          "pair_id": "p09",
+          "domain": "product_description",
+          "text": "Изолента синяя, ширина 19 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 859.6436670050025,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3899881093508916,
+              "clean": 0.6100118906491084
+            },
+            "support_probabilities": {
+              "typo": 0.45324498414993286,
+              "clean": 0.7089570760726929
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p10_typo",
+          "pair_id": "p10",
+          "domain": "product_description",
+          "text": "Рюкзак синий, обьём 20 литров.",
+          "gold": "typo",
+          "error_type": "orthography",
+          "errors": [
+            {
+              "wrong": "обьём",
+              "correct": "объём"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 885.3210830129683,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.8256327971264312,
+              "clean": 0.17436720287356883
+            },
+            "support_probabilities": {
+              "typo": 0.8311286568641663,
+              "clean": 0.175527885556221
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p10_clean",
+          "pair_id": "p10",
+          "domain": "product_description",
+          "text": "Рюкзак синий, объём 20 литров.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 881.4637090545148,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.32765775373269734,
+              "clean": 0.6723422462673027
+            },
+            "support_probabilities": {
+              "typo": 0.3486306071281433,
+              "clean": 0.7153778076171875
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p11_typo",
+          "pair_id": "p11",
+          "domain": "product_description",
+          "text": "Куртка мужская, сьёмный капюшон.",
+          "gold": "typo",
+          "error_type": "orthography",
+          "errors": [
+            {
+              "wrong": "сьёмный",
+              "correct": "съёмный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 852.5956670055166,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.7825829729087385,
+              "clean": 0.2174170270912616
+            },
+            "support_probabilities": {
+              "typo": 0.8311277627944946,
+              "clean": 0.2309037297964096
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p11_clean",
+          "pair_id": "p11",
+          "domain": "product_description",
+          "text": "Куртка мужская, съёмный капюшон.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 834.4435840263031,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4076090766237718,
+              "clean": 0.5923909233762282
+            },
+            "support_probabilities": {
+              "typo": 0.47655850648880005,
+              "clean": 0.6925972700119019
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p12_typo",
+          "pair_id": "p12",
+          "domain": "product_description",
+          "text": "Стул чёрнй с металлическим каркасом.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "чёрнй",
+              "correct": "чёрный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 837.4796669813804,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.9704806252731085,
+              "clean": 0.029519374726891465
+            },
+            "support_probabilities": {
+              "typo": 0.978380024433136,
+              "clean": 0.02975965291261673
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p12_clean",
+          "pair_id": "p12",
+          "domain": "product_description",
+          "text": "Стул чёрный с металлическим каркасом.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 853.2032910152338,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.2582974716177427,
+              "clean": 0.7417025283822573
+            },
+            "support_probabilities": {
+              "typo": 0.2813972234725952,
+              "clean": 0.8080335855484009
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p13_typo",
+          "pair_id": "p13",
+          "domain": "product_description",
+          "text": "Футболка трикотажнная женская.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "трикотажнная",
+              "correct": "трикотажная"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 1212.14170899475,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.7760841979945814,
+              "clean": 0.22391580200541866
+            },
+            "support_probabilities": {
+              "typo": 0.7718285918235779,
+              "clean": 0.2226879745721817
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p13_clean",
+          "pair_id": "p13",
+          "domain": "product_description",
+          "text": "Футболка трикотажная женская.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "typo",
+          "correct": false,
+          "http_ms": 838.0959579953924,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5856792799284918,
+              "clean": 0.4143207200715083
+            },
+            "support_probabilities": {
+              "typo": 0.6297577023506165,
+              "clean": 0.4455026388168335
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p14_typo",
+          "pair_id": "p14",
+          "domain": "product_description",
+          "text": "Сапоги резиновые, раземр 43.",
+          "gold": "typo",
+          "error_type": "transposition",
+          "errors": [
+            {
+              "wrong": "раземр",
+              "correct": "размер"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 885.007000004407,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.8340438867059127,
+              "clean": 0.16595611329408733
+            },
+            "support_probabilities": {
+              "typo": 0.8596518039703369,
+              "clean": 0.1710515171289444
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p14_clean",
+          "pair_id": "p14",
+          "domain": "product_description",
+          "text": "Сапоги резиновые, размер 43.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1170.9432920324616,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.2782806931629188,
+              "clean": 0.7217193068370812
+            },
+            "support_probabilities": {
+              "typo": 0.300735741853714,
+              "clean": 0.7799563407897949
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p15_typo",
+          "pair_id": "p15",
+          "domain": "product_description",
+          "text": "Контейнер пластмасовый с крышкой.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "пластмасовый",
+              "correct": "пластмассовый"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 866.4477500133216,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4108225856261056,
+              "clean": 0.5891774143738945
+            },
+            "support_probabilities": {
+              "typo": 0.4687761068344116,
+              "clean": 0.6722909212112427
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p15_clean",
+          "pair_id": "p15",
+          "domain": "product_description",
+          "text": "Контейнер пластмассовый с крышкой.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 858.3137500099838,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.388447088886609,
+              "clean": 0.611552911113391
+            },
+            "support_probabilities": {
+              "typo": 0.43781083822250366,
+              "clean": 0.6892688870429993
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p16_typo",
+          "pair_id": "p16",
+          "domain": "product_description",
+          "text": "Шкаф влагостокий для ванной.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "влагостокий",
+              "correct": "влагостойкий"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 878.4825830371119,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4684482458629978,
+              "clean": 0.5315517541370022
+            },
+            "support_probabilities": {
+              "typo": 0.5156044363975525,
+              "clean": 0.5850602388381958
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p16_clean",
+          "pair_id": "p16",
+          "domain": "product_description",
+          "text": "Шкаф влагостойкий для ванной.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 836.4289160235785,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4614554592939885,
+              "clean": 0.5385445407060114
+            },
+            "support_probabilities": {
+              "typo": 0.5077943205833435,
+              "clean": 0.5926246047019958
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo1",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Малярная кисть с деревянной ручкойй.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "ручкойй",
+              "correct": "ручкой"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 835.296917008236,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.8725107190589821,
+              "clean": 0.1274892809410178
+            },
+            "support_probabilities": {
+              "typo": 0.8976863622665405,
+              "clean": 0.13116788864135742
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo2",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Матрас ортопидический, 160×200 см.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "ортопидический",
+              "correct": "ортопедический"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 861.3945419783704,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.47732335717492524,
+              "clean": 0.5226766428250748
+            },
+            "support_probabilities": {
+              "typo": 0.49217161536216736,
+              "clean": 0.5389357209205627
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo3",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Дрелль электрическая, 600 Вт.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "Дрелль",
+              "correct": "Дрель"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 834.235250018537,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.7799991178246509,
+              "clean": 0.22000088217534905
+            },
+            "support_probabilities": {
+              "typo": 0.7799755930900574,
+              "clean": 0.21999424695968628
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo4",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Полителеновый пакет с ручками.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "Полителеновый",
+              "correct": "Полиэтиленовый"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 850.2854999969713,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.6855020362961848,
+              "clean": 0.3144979637038152
+            },
+            "support_probabilities": {
+              "typo": 0.699239194393158,
+              "clean": 0.3208003640174866
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean1",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+          "gold": "clean",
+          "error_type": "brand_model",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 835.0814169971272,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3218081372813171,
+              "clean": 0.6781918627186829
+            },
+            "support_probabilities": {
+              "typo": 0.3775251507759094,
+              "clean": 0.7956122159957886
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean2",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Перфоратор SDS-plus, артикул HR2470.",
+          "gold": "clean",
+          "error_type": "sku_abbreviation",
+          "errors": [],
+          "prediction": "typo",
+          "correct": false,
+          "http_ms": 835.1136660203338,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5034677661338285,
+              "clean": 0.49653223386617157
+            },
+            "support_probabilities": {
+              "typo": 0.5621575117111206,
+              "clean": 0.5544134974479675
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean3",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Стол высотой 100 метров.",
+          "gold": "clean",
+          "error_type": "implausible_value_not_spelling",
+          "errors": [],
+          "prediction": "typo",
+          "correct": false,
+          "http_ms": 853.331666032318,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.9582094107138817,
+              "clean": 0.04179058928611832
+            },
+            "support_probabilities": {
+              "typo": 0.8688145875930786,
+              "clean": 0.03789179399609566
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean4",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+          "gold": "clean",
+          "error_type": "units_abbreviations",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 834.2302499804646,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4928082837741418,
+              "clean": 0.5071917162258582
+            },
+            "support_probabilities": {
+              "typo": 0.5311912894248962,
+              "clean": 0.5466949939727783
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        }
+      ],
+      "metrics": {
+        "count": 40,
+        "correct": 31,
+        "accuracy": 0.775,
+        "tp": 15,
+        "tn": 16,
+        "fp": 4,
+        "fn": 5,
+        "precision": 0.7894736842105263,
+        "recall": 0.75,
+        "f1": 0.7692307692307692,
+        "false_positive_rate": 0.2,
+        "pairs_both_correct": 10,
+        "pair_count": 16,
+        "http_p50_ms": 855.1564370281994,
+        "http_p95_ms": 1170.9432920324616
+      }
+    },
+    {
+      "variant": {
+        "id": "ru_explicit",
+        "instructions": "Проверь написание обычных русских слов в описании товара. Опечатка — пропуск, лишняя буква, перестановка букв или неверное написание слова. Бренды, артикулы, сокращения, единицы измерения и допустимое е вместо ё не считай ошибками. Не оценивай правдоподобность характеристик товара.",
+        "options": [
+          {
+            "id": "typo",
+            "criterion": "Хотя бы одно обычное русское слово написано с орфографической ошибкой или опечаткой."
+          },
+          {
+            "id": "clean",
+            "criterion": "Обычные русские слова написаны правильно; орфографических ошибок и опечаток нет."
+          }
+        ]
+      },
+      "warmup_http_ms": 834.3860000022687,
+      "rows": [
+        {
+          "id": "p01_typo",
+          "pair_id": "p01",
+          "domain": "product_description",
+          "text": "Куртка зимня мужская, размер 50.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "зимня",
+              "correct": "зимняя"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 832.3637919966131,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.14255458011280428,
+              "clean": 0.8574454198871957
+            },
+            "support_probabilities": {
+              "typo": 0.14414680004119873,
+              "clean": 0.8670223951339722
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p01_clean",
+          "pair_id": "p01",
+          "domain": "product_description",
+          "text": "Куртка зимняя мужская, размер 50.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 889.3605409539305,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.11982149604440485,
+              "clean": 0.8801785039555952
+            },
+            "support_probabilities": {
+              "typo": 0.1242114007472992,
+              "clean": 0.9124256372451782
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p02_typo",
+          "pair_id": "p02",
+          "domain": "product_description",
+          "text": "Куртка кожанная с капюшоном.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "кожанная",
+              "correct": "кожаная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 834.075499966275,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09538449786814342,
+              "clean": 0.9046155021318566
+            },
+            "support_probabilities": {
+              "typo": 0.10230351239442825,
+              "clean": 0.9702346324920654
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p02_clean",
+          "pair_id": "p02",
+          "domain": "product_description",
+          "text": "Куртка кожаная с капюшоном.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 881.2958329799585,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09656043442887034,
+              "clean": 0.9034395655711297
+            },
+            "support_probabilities": {
+              "typo": 0.1037474200129509,
+              "clean": 0.9706825017929077
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p03_typo",
+          "pair_id": "p03",
+          "domain": "product_description",
+          "text": "Табуретка деревяная для кухни.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "деревяная",
+              "correct": "деревянная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 836.0837920336053,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.40454489791057985,
+              "clean": 0.5954551020894201
+            },
+            "support_probabilities": {
+              "typo": 0.39233049750328064,
+              "clean": 0.5774765610694885
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p03_clean",
+          "pair_id": "p03",
+          "domain": "product_description",
+          "text": "Табуретка деревянная для кухни.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 877.1104590268806,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.08780382767991027,
+              "clean": 0.9121961723200898
+            },
+            "support_probabilities": {
+              "typo": 0.09400918334722519,
+              "clean": 0.9766637682914734
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p04_typo",
+          "pair_id": "p04",
+          "domain": "product_description",
+          "text": "Стол письменый белый, 1200×600×750 мм.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "письменый",
+              "correct": "письменный"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 905.8169999625534,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4964347553447926,
+              "clean": 0.5035652446552075
+            },
+            "support_probabilities": {
+              "typo": 0.538974940776825,
+              "clean": 0.5467164516448975
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p04_clean",
+          "pair_id": "p04",
+          "domain": "product_description",
+          "text": "Стол письменный белый, 1200×600×750 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 874.5034579769708,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.13394394498637738,
+              "clean": 0.8660560550136226
+            },
+            "support_probabilities": {
+              "typo": 0.14223019778728485,
+              "clean": 0.9196333885192871
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p05_typo",
+          "pair_id": "p05",
+          "domain": "product_description",
+          "text": "Шкаф металический двухсекционный.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "металический",
+              "correct": "металлический"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 862.5325419707224,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.2863582011174684,
+              "clean": 0.7136417988825315
+            },
+            "support_probabilities": {
+              "typo": 0.3140438199043274,
+              "clean": 0.7826379537582397
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p05_clean",
+          "pair_id": "p05",
+          "domain": "product_description",
+          "text": "Шкаф металлический двухсекционный.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 868.5629170504399,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.13095078809580032,
+              "clean": 0.8690492119041997
+            },
+            "support_probabilities": {
+              "typo": 0.14414680004119873,
+              "clean": 0.9566239714622498
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p06_typo",
+          "pair_id": "p06",
+          "domain": "product_description",
+          "text": "Шуруповерт акумуляторный, 18 В.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "акумуляторный",
+              "correct": "аккумуляторный"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 1296.7465840047225,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3968576287205451,
+              "clean": 0.6031423712794549
+            },
+            "support_probabilities": {
+              "typo": 0.4378158152103424,
+              "clean": 0.6653904318809509
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p06_clean",
+          "pair_id": "p06",
+          "domain": "product_description",
+          "text": "Шуруповерт аккумуляторный, 18 В.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1747.0354170072824,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.40358213416551253,
+              "clean": 0.5964178658344875
+            },
+            "support_probabilities": {
+              "typo": 0.4455220699310303,
+              "clean": 0.6583971381187439
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p07_typo",
+          "pair_id": "p07",
+          "domain": "product_description",
+          "text": "Перфаратор электрический, 800 Вт.",
+          "gold": "typo",
+          "error_type": "substitution",
+          "errors": [
+            {
+              "wrong": "Перфаратор",
+              "correct": "Перфоратор"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 1696.4307919843122,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4161956441260277,
+              "clean": 0.5838043558739723
+            },
+            "support_probabilities": {
+              "typo": 0.422496497631073,
+              "clean": 0.5926426649093628
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p07_clean",
+          "pair_id": "p07",
+          "domain": "product_description",
+          "text": "Перфоратор электрический, 800 Вт.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 854.1154579725116,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.11991990554377921,
+              "clean": 0.8800800944562208
+            },
+            "support_probabilities": {
+              "typo": 0.12940078973770142,
+              "clean": 0.9496593475341797
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p08_typo",
+          "pair_id": "p08",
+          "domain": "product_description",
+          "text": "Штангенцирклуь, длина 125 мм.",
+          "gold": "typo",
+          "error_type": "transposition",
+          "errors": [
+            {
+              "wrong": "Штангенцирклуь",
+              "correct": "Штангенциркуль"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 848.8826249958947,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.9005605397407708,
+              "clean": 0.09943946025922919
+            },
+            "support_probabilities": {
+              "typo": 0.8757816553115845,
+              "clean": 0.09670338779687881
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p08_clean",
+          "pair_id": "p08",
+          "domain": "product_description",
+          "text": "Штангенциркуль, длина 125 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 907.9157080268487,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.278017105312604,
+              "clean": 0.721982894687396
+            },
+            "support_probabilities": {
+              "typo": 0.3073538541793823,
+              "clean": 0.7981675267219543
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p09_typo",
+          "pair_id": "p09",
+          "domain": "product_description",
+          "text": "Изоллента синяя, ширина 19 мм.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "Изоллента",
+              "correct": "Изолента"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 861.3075829925947,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.46536332524404195,
+              "clean": 0.534636674755958
+            },
+            "support_probabilities": {
+              "typo": 0.5544620156288147,
+              "clean": 0.6369984745979309
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p09_clean",
+          "pair_id": "p09",
+          "domain": "product_description",
+          "text": "Изолента синяя, ширина 19 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 854.7043329454027,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.13982011530201127,
+              "clean": 0.8601798846979887
+            },
+            "support_probabilities": {
+              "typo": 0.15610302984714508,
+              "clean": 0.9603531360626221
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p10_typo",
+          "pair_id": "p10",
+          "domain": "product_description",
+          "text": "Рюкзак синий, обьём 20 литров.",
+          "gold": "typo",
+          "error_type": "orthography",
+          "errors": [
+            {
+              "wrong": "обьём",
+              "correct": "объём"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 960.3144580032676,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4819658681393328,
+              "clean": 0.5180341318606672
+            },
+            "support_probabilities": {
+              "typo": 0.5926612615585327,
+              "clean": 0.6370134949684143
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p10_clean",
+          "pair_id": "p10",
+          "domain": "product_description",
+          "text": "Рюкзак синий, объём 20 литров.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 836.7093339911662,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09056229944979914,
+              "clean": 0.9094377005502009
+            },
+            "support_probabilities": {
+              "typo": 0.09670510143041611,
+              "clean": 0.9711244702339172
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p11_typo",
+          "pair_id": "p11",
+          "domain": "product_description",
+          "text": "Куртка мужская, сьёмный капюшон.",
+          "gold": "typo",
+          "error_type": "orthography",
+          "errors": [
+            {
+              "wrong": "сьёмный",
+              "correct": "съёмный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 919.1710830200464,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5056766421478346,
+              "clean": 0.49432335785216547
+            },
+            "support_probabilities": {
+              "typo": 0.6442159414291382,
+              "clean": 0.6297522187232971
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p11_clean",
+          "pair_id": "p11",
+          "domain": "product_description",
+          "text": "Куртка мужская, съёмный капюшон.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 833.1357080023736,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.14860543877742421,
+              "clean": 0.8513945612225757
+            },
+            "support_probabilities": {
+              "typo": 0.16885395348072052,
+              "clean": 0.9674029350280762
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p12_typo",
+          "pair_id": "p12",
+          "domain": "product_description",
+          "text": "Стул чёрнй с металлическим каркасом.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "чёрнй",
+              "correct": "чёрный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 900.3313339781016,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.9231240255331713,
+              "clean": 0.07687597446682867
+            },
+            "support_probabilities": {
+              "typo": 0.9511392712593079,
+              "clean": 0.07920902967453003
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p12_clean",
+          "pair_id": "p12",
+          "domain": "product_description",
+          "text": "Стул чёрный с металлическим каркасом.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 836.51233301498,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.08818105810853288,
+              "clean": 0.9118189418914672
+            },
+            "support_probabilities": {
+              "typo": 0.0953485518693924,
+              "clean": 0.9859330058097839
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p13_typo",
+          "pair_id": "p13",
+          "domain": "product_description",
+          "text": "Футболка трикотажнная женская.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "трикотажнная",
+              "correct": "трикотажная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 845.3905420028605,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.30876969889088896,
+              "clean": 0.691230301109111
+            },
+            "support_probabilities": {
+              "typo": 0.28776314854621887,
+              "clean": 0.644203782081604
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p13_clean",
+          "pair_id": "p13",
+          "domain": "product_description",
+          "text": "Футболка трикотажная женская.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 876.8054170068353,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.18564743826373065,
+              "clean": 0.8143525617362694
+            },
+            "support_probabilities": {
+              "typo": 0.19682329893112183,
+              "clean": 0.8633760809898376
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p14_typo",
+          "pair_id": "p14",
+          "domain": "product_description",
+          "text": "Сапоги резиновые, раземр 43.",
+          "gold": "typo",
+          "error_type": "transposition",
+          "errors": [
+            {
+              "wrong": "раземр",
+              "correct": "размер"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 846.8055829871446,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5288904978387559,
+              "clean": 0.4711095021612442
+            },
+            "support_probabilities": {
+              "typo": 0.6224513053894043,
+              "clean": 0.5544488430023193
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p14_clean",
+          "pair_id": "p14",
+          "domain": "product_description",
+          "text": "Сапоги резиновые, размер 43.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 838.7040839879774,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.07594685819687741,
+              "clean": 0.9240531418031226
+            },
+            "support_probabilities": {
+              "typo": 0.08035687357187271,
+              "clean": 0.9777102470397949
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p15_typo",
+          "pair_id": "p15",
+          "domain": "product_description",
+          "text": "Контейнер пластмасовый с крышкой.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "пластмасовый",
+              "correct": "пластмассовый"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 861.7912499466911,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.10302698826048086,
+              "clean": 0.8969730117395192
+            },
+            "support_probabilities": {
+              "typo": 0.11279425024986267,
+              "clean": 0.982008695602417
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p15_clean",
+          "pair_id": "p15",
+          "domain": "product_description",
+          "text": "Контейнер пластмассовый с крышкой.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 835.2494170540012,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09918765419739321,
+              "clean": 0.9008123458026068
+            },
+            "support_probabilities": {
+              "typo": 0.10818803310394287,
+              "clean": 0.9825528860092163
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p16_typo",
+          "pair_id": "p16",
+          "domain": "product_description",
+          "text": "Шкаф влагостокий для ванной.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "влагостокий",
+              "correct": "влагостойкий"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 848.6866249586456,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.10786841047510483,
+              "clean": 0.8921315895248951
+            },
+            "support_probabilities": {
+              "typo": 0.10818776488304138,
+              "clean": 0.8947728276252747
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p16_clean",
+          "pair_id": "p16",
+          "domain": "product_description",
+          "text": "Шкаф влагостойкий для ванной.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 843.0462080286816,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.10097537323193011,
+              "clean": 0.8990246267680699
+            },
+            "support_probabilities": {
+              "typo": 0.0994691550731659,
+              "clean": 0.8856141567230225
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo1",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Малярная кисть с деревянной ручкойй.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "ручкойй",
+              "correct": "ручкой"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 834.0387080097571,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3578169156838506,
+              "clean": 0.6421830843161493
+            },
+            "support_probabilities": {
+              "typo": 0.4073273837566376,
+              "clean": 0.7310407757759094
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo2",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Матрас ортопидический, 160×200 см.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "ортопидический",
+              "correct": "ортопедический"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 845.9784170263447,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.1718452459501663,
+              "clean": 0.8281547540498337
+            },
+            "support_probabilities": {
+              "typo": 0.18242324888706207,
+              "clean": 0.8791321516036987
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo3",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Дрелль электрическая, 600 Вт.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "Дрелль",
+              "correct": "Дрель"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 989.551541977562,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.45544156482980713,
+              "clean": 0.5445584351701929
+            },
+            "support_probabilities": {
+              "typo": 0.47657111287117004,
+              "clean": 0.5698224306106567
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo4",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Полителеновый пакет с ручками.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "Полителеновый",
+              "correct": "Полиэтиленовый"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 852.6061250013299,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3744693562609589,
+              "clean": 0.6255306437390411
+            },
+            "support_probabilities": {
+              "typo": 0.4224977195262909,
+              "clean": 0.7057594060897827
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean1",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+          "gold": "clean",
+          "error_type": "brand_model",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1412.4654170009308,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.20651970195737168,
+              "clean": 0.7934802980426283
+            },
+            "support_probabilities": {
+              "typo": 0.24508079886436462,
+              "clean": 0.9416379332542419
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean2",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Перфоратор SDS-plus, артикул HR2470.",
+          "gold": "clean",
+          "error_type": "sku_abbreviation",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 998.4904999728315,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.26092535647365467,
+              "clean": 0.7390746435263453
+            },
+            "support_probabilities": {
+              "typo": 0.30735093355178833,
+              "clean": 0.8705757260322571
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean3",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Стол высотой 100 метров.",
+          "gold": "clean",
+          "error_type": "implausible_value_not_spelling",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 840.4397910344414,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4373104505618165,
+              "clean": 0.5626895494381835
+            },
+            "support_probabilities": {
+              "typo": 0.6442195177078247,
+              "clean": 0.8289204835891724
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean4",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+          "gold": "clean",
+          "error_type": "units_abbreviations",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 843.6584999435581,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4581420151374565,
+              "clean": 0.5418579848625434
+            },
+            "support_probabilities": {
+              "typo": 0.4687792956829071,
+              "clean": 0.5544390082359314
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        }
+      ],
+      "metrics": {
+        "count": 40,
+        "correct": 24,
+        "accuracy": 0.6,
+        "tp": 4,
+        "tn": 20,
+        "fp": 0,
+        "fn": 16,
+        "precision": 1.0,
+        "recall": 0.2,
+        "f1": 0.33333333333333337,
+        "false_positive_rate": 0.0,
+        "pairs_both_correct": 4,
+        "pair_count": 16,
+        "http_p50_ms": 858.0059579689987,
+        "http_p95_ms": 1412.4654170009308
+      }
+    },
+    {
+      "variant": {
+        "id": "en_explicit",
+        "instructions": "Check the spelling of ordinary Russian words in the product description. Ignore brands, model numbers, abbreviations, measurement units and the accepted use of е instead of ё. Do not judge whether the product specifications are plausible. Is there a spelling mistake or typo?",
+        "options": [
+          {
+            "id": "typo",
+            "criterion": "At least one ordinary Russian word contains a spelling mistake or a typo."
+          },
+          {
+            "id": "clean",
+            "criterion": "All ordinary Russian words are spelled correctly. There are no spelling mistakes or typos."
+          }
+        ]
+      },
+      "warmup_http_ms": 838.3084999513812,
+      "rows": [
+        {
+          "id": "p01_typo",
+          "pair_id": "p01",
+          "domain": "product_description",
+          "text": "Куртка зимня мужская, размер 50.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "зимня",
+              "correct": "зимняя"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 963.7230829684995,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.15200216337391015,
+              "clean": 0.8479978366260899
+            },
+            "support_probabilities": {
+              "typo": 0.15816932916641235,
+              "clean": 0.882403552532196
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p01_clean",
+          "pair_id": "p01",
+          "domain": "product_description",
+          "text": "Куртка зимняя мужская, размер 50.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 840.417541039642,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.1334459976434909,
+              "clean": 0.866554002356509
+            },
+            "support_probabilities": {
+              "typo": 0.13845781981945038,
+              "clean": 0.8990991115570068
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p02_typo",
+          "pair_id": "p02",
+          "domain": "product_description",
+          "text": "Куртка кожанная с капюшоном.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "кожанная",
+              "correct": "кожаная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 861.570541979745,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.12062533935464886,
+              "clean": 0.8793746606453512
+            },
+            "support_probabilities": {
+              "typo": 0.12939822673797607,
+              "clean": 0.9433301687240601
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p02_clean",
+          "pair_id": "p02",
+          "domain": "product_description",
+          "text": "Куртка кожаная с капюшоном.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 840.0412920163944,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.11001098087535131,
+              "clean": 0.8899890191246487
+            },
+            "support_probabilities": {
+              "typo": 0.11756797879934311,
+              "clean": 0.9511251449584961
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p03_typo",
+          "pair_id": "p03",
+          "domain": "product_description",
+          "text": "Табуретка деревяная для кухни.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "деревяная",
+              "correct": "деревянная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 835.5523749487475,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.46186797272255825,
+              "clean": 0.5381320272774418
+            },
+            "support_probabilities": {
+              "typo": 0.5467212796211243,
+              "clean": 0.6369963884353638
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p03_clean",
+          "pair_id": "p03",
+          "domain": "product_description",
+          "text": "Табуретка деревянная для кухни.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 847.1118749585003,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.13551742967490144,
+              "clean": 0.8644825703250986
+            },
+            "support_probabilities": {
+              "typo": 0.14222842454910278,
+              "clean": 0.9072928428649902
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p04_typo",
+          "pair_id": "p04",
+          "domain": "product_description",
+          "text": "Стол письменый белый, 1200×600×750 мм.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "письменый",
+              "correct": "письменный"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 834.3122080550529,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4653176001281036,
+              "clean": 0.5346823998718964
+            },
+            "support_probabilities": {
+              "typo": 0.585083544254303,
+              "clean": 0.6723018288612366
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p04_clean",
+          "pair_id": "p04",
+          "domain": "product_description",
+          "text": "Стол письменный белый, 1200×600×750 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 834.9824160104617,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.12710822186387635,
+              "clean": 0.8728917781361236
+            },
+            "support_probabilities": {
+              "typo": 0.13660481572151184,
+              "clean": 0.9381078481674194
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p05_typo",
+          "pair_id": "p05",
+          "domain": "product_description",
+          "text": "Шкаф металический двухсекционный.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "металический",
+              "correct": "металлический"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 852.2988339536823,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.25945109644092856,
+              "clean": 0.7405489035590714
+            },
+            "support_probabilities": {
+              "typo": 0.27511879801750183,
+              "clean": 0.7852690815925598
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p05_clean",
+          "pair_id": "p05",
+          "domain": "product_description",
+          "text": "Шкаф металлический двухсекционный.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 879.8046670272015,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09042050895421991,
+              "clean": 0.9095794910457801
+            },
+            "support_probabilities": {
+              "typo": 0.09534730017185211,
+              "clean": 0.9591402411460876
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p06_typo",
+          "pair_id": "p06",
+          "domain": "product_description",
+          "text": "Шуруповерт акумуляторный, 18 В.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "акумуляторный",
+              "correct": "аккумуляторный"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 835.9485000255518,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.31036787405508737,
+              "clean": 0.6896321259449126
+            },
+            "support_probabilities": {
+              "typo": 0.3557615280151367,
+              "clean": 0.7904960513114929
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p06_clean",
+          "pair_id": "p06",
+          "domain": "product_description",
+          "text": "Шуруповерт аккумуляторный, 18 В.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 863.9009580365382,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.33338537211854524,
+              "clean": 0.6666146278814548
+            },
+            "support_probabilities": {
+              "typo": 0.37752819061279297,
+              "clean": 0.7548795938491821
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p07_typo",
+          "pair_id": "p07",
+          "domain": "product_description",
+          "text": "Перфаратор электрический, 800 Вт.",
+          "gold": "typo",
+          "error_type": "substitution",
+          "errors": [
+            {
+              "wrong": "Перфаратор",
+              "correct": "Перфоратор"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 855.1590829738416,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.28129380563260786,
+              "clean": 0.7187061943673921
+            },
+            "support_probabilities": {
+              "typo": 0.30734479427337646,
+              "clean": 0.7852665185928345
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p07_clean",
+          "pair_id": "p07",
+          "domain": "product_description",
+          "text": "Перфоратор электрический, 800 Вт.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1058.261208992917,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.1083612836628018,
+              "clean": 0.8916387163371982
+            },
+            "support_probabilities": {
+              "typo": 0.11756810545921326,
+              "clean": 0.9673960208892822
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p08_typo",
+          "pair_id": "p08",
+          "domain": "product_description",
+          "text": "Штангенцирклуь, длина 125 мм.",
+          "gold": "typo",
+          "error_type": "transposition",
+          "errors": [
+            {
+              "wrong": "Штангенцирклуь",
+              "correct": "Штангенциркуль"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 1425.2855000086129,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.613195940782657,
+              "clean": 0.386804059217343
+            },
+            "support_probabilities": {
+              "typo": 0.5926490426063538,
+              "clean": 0.37384307384490967
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p08_clean",
+          "pair_id": "p08",
+          "domain": "product_description",
+          "text": "Штангенциркуль, длина 125 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 834.0913329739124,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.17409007055814188,
+              "clean": 0.8259099294418581
+            },
+            "support_probabilities": {
+              "typo": 0.1895168572664261,
+              "clean": 0.8990969657897949
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p09_typo",
+          "pair_id": "p09",
+          "domain": "product_description",
+          "text": "Изоллента синяя, ширина 19 мм.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "Изоллента",
+              "correct": "Изолента"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 866.4233750314452,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.35405674730667264,
+              "clean": 0.6459432526933273
+            },
+            "support_probabilities": {
+              "typo": 0.4073169529438019,
+              "clean": 0.7431114912033081
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p09_clean",
+          "pair_id": "p09",
+          "domain": "product_description",
+          "text": "Изолента синяя, ширина 19 мм.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 835.7236669980921,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.0927158940917949,
+              "clean": 0.9072841059082051
+            },
+            "support_probabilities": {
+              "typo": 0.09807717055082321,
+              "clean": 0.9597476124763489
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p10_typo",
+          "pair_id": "p10",
+          "domain": "product_description",
+          "text": "Рюкзак синий, обьём 20 литров.",
+          "gold": "typo",
+          "error_type": "orthography",
+          "errors": [
+            {
+              "wrong": "обьём",
+              "correct": "объём"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 840.4975830344483,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4492890341424353,
+              "clean": 0.5507109658575646
+            },
+            "support_probabilities": {
+              "typo": 0.5077993869781494,
+              "clean": 0.622429370880127
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p10_clean",
+          "pair_id": "p10",
+          "domain": "product_description",
+          "text": "Рюкзак синий, объём 20 литров.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1234.6357080386952,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.174548900254997,
+              "clean": 0.825451099745003
+            },
+            "support_probabilities": {
+              "typo": 0.1895158439874649,
+              "clean": 0.8962305784225464
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p11_typo",
+          "pair_id": "p11",
+          "domain": "product_description",
+          "text": "Куртка мужская, сьёмный капюшон.",
+          "gold": "typo",
+          "error_type": "orthography",
+          "errors": [
+            {
+              "wrong": "сьёмный",
+              "correct": "съёмный"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 843.7660420313478,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3984204437648745,
+              "clean": 0.6015795562351255
+            },
+            "support_probabilities": {
+              "typo": 0.49216821789741516,
+              "clean": 0.7431303858757019
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p11_clean",
+          "pair_id": "p11",
+          "domain": "product_description",
+          "text": "Куртка мужская, съёмный капюшон.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1139.880208997056,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.2062207495023765,
+              "clean": 0.7937792504976235
+            },
+            "support_probabilities": {
+              "typo": 0.2450723946094513,
+              "clean": 0.943325936794281
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p12_typo",
+          "pair_id": "p12",
+          "domain": "product_description",
+          "text": "Стул чёрнй с металлическим каркасом.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "чёрнй",
+              "correct": "чёрный"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 863.5142910061404,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.6792984093377438,
+              "clean": 0.32070159066225623
+            },
+            "support_probabilities": {
+              "typo": 0.6723166704177856,
+              "clean": 0.31740546226501465
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p12_clean",
+          "pair_id": "p12",
+          "domain": "product_description",
+          "text": "Стул чёрный с металлическим каркасом.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 867.3012500512414,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.04838329063490375,
+              "clean": 0.9516167093650962
+            },
+            "support_probabilities": {
+              "typo": 0.048857174813747406,
+              "clean": 0.9609372019767761
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p13_typo",
+          "pair_id": "p13",
+          "domain": "product_description",
+          "text": "Футболка трикотажнная женская.",
+          "gold": "typo",
+          "error_type": "extra_letter",
+          "errors": [
+            {
+              "wrong": "трикотажнная",
+              "correct": "трикотажная"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 1139.31749999756,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.3755507514995088,
+              "clean": 0.6244492485004912
+            },
+            "support_probabilities": {
+              "typo": 0.4224885404109955,
+              "clean": 0.7024953365325928
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p13_clean",
+          "pair_id": "p13",
+          "domain": "product_description",
+          "text": "Футболка трикотажная женская.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 1120.3169579966925,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.2848061649525483,
+              "clean": 0.7151938350474517
+            },
+            "support_probabilities": {
+              "typo": 0.320809006690979,
+              "clean": 0.8056027293205261
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p14_typo",
+          "pair_id": "p14",
+          "domain": "product_description",
+          "text": "Сапоги резиновые, раземр 43.",
+          "gold": "typo",
+          "error_type": "transposition",
+          "errors": [
+            {
+              "wrong": "раземр",
+              "correct": "размер"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 892.3942500259727,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5498824531816394,
+              "clean": 0.45011754681836064
+            },
+            "support_probabilities": {
+              "typo": 0.6584006547927856,
+              "clean": 0.538947343826294
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p14_clean",
+          "pair_id": "p14",
+          "domain": "product_description",
+          "text": "Сапоги резиновые, размер 43.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 864.1049170400947,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09508908567185312,
+              "clean": 0.9049109143281469
+            },
+            "support_probabilities": {
+              "typo": 0.0994681715965271,
+              "clean": 0.9465842843055725
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p15_typo",
+          "pair_id": "p15",
+          "domain": "product_description",
+          "text": "Контейнер пластмасовый с крышкой.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "пластмасовый",
+              "correct": "пластмассовый"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 840.0027910247445,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.08140843477513758,
+              "clean": 0.9185915652248624
+            },
+            "support_probabilities": {
+              "typo": 0.08388852328062057,
+              "clean": 0.9465762376785278
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p15_clean",
+          "pair_id": "p15",
+          "domain": "product_description",
+          "text": "Контейнер пластмассовый с крышкой.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 840.3144999756478,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.08110807561350687,
+              "clean": 0.9188919243864931
+            },
+            "support_probabilities": {
+              "typo": 0.08388857543468475,
+              "clean": 0.9503928422927856
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p16_typo",
+          "pair_id": "p16",
+          "domain": "product_description",
+          "text": "Шкаф влагостокий для ванной.",
+          "gold": "typo",
+          "error_type": "missing_letter",
+          "errors": [
+            {
+              "wrong": "влагостокий",
+              "correct": "влагостойкий"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 1400.2420830074698,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.163404172025898,
+              "clean": 0.836595827974102
+            },
+            "support_probabilities": {
+              "typo": 0.17328329384326935,
+              "clean": 0.8871749043464661
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "p16_clean",
+          "pair_id": "p16",
+          "domain": "product_description",
+          "text": "Шкаф влагостойкий для ванной.",
+          "gold": "clean",
+          "error_type": "none",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 850.6569170276634,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.11125812463523777,
+              "clean": 0.8887418753647622
+            },
+            "support_probabilities": {
+              "typo": 0.11595789343118668,
+              "clean": 0.92628413438797
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo1",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Малярная кисть с деревянной ручкойй.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "ручкойй",
+              "correct": "ручкой"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 835.1738749770448,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.4255814939737792,
+              "clean": 0.5744185060262208
+            },
+            "support_probabilities": {
+              "typo": 0.5156023502349854,
+              "clean": 0.6959220170974731
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo2",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Матрас ортопидический, 160×200 см.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "ортопидический",
+              "correct": "ортопедический"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 864.4315000274219,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.15843682967895475,
+              "clean": 0.8415631703210452
+            },
+            "support_probabilities": {
+              "typo": 0.17105633020401,
+              "clean": 0.9085937142372131
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo3",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Дрелль электрическая, 600 Вт.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "Дрелль",
+              "correct": "Дрель"
+            }
+          ],
+          "prediction": "clean",
+          "correct": false,
+          "http_ms": 838.300707982853,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.29506842041138887,
+              "clean": 0.7049315795886112
+            },
+            "support_probabilities": {
+              "typo": 0.35575875639915466,
+              "clean": 0.8499234914779663
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "extra_typo4",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Полителеновый пакет с ручками.",
+          "gold": "typo",
+          "error_type": "additional_spelling",
+          "errors": [
+            {
+              "wrong": "Полителеновый",
+              "correct": "Полиэтиленовый"
+            }
+          ],
+          "prediction": "typo",
+          "correct": true,
+          "http_ms": 855.341500020586,
+          "response": {
+            "choice": "typo",
+            "probabilities": {
+              "typo": 0.5909160522725148,
+              "clean": 0.40908394772748524
+            },
+            "support_probabilities": {
+              "typo": 0.5774782299995422,
+              "clean": 0.39978110790252686
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean1",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+          "gold": "clean",
+          "error_type": "brand_model",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 835.5433330289088,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.09418921657886284,
+              "clean": 0.9058107834211372
+            },
+            "support_probabilities": {
+              "typo": 0.10230246931314468,
+              "clean": 0.9838353395462036
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean2",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Перфоратор SDS-plus, артикул HR2470.",
+          "gold": "clean",
+          "error_type": "sku_abbreviation",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 837.7516249893233,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.1458222730671972,
+              "clean": 0.8541777269328028
+            },
+            "support_probabilities": {
+              "typo": 0.16666929423809052,
+              "clean": 0.9762925505638123
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean3",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "Стол высотой 100 метров.",
+          "gold": "clean",
+          "error_type": "implausible_value_not_spelling",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 848.1549579882994,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.04790047671566912,
+              "clean": 0.9520995232843309
+            },
+            "support_probabilities": {
+              "typo": 0.048857349902391434,
+              "clean": 0.9711189270019531
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        },
+        {
+          "id": "hard_clean4",
+          "pair_id": null,
+          "domain": "product_description",
+          "text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+          "gold": "clean",
+          "error_type": "units_abbreviations",
+          "errors": [],
+          "prediction": "clean",
+          "correct": true,
+          "http_ms": 835.3502909885719,
+          "response": {
+            "choice": "clean",
+            "probabilities": {
+              "typo": 0.23015977573313798,
+              "clean": 0.769840224266862
+            },
+            "support_probabilities": {
+              "typo": 0.262829065322876,
+              "clean": 0.879112720489502
+            },
+            "context": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+          }
+        }
+      ],
+      "metrics": {
+        "count": 40,
+        "correct": 24,
+        "accuracy": 0.6,
+        "tp": 4,
+        "tn": 20,
+        "fp": 0,
+        "fn": 16,
+        "precision": 1.0,
+        "recall": 0.2,
+        "f1": 0.33333333333333337,
+        "false_positive_rate": 0.0,
+        "pairs_both_correct": 3,
+        "pair_count": 16,
+        "http_p50_ms": 851.4778754906729,
+        "http_p95_ms": 1234.6357080386952
+      }
+    }
+  ],
+  "health_after": {
+    "status": "ready",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "attention": "sdpa",
+    "runtime": "fla-only",
+    "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+  },
+  "finished_at": "2026-10-09T22:36:59.429204+00:00",
+  "routing_analysis": {
+    "scope": "russian_only",
+    "score": "response.probabilities.typo",
+    "priority": "recall",
+    "selection": "posthoc_development_not_calibrated",
+    "variants": {
+      "ru_short": [
+        {
+          "threshold": 0.5,
+          "typos_caught": 15,
+          "typos_total": 20,
+          "typos_missed": 5,
+          "recall": 0.75,
+          "llm_calls": 19,
+          "total_texts": 40,
+          "llm_call_fraction": 0.475,
+          "false_alarms": 4
+        },
+        {
+          "threshold": 0.4,
+          "typos_caught": 18,
+          "typos_total": 20,
+          "typos_missed": 2,
+          "recall": 0.9,
+          "llm_calls": 29,
+          "total_texts": 40,
+          "llm_call_fraction": 0.725,
+          "false_alarms": 11
+        },
+        {
+          "threshold": 0.3,
+          "typos_caught": 20,
+          "typos_total": 20,
+          "typos_missed": 0,
+          "recall": 1.0,
+          "llm_calls": 38,
+          "total_texts": 40,
+          "llm_call_fraction": 0.95,
+          "false_alarms": 18
+        },
+        {
+          "threshold": 0.2,
+          "typos_caught": 20,
+          "typos_total": 20,
+          "typos_missed": 0,
+          "recall": 1.0,
+          "llm_calls": 40,
+          "total_texts": 40,
+          "llm_call_fraction": 1.0,
+          "false_alarms": 20
+        },
+        {
+          "threshold": 0.1,
+          "typos_caught": 20,
+          "typos_total": 20,
+          "typos_missed": 0,
+          "recall": 1.0,
+          "llm_calls": 40,
+          "total_texts": 40,
+          "llm_call_fraction": 1.0,
+          "false_alarms": 20
+        },
+        {
+          "threshold": 0.05,
+          "typos_caught": 20,
+          "typos_total": 20,
+          "typos_missed": 0,
+          "recall": 1.0,
+          "llm_calls": 40,
+          "total_texts": 40,
+          "llm_call_fraction": 1.0,
+          "false_alarms": 20
+        }
+      ],
+      "ru_explicit": [
+        {
+          "threshold": 0.5,
+          "typos_caught": 4,
+          "typos_total": 20,
+          "typos_missed": 16,
+          "recall": 0.2,
+          "llm_calls": 4,
+          "total_texts": 40,
+          "llm_call_fraction": 0.1,
+          "false_alarms": 0
+        },
+        {
+          "threshold": 0.4,
+          "typos_caught": 10,
+          "typos_total": 20,
+          "typos_missed": 10,
+          "recall": 0.5,
+          "llm_calls": 13,
+          "total_texts": 40,
+          "llm_call_fraction": 0.325,
+          "false_alarms": 3
+        },
+        {
+          "threshold": 0.3,
+          "typos_caught": 14,
+          "typos_total": 20,
+          "typos_missed": 6,
+          "recall": 0.7,
+          "llm_calls": 17,
+          "total_texts": 40,
+          "llm_call_fraction": 0.425,
+          "false_alarms": 3
+        },
+        {
+          "threshold": 0.2,
+          "typos_caught": 15,
+          "typos_total": 20,
+          "typos_missed": 5,
+          "recall": 0.75,
+          "llm_calls": 21,
+          "total_texts": 40,
+          "llm_call_fraction": 0.525,
+          "false_alarms": 6
+        },
+        {
+          "threshold": 0.1,
+          "typos_caught": 19,
+          "typos_total": 20,
+          "typos_missed": 1,
+          "recall": 0.95,
+          "llm_calls": 33,
+          "total_texts": 40,
+          "llm_call_fraction": 0.825,
+          "false_alarms": 14
+        },
+        {
+          "threshold": 0.05,
+          "typos_caught": 20,
+          "typos_total": 20,
+          "typos_missed": 0,
+          "recall": 1.0,
+          "llm_calls": 40,
+          "total_texts": 40,
+          "llm_call_fraction": 1.0,
+          "false_alarms": 20
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,468 @@
+{
+  "kind": "synthetic_development",
+  "task": "binary_typo_detection",
+  "language": "ru",
+  "annotation_policy": "Ошибки написания обычных русских слов. Е вместо ё допускается. Бренды, артикулы, сокращения, единицы, пунктуация и правдоподобность чисел не являются орфографической ошибкой. Исправления — ручная разметка, не вход модели.",
+  "cases": [
+    {
+      "id": "p01_typo",
+      "pair_id": "p01",
+      "domain": "product_description",
+      "text": "Куртка зимня мужская, размер 50.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "зимня",
+          "correct": "зимняя"
+        }
+      ]
+    },
+    {
+      "id": "p01_clean",
+      "pair_id": "p01",
+      "domain": "product_description",
+      "text": "Куртка зимняя мужская, размер 50.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p02_typo",
+      "pair_id": "p02",
+      "domain": "product_description",
+      "text": "Куртка кожанная с капюшоном.",
+      "gold": "typo",
+      "error_type": "extra_letter",
+      "errors": [
+        {
+          "wrong": "кожанная",
+          "correct": "кожаная"
+        }
+      ]
+    },
+    {
+      "id": "p02_clean",
+      "pair_id": "p02",
+      "domain": "product_description",
+      "text": "Куртка кожаная с капюшоном.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p03_typo",
+      "pair_id": "p03",
+      "domain": "product_description",
+      "text": "Табуретка деревяная для кухни.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "деревяная",
+          "correct": "деревянная"
+        }
+      ]
+    },
+    {
+      "id": "p03_clean",
+      "pair_id": "p03",
+      "domain": "product_description",
+      "text": "Табуретка деревянная для кухни.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p04_typo",
+      "pair_id": "p04",
+      "domain": "product_description",
+      "text": "Стол письменый белый, 1200×600×750 мм.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "письменый",
+          "correct": "письменный"
+        }
+      ]
+    },
+    {
+      "id": "p04_clean",
+      "pair_id": "p04",
+      "domain": "product_description",
+      "text": "Стол письменный белый, 1200×600×750 мм.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p05_typo",
+      "pair_id": "p05",
+      "domain": "product_description",
+      "text": "Шкаф металический двухсекционный.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "металический",
+          "correct": "металлический"
+        }
+      ]
+    },
+    {
+      "id": "p05_clean",
+      "pair_id": "p05",
+      "domain": "product_description",
+      "text": "Шкаф металлический двухсекционный.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p06_typo",
+      "pair_id": "p06",
+      "domain": "product_description",
+      "text": "Шуруповерт акумуляторный, 18 В.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "акумуляторный",
+          "correct": "аккумуляторный"
+        }
+      ]
+    },
+    {
+      "id": "p06_clean",
+      "pair_id": "p06",
+      "domain": "product_description",
+      "text": "Шуруповерт аккумуляторный, 18 В.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p07_typo",
+      "pair_id": "p07",
+      "domain": "product_description",
+      "text": "Перфаратор электрический, 800 Вт.",
+      "gold": "typo",
+      "error_type": "substitution",
+      "errors": [
+        {
+          "wrong": "Перфаратор",
+          "correct": "Перфоратор"
+        }
+      ]
+    },
+    {
+      "id": "p07_clean",
+      "pair_id": "p07",
+      "domain": "product_description",
+      "text": "Перфоратор электрический, 800 Вт.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p08_typo",
+      "pair_id": "p08",
+      "domain": "product_description",
+      "text": "Штангенцирклуь, длина 125 мм.",
+      "gold": "typo",
+      "error_type": "transposition",
+      "errors": [
+        {
+          "wrong": "Штангенцирклуь",
+          "correct": "Штангенциркуль"
+        }
+      ]
+    },
+    {
+      "id": "p08_clean",
+      "pair_id": "p08",
+      "domain": "product_description",
+      "text": "Штангенциркуль, длина 125 мм.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p09_typo",
+      "pair_id": "p09",
+      "domain": "product_description",
+      "text": "Изоллента синяя, ширина 19 мм.",
+      "gold": "typo",
+      "error_type": "extra_letter",
+      "errors": [
+        {
+          "wrong": "Изоллента",
+          "correct": "Изолента"
+        }
+      ]
+    },
+    {
+      "id": "p09_clean",
+      "pair_id": "p09",
+      "domain": "product_description",
+      "text": "Изолента синяя, ширина 19 мм.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p10_typo",
+      "pair_id": "p10",
+      "domain": "product_description",
+      "text": "Рюкзак синий, обьём 20 литров.",
+      "gold": "typo",
+      "error_type": "orthography",
+      "errors": [
+        {
+          "wrong": "обьём",
+          "correct": "объём"
+        }
+      ]
+    },
+    {
+      "id": "p10_clean",
+      "pair_id": "p10",
+      "domain": "product_description",
+      "text": "Рюкзак синий, объём 20 литров.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p11_typo",
+      "pair_id": "p11",
+      "domain": "product_description",
+      "text": "Куртка мужская, сьёмный капюшон.",
+      "gold": "typo",
+      "error_type": "orthography",
+      "errors": [
+        {
+          "wrong": "сьёмный",
+          "correct": "съёмный"
+        }
+      ]
+    },
+    {
+      "id": "p11_clean",
+      "pair_id": "p11",
+      "domain": "product_description",
+      "text": "Куртка мужская, съёмный капюшон.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p12_typo",
+      "pair_id": "p12",
+      "domain": "product_description",
+      "text": "Стул чёрнй с металлическим каркасом.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "чёрнй",
+          "correct": "чёрный"
+        }
+      ]
+    },
+    {
+      "id": "p12_clean",
+      "pair_id": "p12",
+      "domain": "product_description",
+      "text": "Стул чёрный с металлическим каркасом.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p13_typo",
+      "pair_id": "p13",
+      "domain": "product_description",
+      "text": "Футболка трикотажнная женская.",
+      "gold": "typo",
+      "error_type": "extra_letter",
+      "errors": [
+        {
+          "wrong": "трикотажнная",
+          "correct": "трикотажная"
+        }
+      ]
+    },
+    {
+      "id": "p13_clean",
+      "pair_id": "p13",
+      "domain": "product_description",
+      "text": "Футболка трикотажная женская.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p14_typo",
+      "pair_id": "p14",
+      "domain": "product_description",
+      "text": "Сапоги резиновые, раземр 43.",
+      "gold": "typo",
+      "error_type": "transposition",
+      "errors": [
+        {
+          "wrong": "раземр",
+          "correct": "размер"
+        }
+      ]
+    },
+    {
+      "id": "p14_clean",
+      "pair_id": "p14",
+      "domain": "product_description",
+      "text": "Сапоги резиновые, размер 43.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p15_typo",
+      "pair_id": "p15",
+      "domain": "product_description",
+      "text": "Контейнер пластмасовый с крышкой.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "пластмасовый",
+          "correct": "пластмассовый"
+        }
+      ]
+    },
+    {
+      "id": "p15_clean",
+      "pair_id": "p15",
+      "domain": "product_description",
+      "text": "Контейнер пластмассовый с крышкой.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "p16_typo",
+      "pair_id": "p16",
+      "domain": "product_description",
+      "text": "Шкаф влагостокий для ванной.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "влагостокий",
+          "correct": "влагостойкий"
+        }
+      ]
+    },
+    {
+      "id": "p16_clean",
+      "pair_id": "p16",
+      "domain": "product_description",
+      "text": "Шкаф влагостойкий для ванной.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": []
+    },
+    {
+      "id": "extra_typo1",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Малярная кисть с деревянной ручкойй.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "ручкойй",
+          "correct": "ручкой"
+        }
+      ]
+    },
+    {
+      "id": "extra_typo2",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Матрас ортопидический, 160×200 см.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "ортопидический",
+          "correct": "ортопедический"
+        }
+      ]
+    },
+    {
+      "id": "extra_typo3",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Дрелль электрическая, 600 Вт.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "Дрелль",
+          "correct": "Дрель"
+        }
+      ]
+    },
+    {
+      "id": "extra_typo4",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Полителеновый пакет с ручками.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "Полителеновый",
+          "correct": "Полиэтиленовый"
+        }
+      ]
+    },
+    {
+      "id": "hard_clean1",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+      "gold": "clean",
+      "error_type": "brand_model",
+      "errors": []
+    },
+    {
+      "id": "hard_clean2",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Перфоратор SDS-plus, артикул HR2470.",
+      "gold": "clean",
+      "error_type": "sku_abbreviation",
+      "errors": []
+    },
+    {
+      "id": "hard_clean3",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Стол высотой 100 метров.",
+      "gold": "clean",
+      "error_type": "implausible_value_not_spelling",
+      "errors": []
+    },
+    {
+      "id": "hard_clean4",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+      "gold": "clean",
+      "error_type": "units_abbreviations",
+      "errors": []
+    }
+  ]
+}

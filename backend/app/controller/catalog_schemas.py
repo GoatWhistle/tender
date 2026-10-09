@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel
 
-from app.domain.catalog import Characteristic, Position, Value
+from app.domain.catalog import Characteristic, CharacteristicKind, Group, Position, Value
 
 
 class ValueOut(BaseModel):
@@ -36,6 +36,7 @@ class CharacteristicOut(BaseModel):
     name: str
     quantitative: bool
     required: bool
+    kind: CharacteristicKind
     multi: bool
     values: list[ValueOut]
 
@@ -46,6 +47,7 @@ class CharacteristicOut(BaseModel):
             name=c.name,
             quantitative=c.quantitative,
             required=c.required,
+            kind=c.kind,
             multi=c.multi,
             values=[ValueOut.of(v) for v in c.values],
         )
@@ -57,6 +59,7 @@ class PositionSummary(BaseModel):
     category: str
     okpd2: str
     is_template: bool
+    group: str
 
     @classmethod
     def of(cls, p: Position) -> "PositionSummary":
@@ -66,6 +69,7 @@ class PositionSummary(BaseModel):
             category=p.category,
             okpd2=p.okpd2,
             is_template=p.is_template,
+            group=p.group,
         )
 
 
@@ -85,8 +89,22 @@ class PositionOut(PositionSummary):
             okpd2=p.okpd2,
             okpd2_name=p.okpd2_name,
             is_template=p.is_template,
+            group=p.group,
             parent=p.parent,
             units=list(p.units),
             rubrics=list(p.rubrics),
             characteristics=[CharacteristicOut.of(c) for c in p.characteristics],
+        )
+
+
+class GroupOut(BaseModel):
+    position: PositionSummary
+    # Потомки группы; у группы без потомков — она сама.
+    leaves: list[PositionSummary]
+
+    @classmethod
+    def of(cls, g: Group) -> "GroupOut":
+        return cls(
+            position=PositionSummary.of(g.position),
+            leaves=[PositionSummary.of(p) for p in g.leaves],
         )

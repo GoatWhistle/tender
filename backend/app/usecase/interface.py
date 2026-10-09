@@ -3,11 +3,26 @@
 Pydantic и типов библиотек. Реализации — в `app.adapter` и `app.repository`.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from types import TracebackType
 from typing import Protocol, Self
 
+from app.domain.aliases import Alias
 from app.domain.catalog import Position
+from app.domain.inference import (
+    ChoiceBatch,
+    ChoiceQuestion,
+    Claim,
+    ClaimBatch,
+    EmbeddingBatch,
+    Extraction,
+    ExtractionRequest,
+    ModelHealth,
+    Vector,
+)
+from app.domain.search import RankedGroup, SearchResult
+from app.domain.search_vectors import SearchVectors
+from app.domain.sessions import Revision, SessionState
 
 
 class UnitOfWork(Protocol):
@@ -57,9 +72,107 @@ class CatalogRepository(Protocol):
         """По коду; с `category` — только позиции этой категории выгрузки."""
         ...
 
+    def groups(self, category: str | None = None) -> list[Position]:
+        """Группы КТРУ (`Position.is_group`) по коду; с `category` — только этой категории."""
+        ...
+
+    def children(self, code: str) -> list[Position]:
+        """Позиции, у которых родитель — `code`, по коду."""
+        ...
+
     def count(self) -> int: ...
 
     def replace(self, positions: Iterable[Position]) -> None:
         """Справочник целиком заменяется переданным: повторный вызов с тем же набором ничего не
         меняет."""
         ...
+
+
+class Embeddings(Protocol):
+    """Тексты → векторы размерности `dimension` единичной длины: нормализация — часть контракта,
+    вызывающий её не делает. Сейчас — заглушка `app.adapter.stub`."""
+
+    @property
+    def dimension(self) -> int: ...
+
+    def embed_queries(self, texts: Sequence[str]) -> EmbeddingBatch:
+        """По вектору на текст, в порядке текстов."""
+        ...
+
+    def embed_documents(self, texts: Sequence[str]) -> EmbeddingBatch:
+        """Документы без инструкции запроса; по вектору на текст."""
+        ...
+
+    def health(self) -> ModelHealth: ...
+
+
+class DecisionBackend(Protocol):
+    """Decision-модель (раздел 7.4 плана): выбор из вариантов и проверка утверждений (раздел
+    8.5). Отвечает распределениями, порог принятия — в сценарии. Сейчас — заглушка
+    `app.adapter.stub`."""
+
+    def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
+        """По ответу на каждый вопрос пакета: распределение по `option_ids`, выбор или отказ."""
+        ...
+
+    def verify(self, context: str, claims: Sequence[Claim]) -> ClaimBatch:
+        """По каждому утверждению — распределение по `Verdict`: следует ли оно из контекста."""
+        ...
+
+    def health(self) -> ModelHealth: ...
+
+
+class FactExtractor(Protocol):
+    """Генеративный извлекатель фактов (разделы 8.2–8.3 плана): ищет значения только
+    переданных характеристик в переданных сообщениях. Сейчас — заглушка `app.adapter.stub`."""
+
+    def extract(self, request: ExtractionRequest) -> Extraction: ...
+
+    def health(self) -> ModelHealth: ...
+
+
+class LexicalIndex(Protocol):
+    def build(self, groups: Sequence[Position]) -> None: ...
+
+    def rank(self, description: str, category: str | None = None) -> list[RankedGroup]: ...
+
+
+class VectorIndex(Protocol):
+    def build(self, groups: Sequence[Position], saved: SearchVectors | None = None) -> None: ...
+
+    def rank(self, query: Vector, category: str | None = None) -> list[RankedGroup]: ...
+
+
+class AliasesSource(Protocol):
+    def load(self) -> list[Alias]: ...
+
+
+class AliasesRepository(Protocol):
+    def all(self) -> list[Alias]: ...
+
+    def replace(self, aliases: Iterable[Alias]) -> None: ...
+
+
+class SearchVectorsRepository(Protocol):
+    def load(self) -> SearchVectors | None: ...
+
+    def replace(self, snapshot: SearchVectors | None) -> None: ...
+
+
+class SessionsRepository(Protocol):
+    """Снимки ревизий; запись только внутри единицы работы.
+
+    lock=True сериализует обновления до чтения снимка и проверки ключа.
+    """
+
+    def latest(self, session_id: str, *, lock: bool = False) -> SessionState | None: ...
+
+    def replay(self, session_id: str, key: str) -> Revision | None: ...
+
+    def save(self, revision: Revision) -> None: ...
+
+
+class GroupSearcher(Protocol):
+    def run(
+        self, description: str, category: str | None = None, limit: int = 10
+    ) -> SearchResult: ...

@@ -15,6 +15,17 @@
 Команды — `README.md`, «Разработка». Проверки перед PR:
 `cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest`.
 
+Отдельный GPU-сервис — `services/openjev/`, порт runtime — `openjev_service/usecase/interface.py`.
+Запуск: `docker compose --profile gpu up --build -d openjev`; документация и проверки —
+`services/openjev/README.md`. CPU-тесты без весов:
+`PYTHONPATH=services/openjev backend/.venv/bin/python -m unittest discover -s tests/decisions -v`.
+
+Qwen-модели — `services/qwen/`; команды подготовки весов и запуска —
+`services/qwen/README.md`. Конфигурация:
+`docker compose -f compose.yaml -f compose.qwen.yaml --profile gpu --profile download config --quiet`.
+CPU strict-проверки:
+`PYTHONPATH=services/qwen python3 -m unittest discover -s tests/qwen -v`.
+
 ## Coding Style & Naming Conventions
 
 Ruff (line 100) и mypy strict — конфиг в `backend/pyproject.toml`. Тексты, docs, issues,
@@ -46,3 +57,11 @@ Keep secrets and machine-specific settings out of version control. Provide examp
 - **Без следов ИИ-агентов:** Claude, Claude Code, Codex и другие агенты не упоминаются как автор,
   соавтор или источник в коммитах, PR, issues и комментариях — без `Co-Authored-By`,
   `Generated with …` и AI-дисклеймеров.
+
+
+### Оценка русских ошибок
+
+При изменении `evals/errors/`, размеченных диагностик или метрик запусти
+`python3 -m unittest discover -s tests/evals -v` и `ruff check evals/errors tests/evals`.
+Для прогона и подсчёта метрик читай раздел «Оценка русских ошибок» в `README.md`;
+контракты и правила разметки — §§8.8, 9.3, 15.6 и 16.1 `docs/Предлагаемое решение.md`.

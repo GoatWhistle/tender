@@ -22,6 +22,12 @@ class MemoryCatalog:
             key=lambda p: p.code,
         )
 
+    def groups(self, category: str | None = None) -> list[Position]:
+        return [p for p in self.positions(category) if p.is_group]
+
+    def children(self, code: str) -> list[Position]:
+        return [p for p in self.positions() if p.parent == code]
+
     def count(self) -> int:
         return len(self._positions())
 
