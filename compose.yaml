@@ -2,6 +2,7 @@ services:
   openjev:
     profiles: [gpu]
     platform: linux/amd64
+    image: tender-openjev:4b-v5
     build:
       context: .
       dockerfile: services/openjev/Dockerfile
