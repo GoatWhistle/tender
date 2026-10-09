@@ -17,6 +17,7 @@ STATUS: dict[type[e.DomainError], int] = {
     e.PositionNotFound: 404,
     e.GroupNotFound: 404,
     e.CatalogEmpty: 503,
+    e.ModelFailure: 503,
 }
 
 

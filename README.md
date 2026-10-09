@@ -13,16 +13,20 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
   settings.py            настройки окружения `Settings` и пути к данным
   build_var.py           офлайн-артефакты для замеров: снимок КТРУ, словарь, образцы СТЕ → var/
   app/                   только слои — docs/adr/0001-layers-and-ports.md
-    domain/              понятия и правила без библиотек: позиции КТРУ, характеристики, значения
-    usecase/             сценарии на единице работы и порты (`interface.py`)
+    domain/              понятия и правила без библиотек: позиции КТРУ, характеристики, значения,
+                         запросы к моделям и их ответы (`inference.py`)
+    usecase/             сценарии на единице работы, порты (`interface.py`), общая проверка
+                         ответов моделей (`model_checks.py`)
     controller/          роутеры FastAPI, схемы Pydantic, зависимости, ошибки → HTTP
-    adapter/             реализации портов: справочник из XML ЕИС и из JSON-снимка
+    adapter/             реализации портов: справочник из XML ЕИС и из JSON-снимка, заглушки
+                         моделей для тестов (`stub/`)
     repository/          хранилища на SQLite, ORM всех таблиц (`orm/`), in-memory (`memory/`)
   migrations/            миграции схемы
   tests/                 тесты через HTTP API и сценарии на in-memory хранилищах
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
 evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
+services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
 ```
 
 Зависимости слоёв идут внутрь, к `domain`; `backend/tests/test_layers.py` это проверяет.
@@ -30,6 +34,10 @@ var/                     локальные артефакты (не в git): б
 `usecase/catalog.py`, `controller/catalog.py`, `repository/catalog.py`.
 
 ## Разработка
+
+GPU decision-сервис запускается отдельно: `docker compose --profile gpu up --build -d openjev`.
+Условия запуска, API/curl, переменные окружения и CPU-проверки —
+[`services/openjev/README.md`](services/openjev/README.md).
 
 ```bash
 cd backend
@@ -63,7 +71,8 @@ cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy
 - **Порт модели или внешней системы** (поиск, decision-модель, извлекатель): `Protocol` в
   `app/usecase/interface.py` с доменными типами на входе и выходе; реализация — в
   `app/adapter/`, библиотеку импортирует только она; создаётся в `backend/main.py` и передаётся
-  в `build_usecases`.
+  в `build_usecases`. Порт модели сценарий получает только за общей проверкой ответа —
+  `checked_*` из `composition.py`; управляемая заглушка для тестов — `app/adapter/stub/`.
 - **Миграция** — `uv run alembic revision --autogenerate -m "short english slug"`, затем
   прочитать и поправить. `test_models_match_migrations` падает, если модели разошлись с
   миграциями.
