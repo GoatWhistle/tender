@@ -176,8 +176,8 @@ R@k — сколько раз допустимая группа вошла в to
 ## Воспроизведение
 
 ```bash
-uv run python -m backend.catalog.build          # var/ktru.json, var/vocab.json
-uv run python evals/smoke/make_cases.py         # пересобирает smoke_v0.json (TF-IDF top-20)
+(cd backend && uv run python build_var.py)                  # var/ktru.json, var/vocab.json
+(cd backend && uv run python ../evals/smoke/make_cases.py)  # пересобирает smoke_v0.json (TF-IDF top-20)
 # bge-m3 за llama.cpp server, затем гибрид (дописывает hyb10 в датасет):
 python evals/smoke/bench_emb.py evals/datasets/smoke_v0.json http://<host>:8089/v1/embeddings
 # на GPU-хосте, в окружении с `laya` и torch (CUDA); USE_TF=0, веса заранее в кэше HF:

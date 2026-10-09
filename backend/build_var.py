@@ -1,29 +1,28 @@
-"""Офлайн-сборка артефактов: индекс КТРУ (JSON) и частотный словарь.
+"""Офлайн-сборка артефактов для замеров: снимок КТРУ (JSON), частотный словарь и образцы СТЕ.
 
-Запуск: `uv run python -m backend.catalog.build`. Результат — каталог `var/`.
+Запуск: `cd backend && uv run python build_var.py`. Результат — каталог `var/` в корне репо.
 """
-
-from __future__ import annotations
 
 import json
 import re
 import sys
 from collections import Counter
-from pathlib import Path
+from collections.abc import Iterator
 
 import openpyxl
 
-from .ktru import CATEGORIES, DATA_DIR, dump_json, load_positions
+from app.adapter.ktru_json import dump_json
+from app.adapter.ktru_xml import XmlKtruSource
+from app.domain.catalog import CATEGORIES
+from settings import STE_XLSX_DIR, VAR_DIR, Settings
 
-VAR = Path(__file__).resolve().parents[3] / "var"
-XLSX_DIR = DATA_DIR / "Примеры выгрузок"
 WORD = re.compile(r"[а-яё]+|[a-z]+", re.I)
 
 
-def ste_rows(limit: int | None = None):
+def ste_rows(limit: int | None = None) -> Iterator[tuple[str, str, str]]:
     """Наименования и характеристики реальных СТЕ из выгрузок организаторов."""
     for cat in CATEGORIES:
-        wb = openpyxl.load_workbook(XLSX_DIR / f"{cat}.xlsx", read_only=True)
+        wb = openpyxl.load_workbook(STE_XLSX_DIR / f"{cat}.xlsx", read_only=True)
         ws = wb.worksheets[0]
         for i, row in enumerate(ws.iter_rows(min_row=2, values_only=True)):
             if limit and i >= limit:
@@ -34,9 +33,9 @@ def ste_rows(limit: int | None = None):
 
 
 def main() -> None:
-    VAR.mkdir(exist_ok=True)
-    positions = load_positions()
-    dump_json(positions, VAR / "ktru.json")
+    VAR_DIR.mkdir(exist_ok=True)
+    positions = XmlKtruSource(Settings().ktru_xml_dir).load()
+    dump_json(positions, VAR_DIR / "ktru.json")
     print(f"КТРУ: {len(positions)} позиций", file=sys.stderr)
 
     freq: Counter[str] = Counter()
@@ -57,8 +56,12 @@ def main() -> None:
             freq[w] += 1
         if len(samples[cat]) < 3000:
             samples[cat].append(name)
-    (VAR / "vocab.json").write_text(json.dumps(dict(freq.most_common()), ensure_ascii=False))
-    (VAR / "ste_samples.json").write_text(json.dumps(samples, ensure_ascii=False, indent=0))
+    (VAR_DIR / "vocab.json").write_text(
+        json.dumps(dict(freq.most_common()), ensure_ascii=False), encoding="utf-8"
+    )
+    (VAR_DIR / "ste_samples.json").write_text(
+        json.dumps(samples, ensure_ascii=False, indent=0), encoding="utf-8"
+    )
     print(f"Словарь: {len(freq)} слов", file=sys.stderr)
 
 

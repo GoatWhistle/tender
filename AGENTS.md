@@ -2,19 +2,30 @@
 
 ## Project Structure & Module Organization
 
-This directory currently contains no source code, tests, assets, or build configuration. Establish a clear layout when adding the first implementation. Suggested locations are `src/` for application code, `tests/` for automated tests, `assets/` for static resources, and `docs/` for supporting documentation. Group related modules by feature and document actual entry points in `README.md`.
+Бэкенд — `backend/`, слои `domain` / `usecase` / `controller` / `adapter` / `repository`,
+порт в `usecase/interface.py` — на всё, что можно заменить другой реализацией, даже если она
+сейчас одна. Сборка — вручную, без DI-контейнера: реализации выбирает `backend/main.py`,
+сценарии из портов собирает `backend/composition.py`. Правило и граница —
+[`docs/adr/0001-layers-and-ports.md`](docs/adr/0001-layers-and-ports.md), раскладка и куда
+класть новую сущность — `README.md`, «Устройство» и «Образцы». Замеры — `evals/`, продукт их не
+импортирует.
 
 ## Build, Test, and Development Commands
 
-No build, test, or local development commands are configured yet. When selecting a toolchain, provide reproducible commands for installation, local execution, testing, formatting, and production builds. Record these commands in `README.md` and update this guide. Do not assume commands such as `npm test` or `make build` work until their configuration exists.
+Команды — `README.md`, «Разработка». Проверки перед PR:
+`cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest`.
 
 ## Coding Style & Naming Conventions
 
-Adopt the chosen language’s standard formatter and linter, and commit their configuration. Until then, follow surrounding code, use consistent indentation within each file, and choose descriptive names. Keep modules focused and avoid introducing multiple naming styles for equivalent concepts. Do not mix whitespace cleanup with unrelated functional changes.
+Ruff (line 100) и mypy strict — конфиг в `backend/pyproject.toml`. Тексты, docs, issues,
+коммиты — по-русски, идентификаторы — по-английски. Do not mix whitespace cleanup with unrelated
+functional changes.
 
 ## Testing Guidelines
 
-No testing framework or coverage threshold is established. Add tests alongside new behavior using the selected framework’s naming conventions. Cover normal operation, edge cases, and failure paths. Document how contributors run the suite; keep tests deterministic and independent of private credentials.
+pytest, тесты — `backend/tests/`: через HTTP API на временной SQLite со схемой из миграций и
+сценарии на in-memory хранилищах. Фикстуры — `backend/tests/conftest.py`; набор не читает
+выгрузки организаторов и не ходит в сеть.
 
 ## Commit & Pull Request Guidelines
 
