@@ -2,3 +2,8 @@
 .claude/settings.local.json
 .claude/worktrees/
 .claude/scheduled_tasks.lock
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+var/
