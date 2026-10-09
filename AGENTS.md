@@ -51,3 +51,11 @@ Keep secrets and machine-specific settings out of version control. Provide examp
 - **Без следов ИИ-агентов:** Claude, Claude Code, Codex и другие агенты не упоминаются как автор,
   соавтор или источник в коммитах, PR, issues и комментариях — без `Co-Authored-By`,
   `Generated with …` и AI-дисклеймеров.
+
+
+### Оценка русских ошибок
+
+При изменении `evals/errors/`, размеченных диагностик или метрик запусти
+`python3 -m unittest discover -s tests/evals -v` и `ruff check evals/errors tests/evals`.
+Для прогона и подсчёта метрик читай раздел «Оценка русских ошибок» в `README.md`;
+контракты и правила разметки — §§8.8, 9.3, 15.6 и 16.1 `docs/Предлагаемое решение.md`.

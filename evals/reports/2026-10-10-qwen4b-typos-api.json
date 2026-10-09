@@ -1,0 +1,2703 @@
+{
+  "kind": "synthetic_development_llm_typo_correction",
+  "started_at": "2026-10-09T22:46:59.625133+00:00",
+  "model": "qwen-extractor",
+  "dataset_sha256": "f716612b4ab574e41b3c84b8c542dec3c880f64dcdea057de8ea23eb261bc42e",
+  "health": {
+    "status": "ready",
+    "model": "qwen-extractor",
+    "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "strict": true,
+    "backend": "xgrammar",
+    "thinking": false
+  },
+  "system_prompt": "Проверь только орфографию и опечатки в русском описании товара.\nИсправляй только явно неправильно написанные обычные слова. Не перефразируй текст,\nне меняй регистр, пунктуацию и пробелы вне исправляемого слова. Не добавляй сведений.\nСохраняй числа, единицы измерения, размеры, бренды, артикулы и сокращения дословно.\nНе исправляй неправдоподобные характеристики: это другая задача.\nНаписание е вместо ё допустимо и не требует исправления.\nЕсли ошибок нет, corrected_text должен дословно совпадать с исходным текстом,\nа errors должен быть пустым списком. Иначе верни минимальные замены ошибочных слов\nв errors: original — точный фрагмент исходного текста, replacement — исправление.\ncorrected_text должен получаться только применением перечисленных замен.\nВерни только JSON по заданной схеме, без объяснений.",
+  "request_config": {
+    "model": "qwen-extractor",
+    "temperature": 0,
+    "max_tokens": 512,
+    "stream": false,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "typo_validation",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "corrected_text": {
+              "type": "string"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "original": {
+                    "type": "string"
+                  },
+                  "replacement": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "original",
+                  "replacement"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "corrected_text",
+            "errors"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "p01_typo",
+      "pair_id": "p01",
+      "domain": "product_description",
+      "text": "Куртка зимня мужская, размер 50.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "зимня",
+          "correct": "зимняя"
+        }
+      ],
+      "expected_text": "Куртка зимняя мужская, размер 50.",
+      "response": {
+        "id": "chatcmpl-b65c0b23b88522e1",
+        "object": "chat.completion",
+        "created": 1791586022,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Куртка зимняя мужская, размер 50.\", \"errors\": [{\"original\": \"зимня\", \"replacement\": \"зимняя\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 287,
+          "completion_tokens": 38,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Куртка зимняя мужская, размер 50.",
+      "predicted_errors": [
+        {
+          "original": "зимня",
+          "replacement": "зимняя"
+        }
+      ],
+      "error": null,
+      "http_ms": 1214.372624992393
+    },
+    {
+      "id": "p01_clean",
+      "pair_id": "p01",
+      "domain": "product_description",
+      "text": "Куртка зимняя мужская, размер 50.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Куртка зимняя мужская, размер 50.",
+      "response": {
+        "id": "chatcmpl-ac17fc2f57a2affa",
+        "object": "chat.completion",
+        "created": 1791586024,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Куртка зимняя мужская, размер 50.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 274,
+          "completion_tokens": 25,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Куртка зимняя мужская, размер 50.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1094.0000420087017
+    },
+    {
+      "id": "p02_typo",
+      "pair_id": "p02",
+      "domain": "product_description",
+      "text": "Куртка кожанная с капюшоном.",
+      "gold": "typo",
+      "error_type": "extra_letter",
+      "errors": [
+        {
+          "wrong": "кожанная",
+          "correct": "кожаная"
+        }
+      ],
+      "expected_text": "Куртка кожаная с капюшоном.",
+      "response": {
+        "id": "chatcmpl-907df7bbb2aa5933",
+        "object": "chat.completion",
+        "created": 1791586025,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Куртка кожаная с капюшоном.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 248,
+          "total_tokens": 272,
+          "completion_tokens": 24,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": false,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Куртка кожаная с капюшоном.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1113.7187500135042
+    },
+    {
+      "id": "p02_clean",
+      "pair_id": "p02",
+      "domain": "product_description",
+      "text": "Куртка кожаная с капюшоном.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Куртка кожаная с капюшоном.",
+      "response": {
+        "id": "chatcmpl-b8a9c20ca3e83328",
+        "object": "chat.completion",
+        "created": 1791586026,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Куртка кожаная с капюшоном.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 248,
+          "total_tokens": 272,
+          "completion_tokens": 24,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Куртка кожаная с капюшоном.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1125.204375013709
+    },
+    {
+      "id": "p03_typo",
+      "pair_id": "p03",
+      "domain": "product_description",
+      "text": "Табуретка деревяная для кухни.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "деревяная",
+          "correct": "деревянная"
+        }
+      ],
+      "expected_text": "Табуретка деревянная для кухни.",
+      "response": {
+        "id": "chatcmpl-a2537b57b4658c89",
+        "object": "chat.completion",
+        "created": 1791586027,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Табуретка деревянная для кухни.\", \"errors\": [{\"original\": \"деревяная\", \"replacement\": \"деревянная\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 245,
+          "total_tokens": 283,
+          "completion_tokens": 38,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Табуретка деревянная для кухни.",
+      "predicted_errors": [
+        {
+          "original": "деревяная",
+          "replacement": "деревянная"
+        }
+      ],
+      "error": null,
+      "http_ms": 1328.262209019158
+    },
+    {
+      "id": "p03_clean",
+      "pair_id": "p03",
+      "domain": "product_description",
+      "text": "Табуретка деревянная для кухни.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Табуретка деревянная для кухни.",
+      "response": {
+        "id": "chatcmpl-b2c386ac2488bc32",
+        "object": "chat.completion",
+        "created": 1791586028,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Табуретка деревянная для кухни.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 245,
+          "total_tokens": 266,
+          "completion_tokens": 21,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Табуретка деревянная для кухни.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1069.7057499783114
+    },
+    {
+      "id": "p04_typo",
+      "pair_id": "p04",
+      "domain": "product_description",
+      "text": "Стол письменый белый, 1200×600×750 мм.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "письменый",
+          "correct": "письменный"
+        }
+      ],
+      "expected_text": "Стол письменный белый, 1200×600×750 мм.",
+      "response": {
+        "id": "chatcmpl-84a994c1bf1fdfde",
+        "object": "chat.completion",
+        "created": 1791586029,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Стол письменный белый, 1200×600×750 мм.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 257,
+          "total_tokens": 290,
+          "completion_tokens": 33,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": false,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Стол письменный белый, 1200×600×750 мм.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1158.4966670488939
+    },
+    {
+      "id": "p04_clean",
+      "pair_id": "p04",
+      "domain": "product_description",
+      "text": "Стол письменный белый, 1200×600×750 мм.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Стол письменный белый, 1200×600×750 мм.",
+      "response": {
+        "id": "chatcmpl-b7ba864940464a00",
+        "object": "chat.completion",
+        "created": 1791586030,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Стол письменный белый, 1200×600×750 мм.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 257,
+          "total_tokens": 290,
+          "completion_tokens": 33,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Стол письменный белый, 1200×600×750 мм.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1208.3316670032218
+    },
+    {
+      "id": "p05_typo",
+      "pair_id": "p05",
+      "domain": "product_description",
+      "text": "Шкаф металический двухсекционный.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "металический",
+          "correct": "металлический"
+        }
+      ],
+      "expected_text": "Шкаф металлический двухсекционный.",
+      "response": {
+        "id": "chatcmpl-852dbc521140fa31",
+        "object": "chat.completion",
+        "created": 1791586032,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Шкаф металический двухсекционный.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 246,
+          "total_tokens": 268,
+          "completion_tokens": 22,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Шкаф металический двухсекционный.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1078.3992080250755
+    },
+    {
+      "id": "p05_clean",
+      "pair_id": "p05",
+      "domain": "product_description",
+      "text": "Шкаф металлический двухсекционный.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Шкаф металлический двухсекционный.",
+      "response": {
+        "id": "chatcmpl-b9a2e794edff1bd1",
+        "object": "chat.completion",
+        "created": 1791586033,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Шкаф металлический двухсекционный.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 245,
+          "total_tokens": 266,
+          "completion_tokens": 21,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Шкаф металлический двухсекционный.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1073.2693749596365
+    },
+    {
+      "id": "p06_typo",
+      "pair_id": "p06",
+      "domain": "product_description",
+      "text": "Шуруповерт акумуляторный, 18 В.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "акумуляторный",
+          "correct": "аккумуляторный"
+        }
+      ],
+      "expected_text": "Шуруповерт аккумуляторный, 18 В.",
+      "response": {
+        "id": "chatcmpl-9ed5a0be1923d988",
+        "object": "chat.completion",
+        "created": 1791586034,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Шуруповерт акумуляторный, 18 В.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 252,
+          "total_tokens": 280,
+          "completion_tokens": 28,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Шуруповерт акумуляторный, 18 В.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1137.561250012368
+    },
+    {
+      "id": "p06_clean",
+      "pair_id": "p06",
+      "domain": "product_description",
+      "text": "Шуруповерт аккумуляторный, 18 В.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Шуруповерт аккумуляторный, 18 В.",
+      "response": {
+        "id": "chatcmpl-a1fab1fd0b2dfed6",
+        "object": "chat.completion",
+        "created": 1791586036,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Шуруповерт аккумуляторный, 18 В.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 250,
+          "total_tokens": 276,
+          "completion_tokens": 26,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Шуруповерт аккумуляторный, 18 В.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1651.077583024744
+    },
+    {
+      "id": "p07_typo",
+      "pair_id": "p07",
+      "domain": "product_description",
+      "text": "Перфаратор электрический, 800 Вт.",
+      "gold": "typo",
+      "error_type": "substitution",
+      "errors": [
+        {
+          "wrong": "Перфаратор",
+          "correct": "Перфоратор"
+        }
+      ],
+      "expected_text": "Перфоратор электрический, 800 Вт.",
+      "response": {
+        "id": "chatcmpl-b249d4c28d929290",
+        "object": "chat.completion",
+        "created": 1791586037,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Перфоратор электрический, 800 Вт.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 248,
+          "total_tokens": 272,
+          "completion_tokens": 24,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": false,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Перфоратор электрический, 800 Вт.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1081.738208013121
+    },
+    {
+      "id": "p07_clean",
+      "pair_id": "p07",
+      "domain": "product_description",
+      "text": "Перфоратор электрический, 800 Вт.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Перфоратор электрический, 800 Вт.",
+      "response": {
+        "id": "chatcmpl-905eff7b38f8a5d9",
+        "object": "chat.completion",
+        "created": 1791586038,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Перфоратор электрический, 800 Вт.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 248,
+          "total_tokens": 272,
+          "completion_tokens": 24,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Перфоратор электрический, 800 Вт.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1614.8130829678848
+    },
+    {
+      "id": "p08_typo",
+      "pair_id": "p08",
+      "domain": "product_description",
+      "text": "Штангенцирклуь, длина 125 мм.",
+      "gold": "typo",
+      "error_type": "transposition",
+      "errors": [
+        {
+          "wrong": "Штангенцирклуь",
+          "correct": "Штангенциркуль"
+        }
+      ],
+      "expected_text": "Штангенциркуль, длина 125 мм.",
+      "response": {
+        "id": "chatcmpl-94f6fc283a595632",
+        "object": "chat.completion",
+        "created": 1791586039,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Штангенциркулю, длина 125 мм.\", \"errors\": [{\"original\": \"цирклуь\", \"replacement\": \"циркулю\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 251,
+          "total_tokens": 293,
+          "completion_tokens": 42,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Штангенциркулю, длина 125 мм.",
+      "predicted_errors": [
+        {
+          "original": "цирклуь",
+          "replacement": "циркулю"
+        }
+      ],
+      "error": null,
+      "http_ms": 1225.6420839694329
+    },
+    {
+      "id": "p08_clean",
+      "pair_id": "p08",
+      "domain": "product_description",
+      "text": "Штангенциркуль, длина 125 мм.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Штангенциркуль, длина 125 мм.",
+      "response": {
+        "id": "chatcmpl-8bb31eedce38072f",
+        "object": "chat.completion",
+        "created": 1791586041,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Штангенциркуль, длина 125 мм.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 250,
+          "total_tokens": 276,
+          "completion_tokens": 26,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Штангенциркуль, длина 125 мм.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1113.7254170025699
+    },
+    {
+      "id": "p09_typo",
+      "pair_id": "p09",
+      "domain": "product_description",
+      "text": "Изоллента синяя, ширина 19 мм.",
+      "gold": "typo",
+      "error_type": "extra_letter",
+      "errors": [
+        {
+          "wrong": "Изоллента",
+          "correct": "Изолента"
+        }
+      ],
+      "expected_text": "Изолента синяя, ширина 19 мм.",
+      "response": {
+        "id": "chatcmpl-bb9891dbc5bf47b4",
+        "object": "chat.completion",
+        "created": 1791586042,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Изоллента синяя, ширина 19 мм.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 250,
+          "total_tokens": 276,
+          "completion_tokens": 26,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Изоллента синяя, ширина 19 мм.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1091.3279589731246
+    },
+    {
+      "id": "p09_clean",
+      "pair_id": "p09",
+      "domain": "product_description",
+      "text": "Изолента синяя, ширина 19 мм.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Изолента синяя, ширина 19 мм.",
+      "response": {
+        "id": "chatcmpl-b6200ff8625eb3e5",
+        "object": "chat.completion",
+        "created": 1791586043,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Изолента синяя, ширина 19 мм.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 274,
+          "completion_tokens": 25,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Изолента синяя, ширина 19 мм.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1088.0709580378607
+    },
+    {
+      "id": "p10_typo",
+      "pair_id": "p10",
+      "domain": "product_description",
+      "text": "Рюкзак синий, обьём 20 литров.",
+      "gold": "typo",
+      "error_type": "orthography",
+      "errors": [
+        {
+          "wrong": "обьём",
+          "correct": "объём"
+        }
+      ],
+      "expected_text": "Рюкзак синий, объём 20 литров.",
+      "response": {
+        "id": "chatcmpl-8b1ae8659dfcf49c",
+        "object": "chat.completion",
+        "created": 1791586044,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Рюкзак синий, объём 20 литров.\", \"errors\": [{\"original\": \"обьём\", \"replacement\": \"объём\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 251,
+          "total_tokens": 292,
+          "completion_tokens": 41,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Рюкзак синий, объём 20 литров.",
+      "predicted_errors": [
+        {
+          "original": "обьём",
+          "replacement": "объём"
+        }
+      ],
+      "error": null,
+      "http_ms": 1217.8675839677453
+    },
+    {
+      "id": "p10_clean",
+      "pair_id": "p10",
+      "domain": "product_description",
+      "text": "Рюкзак синий, объём 20 литров.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Рюкзак синий, объём 20 литров.",
+      "response": {
+        "id": "chatcmpl-8fe2b842404112eb",
+        "object": "chat.completion",
+        "created": 1791586045,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Рюкзак синий, объём 20 литров.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 250,
+          "total_tokens": 276,
+          "completion_tokens": 26,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Рюкзак синий, объём 20 литров.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1443.4534579631872
+    },
+    {
+      "id": "p11_typo",
+      "pair_id": "p11",
+      "domain": "product_description",
+      "text": "Куртка мужская, сьёмный капюшон.",
+      "gold": "typo",
+      "error_type": "orthography",
+      "errors": [
+        {
+          "wrong": "сьёмный",
+          "correct": "съёмный"
+        }
+      ],
+      "expected_text": "Куртка мужская, съёмный капюшон.",
+      "response": {
+        "id": "chatcmpl-98b2cb4df704cbcc",
+        "object": "chat.completion",
+        "created": 1791586046,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Куртка мужская, съёмный капюшон.\", \"errors\": [{\"original\": \"сьёмный\", \"replacement\": \"съёмный\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 250,
+          "total_tokens": 290,
+          "completion_tokens": 40,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Куртка мужская, съёмный капюшон.",
+      "predicted_errors": [
+        {
+          "original": "сьёмный",
+          "replacement": "съёмный"
+        }
+      ],
+      "error": null,
+      "http_ms": 1197.0938749727793
+    },
+    {
+      "id": "p11_clean",
+      "pair_id": "p11",
+      "domain": "product_description",
+      "text": "Куртка мужская, съёмный капюшон.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Куртка мужская, съёмный капюшон.",
+      "response": {
+        "id": "chatcmpl-b1318b01c9e5944d",
+        "object": "chat.completion",
+        "created": 1791586286,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Куртка мужская, съёмный капюшон.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 274,
+          "completion_tokens": 25,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Куртка мужская, съёмный капюшон.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1111.227500019595
+    },
+    {
+      "id": "p12_typo",
+      "pair_id": "p12",
+      "domain": "product_description",
+      "text": "Стул чёрнй с металлическим каркасом.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "чёрнй",
+          "correct": "чёрный"
+        }
+      ],
+      "expected_text": "Стул чёрный с металлическим каркасом.",
+      "response": {
+        "id": "chatcmpl-ba589ab39365373c",
+        "object": "chat.completion",
+        "created": 1791586287,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Стул чёрный с металлическим каркасом.\", \"errors\": [{\"original\": \"чёрнй\", \"replacement\": \"чёрный\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 247,
+          "total_tokens": 285,
+          "completion_tokens": 38,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Стул чёрный с металлическим каркасом.",
+      "predicted_errors": [
+        {
+          "original": "чёрнй",
+          "replacement": "чёрный"
+        }
+      ],
+      "error": null,
+      "http_ms": 1280.623333004769
+    },
+    {
+      "id": "p12_clean",
+      "pair_id": "p12",
+      "domain": "product_description",
+      "text": "Стул чёрный с металлическим каркасом.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Стул чёрный с металлическим каркасом.",
+      "response": {
+        "id": "chatcmpl-a5c61015f4eb110b",
+        "object": "chat.completion",
+        "created": 1791586242,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Стул чёрный с металлическим каркасом.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 246,
+          "total_tokens": 268,
+          "completion_tokens": 22,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Стул чёрный с металлическим каркасом.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1184.404083993286
+    },
+    {
+      "id": "p13_typo",
+      "pair_id": "p13",
+      "domain": "product_description",
+      "text": "Футболка трикотажнная женская.",
+      "gold": "typo",
+      "error_type": "extra_letter",
+      "errors": [
+        {
+          "wrong": "трикотажнная",
+          "correct": "трикотажная"
+        }
+      ],
+      "expected_text": "Футболка трикотажная женская.",
+      "response": {
+        "id": "chatcmpl-8d28067b3dfdb4fb",
+        "object": "chat.completion",
+        "created": 1791586244,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Футболка трикотажная женская.\", \"errors\": [{\"original\": \"трикотажнная\", \"replacement\": \"трикотажная\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 247,
+          "total_tokens": 287,
+          "completion_tokens": 40,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Футболка трикотажная женская.",
+      "predicted_errors": [
+        {
+          "original": "трикотажнная",
+          "replacement": "трикотажная"
+        }
+      ],
+      "error": null,
+      "http_ms": 2205.4762500338256
+    },
+    {
+      "id": "p13_clean",
+      "pair_id": "p13",
+      "domain": "product_description",
+      "text": "Футболка трикотажная женская.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Футболка трикотажная женская.",
+      "response": {
+        "id": "chatcmpl-a69619b5726ba996",
+        "object": "chat.completion",
+        "created": 1791586246,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Футболка трикотажная женская.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 247,
+          "total_tokens": 270,
+          "completion_tokens": 23,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Футболка трикотажная женская.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1104.3939579976723
+    },
+    {
+      "id": "p14_typo",
+      "pair_id": "p14",
+      "domain": "product_description",
+      "text": "Сапоги резиновые, раземр 43.",
+      "gold": "typo",
+      "error_type": "transposition",
+      "errors": [
+        {
+          "wrong": "раземр",
+          "correct": "размер"
+        }
+      ],
+      "expected_text": "Сапоги резиновые, размер 43.",
+      "response": {
+        "id": "chatcmpl-91290d638ea6091e",
+        "object": "chat.completion",
+        "created": 1791586247,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Сапоги резиновые, размер 43.\", \"errors\": [{\"original\": \"раземр\", \"replacement\": \"размер\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 286,
+          "completion_tokens": 37,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Сапоги резиновые, размер 43.",
+      "predicted_errors": [
+        {
+          "original": "раземр",
+          "replacement": "размер"
+        }
+      ],
+      "error": null,
+      "http_ms": 1210.1662500062957
+    },
+    {
+      "id": "p14_clean",
+      "pair_id": "p14",
+      "domain": "product_description",
+      "text": "Сапоги резиновые, размер 43.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Сапоги резиновые, размер 43.",
+      "response": {
+        "id": "chatcmpl-abee750c7b89cde5",
+        "object": "chat.completion",
+        "created": 1791586248,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Сапоги резиновые, размер 43.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 247,
+          "total_tokens": 270,
+          "completion_tokens": 23,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Сапоги резиновые, размер 43.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1113.0512499948964
+    },
+    {
+      "id": "p15_typo",
+      "pair_id": "p15",
+      "domain": "product_description",
+      "text": "Контейнер пластмасовый с крышкой.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "пластмасовый",
+          "correct": "пластмассовый"
+        }
+      ],
+      "expected_text": "Контейнер пластмассовый с крышкой.",
+      "response": {
+        "id": "chatcmpl-928117b857ac6db2",
+        "object": "chat.completion",
+        "created": 1791586249,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Контейнер пластмассовый с крышкой.\", \"errors\": [{\"original\": \"пластмасовый\", \"replacement\": \"пластмассовый\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 246,
+          "total_tokens": 289,
+          "completion_tokens": 43,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Контейнер пластмассовый с крышкой.",
+      "predicted_errors": [
+        {
+          "original": "пластмасовый",
+          "replacement": "пластмассовый"
+        }
+      ],
+      "error": null,
+      "http_ms": 1262.8332499880344
+    },
+    {
+      "id": "p15_clean",
+      "pair_id": "p15",
+      "domain": "product_description",
+      "text": "Контейнер пластмассовый с крышкой.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Контейнер пластмассовый с крышкой.",
+      "response": {
+        "id": "chatcmpl-995e5fb25c05e0af",
+        "object": "chat.completion",
+        "created": 1791586250,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Контейнер пластмассовый с крышкой.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 247,
+          "total_tokens": 270,
+          "completion_tokens": 23,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Контейнер пластмассовый с крышкой.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1091.2674580467865
+    },
+    {
+      "id": "p16_typo",
+      "pair_id": "p16",
+      "domain": "product_description",
+      "text": "Шкаф влагостокий для ванной.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "влагостокий",
+          "correct": "влагостойкий"
+        }
+      ],
+      "expected_text": "Шкаф влагостойкий для ванной.",
+      "response": {
+        "id": "chatcmpl-b81dd12935a2a341",
+        "object": "chat.completion",
+        "created": 1791586251,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Шкаф влагостокий для ванной.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 245,
+          "total_tokens": 266,
+          "completion_tokens": 21,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Шкаф влагостокий для ванной.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1078.9325829828158
+    },
+    {
+      "id": "p16_clean",
+      "pair_id": "p16",
+      "domain": "product_description",
+      "text": "Шкаф влагостойкий для ванной.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Шкаф влагостойкий для ванной.",
+      "response": {
+        "id": "chatcmpl-845bd9240593021a",
+        "object": "chat.completion",
+        "created": 1791586252,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Шкаф влагостойкий для ванной.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 246,
+          "total_tokens": 268,
+          "completion_tokens": 22,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Шкаф влагостойкий для ванной.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1094.6302089723758
+    },
+    {
+      "id": "extra_typo1",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Малярная кисть с деревянной ручкойй.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "ручкойй",
+          "correct": "ручкой"
+        }
+      ],
+      "expected_text": "Малярная кисть с деревянной ручкой.",
+      "response": {
+        "id": "chatcmpl-b78e938a7757fa41",
+        "object": "chat.completion",
+        "created": 1791586253,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Малярная кисть с деревянной ручкой.\", \"errors\": [{\"original\": \"ручкойй\", \"replacement\": \"ручкой\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 288,
+          "completion_tokens": 39,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Малярная кисть с деревянной ручкой.",
+      "predicted_errors": [
+        {
+          "original": "ручкойй",
+          "replacement": "ручкой"
+        }
+      ],
+      "error": null,
+      "http_ms": 1227.8229580260813
+    },
+    {
+      "id": "extra_typo2",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Матрас ортопидический, 160×200 см.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "ортопидический",
+          "correct": "ортопедический"
+        }
+      ],
+      "expected_text": "Матрас ортопедический, 160×200 см.",
+      "response": {
+        "id": "chatcmpl-860e0b4a07f708c0",
+        "object": "chat.completion",
+        "created": 1791586255,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Матрас ортопедический, 160×200 см.\", \"errors\": [{\"original\": \"ортопидический\", \"replacement\": \"ортопедический\"}]}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 256,
+          "total_tokens": 309,
+          "completion_tokens": 53,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": true,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Матрас ортопедический, 160×200 см.",
+      "predicted_errors": [
+        {
+          "original": "ортопидический",
+          "replacement": "ортопедический"
+        }
+      ],
+      "error": null,
+      "http_ms": 1784.0836659888737
+    },
+    {
+      "id": "extra_typo3",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Дрелль электрическая, 600 Вт.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "Дрелль",
+          "correct": "Дрель"
+        }
+      ],
+      "expected_text": "Дрель электрическая, 600 Вт.",
+      "response": {
+        "id": "chatcmpl-8968f644dd63ca71",
+        "object": "chat.completion",
+        "created": 1791586257,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Дрелль электрическая, 600 Вт.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 249,
+          "total_tokens": 274,
+          "completion_tokens": 25,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Дрелль электрическая, 600 Вт.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1463.967582967598
+    },
+    {
+      "id": "extra_typo4",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Полителеновый пакет с ручками.",
+      "gold": "typo",
+      "error_type": "additional_spelling",
+      "errors": [
+        {
+          "wrong": "Полителеновый",
+          "correct": "Полиэтиленовый"
+        }
+      ],
+      "expected_text": "Полиэтиленовый пакет с ручками.",
+      "response": {
+        "id": "chatcmpl-856ebdbda2c69561",
+        "object": "chat.completion",
+        "created": 1791586258,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Полителеновый пакет с ручками.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 247,
+          "total_tokens": 270,
+          "completion_tokens": 23,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": true,
+      "corrected_text": "Полителеновый пакет с ручками.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1431.6943750018254
+    },
+    {
+      "id": "hard_clean1",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+      "gold": "clean",
+      "error_type": "brand_model",
+      "errors": [],
+      "expected_text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+      "response": {
+        "id": "chatcmpl-a9be30b823edce52",
+        "object": "chat.completion",
+        "created": 1791586260,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Дрель Bosch GSB 13 RE, 600 Вт.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 253,
+          "total_tokens": 282,
+          "completion_tokens": 29,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Дрель Bosch GSB 13 RE, 600 Вт.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1456.1100419959985
+    },
+    {
+      "id": "hard_clean2",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Перфоратор SDS-plus, артикул HR2470.",
+      "gold": "clean",
+      "error_type": "sku_abbreviation",
+      "errors": [],
+      "expected_text": "Перфоратор SDS-plus, артикул HR2470.",
+      "response": {
+        "id": "chatcmpl-876d33e5540a2c24",
+        "object": "chat.completion",
+        "created": 1791586261,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Перфоратор SDS-plus, артикул HR2470.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 250,
+          "total_tokens": 276,
+          "completion_tokens": 26,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Перфоратор SDS-plus, артикул HR2470.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1088.3863330236636
+    },
+    {
+      "id": "hard_clean3",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "Стол высотой 100 метров.",
+      "gold": "clean",
+      "error_type": "implausible_value_not_spelling",
+      "errors": [],
+      "expected_text": "Стол высотой 100 метров.",
+      "response": {
+        "id": "chatcmpl-961282abed2745e2",
+        "object": "chat.completion",
+        "created": 1791586262,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"Стол высотой 100 метров.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 245,
+          "total_tokens": 266,
+          "completion_tokens": 21,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "Стол высотой 100 метров.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1052.5779169984162
+    },
+    {
+      "id": "hard_clean4",
+      "pair_id": null,
+      "domain": "product_description",
+      "text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+      "gold": "clean",
+      "error_type": "units_abbreviations",
+      "errors": [],
+      "expected_text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+      "response": {
+        "id": "chatcmpl-a2b0e5399966cee0",
+        "object": "chat.completion",
+        "created": 1791586263,
+        "model": "qwen-extractor",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"corrected_text\": \"ЛДСП 1200×600×750 мм; цвет RAL 9010.\", \"errors\": []}",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.22.1-31ef9601",
+        "usage": {
+          "prompt_tokens": 263,
+          "total_tokens": 302,
+          "completion_tokens": 39,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "prompt_text": null,
+        "kv_transfer_params": null
+      },
+      "schema_valid": true,
+      "contract_consistent": true,
+      "detected": false,
+      "exact_text_correct": true,
+      "gold_replacements_exact": true,
+      "protected_unchanged": true,
+      "corrected_text": "ЛДСП 1200×600×750 мм; цвет RAL 9010.",
+      "predicted_errors": [],
+      "error": null,
+      "http_ms": 1207.387792004738
+    }
+  ],
+  "warmup_response": {
+    "id": "chatcmpl-a44843f7f5083915",
+    "object": "chat.completion",
+    "created": 1791586021,
+    "model": "qwen-extractor",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"corrected_text\": \"Стол деревянный.\", \"errors\": []}",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "tool_calls": [],
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.22.1-31ef9601",
+    "usage": {
+      "prompt_tokens": 241,
+      "total_tokens": 258,
+      "completion_tokens": 17,
+      "prompt_tokens_details": null
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null
+  },
+  "warmup_http_ms": 1723.3059580321424,
+  "resumes": [
+    {
+      "at": "2026-10-09T22:50:38.748296+00:00",
+      "health": {
+        "status": "ready",
+        "model": "qwen-extractor",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "strict": true,
+        "backend": "xgrammar",
+        "thinking": false
+      }
+    },
+    {
+      "at": "2026-10-09T22:51:23.985494+00:00",
+      "health": {
+        "status": "ready",
+        "model": "qwen-extractor",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "strict": true,
+        "backend": "xgrammar",
+        "thinking": false
+      }
+    }
+  ],
+  "transport_failures": [
+    {
+      "id": "p11_clean",
+      "pair_id": "p11",
+      "domain": "product_description",
+      "text": "Куртка мужская, съёмный капюшон.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Куртка мужская, съёмный капюшон.",
+      "response": {},
+      "schema_valid": false,
+      "contract_consistent": false,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": false,
+      "corrected_text": null,
+      "predicted_errors": null,
+      "error": "HTTP 503: {\"detail\":\"Inference engine unavailable or timed out\"}",
+      "http_ms": 813.7345419963822
+    },
+    {
+      "id": "p11_clean",
+      "pair_id": "p11",
+      "domain": "product_description",
+      "text": "Куртка мужская, съёмный капюшон.",
+      "gold": "clean",
+      "error_type": "none",
+      "errors": [],
+      "expected_text": "Куртка мужская, съёмный капюшон.",
+      "response": {},
+      "schema_valid": false,
+      "contract_consistent": false,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": false,
+      "corrected_text": null,
+      "predicted_errors": null,
+      "error": "Remote end closed connection without response",
+      "transport_failed": true,
+      "http_ms": 454.4208749430254
+    },
+    {
+      "id": "p12_typo",
+      "pair_id": "p12",
+      "domain": "product_description",
+      "text": "Стул чёрнй с металлическим каркасом.",
+      "gold": "typo",
+      "error_type": "missing_letter",
+      "errors": [
+        {
+          "wrong": "чёрнй",
+          "correct": "чёрный"
+        }
+      ],
+      "expected_text": "Стул чёрный с металлическим каркасом.",
+      "response": {},
+      "schema_valid": false,
+      "contract_consistent": false,
+      "detected": false,
+      "exact_text_correct": false,
+      "gold_replacements_exact": false,
+      "protected_unchanged": false,
+      "corrected_text": null,
+      "predicted_errors": null,
+      "error": "[Errno 54] Connection reset by peer",
+      "transport_failed": true,
+      "http_ms": 726.6774589661509
+    }
+  ],
+  "metrics": {
+    "cases": 40,
+    "typo_cases": 20,
+    "clean_cases": 20,
+    "schema_valid": 40,
+    "contract_consistent": 37,
+    "typos_detected": 11,
+    "typos_missed_or_failed": 9,
+    "detection_recall": 0.55,
+    "false_alarms": 0,
+    "typo_texts_corrected_exactly": 13,
+    "typo_texts_unchanged": 6,
+    "typo_texts_changed_without_error_list": 3,
+    "typo_texts_changed_incorrectly": 1,
+    "typo_replacements_match_gold": 10,
+    "clean_texts_unchanged": 20,
+    "clean_texts_accepted_unchanged": 20,
+    "all_texts_exact": 33,
+    "protected_tokens_unchanged": 40,
+    "http_p50_ms": 1171.4503755210899,
+    "http_p95_ms": 1651.077583024744
+  },
+  "health_after": {
+    "status": "ready",
+    "model": "qwen-extractor",
+    "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "strict": true,
+    "backend": "xgrammar",
+    "thinking": false
+  },
+  "finished_at": "2026-10-09T22:51:29.132978+00:00"
+}

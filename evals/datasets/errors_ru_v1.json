@@ -1,0 +1,716 @@
+{
+  "version": 1,
+  "kind": "synthetic_development",
+  "language": "ru",
+  "policy": "12 положительных демонстраций и 12 корректных контролей. XML-правила реальны; тексты синтетические. Наличие ошибки определяется только внутри явно ограниченного fixture scope. Synonym — нормализация, не ошибка. Независимая test-оценка не выполнена.",
+  "sources": {
+    "Одежда": {
+      "path": "data/yandex_disk/КТРУ/xml/Одежда.xml",
+      "sha256": "f20635752e97eda31a45f05df8aabcbcf9c90d62d23742c6ef797c0fa1174a50"
+    },
+    "Мебель": {
+      "path": "data/yandex_disk/КТРУ/xml/Мебель.xml",
+      "sha256": "7dea1efb0190a7701412cab33f7ae2504972277c95c008a1283ea83ee053643c"
+    },
+    "Инструменты": {
+      "path": "data/yandex_disk/КТРУ/xml/Инструменты.xml",
+      "sha256": "42a93d9a7db06259aa38e28b645673a32170fba0dd3f224c94aaa51241d6dab9"
+    }
+  },
+  "rules": {
+    "clothes_enum": {
+      "category": "Одежда",
+      "position_code": "13.92.14.120-00000001",
+      "position_name": "Фартук кухонный",
+      "characteristic": {
+        "code": "8e875e9a-9",
+        "name": "Тип ткани",
+        "quantitative": false,
+        "required": true,
+        "multi": true,
+        "values": [
+          {
+            "code": "8c1babc4-e",
+            "text": "Натуральная",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          },
+          {
+            "code": "2a3bb31f-e",
+            "text": "Синтетическая",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          },
+          {
+            "code": "0162c36b-8",
+            "text": "Смесовая",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          }
+        ]
+      },
+      "source": "Одежда"
+    },
+    "clothes_numeric": {
+      "category": "Одежда",
+      "position_code": "14.12.30.130-00000005",
+      "position_name": "Фартук профессиональный",
+      "characteristic": {
+        "code": "4eff6887-5",
+        "name": "Рост",
+        "quantitative": true,
+        "required": false,
+        "multi": true,
+        "values": [
+          {
+            "code": "86678515-1",
+            "text": null,
+            "unit": "Сантиметр",
+            "unit_code": "004",
+            "concrete": null,
+            "min": 146.0,
+            "min_op": "greaterOrEqual",
+            "max": 164.0,
+            "max_op": "less"
+          },
+          {
+            "code": "4836a774-e",
+            "text": null,
+            "unit": "Сантиметр",
+            "unit_code": "004",
+            "concrete": null,
+            "min": 164.0,
+            "min_op": "greaterOrEqual",
+            "max": 176.0,
+            "max_op": "less"
+          },
+          {
+            "code": "29e0db96-0",
+            "text": null,
+            "unit": "Сантиметр",
+            "unit_code": "004",
+            "concrete": null,
+            "min": 176.0,
+            "min_op": "greaterOrEqual",
+            "max": 188.0,
+            "max_op": "less"
+          },
+          {
+            "code": "db66f695-2",
+            "text": null,
+            "unit": "Сантиметр",
+            "unit_code": "004",
+            "concrete": null,
+            "min": 188.0,
+            "min_op": "greaterOrEqual",
+            "max": 200.0,
+            "max_op": "lessOrEqual"
+          }
+        ]
+      },
+      "source": "Одежда"
+    },
+    "furniture_enum": {
+      "category": "Мебель",
+      "position_code": "25.99.21.110-00000001",
+      "position_name": "Сейф металлический",
+      "characteristic": {
+        "code": "6c1c3057-a",
+        "name": "Защитные свойства",
+        "quantitative": false,
+        "required": true,
+        "multi": true,
+        "values": [
+          {
+            "code": "c6ad4a54-4",
+            "text": "Взломостойкий",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          },
+          {
+            "code": "b1b1f0f6-3",
+            "text": "Огнестойкий",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          }
+        ]
+      },
+      "source": "Мебель"
+    },
+    "furniture_numeric": {
+      "category": "Мебель",
+      "position_code": "25.99.21.110-00000001",
+      "position_name": "Сейф металлический",
+      "characteristic": {
+        "code": "b7c5af2a-6",
+        "name": "Угол открывания двери сейфа, градус",
+        "quantitative": true,
+        "required": false,
+        "multi": true,
+        "values": [
+          {
+            "code": "96096326-2",
+            "text": null,
+            "unit": null,
+            "unit_code": null,
+            "concrete": 90.0,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          },
+          {
+            "code": "419cd318-6",
+            "text": null,
+            "unit": null,
+            "unit_code": null,
+            "concrete": 180.0,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          }
+        ]
+      },
+      "source": "Мебель"
+    },
+    "tools_enum": {
+      "category": "Инструменты",
+      "position_code": "25.73.10.000-00000003",
+      "position_name": "Топор",
+      "characteristic": {
+        "code": "ac1d47d1-8",
+        "name": "Тип лезвия",
+        "quantitative": false,
+        "required": false,
+        "multi": true,
+        "values": [
+          {
+            "code": "95fed633-8",
+            "text": "Одностороннее",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          },
+          {
+            "code": "48f26e9b-e",
+            "text": "Двухстороннее",
+            "unit": null,
+            "unit_code": null,
+            "concrete": null,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          }
+        ]
+      },
+      "source": "Инструменты"
+    },
+    "tools_numeric": {
+      "category": "Инструменты",
+      "position_code": "25.73.20.110-00000001",
+      "position_name": "Пила ручная",
+      "characteristic": {
+        "code": "9fc9ccf6-e",
+        "name": "Тип ножовочной рамки",
+        "quantitative": true,
+        "required": true,
+        "multi": true,
+        "values": [
+          {
+            "code": "dd52f36f-e",
+            "text": null,
+            "unit": null,
+            "unit_code": null,
+            "concrete": 1.0,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          },
+          {
+            "code": "c4ee6a6c-d",
+            "text": null,
+            "unit": null,
+            "unit_code": null,
+            "concrete": 2.0,
+            "min": null,
+            "min_op": null,
+            "max": null,
+            "max_op": null
+          }
+        ]
+      },
+      "source": "Инструменты"
+    }
+  },
+  "aliases": [
+    {
+      "id": "clothes_alias",
+      "alias": "х/б напыление",
+      "canonical": "хлопчато-бумажное напыление",
+      "source": {
+        "path": "data/yandex_disk/Примеры выгрузок/Одежда.xlsx",
+        "sheet": "sheet1",
+        "cells": [
+          "B1495",
+          "F1495"
+        ]
+      },
+      "reviewed": true,
+      "review_note": "Только напыление, не материал основы перчатки."
+    },
+    {
+      "id": "furniture_alias",
+      "alias": "кожзам",
+      "canonical": "Искусственная кожа",
+      "source": {
+        "path": "data/yandex_disk/Примеры выгрузок/Мебель.xlsx",
+        "sheet": "sheet1",
+        "cells": [
+          "B65",
+          "F65"
+        ]
+      },
+      "reviewed": true,
+      "review_note": "Только материал обивки; не доказывает материал каркаса."
+    },
+    {
+      "id": "tools_alias",
+      "alias": "Дрель-шуруповерт",
+      "canonical": "Шуруповерт",
+      "source": {
+        "path": "data/yandex_disk/Примеры выгрузок/Инструменты.xlsx",
+        "sheet": "sheet1",
+        "cells": [
+          "B2",
+          "F2"
+        ]
+      },
+      "reviewed": true,
+      "review_note": "Только контекст аккумуляторного инструмента с режимами завинчивание и сверление; не любая дрель."
+    }
+  ],
+  "cases": [
+    {
+      "id": "clothes_typo_positive",
+      "category": "Одежда",
+      "text": "Фартук кухонный. Тип ткани: Синтетичсекая.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "13.92.14.120-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "clothes_enum",
+      "expected": [
+        {
+          "kind": "typo",
+          "source_quote": "Тип ткани: Синтетичсекая",
+          "suggestion": "Синтетическая"
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "clothes_typo_control",
+      "category": "Одежда",
+      "text": "Фартук кухонный. Тип ткани: Синтетическая.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "13.92.14.120-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "clothes_enum",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "clothes_value_not_in_catalog_positive",
+      "category": "Одежда",
+      "text": "Фартук кухонный. Тип ткани: Телепатическая.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "13.92.14.120-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "clothes_enum",
+      "expected": [
+        {
+          "kind": "value_not_in_catalog",
+          "source_quote": "Тип ткани: Телепатическая",
+          "suggestion": null
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "clothes_value_not_in_catalog_control",
+      "category": "Одежда",
+      "text": "Фартук кухонный. Тип ткани: Синтетическая.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "13.92.14.120-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "clothes_enum",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "clothes_out_of_range_positive",
+      "category": "Одежда",
+      "text": "Фартук профессиональный. Рост: 201 Сантиметр.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "14.12.30.130-00000005"
+        ],
+        "complete": true
+      },
+      "rule_id": "clothes_numeric",
+      "expected": [
+        {
+          "kind": "out_of_range",
+          "source_quote": "Рост: 201 Сантиметр",
+          "suggestion": null
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "clothes_out_of_range_control",
+      "category": "Одежда",
+      "text": "Фартук профессиональный. Рост: 200 Сантиметр.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "14.12.30.130-00000005"
+        ],
+        "complete": true
+      },
+      "rule_id": "clothes_numeric",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "furniture_typo_positive",
+      "category": "Мебель",
+      "text": "Сейф металлический. Защитные свойства: Взломостйокий.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.99.21.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "furniture_enum",
+      "expected": [
+        {
+          "kind": "typo",
+          "source_quote": "Защитные свойства: Взломостйокий",
+          "suggestion": "Взломостойкий"
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "furniture_typo_control",
+      "category": "Мебель",
+      "text": "Сейф металлический. Защитные свойства: Взломостойкий.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.99.21.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "furniture_enum",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "furniture_value_not_in_catalog_positive",
+      "category": "Мебель",
+      "text": "Сейф металлический. Защитные свойства: Телепатический.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.99.21.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "furniture_enum",
+      "expected": [
+        {
+          "kind": "value_not_in_catalog",
+          "source_quote": "Защитные свойства: Телепатический",
+          "suggestion": null
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "furniture_value_not_in_catalog_control",
+      "category": "Мебель",
+      "text": "Сейф металлический. Защитные свойства: Взломостойкий.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.99.21.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "furniture_enum",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "furniture_out_of_range_positive",
+      "category": "Мебель",
+      "text": "Сейф металлический. Угол открывания двери сейфа, градус: 135.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.99.21.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "furniture_numeric",
+      "expected": [
+        {
+          "kind": "out_of_range",
+          "source_quote": "Угол открывания двери сейфа, градус: 135",
+          "suggestion": null
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "furniture_out_of_range_control",
+      "category": "Мебель",
+      "text": "Сейф металлический. Угол открывания двери сейфа, градус: 90.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.99.21.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "furniture_numeric",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "tools_typo_positive",
+      "category": "Инструменты",
+      "text": "Топор. Тип лезвия: Односторннее.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.73.10.000-00000003"
+        ],
+        "complete": true
+      },
+      "rule_id": "tools_enum",
+      "expected": [
+        {
+          "kind": "typo",
+          "source_quote": "Тип лезвия: Односторннее",
+          "suggestion": "Одностороннее"
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "tools_typo_control",
+      "category": "Инструменты",
+      "text": "Топор. Тип лезвия: Одностороннее.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.73.10.000-00000003"
+        ],
+        "complete": true
+      },
+      "rule_id": "tools_enum",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "tools_value_not_in_catalog_positive",
+      "category": "Инструменты",
+      "text": "Топор. Тип лезвия: Телепатическое.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.73.10.000-00000003"
+        ],
+        "complete": true
+      },
+      "rule_id": "tools_enum",
+      "expected": [
+        {
+          "kind": "value_not_in_catalog",
+          "source_quote": "Тип лезвия: Телепатическое",
+          "suggestion": null
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "tools_value_not_in_catalog_control",
+      "category": "Инструменты",
+      "text": "Топор. Тип лезвия: Одностороннее.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.73.10.000-00000003"
+        ],
+        "complete": true
+      },
+      "rule_id": "tools_enum",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "tools_out_of_range_positive",
+      "category": "Инструменты",
+      "text": "Пила ручная. Тип ножовочной рамки: 3.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.73.20.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "tools_numeric",
+      "expected": [
+        {
+          "kind": "out_of_range",
+          "source_quote": "Тип ножовочной рамки: 3",
+          "suggestion": null
+        }
+      ],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "tools_out_of_range_control",
+      "category": "Инструменты",
+      "text": "Пила ручная. Тип ножовочной рамки: 1.",
+      "scope": {
+        "kind": "fixture_group",
+        "position_codes": [
+          "25.73.20.110-00000001"
+        ],
+        "complete": true
+      },
+      "rule_id": "tools_numeric",
+      "expected": [],
+      "note": "Все варианты характеристики из исходного XML; scope ограничен fixture, не всей категорией."
+    },
+    {
+      "id": "clothes_synonym_positive",
+      "category": "Одежда",
+      "text": "х/б напыление",
+      "rule_id": "clothes_alias",
+      "expected": [
+        {
+          "kind": "synonym",
+          "source_quote": "х/б напыление",
+          "suggestion": "хлопчато-бумажное напыление"
+        }
+      ],
+      "note": "Только напыление, не материал основы перчатки."
+    },
+    {
+      "id": "clothes_synonym_control",
+      "category": "Одежда",
+      "text": "хлопчато-бумажное напыление",
+      "rule_id": "clothes_alias",
+      "expected": [],
+      "note": "Только напыление, не материал основы перчатки."
+    },
+    {
+      "id": "furniture_synonym_positive",
+      "category": "Мебель",
+      "text": "кожзам",
+      "rule_id": "furniture_alias",
+      "expected": [
+        {
+          "kind": "synonym",
+          "source_quote": "кожзам",
+          "suggestion": "Искусственная кожа"
+        }
+      ],
+      "note": "Только материал обивки; не доказывает материал каркаса."
+    },
+    {
+      "id": "furniture_synonym_control",
+      "category": "Мебель",
+      "text": "Искусственная кожа",
+      "rule_id": "furniture_alias",
+      "expected": [],
+      "note": "Только материал обивки; не доказывает материал каркаса."
+    },
+    {
+      "id": "tools_synonym_positive",
+      "category": "Инструменты",
+      "text": "Дрель-шуруповерт аккумуляторная; режимы завинчивание и сверление.",
+      "rule_id": "tools_alias",
+      "expected": [
+        {
+          "kind": "synonym",
+          "source_quote": "Дрель-шуруповерт",
+          "suggestion": "Шуруповерт"
+        }
+      ],
+      "note": "Только контекст аккумуляторного инструмента с режимами завинчивание и сверление; не любая дрель."
+    },
+    {
+      "id": "tools_synonym_control",
+      "category": "Инструменты",
+      "text": "Шуруповерт аккумуляторная; режимы завинчивание и сверление.",
+      "rule_id": "tools_alias",
+      "expected": [],
+      "note": "Только контекст аккумуляторного инструмента с режимами завинчивание и сверление; не любая дрель."
+    }
+  ]
+}
