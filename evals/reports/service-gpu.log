@@ -1,0 +1,185 @@
+INFO:     Started server process [8924]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+Loading weights:   0%|          | 0/724 [00:00<?, ?it/s]Loading weights:  56%|█████▋    | 409/724 [00:00<00:00, 4087.58it/s]Loading weights: 100%|██████████| 724/724 [00:00<00:00, 3852.95it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+INFO:     127.0.0.1:53574 - "GET /health/ready HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:45162 - "GET /health/ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45174 - "GET /health/ready HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45190 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45206 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45222 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45234 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45248 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45256 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45260 - "DELETE /v1/contexts/791b7b459dc94e6ea1c889c3dbb08a3c HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45272 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45286 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45290 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45298 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45314 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45320 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45326 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45336 - "DELETE /v1/contexts/bd5479ee1efd4ae999e3105eebdae97c HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45346 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45350 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45360 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45374 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45386 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45394 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45408 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45422 - "DELETE /v1/contexts/9977ce9c38c74965988aea4282ccea4d HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45426 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45438 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45452 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45462 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45474 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45476 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45486 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45498 - "DELETE /v1/contexts/d0f37ace1ef345cabf9b66cbc490a78f HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45506 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45522 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45526 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45532 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45542 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45548 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45558 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45564 - "DELETE /v1/contexts/b3f59bdd101d4ada9c985b2442215a11 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45568 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45578 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45580 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45584 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45592 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45606 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45622 - "DELETE /v1/contexts/6f54491f858d49ccad441388723bb8e3 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45630 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45642 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45652 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45666 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45678 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45684 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45690 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45702 - "DELETE /v1/contexts/137e7291d83d4b16913adca8b513247c HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45714 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45730 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45746 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45760 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45768 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45784 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45788 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45804 - "DELETE /v1/contexts/c511434d5df545afae5a70b97c30758b HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45810 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45816 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45828 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45832 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45844 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45856 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45864 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45870 - "DELETE /v1/contexts/cc443f3445a94082afc180e63e5a495a HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45884 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45886 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45900 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45906 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45922 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45924 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45930 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45944 - "DELETE /v1/contexts/2312418a1fd24969a4e35f00451ecfd2 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:45946 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45952 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45966 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45982 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45990 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46006 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46018 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46024 - "DELETE /v1/contexts/0f9b84b23a504564aec1608a8c5f7e3e HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46038 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46044 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46046 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46052 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46062 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46072 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46074 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46086 - "DELETE /v1/contexts/c509639c81934cbb88e04f66c04fa922 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46088 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46094 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46100 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46112 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46120 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46128 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46138 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46140 - "DELETE /v1/contexts/028f6eeda5204193b70a7ebbbaa771ff HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46142 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46158 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46164 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46168 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46184 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46190 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46196 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46204 - "DELETE /v1/contexts/b0f8c8c93bfa43be8b3975dd2de5b814 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46206 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46216 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46232 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46246 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46260 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46274 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46282 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46296 - "DELETE /v1/contexts/d6d0e537c58e400abba3559f913575c8 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46304 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46310 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46322 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46324 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46334 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46348 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46356 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46358 - "DELETE /v1/contexts/5ba497fd13ef4df18f9e0a8a8eecad22 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46368 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46374 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46378 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46394 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46404 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46420 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46428 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46440 - "DELETE /v1/contexts/dc50e9ee2c3648fe90caa4e00e2e64b6 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46442 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46456 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46466 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46478 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46492 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46504 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46506 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46520 - "DELETE /v1/contexts/a2bff92a3f2942a79173ae470cc25523 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46534 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46546 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46562 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46564 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46578 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46580 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46582 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46590 - "DELETE /v1/contexts/a4619a319cd14bf5ad02381cd0873626 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46598 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46600 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46602 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46610 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46622 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46638 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46644 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46650 - "DELETE /v1/contexts/992d2cc4f20741669c6ab2db1b7787d6 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46664 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46680 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46694 - "POST /v1/contexts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46696 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46698 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46712 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46716 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46730 - "DELETE /v1/contexts/d4fd22271231448aba774dd0e9927199 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:46734 - "POST /v1/nli HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46744 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46754 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46770 - "POST /v1/choice HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46772 - "POST /v1/nli HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46778 - "POST /v1/nli HTTP/1.1" 413 Request Entity Too Large
+INFO:     127.0.0.1:46784 - "POST /v1/nli HTTP/1.1" 413 Request Entity Too Large
+INFO:     127.0.0.1:46798 - "POST /v1/nli HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:46802 - "GET /health/ready HTTP/1.1" 200 OK

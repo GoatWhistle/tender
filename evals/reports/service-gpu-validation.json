@@ -1,0 +1,1201 @@
+{
+  "health": {
+    "status": "ready",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "attention": "sdpa",
+    "runtime": "fla-only",
+    "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+  },
+  "health_after_errors": {
+    "status": "ready",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "attention": "sdpa",
+    "runtime": "fla-only",
+    "model_revision": "a20448012c213128955ca0c693e7c943865cab77"
+  },
+  "cases": 60,
+  "contexts": 21,
+  "full_correct": 59,
+  "cached_correct": 59,
+  "label_changes": 0,
+  "max_probability_delta": 0.005252242088317871,
+  "A_B_A_checks": 21,
+  "auto_cache_reuse": true,
+  "changed_state_new_context": true,
+  "deleted_context_rejected": true,
+  "external_ids_neutralized": true,
+  "limit_errors_preserve_readiness": true,
+  "rows": [
+    {
+      "id": "nli00",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.0005354503518901765,
+        "supported": 0.9988481998443604,
+        "not_stated": 0.0006162995123304427
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0005354503518901765,
+        "supported": 0.9988481998443604,
+        "not_stated": 0.0006162995123304427
+      },
+      "max_probability_delta": 0.0
+    },
+    {
+      "id": "nli01",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9949809908866882,
+        "supported": 0.004982085898518562,
+        "not_stated": 3.686836498673074e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.994901180267334,
+        "supported": 0.005060136318206787,
+        "not_stated": 3.8634618249488994e-05
+      },
+      "max_probability_delta": 7.981061935424805e-05
+    },
+    {
+      "id": "nli02",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 9.308895096182823e-05,
+        "supported": 0.0006117770681157708,
+        "not_stated": 0.9992951154708862
+      },
+      "cached_probabilities": {
+        "contradicted": 9.308961307397112e-05,
+        "supported": 0.0006046539638191462,
+        "not_stated": 0.9993022680282593
+      },
+      "max_probability_delta": 7.152557373046875e-06
+    },
+    {
+      "id": "nli03",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00025307724718004465,
+        "supported": 0.9994344115257263,
+        "not_stated": 0.0003125087241642177
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00025706348242238164,
+        "supported": 0.9994376301765442,
+        "not_stated": 0.0003052704269066453
+      },
+      "max_probability_delta": 7.2382972575724125e-06
+    },
+    {
+      "id": "nli04",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9971158504486084,
+        "supported": 0.002778898226097226,
+        "not_stated": 0.00010525355173740536
+      },
+      "cached_probabilities": {
+        "contradicted": 0.997121274471283,
+        "supported": 0.0027734912000596523,
+        "not_stated": 0.00010525412653805688
+      },
+      "max_probability_delta": 5.424022674560547e-06
+    },
+    {
+      "id": "nli05",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.00019655920914374292,
+        "supported": 0.003094943705946207,
+        "not_stated": 0.9967085123062134
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00019656357471831143,
+        "supported": 0.003072825027629733,
+        "not_stated": 0.9967306852340698
+      },
+      "max_probability_delta": 2.2172927856445312e-05
+    },
+    {
+      "id": "nli06",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00036230977275408804,
+        "supported": 0.9988646507263184,
+        "not_stated": 0.0007730255601927638
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0003351122431922704,
+        "supported": 0.998955488204956,
+        "not_stated": 0.0007094325846992433
+      },
+      "max_probability_delta": 9.083747863769531e-05
+    },
+    {
+      "id": "nli07",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9984127283096313,
+        "supported": 0.001364057301543653,
+        "not_stated": 0.00022311157954391092
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9983788728713989,
+        "supported": 0.0013909139670431614,
+        "not_stated": 0.00023018609499558806
+      },
+      "max_probability_delta": 3.3855438232421875e-05
+    },
+    {
+      "id": "nli08",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.023866994306445122,
+        "supported": 0.0020652080420404673,
+        "not_stated": 0.9740678668022156
+      },
+      "cached_probabilities": {
+        "contradicted": 0.022845380008220673,
+        "supported": 0.0019423628691583872,
+        "not_stated": 0.9752122163772583
+      },
+      "max_probability_delta": 0.0011443495750427246
+    },
+    {
+      "id": "nli09",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.02594759687781334,
+        "supported": 0.9736764430999756,
+        "not_stated": 0.00037595120375044644
+      },
+      "cached_probabilities": {
+        "contradicted": 0.022109106183052063,
+        "supported": 0.9775525331497192,
+        "not_stated": 0.00033834201167337596
+      },
+      "max_probability_delta": 0.0038760900497436523
+    },
+    {
+      "id": "nli10",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9964686632156372,
+        "supported": 0.0034832567907869816,
+        "not_stated": 4.815731517737731e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9964948296546936,
+        "supported": 0.003456240752711892,
+        "not_stated": 4.891696517006494e-05
+      },
+      "max_probability_delta": 2.7016038075089455e-05
+    },
+    {
+      "id": "nli11",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.00017946730076801032,
+        "supported": 0.00033791878377087414,
+        "not_stated": 0.9994826316833496
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0001766903151292354,
+        "supported": 0.00031010116799734533,
+        "not_stated": 0.9995131492614746
+      },
+      "max_probability_delta": 3.0517578125e-05
+    },
+    {
+      "id": "nli12",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00025507266400381923,
+        "supported": 0.9994755387306213,
+        "not_stated": 0.000269410404143855
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0002530881611164659,
+        "supported": 0.9994775652885437,
+        "not_stated": 0.00026941095711663365
+      },
+      "max_probability_delta": 2.0265579223632812e-06
+    },
+    {
+      "id": "nli13",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9994568228721619,
+        "supported": 0.000504299474414438,
+        "not_stated": 3.881152588292025e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9994552731513977,
+        "supported": 0.0005052846390753984,
+        "not_stated": 3.9422659028787166e-05
+      },
+      "max_probability_delta": 1.5497207641601562e-06
+    },
+    {
+      "id": "nli14",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0005223277839832008,
+        "supported": 0.002002286957576871,
+        "not_stated": 0.9974753260612488
+      },
+      "cached_probabilities": {
+        "contradicted": 0.000530553050339222,
+        "supported": 0.001994479913264513,
+        "not_stated": 0.9974749684333801
+      },
+      "max_probability_delta": 8.225266356021166e-06
+    },
+    {
+      "id": "nli15",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00030054262606427073,
+        "supported": 0.9994542002677917,
+        "not_stated": 0.00024529575603082776
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0002958828117698431,
+        "supported": 0.9994530081748962,
+        "not_stated": 0.000251112476689741
+      },
+      "max_probability_delta": 5.816720658913255e-06
+    },
+    {
+      "id": "nli16",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9967495203018188,
+        "supported": 0.0031110746785998344,
+        "not_stated": 0.00013938707706984133
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9966756105422974,
+        "supported": 0.0031784018501639366,
+        "not_stated": 0.00014606556214857846
+      },
+      "max_probability_delta": 7.390975952148438e-05
+    },
+    {
+      "id": "nli17",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0003919062146451324,
+        "supported": 0.000345856009516865,
+        "not_stated": 0.999262273311615
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0003769021714106202,
+        "supported": 0.00033522373996675014,
+        "not_stated": 0.9992879033088684
+      },
+      "max_probability_delta": 2.562999725341797e-05
+    },
+    {
+      "id": "nli18",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9918083548545837,
+        "supported": 0.004486587829887867,
+        "not_stated": 0.003705010749399662
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9917621612548828,
+        "supported": 0.004503937438130379,
+        "not_stated": 0.0037338954862207174
+      },
+      "max_probability_delta": 4.6193599700927734e-05
+    },
+    {
+      "id": "nli19",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0012057278072461486,
+        "supported": 0.0007143700495362282,
+        "not_stated": 0.9980798959732056
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0012536479625850916,
+        "supported": 0.0007544585387222469,
+        "not_stated": 0.9979918003082275
+      },
+      "max_probability_delta": 8.809566497802734e-05
+    },
+    {
+      "id": "nli20",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00037982966750860214,
+        "supported": 0.9992126226425171,
+        "not_stated": 0.00040749774780124426
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00037982966750860214,
+        "supported": 0.9992126226425171,
+        "not_stated": 0.00040749774780124426
+      },
+      "max_probability_delta": 0.0
+    },
+    {
+      "id": "nli21",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9965980648994446,
+        "supported": 0.0033765265252441168,
+        "not_stated": 2.5380415536346845e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9964633584022522,
+        "supported": 0.003510557347908616,
+        "not_stated": 2.6182537112617865e-05
+      },
+      "max_probability_delta": 0.0001347064971923828
+    },
+    {
+      "id": "nli22",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 3.118982203886844e-05,
+        "supported": 0.00038746403879486024,
+        "not_stated": 0.9995812773704529
+      },
+      "cached_probabilities": {
+        "contradicted": 3.3723143133101985e-05,
+        "supported": 0.0004173016641288996,
+        "not_stated": 0.9995489716529846
+      },
+      "max_probability_delta": 3.230571746826172e-05
+    },
+    {
+      "id": "nli23",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00041717695421539247,
+        "supported": 0.9992502331733704,
+        "not_stated": 0.00033260247437283397
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00040435208939015865,
+        "supported": 0.9992757439613342,
+        "not_stated": 0.000319868850056082
+      },
+      "max_probability_delta": 2.5510787963867188e-05
+    },
+    {
+      "id": "nli24",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9972443580627441,
+        "supported": 0.0027255003806203604,
+        "not_stated": 3.0159533707774244e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9972015619277954,
+        "supported": 0.0027683021035045385,
+        "not_stated": 3.015823858731892e-05
+      },
+      "max_probability_delta": 4.280172288417816e-05
+    },
+    {
+      "id": "nli25",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.00031979632331058383,
+        "supported": 0.0006310415919870138,
+        "not_stated": 0.9990491271018982
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0003457681159488857,
+        "supported": 0.0006459798896685243,
+        "not_stated": 0.9990083575248718
+      },
+      "max_probability_delta": 4.076957702636719e-05
+    },
+    {
+      "id": "nli26",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00045420374954119325,
+        "supported": 0.9983491897583008,
+        "not_stated": 0.0011966675519943237
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00045776873594149947,
+        "supported": 0.9983548521995544,
+        "not_stated": 0.001187361660413444
+      },
+      "max_probability_delta": 9.305891580879688e-06
+    },
+    {
+      "id": "nli27",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9986575841903687,
+        "supported": 0.0012917802669107914,
+        "not_stated": 5.057929229224101e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9986475110054016,
+        "supported": 0.001301898737438023,
+        "not_stated": 5.0578782975208014e-05
+      },
+      "max_probability_delta": 1.0118470527231693e-05
+    },
+    {
+      "id": "nli28",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.001584562356583774,
+        "supported": 0.0005476100486703217,
+        "not_stated": 0.9978677034378052
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0015239834319800138,
+        "supported": 0.0005266746156848967,
+        "not_stated": 0.9979494214057922
+      },
+      "max_probability_delta": 8.171796798706055e-05
+    },
+    {
+      "id": "nli29",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.0006985220825299621,
+        "supported": 0.9990816116333008,
+        "not_stated": 0.0002197997091570869
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0006985196378082037,
+        "supported": 0.9990781545639038,
+        "not_stated": 0.0002232602855656296
+      },
+      "max_probability_delta": 3.4605764085426927e-06
+    },
+    {
+      "id": "nli30",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9991307854652405,
+        "supported": 0.0007717227563261986,
+        "not_stated": 9.754033089848235e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9991322159767151,
+        "supported": 0.0007702180300839245,
+        "not_stated": 9.754046914167702e-05
+      },
+      "max_probability_delta": 1.504726242274046e-06
+    },
+    {
+      "id": "nli31",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0001271638902835548,
+        "supported": 0.001155753736384213,
+        "not_stated": 0.9987170696258545
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0001311927189817652,
+        "supported": 0.0012111476389691234,
+        "not_stated": 0.9986577033996582
+      },
+      "max_probability_delta": 5.936622619628906e-05
+    },
+    {
+      "id": "nli32",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.0003564903454389423,
+        "supported": 0.9982981085777283,
+        "not_stated": 0.001345380675047636
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0003564903454389423,
+        "supported": 0.9982981085777283,
+        "not_stated": 0.001345380675047636
+      },
+      "max_probability_delta": 0.0
+    },
+    {
+      "id": "nli33",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9992262125015259,
+        "supported": 0.0007495132740586996,
+        "not_stated": 2.4282027879962698e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9991788268089294,
+        "supported": 0.0007941226940602064,
+        "not_stated": 2.7087276976089925e-05
+      },
+      "max_probability_delta": 4.738569259643555e-05
+    },
+    {
+      "id": "nli34",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.16181737184524536,
+        "supported": 0.0034650200977921486,
+        "not_stated": 0.8347175717353821
+      },
+      "cached_probabilities": {
+        "contradicted": 0.15659745037555695,
+        "supported": 0.003432764671742916,
+        "not_stated": 0.8399698138237
+      },
+      "max_probability_delta": 0.005252242088317871
+    },
+    {
+      "id": "nli35",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00020984452567063272,
+        "supported": 0.9996064305305481,
+        "not_stated": 0.00018374600040260702
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00020984452567063272,
+        "supported": 0.9996064305305481,
+        "not_stated": 0.00018374600040260702
+      },
+      "max_probability_delta": 0.0
+    },
+    {
+      "id": "nli36",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9993433356285095,
+        "supported": 0.0005906714359298348,
+        "not_stated": 6.601312634302303e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9993141889572144,
+        "supported": 0.0006165869999676943,
+        "not_stated": 6.917915015947074e-05
+      },
+      "max_probability_delta": 2.9146671295166016e-05
+    },
+    {
+      "id": "nli37",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.00035959662636741996,
+        "supported": 0.0004801245522685349,
+        "not_stated": 0.9991602897644043
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0003739044477697462,
+        "supported": 0.0005110667552798986,
+        "not_stated": 0.9991150498390198
+      },
+      "max_probability_delta": 4.5239925384521484e-05
+    },
+    {
+      "id": "nli38",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9969118237495422,
+        "supported": 0.00301584810949862,
+        "not_stated": 7.23248376743868e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9968370199203491,
+        "supported": 0.0030871352646499872,
+        "not_stated": 7.579009252367541e-05
+      },
+      "max_probability_delta": 7.480382919311523e-05
+    },
+    {
+      "id": "nli39",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0022584362886846066,
+        "supported": 0.0009751431061886251,
+        "not_stated": 0.9967663288116455
+      },
+      "cached_probabilities": {
+        "contradicted": 0.002146917860955,
+        "supported": 0.0009452751255594194,
+        "not_stated": 0.9969077706336975
+      },
+      "max_probability_delta": 0.00014144182205200195
+    },
+    {
+      "id": "nli40",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.0005790324648842216,
+        "supported": 0.9989734888076782,
+        "not_stated": 0.00044744162005372345
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0005790324648842216,
+        "supported": 0.9989734888076782,
+        "not_stated": 0.00044744162005372345
+      },
+      "max_probability_delta": 0.0
+    },
+    {
+      "id": "nli41",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9956098198890686,
+        "supported": 0.004331246949732304,
+        "not_stated": 5.895271533518098e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9959384202957153,
+        "supported": 0.004007070325314999,
+        "not_stated": 5.454034544527531e-05
+      },
+      "max_probability_delta": 0.0003286004066467285
+    },
+    {
+      "id": "nli42",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0001271791261387989,
+        "supported": 0.0010361351305618882,
+        "not_stated": 0.9988366961479187
+      },
+      "cached_probabilities": {
+        "contradicted": 0.00012327017611823976,
+        "supported": 0.0010082192020490766,
+        "not_stated": 0.9988685846328735
+      },
+      "max_probability_delta": 3.1888484954833984e-05
+    },
+    {
+      "id": "nli43",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.003841704921796918,
+        "supported": 0.9955440163612366,
+        "not_stated": 0.0006142607890069485
+      },
+      "cached_probabilities": {
+        "contradicted": 0.003987219650298357,
+        "supported": 0.9953691363334656,
+        "not_stated": 0.0006436267285607755
+      },
+      "max_probability_delta": 0.0001748800277709961
+    },
+    {
+      "id": "nli44",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9978481531143188,
+        "supported": 0.002001080196350813,
+        "not_stated": 0.0001508794812252745
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9977878332138062,
+        "supported": 0.002056427765637636,
+        "not_stated": 0.00015565950889140368
+      },
+      "max_probability_delta": 6.031990051269531e-05
+    },
+    {
+      "id": "nli45",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0029785088263452053,
+        "supported": 0.0008467162842862308,
+        "not_stated": 0.9961748123168945
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0026813209988176823,
+        "supported": 0.0007895070011727512,
+        "not_stated": 0.9965291619300842
+      },
+      "max_probability_delta": 0.00035434961318969727
+    },
+    {
+      "id": "nli46",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.00030036605312488973,
+        "supported": 0.9988670349121094,
+        "not_stated": 0.0008325832313857973
+      },
+      "cached_probabilities": {
+        "contradicted": 0.000305094727082178,
+        "supported": 0.9988623857498169,
+        "not_stated": 0.0008325793314725161
+      },
+      "max_probability_delta": 4.728673957288265e-06
+    },
+    {
+      "id": "nli47",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9954943656921387,
+        "supported": 0.004398943856358528,
+        "not_stated": 0.00010673720680642873
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9954738020896912,
+        "supported": 0.004416069481521845,
+        "not_stated": 0.0001101231318898499
+      },
+      "max_probability_delta": 2.0563602447509766e-05
+    },
+    {
+      "id": "nli48",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0003915975394193083,
+        "supported": 0.0011331250425428152,
+        "not_stated": 0.9984752535820007
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0003916009736713022,
+        "supported": 0.0011243169428780675,
+        "not_stated": 0.9984840750694275
+      },
+      "max_probability_delta": 8.821487426757812e-06
+    },
+    {
+      "id": "nli49",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.0008008307195268571,
+        "supported": 0.9990456700325012,
+        "not_stated": 0.00015343941049650311
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0007915081805549562,
+        "supported": 0.9990550875663757,
+        "not_stated": 0.00015344085113611072
+      },
+      "max_probability_delta": 9.417533874511719e-06
+    },
+    {
+      "id": "nli50",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9981757402420044,
+        "supported": 0.0016147360438480973,
+        "not_stated": 0.00020954418869223446
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9983214735984802,
+        "supported": 0.0014877818757668138,
+        "not_stated": 0.00019082000653725117
+      },
+      "max_probability_delta": 0.00014573335647583008
+    },
+    {
+      "id": "nli51",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.005481097847223282,
+        "supported": 0.013290475122630596,
+        "not_stated": 0.9812285304069519
+      },
+      "cached_probabilities": {
+        "contradicted": 0.005443322937935591,
+        "supported": 0.012447728775441647,
+        "not_stated": 0.9821089506149292
+      },
+      "max_probability_delta": 0.0008804202079772949
+    },
+    {
+      "id": "nli52",
+      "gold": "supported",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.8301057815551758,
+        "supported": 0.1686462163925171,
+        "not_stated": 0.001248013461008668
+      },
+      "cached_probabilities": {
+        "contradicted": 0.8256530165672302,
+        "supported": 0.17306627333164215,
+        "not_stated": 0.0012807227903977036
+      },
+      "max_probability_delta": 0.004452764987945557
+    },
+    {
+      "id": "nli53",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9842080473899841,
+        "supported": 0.012559900060296059,
+        "not_stated": 0.0032319549936801195
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9844008088111877,
+        "supported": 0.012391777709126472,
+        "not_stated": 0.0032074321061372757
+      },
+      "max_probability_delta": 0.00019276142120361328
+    },
+    {
+      "id": "nli54",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0056420727632939816,
+        "supported": 0.003847559215500951,
+        "not_stated": 0.9905102849006653
+      },
+      "cached_probabilities": {
+        "contradicted": 0.005406619049608707,
+        "supported": 0.0037450555246323347,
+        "not_stated": 0.9908483028411865
+      },
+      "max_probability_delta": 0.00033801794052124023
+    },
+    {
+      "id": "nli55",
+      "gold": "supported",
+      "full_label": "supported",
+      "cached_label": "supported",
+      "full_probabilities": {
+        "contradicted": 0.000267322437139228,
+        "supported": 0.9995075464248657,
+        "not_stated": 0.00022510804410558194
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0002550857316236943,
+        "supported": 0.9995267391204834,
+        "not_stated": 0.0002181863965233788
+      },
+      "max_probability_delta": 1.919269561767578e-05
+    },
+    {
+      "id": "nli56",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9965288043022156,
+        "supported": 0.003074148902669549,
+        "not_stated": 0.0003969888493884355
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9964684247970581,
+        "supported": 0.003140719374641776,
+        "not_stated": 0.0003908104554284364
+      },
+      "max_probability_delta": 6.65704719722271e-05
+    },
+    {
+      "id": "nli57",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.0005482010310515761,
+        "supported": 0.0005070031620562077,
+        "not_stated": 0.9989446997642517
+      },
+      "cached_probabilities": {
+        "contradicted": 0.0005482075503095984,
+        "supported": 0.0004952642484568059,
+        "not_stated": 0.9989564418792725
+      },
+      "max_probability_delta": 1.1742115020751953e-05
+    },
+    {
+      "id": "nli58",
+      "gold": "contradicted",
+      "full_label": "contradicted",
+      "cached_label": "contradicted",
+      "full_probabilities": {
+        "contradicted": 0.9967594742774963,
+        "supported": 0.0031477785669267178,
+        "not_stated": 9.285273699788377e-05
+      },
+      "cached_probabilities": {
+        "contradicted": 0.9967485666275024,
+        "supported": 0.003160063875839114,
+        "not_stated": 9.141219197772443e-05
+      },
+      "max_probability_delta": 1.2285308912396431e-05
+    },
+    {
+      "id": "nli59",
+      "gold": "not_stated",
+      "full_label": "not_stated",
+      "cached_label": "not_stated",
+      "full_probabilities": {
+        "contradicted": 0.005704288370907307,
+        "supported": 0.004530124366283417,
+        "not_stated": 0.9897655844688416
+      },
+      "cached_probabilities": {
+        "contradicted": 0.005682275630533695,
+        "supported": 0.004512642975896597,
+        "not_stated": 0.9898051023483276
+      },
+      "max_probability_delta": 3.9517879486083984e-05
+    }
+  ],
+  "replays": [
+    {
+      "context_id": "791b7b459dc94e6ea1c889c3dbb08a3c",
+      "A_B_A_equal": true,
+      "full_http_ms": 105.66555999685079,
+      "prepare_http_ms": 69.82555499416776,
+      "cached_http_ms": 66.81031800690107
+    },
+    {
+      "context_id": "bd5479ee1efd4ae999e3105eebdae97c",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.31320500490256,
+      "prepare_http_ms": 58.675748005043715,
+      "cached_http_ms": 66.11756602069363
+    },
+    {
+      "context_id": "9977ce9c38c74965988aea4282ccea4d",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.49275500420481,
+      "prepare_http_ms": 58.42316700727679,
+      "cached_http_ms": 65.92460500542074
+    },
+    {
+      "context_id": "d0f37ace1ef345cabf9b66cbc490a78f",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.8928460017778,
+      "prepare_http_ms": 58.84032801259309,
+      "cached_http_ms": 65.73214402305894
+    },
+    {
+      "context_id": "b3f59bdd101d4ada9c985b2442215a11",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.3069249803666,
+      "prepare_http_ms": 58.294146991102025,
+      "cached_http_ms": 65.45306299813092
+    },
+    {
+      "context_id": "6f54491f858d49ccad441388723bb8e3",
+      "A_B_A_equal": true,
+      "full_http_ms": 55.18182000378147,
+      "prepare_http_ms": 58.64855699473992,
+      "cached_http_ms": 65.38527298835106
+    },
+    {
+      "context_id": "137e7291d83d4b16913adca8b513247c",
+      "A_B_A_equal": true,
+      "full_http_ms": 59.83528000069782,
+      "prepare_http_ms": 59.02464798418805,
+      "cached_http_ms": 65.445673011709
+    },
+    {
+      "context_id": "c511434d5df545afae5a70b97c30758b",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.57863400503993,
+      "prepare_http_ms": 59.22936898423359,
+      "cached_http_ms": 65.72980398777872
+    },
+    {
+      "context_id": "cc443f3445a94082afc180e63e5a495a",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.33525400864892,
+      "prepare_http_ms": 58.55646700365469,
+      "cached_http_ms": 65.39794302079827
+    },
+    {
+      "context_id": "2312418a1fd24969a4e35f00451ecfd2",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.371024013264105,
+      "prepare_http_ms": 58.66574699757621,
+      "cached_http_ms": 65.41185200330801
+    },
+    {
+      "context_id": "0f9b84b23a504564aec1608a8c5f7e3e",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.20669301808812,
+      "prepare_http_ms": 58.61806601751596,
+      "cached_http_ms": 65.46113200602122
+    },
+    {
+      "context_id": "c509639c81934cbb88e04f66c04fa922",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.22320300992578,
+      "prepare_http_ms": 58.26857499778271,
+      "cached_http_ms": 65.24802101193927
+    },
+    {
+      "context_id": "028f6eeda5204193b70a7ebbbaa771ff",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.66045401105657,
+      "prepare_http_ms": 58.507195994025096,
+      "cached_http_ms": 65.67943299887702
+    },
+    {
+      "context_id": "b0f8c8c93bfa43be8b3975dd2de5b814",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.194443012122065,
+      "prepare_http_ms": 58.30888499622233,
+      "cached_http_ms": 65.31551099033095
+    },
+    {
+      "context_id": "d6d0e537c58e400abba3559f913575c8",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.19948300975375,
+      "prepare_http_ms": 58.688165998319164,
+      "cached_http_ms": 65.48267099424265
+    },
+    {
+      "context_id": "5ba497fd13ef4df18f9e0a8a8eecad22",
+      "A_B_A_equal": true,
+      "full_http_ms": 58.30683500971645,
+      "prepare_http_ms": 59.19609699049033,
+      "cached_http_ms": 66.5772540087346
+    },
+    {
+      "context_id": "dc50e9ee2c3648fe90caa4e00e2e64b6",
+      "A_B_A_equal": true,
+      "full_http_ms": 58.15717400400899,
+      "prepare_http_ms": 58.57675499282777,
+      "cached_http_ms": 65.90654200408608
+    },
+    {
+      "context_id": "a2bff92a3f2942a79173ae470cc25523",
+      "A_B_A_equal": true,
+      "full_http_ms": 59.46227698586881,
+      "prepare_http_ms": 60.46153898932971,
+      "cached_http_ms": 65.76257199048996
+    },
+    {
+      "context_id": "a4619a319cd14bf5ad02381cd0873626",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.31277199811302,
+      "prepare_http_ms": 58.694014995126054,
+      "cached_http_ms": 66.9433239963837
+    },
+    {
+      "context_id": "992d2cc4f20741669c6ab2db1b7787d6",
+      "A_B_A_equal": true,
+      "full_http_ms": 58.8838949915953,
+      "prepare_http_ms": 59.27159599377774,
+      "cached_http_ms": 66.28505300614052
+    },
+    {
+      "context_id": "d4fd22271231448aba774dd0e9927199",
+      "A_B_A_equal": true,
+      "full_http_ms": 57.241870992584154,
+      "prepare_http_ms": 58.62291497760452,
+      "cached_http_ms": 64.32625799789093
+    }
+  ]
+}
