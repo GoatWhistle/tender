@@ -17,6 +17,7 @@ class ModelHealth:
     model: str
     revision: str
     ready: bool
+    detail: str = ""  # почему не готова
 
 
 @dataclass(frozen=True)

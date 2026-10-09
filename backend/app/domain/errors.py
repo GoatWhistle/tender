@@ -33,3 +33,10 @@ class ModelFailure(DomainError):
 
     code = "technical_error"
     message = "Модель недоступна или вернула невалидный ответ"
+
+
+class ModelNotConfigured(ModelFailure):
+    """Адрес модели не задан: точка сборки не подменяет её заглушкой."""
+
+    code = "model_not_configured"
+    message = "Модель не настроена"

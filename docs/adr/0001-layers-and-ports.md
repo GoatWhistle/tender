@@ -16,11 +16,14 @@
 - Источник справочника КТРУ — XML ЕИС (`adapter/ktru_xml.py`) и JSON-снимок
   (`adapter/ktru_json.py`), порт `CatalogSource`.
 - Хранилища — репозитории: SQLite (`repository/`) и in-memory (`repository/memory/`).
+- Словарь синонимов — CSV (`adapter/aliases_csv.py`), порт `AliasSource`.
+- Поиск кандидатов: лексический индекс — TF-IDF (`adapter/tfidf.py`, порт `LexicalIndex`),
+  векторный — полный перебор на numpy (`adapter/vector_numpy.py`, порт `VectorIndex`). Слияние
+  RRF — в сценарии (`docs/search.md`).
+- Модель эмбеддингов — OpenAI-совместимый HTTP (`adapter/embeddings_http.py`), порт `Embeddings`.
 - По плану (`docs/Предлагаемое решение.md`), по мере появления:
-  - поиск кандидатов — BM25, векторный, гибрид;
   - decision-модель — `DecisionBackend` из раздела 7.4;
   - извлекатель фактов (Qwen4B за vLLM) и его verifier;
-  - модель эмбеддингов;
   - часы и источник идентификаторов.
 
 ## Что в `domain` без порта

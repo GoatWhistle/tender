@@ -2,7 +2,7 @@
 
 Хеширование слов: каждое слово текста добавляет ±1 в свою координату, вектор нормируется. Один
 и тот же текст — один и тот же вектор; тексты с общими словами ближе, поэтому гибридный поиск
-проверяется на заглушке целиком.
+проверяется на заглушке целиком. Запрос и документ заглушка не различает.
 """
 
 import hashlib
@@ -28,7 +28,13 @@ class StubEmbeddings(Scripted):
     def dimension(self) -> int:
         return self._dimension
 
-    def embed(self, texts: Sequence[str]) -> EmbeddingBatch:
+    def embed_queries(self, texts: Sequence[str]) -> EmbeddingBatch:
+        return self._embed(texts)
+
+    def embed_documents(self, texts: Sequence[str]) -> EmbeddingBatch:
+        return self._embed(texts)
+
+    def _embed(self, texts: Sequence[str]) -> EmbeddingBatch:
         self._raise_fault()
         if self.reply is not None:
             return self.reply

@@ -3,7 +3,7 @@
 Pydantic и типов библиотек. Реализации — в `app.adapter` и `app.repository`.
 """
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from types import TracebackType
 from typing import Protocol, Self
 
@@ -17,7 +17,9 @@ from app.domain.inference import (
     Extraction,
     ExtractionRequest,
     ModelHealth,
+    Vector,
 )
+from app.domain.search import Alias, Hit
 
 
 class UnitOfWork(Protocol):
@@ -83,15 +85,71 @@ class CatalogRepository(Protocol):
         ...
 
 
+class AliasSource(Protocol):
+    """Откуда берётся словарь синонимов групп КТРУ. Сейчас — `data/aliases.csv`
+    (`app.adapter.aliases_csv`)."""
+
+    def load(self) -> list[Alias]: ...
+
+
+class AliasRepository(Protocol):
+    """Словарь синонимов в хранилище, все записи — и непроверенные. Пишет только внутри единицы
+    работы. Сейчас — SQLite (`app.repository.aliases`) и in-memory
+    (`app.repository.memory.aliases`)."""
+
+    def aliases(self) -> list[Alias]:
+        """В порядке загрузки."""
+        ...
+
+    def replace(self, aliases: Iterable[Alias]) -> None:
+        """Словарь целиком заменяется переданным."""
+        ...
+
+
+class LexicalIndex(Protocol):
+    """Лексический поиск по текстам документов. Сейчас — TF-IDF на символьных n-граммах
+    (`app.adapter.tfidf`)."""
+
+    def build(self, documents: Mapping[str, str]) -> None:
+        """Индекс по документам «ключ → текст» заменяет прежний; одинаковые документы — один и
+        тот же индекс."""
+        ...
+
+    def search(self, query: str, keys: Collection[str] | None = None) -> list[Hit]:
+        """Документы с ненулевым скором по убыванию, при равенстве — по ключу; с `keys` — только
+        эти ключи."""
+        ...
+
+
+class VectorIndex(Protocol):
+    """Векторный поиск: скор ключа — максимум косинуса запроса с его векторами. Сейчас — полный
+    перебор по матрице (`app.adapter.vector_numpy`)."""
+
+    def build(self, documents: Sequence[tuple[str, Vector]]) -> None:
+        """Индекс по парам «ключ, вектор единичной длины» заменяет прежний; у ключа может быть
+        несколько векторов."""
+        ...
+
+    def search(self, query: Vector, keys: Collection[str] | None = None) -> list[Hit]:
+        """Все ключи по убыванию скора, при равенстве — по ключу; с `keys` — только эти."""
+        ...
+
+
 class Embeddings(Protocol):
     """Тексты → векторы размерности `dimension` единичной длины: нормализация — часть контракта,
-    вызывающий её не делает. Сейчас — заглушка `app.adapter.stub`."""
+    вызывающий её не делает. Запрос и документ модель может кодировать по-разному (инструкция к
+    запросу). Сейчас — OpenAI-совместимый HTTP (`app.adapter.embeddings_http`) и заглушка
+    `app.adapter.stub`."""
 
     @property
     def dimension(self) -> int: ...
 
-    def embed(self, texts: Sequence[str]) -> EmbeddingBatch:
-        """По вектору на текст, в порядке текстов."""
+    def embed_queries(self, texts: Sequence[str]) -> EmbeddingBatch:
+        """Поисковые запросы — по вектору на текст, в порядке текстов."""
+        ...
+
+    def embed_documents(self, texts: Sequence[str]) -> EmbeddingBatch:
+        """Документы индекса — по вектору на текст, в порядке текстов."""
         ...
 
     def health(self) -> ModelHealth: ...

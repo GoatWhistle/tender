@@ -12,18 +12,23 @@ from dataclasses import dataclass
 
 from app.usecase.catalog import CatalogQueries, CatalogSync
 from app.usecase.interface import (
+    AliasRepository,
+    AliasSource,
     CatalogRepository,
     CatalogSource,
     DecisionBackend,
     Embeddings,
     FactExtractor,
+    LexicalIndex,
     UnitOfWork,
+    VectorIndex,
 )
 from app.usecase.model_checks import (
     CheckedDecisionBackend,
     CheckedEmbeddings,
     CheckedFactExtractor,
 )
+from app.usecase.search import GroupIndex, GroupSearch
 
 
 @dataclass(frozen=True)
@@ -32,21 +37,34 @@ class Repositories[U: UnitOfWork]:
     общее хранилище."""
 
     catalog: Callable[[U], CatalogRepository]
+    aliases: Callable[[U], AliasRepository]
 
 
 @dataclass(frozen=True)
 class Usecases[U: UnitOfWork]:
     catalog_queries: Callable[[U], CatalogQueries]
     catalog_sync: Callable[[U], CatalogSync]
+    group_search: Callable[[U], GroupSearch]
 
 
 def build_usecases[U: UnitOfWork](
-    repositories: Repositories[U], *, catalog_source: CatalogSource
+    repositories: Repositories[U],
+    *,
+    catalog_source: CatalogSource,
+    alias_source: AliasSource,
+    embeddings: Embeddings,
+    lexical_index: LexicalIndex,
+    vector_index: VectorIndex,
 ) -> Usecases[U]:
+    """Индекс групп — один на сборку: его строят и читают сценарии поиска всех запросов."""
     r = repositories
+    index = GroupIndex(lexical_index, vector_index, checked_embeddings(embeddings))
     return Usecases(
         catalog_queries=lambda uow: CatalogQueries(uow, r.catalog(uow)),
-        catalog_sync=lambda uow: CatalogSync(uow, r.catalog(uow), catalog_source),
+        catalog_sync=lambda uow: CatalogSync(
+            uow, r.catalog(uow), catalog_source, r.aliases(uow), alias_source
+        ),
+        group_search=lambda uow: GroupSearch(uow, r.catalog(uow), r.aliases(uow), index),
     )
 
 

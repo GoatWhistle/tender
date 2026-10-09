@@ -6,9 +6,7 @@ from fastapi.testclient import TestClient
 from app.adapter.ktru_json import JsonKtruSource, dump_json
 from app.adapter.ktru_xml import XmlKtruSource
 from app.domain.catalog import Bound, CharacteristicKind, Value
-from app.repository.memory.catalog import MemoryCatalog
 from app.repository.memory.unit_of_work import MemoryStore, MemoryUnitOfWork
-from composition import Repositories, Usecases, build_usecases
 from main import sync_catalog
 from settings import Settings
 from tests.conftest import (
@@ -18,6 +16,7 @@ from tests.conftest import (
     HAMMER_CODE,
     ROBE_CODE,
     TABLE_CODE,
+    memory_usecases,
 )
 
 
@@ -63,13 +62,6 @@ def test_json_snapshot_round_trips(ktru_dir: Path, tmp_path: Path) -> None:
     dump_json(positions, tmp_path / "ktru.json")
 
     assert JsonKtruSource(tmp_path / "ktru.json").load() == positions
-
-
-def memory_usecases(ktru_dir: Path) -> Usecases[MemoryUnitOfWork]:
-    return build_usecases(
-        Repositories[MemoryUnitOfWork](catalog=lambda uow: MemoryCatalog(uow.store)),
-        catalog_source=XmlKtruSource(ktru_dir),
-    )
 
 
 def test_sync_is_idempotent_in_memory(ktru_dir: Path) -> None:

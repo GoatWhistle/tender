@@ -58,20 +58,21 @@ def test_stub_embeddings_are_deterministic_and_normalized() -> None:
     embeddings = checked_embeddings(StubEmbeddings(dimension=16))
     texts = ["Стол письменный", "Топор", "", "Стол письменный"]
 
-    first = embeddings.embed(texts)
-    second = embeddings.embed(texts)
+    first = embeddings.embed_documents(texts)
+    second = embeddings.embed_documents(texts)
 
     assert first == second
     assert len(first.vectors) == len(texts)
     assert all(len(v) == 16 and abs(norm(v) - 1) < 1e-9 for v in first.vectors)
     assert first.vectors[0] == first.vectors[3]
     assert first.vectors[0] != first.vectors[1]
+    assert embeddings.embed_queries(texts) == first
 
 
 def test_stub_embeddings_bring_shared_words_closer() -> None:
     """Гибридный поиск проверяется на заглушке целиком: общие слова — ближе векторы."""
     query, near, far = (
-        StubEmbeddings().embed(["стол письменный", "письменный стол", "топор"]).vectors
+        StubEmbeddings().embed_documents(["стол письменный", "письменный стол", "топор"]).vectors
     )
 
     def cos(a: tuple[float, ...], b: tuple[float, ...]) -> float:
@@ -80,13 +81,18 @@ def test_stub_embeddings_bring_shared_words_closer() -> None:
     assert cos(query, near) > cos(query, far)
 
 
-def test_valid_embeddings_pass_unchanged() -> None:
+EMBED = ["embed_queries", "embed_documents"]
+
+
+@pytest.mark.parametrize("call", EMBED)
+def test_valid_embeddings_pass_unchanged(call: str) -> None:
     stub = StubEmbeddings(dimension=2)
     stub.reply = EmbeddingBatch(vectors=((0.6, 0.8),), revision="r1")
 
-    assert checked_embeddings(stub).embed(["a"]) is stub.reply
+    assert getattr(checked_embeddings(stub), call)(["a"]) is stub.reply
 
 
+@pytest.mark.parametrize("call", EMBED)
 @pytest.mark.parametrize(
     "vectors",
     [
@@ -97,12 +103,14 @@ def test_valid_embeddings_pass_unchanged() -> None:
         pytest.param(((3.0, 4.0),), id="не нормирован"),
     ],
 )
-def test_invalid_embeddings_are_model_failure(vectors: tuple[tuple[float, ...], ...]) -> None:
+def test_invalid_embeddings_are_model_failure(
+    vectors: tuple[tuple[float, ...], ...], call: str
+) -> None:
     stub = StubEmbeddings(dimension=2)
     stub.reply = EmbeddingBatch(vectors=vectors, revision="r1")
 
     with pytest.raises(ModelFailure):
-        checked_embeddings(stub).embed(["a"])
+        getattr(checked_embeddings(stub), call)(["a"])
 
 
 # --- decision: выбор из вариантов
@@ -269,9 +277,14 @@ def test_invalid_extraction_is_model_failure(fact: ExtractedFact) -> None:
 # --- сбой и таймаут адаптера, здоровье
 
 
-def call_embeddings() -> tuple[Scripted, Callable[[], object]]:
+def call_embed_queries() -> tuple[Scripted, Callable[[], object]]:
     stub = StubEmbeddings()
-    return stub, lambda: checked_embeddings(stub).embed(["a"])
+    return stub, lambda: checked_embeddings(stub).embed_queries(["a"])
+
+
+def call_embed_documents() -> tuple[Scripted, Callable[[], object]]:
+    stub = StubEmbeddings()
+    return stub, lambda: checked_embeddings(stub).embed_documents(["a"])
 
 
 def call_choose() -> tuple[Scripted, Callable[[], object]]:
@@ -289,7 +302,7 @@ def call_extract() -> tuple[Scripted, Callable[[], object]]:
     return stub, lambda: checked_extractor(stub).extract(REQUEST)
 
 
-CALLS = [call_embeddings, call_choose, call_verify, call_extract]
+CALLS = [call_embed_queries, call_embed_documents, call_choose, call_verify, call_extract]
 
 
 @pytest.mark.parametrize("make", CALLS)

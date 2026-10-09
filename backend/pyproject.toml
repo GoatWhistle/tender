@@ -7,7 +7,10 @@ dependencies = [
     "alembic>=1.16",
     "fastapi>=0.115",
     "lxml>=5.0",
+    # Индексы поиска групп КТРУ — только в `app.adapter`.
+    "numpy>=1.26",
     "pydantic-settings>=2.8",
+    "scikit-learn>=1.5",
     "sqlalchemy>=2",
     "uvicorn[standard]>=0.34",
 ]
@@ -23,9 +26,7 @@ dev = [
 ]
 # Офлайн-артефакты `build_var.py` и скрипты замеров `evals/`.
 evals = [
-    "numpy>=1.26",
     "openpyxl>=3.1",
-    "scikit-learn>=1.5",
 ]
 
 [tool.uv]

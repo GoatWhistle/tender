@@ -4,7 +4,8 @@
 Набор не ходит в сеть и не читает выгрузки организаторов: `ktru_dir` пишет XML той же структуры,
 что у ЕИС. Дерево групп: стол — позиция без родителя и без потомков, шкаф — шаблон с двумя
 потомками, халат — шаблон без потомков, топор — позиция без родителя, у молотка родитель
-отсутствует в справочнике.
+отсутствует в справочнике. Словарь синонимов `ALIASES`: проверенные «колун» и «рабочий халат»,
+непроверенный «секач» и синоним несуществующей группы.
 """
 
 from collections.abc import Iterator
@@ -15,7 +16,16 @@ from alembic import command
 from alembic.config import Config
 from fastapi.testclient import TestClient
 
+from app.adapter.aliases_csv import CsvAliasSource
+from app.adapter.ktru_xml import XmlKtruSource
+from app.adapter.stub import StubEmbeddings
+from app.adapter.tfidf import TfidfLexicalIndex
+from app.adapter.vector_numpy import NumpyVectorIndex
 from app.domain.catalog import CATEGORIES
+from app.repository.memory.aliases import MemoryAliases
+from app.repository.memory.catalog import MemoryCatalog
+from app.repository.memory.unit_of_work import MemoryUnitOfWork
+from composition import Repositories, Usecases, build_usecases
 from main import create_app, sync_catalog
 from settings import BACKEND_DIR, Settings
 
@@ -129,9 +139,39 @@ def write_ktru(directory: Path) -> Path:
     return directory
 
 
+ALIASES = f"""group_code,alias,source,reviewed
+{AXE_CODE},колун,manual,true
+{AXE_CODE},секач,manual,false
+{ROBE_CODE},Рабочий  халат,smoke_v0,true
+00.00.00.000-00000000,призрак,manual,true
+"""
+
+
+def write_aliases(path: Path) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(ALIASES, encoding="utf-8")
+    return path
+
+
 @pytest.fixture
 def ktru_dir(tmp_path: Path) -> Path:
     return write_ktru(tmp_path / "ktru")
+
+
+def memory_usecases(ktru_dir: Path) -> Usecases[MemoryUnitOfWork]:
+    """Сценарии на in-memory хранилищах и заглушке эмбеддингов; словарь синонимов пишется рядом
+    с `ktru_dir`."""
+    return build_usecases(
+        Repositories[MemoryUnitOfWork](
+            catalog=lambda uow: MemoryCatalog(uow.store),
+            aliases=lambda uow: MemoryAliases(uow.store),
+        ),
+        catalog_source=XmlKtruSource(ktru_dir),
+        alias_source=CsvAliasSource(write_aliases(ktru_dir.parent / "aliases.csv")),
+        embeddings=StubEmbeddings(),
+        lexical_index=TfidfLexicalIndex(),
+        vector_index=NumpyVectorIndex(),
+    )
 
 
 def migrate(database_url: str) -> None:
@@ -143,7 +183,13 @@ def migrate(database_url: str) -> None:
 
 @pytest.fixture
 def settings(tmp_path: Path, ktru_dir: Path) -> Settings:
-    settings = Settings(database_url=f"sqlite:///{tmp_path / 'test.db'}", ktru_xml_dir=ktru_dir)
+    # Модель эмбеддингов не настроена, даже если она есть в `.env`: тесты не ходят в сеть.
+    settings = Settings(
+        database_url=f"sqlite:///{tmp_path / 'test.db'}",
+        ktru_xml_dir=ktru_dir,
+        aliases_csv=write_aliases(tmp_path / "aliases.csv"),
+        embeddings_url=None,
+    )
     migrate(settings.database_url)
     return settings
 

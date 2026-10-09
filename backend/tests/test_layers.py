@@ -5,8 +5,9 @@
 контроллеров; ORM — только в `repository`, FastAPI — только в `controller`; адаптеры и
 контроллеры не знают хранилищ, а хранилища — адаптеров и HTTP; in-memory хранилища не знают
 SQLAlchemy и ничего из `app`, кроме домена, портов и себя, заглушки моделей — тоже; библиотек
-моделей в `app` нет. Импорты читаются из исходников, а не из `sys.modules`: так ловится и импорт
-внутри функции, и импорт под `TYPE_CHECKING`; относительный импорт сводится к полному имени.
+моделей в `app` нет, библиотеки индексов поиска — только в адаптерах. Импорты читаются из
+исходников, а не из `sys.modules`: так ловится и импорт внутри функции, и импорт под
+`TYPE_CHECKING`; относительный импорт сводится к полному имени.
 """
 
 import ast
@@ -207,7 +208,6 @@ MODEL_LIBRARIES = {
     "flagembedding": "FlagEmbedding",
     "accelerate": "accelerate",
     "onnxruntime": "onnxruntime",
-    "numpy": "numpy",
     "vllm": "vllm",
     "openai": "openai",
 }
@@ -218,6 +218,17 @@ def test_model_libraries_stay_out_of_app() -> None:
     app_dir = BACKEND_DIR / "app"
     packages = [p for p in app_dir.iterdir() if (p / "__init__.py").is_file()]
     assert [v for p in sorted(packages) for v in violations(p, MODELS)] == []
+
+
+# Индексы поиска: TF-IDF и полный перебор по матрице — за портами `LexicalIndex` и `VectorIndex`.
+INDEXES = Rule(banned=("numpy", "sklearn", "scipy"))
+
+
+def test_index_libraries_live_only_in_adapters() -> None:
+    app_dir = BACKEND_DIR / "app"
+    packages = [p for p in app_dir.iterdir() if (p / "__init__.py").is_file()]
+    found = [v for p in sorted(packages) if p.name != "adapter" for v in violations(p, INDEXES)]
+    assert found == []
 
 
 def distribution(requirement: str) -> str:
@@ -237,7 +248,7 @@ def test_backend_dependencies_have_no_model_libraries() -> None:
     ("requirement", "name"),
     [
         ("torch~=2.3", "torch"),
-        ("numpy!=1.0", "numpy"),
+        ("onnxruntime!=1.0", "onnxruntime"),
         ("vllm @ https://example.org/vllm.whl", "vllm"),
         ("Sentence_Transformers[onnx]>=3; python_version>'3.11'", "sentence-transformers"),
     ],

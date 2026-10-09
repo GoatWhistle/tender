@@ -1,7 +1,8 @@
 # Tender Hack: автозаполнение характеристик СТЕ и подбор КТРУ
 
 План реализации — `docs/Предлагаемое решение.md`. Трекер и порядок работы — `AGENTS.md`.
-Поля КТРУ и дерево групп — `docs/Словарь данных КТРУ.md`.
+Поля КТРУ и дерево групп — `docs/Словарь данных КТРУ.md`. Поиск групп КТРУ по описанию —
+`docs/search.md`.
 
 ## Устройство
 
@@ -18,13 +19,16 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
     usecase/             сценарии на единице работы, порты (`interface.py`), общая проверка
                          ответов моделей (`model_checks.py`)
     controller/          роутеры FastAPI, схемы Pydantic, зависимости, ошибки → HTTP
-    adapter/             реализации портов: справочник из XML ЕИС и из JSON-снимка, заглушки
+    adapter/             реализации портов: справочник из XML ЕИС и из JSON-снимка, словарь
+                         синонимов из CSV, индексы поиска, эмбеддинги по HTTP, заглушки
                          моделей для тестов (`stub/`)
     repository/          хранилища на SQLite, ORM всех таблиц (`orm/`), in-memory (`memory/`)
   migrations/            миграции схемы
   tests/                 тесты через HTTP API и сценарии на in-memory хранилищах
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
-evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
+data/aliases.csv         словарь синонимов групп КТРУ с источником каждой записи
+evals/                   замеры: наборы `datasets/`, скрипты `smoke/`, `catalog/`, `search/`,
+                         отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
 services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
 ```
@@ -39,11 +43,14 @@ GPU decision-сервис запускается отдельно: `docker compo
 Условия запуска, API/curl, переменные окружения и CPU-проверки —
 [`services/openjev/README.md`](services/openjev/README.md).
 
+Поиску нужен сервис эмбеддингов: `cp backend/.env.example backend/.env` и задать
+`EMBEDDINGS_URL`. Без него приложение работает, а `POST /api/v1/search` отвечает 503.
+
 ```bash
 cd backend
 uv sync
 uv run alembic upgrade head                        # схема в var/tender.db
-uv run python -c 'import main; main.sync_catalog()'  # КТРУ из data/ в базу
+uv run python -c 'import main; main.sync_catalog()'  # КТРУ и синонимы из data/ в базу
 uv run uvicorn --factory main:create_app --reload  # http://localhost:8000/api/docs
 uv run python build_var.py                         # var/ktru.json, var/vocab.json для evals/
 ```
