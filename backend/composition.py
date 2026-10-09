@@ -12,18 +12,25 @@ from dataclasses import dataclass
 
 from app.usecase.catalog import CatalogQueries, CatalogSync
 from app.usecase.interface import (
+    AliasesRepository,
+    AliasesSource,
     CatalogRepository,
     CatalogSource,
     DecisionBackend,
     Embeddings,
     FactExtractor,
+    LexicalIndex,
+    SearchVectorsRepository,
     UnitOfWork,
+    VectorIndex,
 )
 from app.usecase.model_checks import (
     CheckedDecisionBackend,
     CheckedEmbeddings,
     CheckedFactExtractor,
 )
+from app.usecase.search import GroupSearch, SearchSnapshot
+from app.usecase.search_vectors import BuildSearchVectors
 
 
 @dataclass(frozen=True)
@@ -32,21 +39,55 @@ class Repositories[U: UnitOfWork]:
     общее хранилище."""
 
     catalog: Callable[[U], CatalogRepository]
+    aliases: Callable[[U], AliasesRepository] | None = None
+    saved_vectors: Callable[[U], SearchVectorsRepository] | None = None
 
 
 @dataclass(frozen=True)
 class Usecases[U: UnitOfWork]:
     catalog_queries: Callable[[U], CatalogQueries]
     catalog_sync: Callable[[U], CatalogSync]
+    group_search: Callable[[U], GroupSearch]
+    build_search_vectors: Callable[[U], BuildSearchVectors] | None
 
 
 def build_usecases[U: UnitOfWork](
-    repositories: Repositories[U], *, catalog_source: CatalogSource
+    repositories: Repositories[U],
+    *,
+    catalog_source: CatalogSource,
+    lexical: LexicalIndex | None = None,
+    vector: VectorIndex | None = None,
+    embeddings: Embeddings | None = None,
+    aliases_source: AliasesSource | None = None,
 ) -> Usecases[U]:
     r = repositories
+    vectors_factory = r.saved_vectors
+    snapshot = SearchSnapshot()
     return Usecases(
+        build_search_vectors=(
+            lambda uow: BuildSearchVectors(uow, r.catalog(uow), vectors_factory(uow), embeddings)
+        )
+        if vectors_factory is not None and embeddings is not None
+        else None,
+        group_search=lambda uow: GroupSearch(
+            uow,
+            r.catalog(uow),
+            snapshot,
+            lexical,
+            vector,
+            embeddings,
+            r.aliases(uow) if r.aliases is not None else None,
+            r.saved_vectors(uow) if r.saved_vectors is not None else None,
+        ),
         catalog_queries=lambda uow: CatalogQueries(uow, r.catalog(uow)),
-        catalog_sync=lambda uow: CatalogSync(uow, r.catalog(uow), catalog_source),
+        catalog_sync=lambda uow: CatalogSync(
+            uow,
+            r.catalog(uow),
+            catalog_source,
+            r.aliases(uow) if r.aliases is not None else None,
+            aliases_source,
+            r.saved_vectors(uow) if r.saved_vectors is not None else None,
+        ),
     )
 
 

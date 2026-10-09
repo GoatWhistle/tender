@@ -58,8 +58,8 @@ def test_stub_embeddings_are_deterministic_and_normalized() -> None:
     embeddings = checked_embeddings(StubEmbeddings(dimension=16))
     texts = ["Стол письменный", "Топор", "", "Стол письменный"]
 
-    first = embeddings.embed(texts)
-    second = embeddings.embed(texts)
+    first = embeddings.embed_queries(texts)
+    second = embeddings.embed_queries(texts)
 
     assert first == second
     assert len(first.vectors) == len(texts)
@@ -71,7 +71,7 @@ def test_stub_embeddings_are_deterministic_and_normalized() -> None:
 def test_stub_embeddings_bring_shared_words_closer() -> None:
     """Гибридный поиск проверяется на заглушке целиком: общие слова — ближе векторы."""
     query, near, far = (
-        StubEmbeddings().embed(["стол письменный", "письменный стол", "топор"]).vectors
+        StubEmbeddings().embed_queries(["стол письменный", "письменный стол", "топор"]).vectors
     )
 
     def cos(a: tuple[float, ...], b: tuple[float, ...]) -> float:
@@ -80,11 +80,12 @@ def test_stub_embeddings_bring_shared_words_closer() -> None:
     assert cos(query, near) > cos(query, far)
 
 
-def test_valid_embeddings_pass_unchanged() -> None:
+@pytest.mark.parametrize("method", ["embed_queries", "embed_documents"])
+def test_valid_embeddings_pass_unchanged(method: str) -> None:
     stub = StubEmbeddings(dimension=2)
     stub.reply = EmbeddingBatch(vectors=((0.6, 0.8),), revision="r1")
 
-    assert checked_embeddings(stub).embed(["a"]) is stub.reply
+    assert getattr(checked_embeddings(stub), method)(["a"]) is stub.reply
 
 
 @pytest.mark.parametrize(
@@ -97,12 +98,15 @@ def test_valid_embeddings_pass_unchanged() -> None:
         pytest.param(((3.0, 4.0),), id="не нормирован"),
     ],
 )
-def test_invalid_embeddings_are_model_failure(vectors: tuple[tuple[float, ...], ...]) -> None:
+@pytest.mark.parametrize("method", ["embed_queries", "embed_documents"])
+def test_invalid_embeddings_are_model_failure(
+    vectors: tuple[tuple[float, ...], ...], method: str
+) -> None:
     stub = StubEmbeddings(dimension=2)
     stub.reply = EmbeddingBatch(vectors=vectors, revision="r1")
 
     with pytest.raises(ModelFailure):
-        checked_embeddings(stub).embed(["a"])
+        getattr(checked_embeddings(stub), method)(["a"])
 
 
 # --- decision: выбор из вариантов
@@ -271,7 +275,7 @@ def test_invalid_extraction_is_model_failure(fact: ExtractedFact) -> None:
 
 def call_embeddings() -> tuple[Scripted, Callable[[], object]]:
     stub = StubEmbeddings()
-    return stub, lambda: checked_embeddings(stub).embed(["a"])
+    return stub, lambda: checked_embeddings(stub).embed_queries(["a"])
 
 
 def call_choose() -> tuple[Scripted, Callable[[], object]]:

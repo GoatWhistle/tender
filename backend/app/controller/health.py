@@ -3,7 +3,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.controller.deps import CatalogQueriesDep
+from app.controller.deps import CatalogQueriesDep, GroupSearchDep
 from app.controller.errors import error_responses
 from app.domain.errors import CatalogEmpty
 
@@ -26,3 +26,15 @@ def live() -> dict[str, str]:
 )
 def ready(queries: CatalogQueriesDep) -> Ready:
     return Ready(positions=queries.ready())
+
+
+class ModelReady(BaseModel):
+    model: str
+    revision: str
+    ready: bool
+
+
+@router.get("/models", summary="Состояние модели эмбеддингов и индекса поиска")
+def models(search: GroupSearchDep) -> ModelReady:
+    health = search.health()
+    return ModelReady(model=health.model, revision=health.revision, ready=health.ready)

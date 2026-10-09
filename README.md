@@ -26,6 +26,7 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
 evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
+artifacts/               подготовленная SQLite КТРУ с реальными векторами Qwen (в git)
 services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
 services/qwen/           Qwen3 embeddings и Qwen3.5 strict extractor, Docker и GPU-проверки
 ```
@@ -35,6 +36,10 @@ services/qwen/           Qwen3 embeddings и Qwen3.5 strict extractor, Docker и
 `usecase/catalog.py`, `controller/catalog.py`, `repository/catalog.py`.
 
 ## Разработка
+
+Гибридный поиск групп: `POST /api/v1/search`, TF-IDF + Qwen + синонимы, слияние RRF.
+Готовая база трёх категорий, запуск без векторизации документов, настройки сервиса,
+команда сборки и smoke-замер — [`docs/search.md`](docs/search.md).
 
 GPU decision-сервис запускается отдельно: `docker compose --profile gpu up --build -d openjev`.
 Условия запуска, API/curl, переменные окружения и CPU-проверки —

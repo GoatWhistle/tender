@@ -7,6 +7,7 @@ from collections.abc import Iterable, Sequence
 from types import TracebackType
 from typing import Protocol, Self
 
+from app.domain.aliases import Alias
 from app.domain.catalog import Position
 from app.domain.inference import (
     ChoiceBatch,
@@ -17,7 +18,10 @@ from app.domain.inference import (
     Extraction,
     ExtractionRequest,
     ModelHealth,
+    Vector,
 )
+from app.domain.search import RankedGroup
+from app.domain.search_vectors import SearchVectors
 
 
 class UnitOfWork(Protocol):
@@ -90,8 +94,12 @@ class Embeddings(Protocol):
     @property
     def dimension(self) -> int: ...
 
-    def embed(self, texts: Sequence[str]) -> EmbeddingBatch:
+    def embed_queries(self, texts: Sequence[str]) -> EmbeddingBatch:
         """По вектору на текст, в порядке текстов."""
+        ...
+
+    def embed_documents(self, texts: Sequence[str]) -> EmbeddingBatch:
+        """Документы без инструкции запроса; по вектору на текст."""
         ...
 
     def health(self) -> ModelHealth: ...
@@ -120,3 +128,31 @@ class FactExtractor(Protocol):
     def extract(self, request: ExtractionRequest) -> Extraction: ...
 
     def health(self) -> ModelHealth: ...
+
+
+class LexicalIndex(Protocol):
+    def build(self, groups: Sequence[Position]) -> None: ...
+
+    def rank(self, description: str, category: str | None = None) -> list[RankedGroup]: ...
+
+
+class VectorIndex(Protocol):
+    def build(self, groups: Sequence[Position], saved: SearchVectors | None = None) -> None: ...
+
+    def rank(self, query: Vector, category: str | None = None) -> list[RankedGroup]: ...
+
+
+class AliasesSource(Protocol):
+    def load(self) -> list[Alias]: ...
+
+
+class AliasesRepository(Protocol):
+    def all(self) -> list[Alias]: ...
+
+    def replace(self, aliases: Iterable[Alias]) -> None: ...
+
+
+class SearchVectorsRepository(Protocol):
+    def load(self) -> SearchVectors | None: ...
+
+    def replace(self, snapshot: SearchVectors | None) -> None: ...
