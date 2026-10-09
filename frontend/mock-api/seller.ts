@@ -255,6 +255,7 @@ export function createSeller(positions: SPosition[]) {
         detail: `Такого слова нет в справочнике КТРУ. Похоже на «${best.word}» — прочитали так.`,
         quote: orig,
         suggestion: best.word,
+        fact_key: null,
       });
     }
     return { text: out, issues };
@@ -340,6 +341,7 @@ export function createSeller(positions: SPosition[]) {
         detail: `Допустимые значения: ${labels.slice(0, 8).join(", ")}${labels.length > 8 ? "…" : ""}.`,
         quote,
         suggestion: null,
+          fact_key: name,
       });
     }
 
@@ -372,6 +374,7 @@ export function createSeller(positions: SPosition[]) {
             detail: `«${name}» измеряется в единицах ${DIM_NAMES[to.dim]} (${SHORT[targetAlias]}). Проверьте число и единицу.`,
             quote,
             suggestion: null,
+          fact_key: name,
           });
           return;
         }
@@ -390,6 +393,7 @@ export function createSeller(positions: SPosition[]) {
           detail: `По КТРУ допустимо: ${[...new Set(allowed.map((v) => v.label))].slice(0, 6).join("; ")}. Возможно, ошибка в числе или единице.`,
           quote,
           suggestion: null,
+          fact_key: name,
         });
         return;
       }
@@ -403,6 +407,7 @@ export function createSeller(positions: SPosition[]) {
           detail: `Формально подходит под «${hit.label}», но в разы больше нижней границы. Проверьте число и единицу измерения или подтвердите значение в таблице.`,
           quote,
           suggestion: null,
+          fact_key: name,
         });
         return;
       }
@@ -551,6 +556,7 @@ export function createSeller(positions: SPosition[]) {
             detail: `У позиции «${pos.name}» нет характеристики «${f.name}», значение «${f.value}» в карточку не попадёт.`,
             quote: f.quote,
             suggestion: null,
+            fact_key: null,
           });
     }
 
@@ -563,6 +569,7 @@ export function createSeller(positions: SPosition[]) {
           "Начните описание с названия товара, как в каталоге: например, «стол письменный», «шуруповерт», «халат». Затем перечислите материал, размеры и другие характеристики.",
         quote: null,
         suggestion: null,
+        fact_key: null,
       });
     else if (!compatible.length)
       issues.push({
@@ -573,6 +580,7 @@ export function createSeller(positions: SPosition[]) {
           "Характеристики противоречат всем найденным позициям. Посмотрите причины исключения в списке кандидатов и исправьте описание или значение.",
         quote: null,
         suggestion: null,
+        fact_key: null,
       });
 
     const filled = new Set(facts.filter((f) => f.state === "accepted").map((f) => f.key));

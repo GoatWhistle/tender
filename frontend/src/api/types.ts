@@ -146,6 +146,8 @@ export type Issue = {
   detail: string;
   quote: string | null;
   suggestion: string | null;
+  /** ключ факта, к которому относится замечание: его можно исправить значением из справочника */
+  fact_key: string | null;
 };
 
 export type Candidate = {

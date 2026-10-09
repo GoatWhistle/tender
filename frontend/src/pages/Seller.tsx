@@ -78,6 +78,7 @@ function Composer({
   onSubmit: (text: string) => void;
 }) {
   const [text, setText] = useState("");
+  const said = state?.messages.filter((m) => m.role === "user") ?? [];
   const submit = (e?: FormEvent) => {
     e?.preventDefault();
     if (!text.trim() || busy) return;
@@ -85,34 +86,44 @@ function Composer({
     setText("");
   };
   return (
-    <form className="panel composer" onSubmit={submit}>
-      <label htmlFor="describe" className="panel__title">
-        {state ? "Дополнить описание" : "Опишите товар"}
+    <form className="composer" onSubmit={submit}>
+      {said.length > 0 && (
+        <ol className="said" aria-label="Уже написано">
+          {said.map((m, i) => (
+            <li key={i}>{m.text}</li>
+          ))}
+        </ol>
+      )}
+      <label htmlFor="describe" className="sr-only">
+        {state ? "Дополнить описание" : "Описание товара"}
       </label>
       <textarea
         id="describe"
         className="composer__input"
-        rows={state ? 3 : 5}
+        rows={state ? 2 : 4}
         value={text}
+        autoFocus
         placeholder={
           state
-            ? "Например: глубина 60 см, каркас металлический"
-            : "Название товара и характеристики своими словами: материал, размеры, мощность…"
+            ? "Дополните описание: например, «глубина 60 см, каркас металлический»"
+            : "Опишите товар своими словами: что это, материал, размеры, мощность…"
         }
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            submit();
+          }
         }}
       />
-      <div className="composer__row">
+      <div className="composer__bar">
+        <span className="composer__hint">Enter — отправить, Shift + Enter — новая строка</span>
         <button className="pill pill--dark" disabled={busy || !text.trim()}>
-          {state ? "Дополнить" : "Подобрать КТРУ"}
+          {busy ? "Анализ…" : state ? "Дополнить" : "Подобрать КТРУ"}
         </button>
-        <span className="composer__hint">Ctrl + Enter</span>
       </div>
       {!state && (
-        <div className="examples">
-          <p className="examples__title">Примеры</p>
+        <div className="examples" aria-label="Примеры">
           {EXAMPLES.map((x) => (
             <button key={x} type="button" className="example" onClick={() => setText(x)}>
               {x}
@@ -124,113 +135,134 @@ function Composer({
   );
 }
 
-function NextAction({
+const ISSUE_LABEL: Record<Issue["kind"], string> = {
+  typo: "Опечатка",
+  unit: "Не та единица",
+  range: "Проверьте значение",
+  unknown_value: "Нет в справочнике",
+  no_match: "Не распознано",
+  not_in_position: "Не из этой позиции",
+};
+
+/** Карточки, которые «выпадают» под полем ввода: вопрос, замечания и итог. */
+function Cards({
   state,
   busy,
   answer,
+  edit,
   exportCard,
 }: {
   state: SessionState;
   busy: boolean;
   answer: (questionId: string, option: string | null) => void;
+  edit: (key: string, valueCode: string | null) => void;
   exportCard: () => void;
 }) {
   const q = state.next_question;
-  if (q)
-    return (
-      <section className="panel next" aria-labelledby="next-title">
-        <p className="next__eyebrow">Следующий шаг</p>
-        <h2 id="next-title" className="next__title">
-          {q.text}
-        </h2>
-        {q.hint && <p className="next__hint">{q.hint}</p>}
-        <div className="options">
-          {q.options.map((o) => (
-            <button
-              key={o.code}
-              className="option"
-              disabled={busy}
-              onClick={() => answer(q.id, o.code)}
-            >
-              {shortValue(o.label)}
-            </button>
-          ))}
-        </div>
-        {q.allow_unknown && (
-          <button className="textlink" disabled={busy} onClick={() => answer(q.id, null)}>
-            Не знаю — пропустить
-          </button>
-        )}
-      </section>
-    );
+  const cards: { key: string; node: JSX.Element; wide?: boolean }[] = [];
 
-  if (state.status === "no_match") {
-    const issue = state.issues.find((i) => i.kind === "no_match");
-    return (
-      <section className="panel next next--warn">
-        <p className="next__eyebrow">Что сделать</p>
-        <h2 className="next__title">{issue?.title ?? "Товар не распознан"}</h2>
-        <p className="next__hint">{issue?.detail}</p>
-      </section>
-    );
+  if (q)
+    cards.push({
+      key: q.id,
+      wide: q.options.length > 4,
+      node: (
+        <article className="card-x card-x--question">
+          <p className="card-x__eyebrow">Уточнение</p>
+          <h2 className="card-x__title">{q.text}</h2>
+          {q.hint && <p className="card-x__text">{q.hint}</p>}
+          <div className="options">
+            {q.options.map((o) => (
+              <button
+                key={o.code}
+                className="option"
+                disabled={busy}
+                onClick={() => answer(q.id, o.code)}
+              >
+                {shortValue(o.label)}
+              </button>
+            ))}
+          </div>
+          {q.allow_unknown && (
+            <button className="card-x__skip" disabled={busy} onClick={() => answer(q.id, null)}>
+              Не знаю — пропустить
+            </button>
+          )}
+        </article>
+      ),
+    });
+
+  for (const i of state.issues) {
+    const options = i.fact_key ? state.editable[i.fact_key] : undefined;
+    cards.push({
+      key: i.id,
+      node: (
+        <article className={`card-x card-x--issue card-x--${i.kind}`}>
+          <p className="card-x__eyebrow">
+            <span className="card-x__dot" aria-hidden="true" />
+            {ISSUE_LABEL[i.kind]}
+          </p>
+          <h2 className="card-x__title">{i.title}</h2>
+          <p className="card-x__text">{i.detail}</p>
+          {i.quote && <p className="card-x__quote">«{i.quote}»</p>}
+          {options && (
+            <label className="select card-x__fix">
+              <span className="sr-only">Исправить «{i.fact_key}»</span>
+              <select
+                value=""
+                disabled={busy}
+                onChange={(e) => edit(i.fact_key!, e.target.value)}
+              >
+                <option value="" disabled>
+                  Выбрать верное значение…
+                </option>
+                {options.map((o) => (
+                  <option key={o.code} value={o.code}>
+                    {shortValue(o.label)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </article>
+      ),
+    });
   }
 
-  const done = state.status === "complete";
-  return (
-    <section className={done ? "panel next next--done" : "panel next"}>
-      <p className="next__eyebrow">{done ? "Готово" : "Черновик"}</p>
-      <h2 className="next__title">
-        {done
-          ? "Все обязательные характеристики заполнены"
-          : `Не заполнено: ${state.missing_required.join(", ")}`}
-      </h2>
-      <p className="next__hint">
-        {done
-          ? "Проверьте значения в таблице и выгрузите карточку."
-          : "Без этих характеристик карточку можно сохранить только черновиком. Допишите их в описании или выберите значение в таблице."}
-      </p>
-      <button className="pill pill--dark" disabled={busy} onClick={exportCard}>
-        {done ? "Выгрузить карточку" : "Сохранить черновик"}
-      </button>
-    </section>
-  );
-}
+  if (!q && state.position) {
+    const done = state.status === "complete";
+    cards.push({
+      key: `result-${state.status}`,
+      node: (
+        <article className={done ? "card-x card-x--done" : "card-x card-x--draft"}>
+          <p className="card-x__eyebrow">{done ? "Готово" : "Черновик"}</p>
+          <h2 className="card-x__title">
+            {done ? "Обязательные характеристики заполнены" : "Не хватает обязательных полей"}
+          </h2>
+          <p className="card-x__text">
+            {done
+              ? "Проверьте значения в таблице ниже и выгрузите карточку."
+              : `Не заполнено: ${state.missing_required.join(", ")}. Допишите в описании или выберите значение в таблице — или сохраните черновик.`}
+          </p>
+          <button className="pill pill--dark" disabled={busy} onClick={exportCard}>
+            {done ? "Выгрузить карточку" : "Сохранить черновик"}
+          </button>
+        </article>
+      ),
+    });
+  }
 
-function History({ state }: { state: SessionState }) {
+  if (!cards.length) return null;
   return (
-    <section className="history" aria-label="История уточнений">
-      <p className="panel__title">История</p>
-      <ol>
-        {state.messages.map((m, i) => (
-          <li key={i} className={`bubble bubble--${m.role}`}>
-            {m.text}
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
-function Issues({ issues }: { issues: Issue[] }) {
-  const shown = issues.filter((i) => i.kind !== "no_match");
-  if (!shown.length) return null;
-  return (
-    <section className="issues" aria-labelledby="issues-title">
-      <h2 id="issues-title" className="block-title">
-        Проверка: {shown.length} {plural(shown.length, "замечание", "замечания", "замечаний")}
-      </h2>
-      <ul>
-        {shown.map((i) => (
-          <li key={i.id} className={`issue issue--${i.kind}`}>
-            <span className="issue__dot" aria-hidden="true" />
-            <div>
-              <p className="issue__title">{i.title}</p>
-              <p className="issue__detail">{i.detail}</p>
-              {i.quote && <p className="issue__quote">«{i.quote}»</p>}
-            </div>
-          </li>
-        ))}
-      </ul>
+    <section className="cards" aria-label="Уточнения и замечания" aria-live="polite">
+      {cards.map((c, n) => (
+        <div
+          key={c.key}
+          className={c.wide ? "cards__item cards__item--wide" : "cards__item"}
+          style={{ animationDelay: `${n * 60}ms` }}
+        >
+          {c.node}
+        </div>
+      ))}
     </section>
   );
 }
@@ -459,6 +491,7 @@ function download(name: string, data: unknown) {
 export function Seller() {
   const { state, busy, error, run, reset } = useSession();
   const id = state?.session_id;
+  const edit = (key: string, code: string | null) => run(() => sellerApi.editFact(id!, key, code));
 
   const exportCard = async () => {
     if (!id) return;
@@ -468,7 +501,7 @@ export function Seller() {
 
   return (
     <>
-      <section className="pagehead">
+      <section className="pagehead pagehead--compact">
         <nav className="crumbs" aria-label="Путь">
           <Link to="/">Главная</Link>
           <span>/</span>
@@ -476,66 +509,44 @@ export function Seller() {
         </nav>
         <h1 className="pagehead__title">Новая карточка товара</h1>
         <p className="pagehead__sub">
-          Опишите товар своими словами — подберём позицию КТРУ, приведём значения и единицы к
-          справочнику и подскажем, чего не хватает.
+          Опишите товар своими словами — подберём позицию КТРУ, приведём значения к справочнику и
+          подскажем, чего не хватает.
         </p>
       </section>
 
       <div className="seller">
-        <div className="seller__side">
-          <Composer
-            state={state}
-            busy={busy}
-            onSubmit={(text) =>
-              run(() => (id ? sellerApi.message(id, text) : sellerApi.create(text)))
-            }
-          />
-          {state && (
-            <NextAction
+        <Composer
+          state={state}
+          busy={busy}
+          onSubmit={(text) => run(() => (id ? sellerApi.message(id, text) : sellerApi.create(text)))}
+        />
+
+        {error && (
+          <div className="notice" role="alert">
+            <p className="notice__title">Не получилось</p>
+            <p>{error}</p>
+          </div>
+        )}
+
+        {state && (
+          <>
+            <Cards
               state={state}
               busy={busy}
               answer={(q, o) => run(() => sellerApi.answer(id!, q, o))}
+              edit={edit}
               exportCard={exportCard}
             />
-          )}
-          {state && <History state={state} />}
-          {state && (
+            <Summary state={state} busy={busy} />
+            <div className={busy ? "seller__details is-stale" : "seller__details"}>
+              <Characteristics state={state} busy={busy} edit={edit} />
+              <Candidates state={state} />
+            </div>
             <button className="textlink seller__reset" onClick={reset}>
               Начать новую карточку
             </button>
-          )}
-        </div>
-
-        <div className={busy && state ? "seller__main is-stale" : "seller__main"} aria-busy={busy}>
-          {error && (
-            <div className="notice" role="alert">
-              <p className="notice__title">Не получилось</p>
-              <p>{error}</p>
-            </div>
-          )}
-          {!state && !busy && (
-            <div className="seller__empty">
-              <p className="block-title">Здесь появится карточка</p>
-              <p className="muted">
-                Характеристики с цитатами из описания, единицы по ОКЕИ, кандидаты КТРУ и
-                замечания — после первого описания.
-              </p>
-            </div>
-          )}
-          {!state && busy && <div className="seller__empty skeleton" style={{ height: 320 }} />}
-          {state && (
-            <>
-              <Summary state={state} busy={busy} />
-              <Issues issues={state.issues} />
-              <Characteristics
-                state={state}
-                busy={busy}
-                edit={(key, code) => run(() => sellerApi.editFact(id!, key, code))}
-              />
-              <Candidates state={state} />
-            </>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </>
   );
