@@ -52,10 +52,11 @@ export type ProductSummary = {
   supplier: string;
   required_filled: number;
   required_total: number;
+  /** код характеристики → значение; для колонок таблицы */
+  values: Record<string, ProductValue>;
 };
 
 export type Product = ProductSummary & {
-  values: Record<string, ProductValue>;
   position: Position;
 };
 

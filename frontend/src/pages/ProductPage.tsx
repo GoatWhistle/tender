@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type Product } from "../api";
-import { CardSkeleton, ProductCard } from "../components/ProductCard";
+import { ProductTable } from "../components/ProductTable";
 import { Ring } from "../components/Ring";
-import { SpecPlate } from "../components/SpecPlate";
 import { ErrorBlock } from "../components/States";
 import { byName } from "../lib/categories";
 import { plural, price, shortLabel, unit } from "../lib/format";
@@ -91,11 +90,13 @@ function Related({ p }: { p: Product }) {
       <h2 id="related-title" className="section-title">
         Ещё в позиции «{p.position_name}»
       </h2>
-      <div className="grid grid--4">
-        {items
-          ? items.map((x) => <ProductCard key={x.id} p={x} />)
-          : Array.from({ length: 4 }, (_, i) => <CardSkeleton key={i} />)}
-      </div>
+      <ProductTable
+        items={items}
+        columns={[...p.position.characteristics]
+          .sort((a, b) => Number(b.required) - Number(a.required))
+          .slice(0, 4)}
+        skeletonRows={4}
+      />
     </section>
   );
 }
@@ -112,9 +113,6 @@ export function ProductPage() {
   return (
     <>
       <section className="phero">
-        <div className="phero__visual">
-          <SpecPlate category={p.category} code={p.position_code} size="hero" />
-        </div>
         <div className="phero__panel">
           <nav className="crumbs" aria-label="Путь">
             <Link to={`/catalog/${cat?.slug}`}>{p.category}</Link>

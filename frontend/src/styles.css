@@ -357,12 +357,6 @@ fieldset {
   --tone: var(--coral);
 }
 
-.plate--hero {
-  aspect-ratio: auto;
-  height: 100%;
-  min-height: 420px;
-  border-radius: var(--r-card);
-}
 
 .plate--tile {
   aspect-ratio: 4 / 5;
@@ -378,10 +372,6 @@ fieldset {
   transition: transform 400ms var(--ease-out);
 }
 
-.plate--hero .plate__glyph {
-  width: 40%;
-  max-width: 300px;
-}
 
 .plate__chip {
   position: absolute;
@@ -400,21 +390,6 @@ fieldset {
   font-variant-numeric: tabular-nums;
 }
 
-.plate--hero .plate__chip {
-  left: 24px;
-  bottom: 24px;
-  font-size: 14px;
-  padding: 8px 14px;
-}
-
-.plate__ring {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  padding: 3px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-}
 
 /* ---------- Кольцо полноты ---------- */
 
@@ -825,8 +800,7 @@ fieldset {
 }
 
 @media (hover: hover) {
-  .tile:hover .plate__glyph,
-  .card:hover .plate__glyph {
+  .tile:hover .plate__glyph {
     transform: translate(-50%, -54%);
   }
 }
@@ -1079,22 +1053,6 @@ fieldset {
   background: #33353c;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 32px var(--gap);
-  padding-top: 24px;
-  transition: opacity 160ms var(--ease-out);
-}
-
-.grid.is-stale {
-  opacity: 0.5;
-}
-
-.grid--4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
 .pager {
   display: flex;
   flex-wrap: wrap;
@@ -1114,55 +1072,6 @@ fieldset {
 .pager__page[aria-current="page"] {
   background: var(--charcoal);
   color: var(--cloud);
-}
-
-/* ---------- Карточка в сетке ---------- */
-
-.card {
-  display: flex;
-  flex-direction: column;
-}
-
-.card__body {
-  display: grid;
-  gap: 6px;
-  padding: 14px 4px 0;
-}
-
-.card__eyebrow {
-  color: var(--gray);
-  font-size: 13px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card__title {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-}
-
-.card__price {
-  margin-top: 2px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.card .plate {
-  transition: box-shadow 200ms var(--ease-out);
-}
-
-@media (hover: hover) {
-  .card:hover .plate {
-    box-shadow: var(--shadow-float);
-  }
 }
 
 .skeleton {
@@ -1195,25 +1104,24 @@ fieldset {
   padding: 104px var(--gutter) 32px;
   border-radius: var(--r-field);
   background: var(--sky);
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 32px;
 }
 
 .phero--empty {
-  display: block;
-  min-height: 560px;
+  min-height: 420px;
 }
 
 .phero__panel {
+  max-width: var(--max);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 16px 8px 8px;
+  gap: 24px;
+  padding: 24px 0 16px;
 }
 
 .phero__title {
-  font-size: 40px;
+  max-width: 24ch;
+  font-size: 48px;
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -1226,7 +1134,7 @@ fieldset {
 
 .facts {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
@@ -1355,6 +1263,162 @@ fieldset {
   margin-bottom: 0;
 }
 
+/* ---------- Таблица товаров ---------- */
+
+.ptable-wrap {
+  margin-top: 16px;
+  border-radius: var(--r-card);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  overflow-x: auto;
+  transition: opacity 160ms var(--ease-out);
+}
+
+.ptable-wrap.is-stale {
+  opacity: 0.5;
+}
+
+.ptable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ptable thead th {
+  position: sticky;
+  top: 0;
+  padding: 14px 16px;
+  background: var(--cloud);
+  color: var(--gray);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  vertical-align: bottom;
+  line-height: 1.25;
+}
+
+.ptable thead th:first-child {
+  border-top-left-radius: var(--r-card);
+  padding-left: 24px;
+}
+
+.ptable thead th:last-child {
+  border-top-right-radius: var(--r-card);
+  padding-right: 24px;
+}
+
+.ptable abbr {
+  text-decoration: none;
+}
+
+.ptable tbody th,
+.ptable td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 400;
+  border-top: 1px solid var(--line);
+}
+
+.ptable tbody tr:first-child > * {
+  border-top: 0;
+}
+
+.ptable tbody th:first-child {
+  padding-left: 24px;
+}
+
+.ptable tbody td:last-child {
+  padding-right: 24px;
+}
+
+.ptable tbody tr {
+  position: relative;
+  transition: background-color 120ms var(--ease-out);
+}
+
+.ptable tbody tr:not(.ptable__skeleton):hover {
+  background: #f6f8fc;
+}
+
+.ptable__title {
+  min-width: 220px;
+  max-width: 380px;
+}
+
+.ptable__link {
+  display: block;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+/* вся строка — ссылка на товар */
+.ptable__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.ptable__link:focus-visible {
+  outline: none;
+}
+
+.ptable__link:focus-visible::after {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+.ptable__sub {
+  display: block;
+  margin-top: 3px;
+  color: var(--gray);
+  font-size: 13px;
+}
+
+.ptable__code {
+  font-variant-numeric: tabular-nums;
+}
+
+.ptable__none {
+  color: #b5b9c0;
+}
+
+.ptable thead th:not(:first-child) {
+  min-width: 96px;
+}
+
+.ptable__fill,
+.ptable__fill-h {
+  width: 1%;
+  min-width: 0 !important;
+  text-align: center !important;
+}
+
+.ptable__num {
+  width: 1%;
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.ptable__price {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.skeleton--dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.ptable__skeleton .skeleton--title {
+  height: 18px;
+  width: 80%;
+}
+
 /* ---------- Сообщения ---------- */
 
 .notice {
@@ -1481,9 +1545,6 @@ main > .notice {
     padding-top: 152px;
   }
 
-  .grid--4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
   .features {
     grid-template-columns: 1fr;
@@ -1547,12 +1608,7 @@ main > .notice {
   }
 
   .phero {
-    grid-template-columns: 1fr;
-    padding-inline: 12px;
-  }
-
-  .plate--hero {
-    min-height: 260px;
+    padding-inline: 16px;
   }
 
   .phero__title {
@@ -1583,13 +1639,82 @@ main > .notice {
     display: grid;
   }
 
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px 12px;
-  }
 
   .specs__table {
     padding: 4px 16px;
+  }
+
+  .ptable thead {
+    display: none;
+  }
+
+  .ptable,
+  .ptable tbody,
+  .ptable tr,
+  .ptable tbody th,
+  .ptable td {
+    display: block;
+  }
+
+  .ptable tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 12px;
+    padding: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .ptable tbody tr:first-child {
+    border-top: 0;
+  }
+
+  .ptable tbody th,
+  .ptable td {
+    padding: 0 !important;
+    border: 0;
+  }
+
+  .ptable__title {
+    grid-column: 1;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .ptable__fill {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto;
+  }
+
+  .ptable td[data-label] {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: right !important;
+  }
+
+  .ptable td[data-label]::before {
+    content: attr(data-label);
+    color: var(--gray);
+    text-align: left;
+  }
+
+  .ptable td.ptable__fill::before {
+    content: none;
+  }
+
+  .ptable td.ptable__fill {
+    grid-column: 2;
+  }
+
+  .ptable td.ptable__num {
+    width: auto;
+  }
+
+  .ptable td.ptable__num .ptable__sub {
+    display: inline;
+    margin-left: 8px;
   }
 
   .spec {
@@ -1614,11 +1739,6 @@ main > .notice {
 @media (max-width: 480px) {
   .nav-wrap {
     position: relative;
-  }
-
-  .grid,
-  .grid--4 {
-    grid-template-columns: 1fr;
   }
 
   .search {

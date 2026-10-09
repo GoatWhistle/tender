@@ -6,7 +6,7 @@ import { Glyph } from "./Glyph";
 type Props = {
   category: string;
   code: string;
-  size?: "card" | "hero" | "tile";
+  size?: "card" | "tile";
   children?: ReactNode;
 };
 

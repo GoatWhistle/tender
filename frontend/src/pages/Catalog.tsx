@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { api, type Facet, type ProductPage, type Sort } from "../api";
-import { CardSkeleton, ProductCard } from "../components/ProductCard";
+import { ProductTable } from "../components/ProductTable";
 import { Empty, ErrorBlock } from "../components/States";
 import { bySlug } from "../lib/categories";
 import { plural, shortLabel } from "../lib/format";
@@ -208,6 +208,19 @@ export function Catalog() {
     [slug, key],
   );
 
+  const positionCode = params.get("position");
+  const positionInfo = useAsync(
+    () => (positionCode ? api.position(positionCode) : Promise.resolve(null)),
+    [positionCode],
+  );
+  // в колонках — обязательные характеристики позиции, затем остальные, не больше трёх
+  const info = positionInfo.data?.code === positionCode ? positionInfo.data : undefined;
+  const columns = info
+    ? [...info.characteristics]
+        .sort((a, b) => Number(b.required) - Number(a.required))
+        .slice(0, 3)
+    : [];
+
   if (slug && !category) return <ErrorBlock error={new Error("Нет такой категории")} />;
 
   const data = state.data;
@@ -296,11 +309,13 @@ export function Catalog() {
               </button>
             </Empty>
           )}
-          <div className={state.status === "loading" && data ? "grid is-stale" : "grid"}>
-            {data
-              ? data.items.map((p) => <ProductCard key={p.id} p={p} />)
-              : Array.from({ length: 8 }, (_, i) => <CardSkeleton key={i} />)}
-          </div>
+          {!(data && data.total === 0) && (
+            <ProductTable
+              items={data && (!positionCode || info) ? data.items : undefined}
+              columns={columns}
+              stale={state.status === "loading" && !!data}
+            />
+          )}
 
           {data && data.pages > 1 && (
             <nav className="pager" aria-label="Страницы">

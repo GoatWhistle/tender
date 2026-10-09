@@ -50,6 +50,7 @@ export function createCatalog(data: Fixtures) {
       supplier: x.supplier,
       required_filled: required.filter((c) => c.code in x.values).length,
       required_total: required.length,
+      values: x.values,
     };
   };
 
@@ -147,7 +148,6 @@ export function createCatalog(data: Fixtures) {
       if (!x) throw new Missing(id);
       return {
         ...productSummary(x),
-        values: x.values,
         position: positionOf(positionByCode.get(x.position_code)!),
       };
     },
