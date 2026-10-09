@@ -1,7 +1,7 @@
 """Мок-данные витрины: позиции КТРУ из var/ktru.json и названия СТЕ из var/ste_samples.json.
 
 Запуск из корня репозитория (после `backend/build_var.py`):
-    uvx python -I frontend/scripts/build_mock.py var frontend/src/api/mock/fixtures.json
+    uvx python -I frontend/scripts/build_mock.py var frontend/mock-api/fixtures.json
 
 Значения характеристик товаров выбираются из допустимых значений позиции, поэтому витрина
 показывает уже унифицированные карточки. Цены, поставщики и пропуски полей — выдуманные,

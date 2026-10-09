@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NotFound } from "../types";
-import { createMockApi } from "./mock";
+import { Missing, createCatalog } from "./catalog.ts";
 
 const char = (code: string, required: boolean, values: string[]) => ({
   code,
@@ -34,7 +33,7 @@ const product = (id: string, price: number, values: Record<string, string>) => (
   ),
 });
 
-const api = createMockApi(
+const api = createCatalog(
   {
     positions: [position],
     products: [
@@ -43,20 +42,19 @@ const api = createMockApi(
       product("c", 200, { legs: "2" }),
     ],
   },
-  () => 0,
 );
 
 describe("мок витрины", () => {
-  it("фильтр: И между характеристиками, ИЛИ внутри", async () => {
-    const page = await api.products({
+  it("фильтр: И между характеристиками, ИЛИ внутри", () => {
+    const page = api.products({
       position: "P1",
       filters: { color: ["white", "black"], legs: ["4"] },
     });
     expect(page.items.map((x) => x.id).sort()).toEqual(["a", "b"]);
   });
 
-  it("счётчики фасета не учитывают его собственный фильтр", async () => {
-    const page = await api.products({ position: "P1", filters: { color: ["white"] } });
+  it("счётчики фасета не учитывают его собственный фильтр", () => {
+    const page = api.products({ position: "P1", filters: { color: ["white"] } });
     const color = page.facets.find((f) => f.code === "color")!;
     expect(color.values.map((v) => [v.code, v.count])).toEqual([
       ["white", 1],
@@ -66,14 +64,14 @@ describe("мок витрины", () => {
     expect(legs.values.map((v) => [v.code, v.count])).toEqual([["4", 1]]);
   });
 
-  it("без позиции фильтры характеристик не применяются и фасетов нет", async () => {
-    const page = await api.products({ filters: { color: ["white"] } });
+  it("без позиции фильтры характеристик не применяются и фасетов нет", () => {
+    const page = api.products({ filters: { color: ["white"] } });
     expect(page.total).toBe(3);
     expect(page.facets).toEqual([]);
   });
 
-  it("сортировка по цене и полнота обязательных полей", async () => {
-    const page = await api.products({ sort: "price_asc" });
+  it("сортировка по цене и полнота обязательных полей", () => {
+    const page = api.products({ sort: "price_asc" });
     expect(page.items.map((x) => x.id)).toEqual(["b", "c", "a"]);
     expect(page.items.find((x) => x.id === "c")).toMatchObject({
       required_filled: 0,
@@ -81,12 +79,12 @@ describe("мок витрины", () => {
     });
   });
 
-  it("поиск по названию и коду позиции", async () => {
-    expect((await api.products({ q: "стол b" })).total).toBe(1);
-    expect((await api.products({ q: "P1" })).total).toBe(3);
+  it("поиск по названию и коду позиции", () => {
+    expect((api.products({ q: "стол b" })).total).toBe(1);
+    expect((api.products({ q: "P1" })).total).toBe(3);
   });
 
-  it("неизвестный товар — NotFound", async () => {
-    await expect(api.product("zzz")).rejects.toBeInstanceOf(NotFound);
+  it("неизвестный товар — Missing", () => {
+    expect(() => api.product("zzz")).toThrow(Missing);
   });
 });

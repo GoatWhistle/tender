@@ -19,7 +19,7 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
     repository/          хранилища на SQLite, ORM всех таблиц (`orm/`), in-memory (`memory/`)
   migrations/            миграции схемы
   tests/                 тесты через HTTP API и сценарии на in-memory хранилищах
-frontend/                витрина покупателя: React + Vite, мок API — frontend/README.md
+frontend/                витрина покупателя: React + Vite, мок-сервис API — frontend/README.md
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
 evals/                   замеры: наборы `datasets/`, скрипты `smoke/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь

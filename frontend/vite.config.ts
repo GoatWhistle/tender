@@ -1,7 +1,7 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
-// VITE_API=http — запросы к бэкенду через прокси; по умолчанию мок в браузере.
+// /api — на бэкенд (API_URL) или мок-сервис: `API_URL=http://localhost:8001 npm run dev`.
 export default defineConfig({
   plugins: [react()],
   server: {
