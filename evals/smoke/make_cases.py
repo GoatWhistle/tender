@@ -1,7 +1,8 @@
-"""Smoke-набор v0. Запуск из корня: uv run python evals/smoke/make_cases.py (нужен var/ktru.json).
+"""Smoke-набор v0. Запуск: cd backend && uv run python ../evals/smoke/make_cases.py (нужен var/ktru.json).
 Размеченный набор: реальные СТЕ + фразы продавца. gold — допустимые группы КТРУ, НЕТ = нет подходящей."""
-import json, pathlib
-from backend.catalog.ktru import load_json
+import json, pathlib, sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / 'backend'))
+from app.adapter.ktru_json import JsonKtruSource
 from sklearn.feature_extraction.text import TfidfVectorizer
 NONE="НЕТ"
 CASES=[
@@ -84,7 +85,7 @@ ATTRS=[
 ]
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 OUT=ROOT/'evals'/'datasets'/'smoke_v0.json'
-P=load_json(ROOT/'var'/'ktru.json')
+P=JsonKtruSource(ROOT/'var'/'ktru.json').load()
 groups={}
 for p in P:
     if p.is_template or not p.parent: groups.setdefault(p.name,p)
