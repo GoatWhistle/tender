@@ -1,11 +1,16 @@
-"""Справочник КТРУ: позиции, их характеристики и допустимые значения.
+"""Справочник КТРУ: позиции, их характеристики и допустимые значения, группы позиций.
 
 Позиция — официальная запись КТРУ с кодом; характеристика принадлежит позиции: одинаковый код
 характеристики в разных позициях не значит одинаковых допустимых значений. Значение —
 качественное (текст) или количественное (точное число либо диапазон с открытыми или закрытыми
 границами и единицей ОКЕИ). Отсутствующая граница и ноль — разные вещи.
+
+Группа КТРУ — шаблон (`isTemplate`) или позиция без родителя; её конечные позиции — потомки по
+`parentPositionInfo`, а группа без потомков — сама себе конечная позиция. Смысл полей XML —
+`docs/Словарь данных КТРУ.md`.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -67,14 +72,27 @@ class Value:
         return " и ".join(parts) + u
 
 
+class CharacteristicKind(StrEnum):
+    """Вид характеристики (`kind` в XML ЕИС): меняет ли заказчик значение и сколько выбирает."""
+
+    fixed = "fixed"  # 1 — неизменяемая заказчиком
+    single = "single"  # 2 — изменяемая, выбор одного значения
+    multiple = "multiple"  # 3 — изменяемая, выбор нескольких значений
+
+
 @dataclass(frozen=True)
 class Characteristic:
     code: str
     name: str
     quantitative: bool
     required: bool
-    multi: bool  # choiceType=2 — допускается выбор нескольких значений
+    kind: CharacteristicKind
     values: tuple[Value, ...] = ()
+
+    @property
+    def multi(self) -> bool:
+        """Допускается выбор нескольких значений."""
+        return self.kind == CharacteristicKind.multiple
 
     @property
     def units(self) -> list[str]:
@@ -94,11 +112,42 @@ class Position:
     rubrics: tuple[str, ...]
     characteristics: tuple[Characteristic, ...] = ()
 
+    @property
+    def group(self) -> str:
+        """Код группы КТРУ: свой, если позиция — группа, иначе родителя."""
+        if self.is_template or self.parent is None:
+            return self.code
+        return self.parent
+
+    @property
+    def is_group(self) -> bool:
+        return self.group == self.code
+
     def char(self, name: str) -> Characteristic | None:
         for c in self.characteristics:
             if c.name == name:
                 return c
         return None
+
+
+@dataclass(frozen=True)
+class Group:
+    """Группа КТРУ и её конечные позиции. Шаблон с потомками конечной позицией не считается."""
+
+    position: Position
+    leaves: tuple[Position, ...]
+
+    @classmethod
+    def of(cls, position: Position, children: Iterable[Position]) -> "Group":
+        """Группа `position` с потомками `children`; без потомков — сама себе конечная позиция."""
+        return cls(position, tuple(children) or (position,))
+
+
+def outside_tree(positions: Iterable[Position]) -> list[Position]:
+    """Позиции, чья группа не найдена среди `positions`: родитель отсутствует или сам не группа."""
+    positions = list(positions)
+    groups = {p.code for p in positions if p.is_group}
+    return [p for p in positions if p.group not in groups]
 
 
 def _fmt(x: float) -> str:

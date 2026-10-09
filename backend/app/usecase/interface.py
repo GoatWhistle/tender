@@ -57,6 +57,14 @@ class CatalogRepository(Protocol):
         """По коду; с `category` — только позиции этой категории выгрузки."""
         ...
 
+    def groups(self, category: str | None = None) -> list[Position]:
+        """Группы КТРУ (`Position.is_group`) по коду; с `category` — только этой категории."""
+        ...
+
+    def children(self, code: str) -> list[Position]:
+        """Позиции, у которых родитель — `code`, по коду."""
+        ...
+
     def count(self) -> int: ...
 
     def replace(self, positions: Iterable[Position]) -> None:

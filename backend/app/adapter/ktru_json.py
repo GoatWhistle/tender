@@ -6,7 +6,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from app.domain.catalog import Bound, Characteristic, Position, Value
+from app.domain.catalog import Bound, Characteristic, CharacteristicKind, Position, Value
 
 
 class JsonKtruSource:
@@ -35,7 +35,13 @@ def _value(v: dict[str, Any]) -> Value:
 
 def _position(p: dict[str, Any]) -> Position:
     chars = tuple(
-        Characteristic(**{**c, "values": tuple(_value(v) for v in c["values"])})
+        Characteristic(
+            **{
+                **c,
+                "kind": CharacteristicKind(c["kind"]),
+                "values": tuple(_value(v) for v in c["values"]),
+            }
+        )
         for c in p.pop("characteristics")
     )
     return Position(

@@ -19,7 +19,7 @@ class CatalogPosition(Base):
     okpd2: Mapped[str] = mapped_column(String(32))
     okpd2_name: Mapped[str]
     is_template: Mapped[bool]
-    parent: Mapped[str | None] = mapped_column(String(64))
+    parent: Mapped[str | None] = mapped_column(String(64), index=True)
     units: Mapped[list[str]] = mapped_column(JSON)
     rubrics: Mapped[list[str]] = mapped_column(JSON)
 
@@ -41,7 +41,8 @@ class PositionCharacteristic(Base):
     name: Mapped[str]
     quantitative: Mapped[bool]
     required: Mapped[bool]
-    multi: Mapped[bool]
+    # `CharacteristicKind`
+    kind: Mapped[str] = mapped_column(String(16))
 
     values: Mapped[list["AllowedValue"]] = relationship(
         order_by="AllowedValue.ordinal", cascade="all, delete-orphan"

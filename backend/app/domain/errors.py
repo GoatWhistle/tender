@@ -20,3 +20,8 @@ class PositionNotFound(DomainError):
 class CatalogEmpty(DomainError):
     code = "catalog_empty"
     message = "Справочник КТРУ не загружен"
+
+
+class GroupNotFound(DomainError):
+    code = "group_not_found"
+    message = "Группа КТРУ не найдена"
