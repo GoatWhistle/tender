@@ -12,6 +12,7 @@
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import StrEnum
 
 # Категории выгрузки организаторов: по одному XML КТРУ и одной выгрузке СТЕ на категорию.
@@ -33,10 +34,10 @@ class Value:
     text: str | None = None  # качественное значение
     unit: str | None = None  # наименование ОКЕИ
     unit_code: str | None = None
-    concrete: float | None = None
-    min: float | None = None
+    concrete: Decimal | None = None
+    min: Decimal | None = None
     min_op: Bound | None = None
-    max: float | None = None
+    max: Decimal | None = None
     max_op: Bound | None = None
 
     @property
@@ -48,10 +49,10 @@ class Value:
     def max_inclusive(self) -> bool:
         return self.max_op != Bound.less
 
-    def contains(self, x: float) -> bool:
+    def contains(self, x: Decimal) -> bool:
         """Число `x` допустимо этим значением."""
         if self.concrete is not None:
-            return abs(self.concrete - x) < 1e-9
+            return self.concrete == x
         if self.min is not None and not (x >= self.min if self.min_inclusive else x > self.min):
             return False
         if self.max is not None and not (x <= self.max if self.max_inclusive else x < self.max):
@@ -150,5 +151,6 @@ def outside_tree(positions: Iterable[Position]) -> list[Position]:
     return [p for p in positions if p.group not in groups]
 
 
-def _fmt(x: float) -> str:
-    return str(int(x)) if float(x).is_integer() else f"{x:g}"
+def _fmt(x: Decimal) -> str:
+    text = format(x, "f")
+    return text.rstrip("0").rstrip(".") if "." in text else text

@@ -20,7 +20,7 @@ from app.domain.inference import (
     ModelHealth,
     Verdict,
 )
-from app.usecase.interface import DecisionBackend, Embeddings, FactExtractor
+from app.usecase.interface import DecisionBackend, Embeddings, ModelFactExtractor
 
 TOLERANCE = 1e-3
 
@@ -131,7 +131,7 @@ class CheckedFactExtractor:
     """Только ссылки факта на запрос; цитата в сообщении и единица — проверки сценария
     извлечения."""
 
-    def __init__(self, inner: FactExtractor) -> None:
+    def __init__(self, inner: ModelFactExtractor) -> None:
         self._inner = inner
 
     def extract(self, request: ExtractionRequest) -> Extraction:

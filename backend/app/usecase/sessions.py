@@ -4,8 +4,10 @@ from dataclasses import replace
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from app.domain.catalog import Group
+from app.domain.catalog import Group, Position
 from app.domain.errors import CatalogEmpty, IdempotencyConflict, ModelFailure, SessionNotFound
+from app.domain.facts import CheckResult, Fact, RuleCheck
+from app.domain.rules import check_rule, explain, supported
 from app.domain.search import SearchResult
 from app.domain.sessions import (
     Alternative,
@@ -19,7 +21,13 @@ from app.domain.sessions import (
     SessionState,
     SessionStatus,
 )
-from app.usecase.interface import CatalogRepository, GroupSearcher, SessionsRepository, UnitOfWork
+from app.usecase.interface import (
+    CatalogRepository,
+    FactExtractor,
+    GroupSearcher,
+    SessionsRepository,
+    UnitOfWork,
+)
 
 
 class Sessions:
@@ -29,7 +37,9 @@ class Sessions:
         sessions: SessionsRepository,
         search: GroupSearcher,
         catalog: CatalogRepository,
+        fact_extractor: FactExtractor,
     ) -> None:
+        self._fact_extractor = fact_extractor
         self._search = search
         self._catalog = catalog
         self._uow = uow
@@ -82,16 +92,24 @@ class Sessions:
             raise CatalogEmpty()
         selected = result.groups[0].group
         group = Group.of(selected, self._catalog.children(selected.code))
-        candidates = tuple(
-            Candidate(p.code, p.name) for p in sorted(group.leaves, key=lambda p: p.code)
-        )
+        facts, warnings = self._fact_extractor.extract(state.messages, group)
+        candidates = tuple(_candidate(p, facts) for p in sorted(group.leaves, key=lambda p: p.code))
+        compatible = [c for c in candidates if not c.excluded]
+        status = SessionStatus.NEEDS_CLARIFICATION
+        if not compatible:
+            status = SessionStatus.CONFLICT
+        elif len(compatible) == 1 and not any(
+            c.result == CheckResult.UNSUPPORTED for c in compatible[0].checks
+        ):
+            status = SessionStatus.RESOLVED
         count = len(candidates)
         return replace(
             state,
-            status=SessionStatus.RESOLVED if count == 1 else SessionStatus.NEEDS_CLARIFICATION,
+            status=status,
+            facts=facts,
             path=NarrowingPath(selected.category, GroupRef(selected.code, selected.name), count),
             candidates=candidates,
-            candidate_counts=CandidateCounts(count, count),
+            candidate_counts=CandidateCounts(count, len(compatible), count - len(compatible)),
             alternatives=tuple(
                 Alternative(
                     hit.group.code,
@@ -102,5 +120,30 @@ class Sessions:
                 )
                 for hit in result.groups[1:5]
             ),
-            warnings=result.messages,
+            warnings=(*result.messages, *warnings),
         )
+
+
+def _candidate(position: Position, facts: tuple[Fact, ...]) -> Candidate:
+    checks = [check_rule(position, fact) for fact in facts]
+    reason = next(
+        (
+            explain(position, fact)
+            for fact, check in zip(facts, checks, strict=True)
+            if check.result == CheckResult.MISMATCH and fact.status == "accepted_from_text"
+        ),
+        None,
+    )
+    # Неподдержанное правило блокирует автоподтверждение даже без факта по этому полю.
+    if any(not supported(c) for c in position.characteristics):
+        checks.append(RuleCheck(None, CheckResult.UNSUPPORTED))
+    if not any(position.char(f.characteristic_name or "") for f in facts):
+        checks.append(RuleCheck(None, CheckResult.UNKNOWN))
+    return Candidate(
+        position.code,
+        position.name,
+        reason is not None,
+        reason,
+        tuple(c.fact_id for c in checks if c.result == CheckResult.MATCH and c.fact_id is not None),
+        tuple(checks),
+    )

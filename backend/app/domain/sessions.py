@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from app.domain.facts import ExclusionReason, Fact, RuleCheck
 from app.domain.search import MethodContribution
 
 
@@ -50,6 +51,9 @@ class Candidate:
     code: str
     name: str
     excluded: bool = False
+    reason: ExclusionReason | None = None
+    matched_facts: tuple[str, ...] = ()
+    checks: tuple[RuleCheck, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -75,7 +79,7 @@ class SessionState:
     alternatives: tuple[Alternative, ...] = ()
     candidates: tuple[Candidate, ...] = ()
     candidate_counts: CandidateCounts = CandidateCounts()
-    facts: tuple[object, ...] = ()
+    facts: tuple[Fact, ...] = ()
     errors: tuple[AnalysisError, ...] = ()
     warnings: tuple[str, ...] = ()
     next_question: None = None

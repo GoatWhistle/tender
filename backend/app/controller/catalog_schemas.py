@@ -1,5 +1,7 @@
 """Схемы справочника КТРУ в API."""
 
+from decimal import Decimal
+
 from pydantic import BaseModel
 
 from app.domain.catalog import Characteristic, CharacteristicKind, Group, Position, Value
@@ -10,10 +12,10 @@ class ValueOut(BaseModel):
     label: str
     text: str | None
     unit: str | None
-    concrete: float | None
-    min: float | None
+    concrete: Decimal | None
+    min: Decimal | None
     min_inclusive: bool | None
-    max: float | None
+    max: Decimal | None
     max_inclusive: bool | None
 
     @classmethod

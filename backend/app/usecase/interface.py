@@ -8,7 +8,8 @@ from types import TracebackType
 from typing import Protocol, Self
 
 from app.domain.aliases import Alias
-from app.domain.catalog import Position
+from app.domain.catalog import Group, Position
+from app.domain.facts import Fact
 from app.domain.inference import (
     ChoiceBatch,
     ChoiceQuestion,
@@ -22,7 +23,7 @@ from app.domain.inference import (
 )
 from app.domain.search import RankedGroup, SearchResult
 from app.domain.search_vectors import SearchVectors
-from app.domain.sessions import Revision, SessionState
+from app.domain.sessions import Message, Revision, SessionState
 
 
 class UnitOfWork(Protocol):
@@ -122,7 +123,7 @@ class DecisionBackend(Protocol):
     def health(self) -> ModelHealth: ...
 
 
-class FactExtractor(Protocol):
+class ModelFactExtractor(Protocol):
     """Генеративный извлекатель фактов (разделы 8.2–8.3 плана): ищет значения только
     переданных характеристик в переданных сообщениях. Сейчас — заглушка `app.adapter.stub`."""
 
@@ -176,3 +177,11 @@ class GroupSearcher(Protocol):
     def run(
         self, description: str, category: str | None = None, limit: int = 10
     ) -> SearchResult: ...
+
+
+class FactExtractor(Protocol):
+    """Извлечение фактов по всем сообщениям в контексте конечных позиций группы."""
+
+    def extract(
+        self, messages: Sequence[Message], group: Group
+    ) -> tuple[tuple[Fact, ...], tuple[str, ...]]: ...
