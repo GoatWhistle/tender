@@ -23,3 +23,15 @@ No Git repository or commit history is present, so existing message conventions 
 ## Security & Configuration
 
 Keep secrets and machine-specific settings out of version control. Provide example configuration with placeholder values and document required environment variables. Configure ignore rules before adding generated artifacts or local credentials.
+
+## Скилы и трекер
+
+- **Скилы** — `.claude/skills/` (mattpocock, см. `.claude/skills/README-pocock.md`). Трекер для
+  `to-spec` / `to-tickets` / `triage` / `wayfinder` / `implement` / `orchestrate-issues` и любой
+  работы с issues и PR — GitHub Issues через MCP `github`: [`.claude/tracker.md`](.claude/tracker.md).
+  Доменные доки — этот файл и `docs/`.
+- **Работа:** один issue — свежая сессия, свой worktree, ветка `feat/<slug>`, PR в `main` с
+  `Closes #N`. Порядок — по строке `Blocked by:` в теле issue.
+- **Без следов ИИ-агентов:** Claude, Claude Code, Codex и другие агенты не упоминаются как автор,
+  соавтор или источник в коммитах, PR, issues и комментариях — без `Co-Authored-By`,
+  `Generated with …` и AI-дисклеймеров.
