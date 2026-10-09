@@ -20,8 +20,9 @@ from app.domain.inference import (
     ModelHealth,
     Vector,
 )
-from app.domain.search import RankedGroup
+from app.domain.search import RankedGroup, SearchResult
 from app.domain.search_vectors import SearchVectors
+from app.domain.sessions import Revision, SessionState
 
 
 class UnitOfWork(Protocol):
@@ -156,3 +157,22 @@ class SearchVectorsRepository(Protocol):
     def load(self) -> SearchVectors | None: ...
 
     def replace(self, snapshot: SearchVectors | None) -> None: ...
+
+
+class SessionsRepository(Protocol):
+    """Снимки ревизий; запись только внутри единицы работы.
+
+    lock=True сериализует обновления до чтения снимка и проверки ключа.
+    """
+
+    def latest(self, session_id: str, *, lock: bool = False) -> SessionState | None: ...
+
+    def replay(self, session_id: str, key: str) -> Revision | None: ...
+
+    def save(self, revision: Revision) -> None: ...
+
+
+class GroupSearcher(Protocol):
+    def run(
+        self, description: str, category: str | None = None, limit: int = 10
+    ) -> SearchResult: ...

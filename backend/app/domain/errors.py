@@ -38,3 +38,13 @@ class ModelFailure(DomainError):
 class ModelNotConfigured(ModelFailure):
     code = "model_not_configured"
     message = "Модель эмбеддингов не настроена: задайте EMBEDDINGS_URL"
+
+
+class SessionNotFound(DomainError):
+    code = "session_not_found"
+    message = "Сессия не найдена"
+
+
+class IdempotencyConflict(DomainError):
+    code = "idempotency_conflict"
+    message = "Ключ идемпотентности уже использован с другим текстом"
