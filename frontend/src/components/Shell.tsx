@@ -56,6 +56,9 @@ function Nav() {
           ))}
         </nav>
         <Search />
+        <NavLink to="/sell" className="pill pill--dark nav__sell">
+          Поставщику
+        </NavLink>
       </header>
     </div>
   );
@@ -92,8 +95,12 @@ function Footer() {
         <div>
           <p className="footer__heading">Поставщику</p>
           <ul>
-            <li>Карточка по описанию</li>
-            <li>Проверка характеристик</li>
+            <li>
+              <Link to="/sell">Карточка по описанию</Link>
+            </li>
+            <li>
+              <Link to="/sell">Проверка характеристик</Link>
+            </li>
           </ul>
         </div>
       </div>

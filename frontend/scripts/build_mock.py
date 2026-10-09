@@ -132,6 +132,7 @@ def main(var: Path, out: Path) -> None:
                 | {
                     "values": [
                         {"code": v["code"], "label": v["text"] or label(v), "unit": v["unit"]}
+                        | {k: v[k] for k in ("concrete", "min", "min_op", "max", "max_op")}
                         for v in c["values"]
                     ]
                 }

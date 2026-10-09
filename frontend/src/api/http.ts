@@ -1,16 +1,31 @@
 import { NotFound } from "./types";
-import type { StorefrontApi, ProductQuery } from "./types";
+import type { ProductQuery, SellerApi, StorefrontApi } from "./types";
 
 // Эндпоинты витрины на бэкенде — `/api/v1/storefront/...`; фильтры — повторяющийся
 // параметр `f=<код характеристики>:<код значения>`.
 const BASE = "/api/v1/storefront";
 
-async function get<T>(path: string, params?: URLSearchParams): Promise<T> {
-  const qs = params?.toString();
-  const res = await fetch(`${BASE}${path}${qs ? `?${qs}` : ""}`);
-  if (res.status === 404) throw new NotFound(path);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, init);
+  if (res.status === 404) throw new NotFound(url);
+  if (!res.ok) {
+    const body = (await res.json().catch(() => null)) as { detail?: string } | null;
+    throw new Error(body?.detail ?? `${res.status} ${res.statusText}`);
+  }
   return (await res.json()) as T;
+}
+
+function get<T>(path: string, params?: URLSearchParams): Promise<T> {
+  const qs = params?.toString();
+  return request(`${BASE}${path}${qs ? `?${qs}` : ""}`);
+}
+
+function send<T>(method: "POST" | "PATCH", url: string, body?: unknown): Promise<T> {
+  return request(url, {
+    method,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body ?? {}),
+  });
 }
 
 function productParams(q: ProductQuery): URLSearchParams {
@@ -33,4 +48,23 @@ export const httpApi: StorefrontApi = {
   position: (code) => get(`/positions/${encodeURIComponent(code)}`),
   products: (query) => get("/products", productParams(query)),
   product: (id) => get(`/products/${encodeURIComponent(id)}`),
+};
+
+// Сессии карточки поставщика — `/api/v1/sessions/...` (раздел 12.1 плана).
+const SESSIONS = "/api/v1/sessions";
+
+export const sellerApi: SellerApi = {
+  create: (text) => send("POST", SESSIONS, { text }),
+  get: (id) => request(`${SESSIONS}/${encodeURIComponent(id)}`),
+  message: (id, text) => send("POST", `${SESSIONS}/${encodeURIComponent(id)}/messages`, { text }),
+  answer: (id, questionId, option) =>
+    send("POST", `${SESSIONS}/${encodeURIComponent(id)}/answers`, {
+      question_id: questionId,
+      option,
+    }),
+  editFact: (id, key, valueCode) =>
+    send("PATCH", `${SESSIONS}/${encodeURIComponent(id)}/facts/${encodeURIComponent(key)}`, {
+      value_code: valueCode,
+    }),
+  export: (id) => send("POST", `${SESSIONS}/${encodeURIComponent(id)}/export`),
 };

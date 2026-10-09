@@ -1,2 +1,2 @@
-export { httpApi as api } from "./http";
+export { httpApi as api, sellerApi } from "./http";
 export * from "./types";

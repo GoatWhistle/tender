@@ -11,6 +11,7 @@ import { Catalog } from "./pages/Catalog";
 import { Home } from "./pages/Home";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProductPage } from "./pages/ProductPage";
+import { Seller } from "./pages/Seller";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/catalog", element: <Catalog /> },
       { path: "/catalog/:slug", element: <Catalog /> },
       { path: "/product/:id", element: <ProductPage /> },
+      { path: "/sell", element: <Seller /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
