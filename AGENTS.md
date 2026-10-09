@@ -20,6 +20,12 @@
 `services/openjev/README.md`. CPU-тесты без весов:
 `PYTHONPATH=services/openjev backend/.venv/bin/python -m unittest discover -s tests/decisions -v`.
 
+Qwen-модели — `services/qwen/`; команды подготовки весов и запуска —
+`services/qwen/README.md`. Конфигурация:
+`docker compose -f compose.yaml -f compose.qwen.yaml --profile gpu --profile download config --quiet`.
+CPU strict-проверки:
+`PYTHONPATH=services/qwen python3 -m unittest discover -s tests/qwen -v`.
+
 ## Coding Style & Naming Conventions
 
 Ruff (line 100) и mypy strict — конфиг в `backend/pyproject.toml`. Тексты, docs, issues,
