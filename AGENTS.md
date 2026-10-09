@@ -15,6 +15,11 @@
 Команды — `README.md`, «Разработка». Проверки перед PR:
 `cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest`.
 
+Отдельный GPU-сервис — `services/openjev/`, порт runtime — `openjev_service/usecase/interface.py`.
+Запуск: `docker compose --profile gpu up --build -d openjev`; документация и проверки —
+`services/openjev/README.md`. CPU-тесты без весов:
+`PYTHONPATH=services/openjev backend/.venv/bin/python -m unittest discover -s tests/decisions -v`.
+
 ## Coding Style & Naming Conventions
 
 Ruff (line 100) и mypy strict — конфиг в `backend/pyproject.toml`. Тексты, docs, issues,

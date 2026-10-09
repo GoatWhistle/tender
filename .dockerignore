@@ -1,0 +1,10 @@
+.git
+.worktrees
+.venv
+var
+evals
+tests
+docs
+__pycache__
+*.pyc
+.env
