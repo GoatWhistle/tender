@@ -23,6 +23,18 @@ docker compose logs -f openjev
 curl --fail http://127.0.0.1:8000/health/ready
 ```
 
+Если уже есть архив готового образа `tender-openjev-4b-v5.tar`, сборка на целевой
+машине не нужна:
+
+```bash
+docker load -i tender-openjev-4b-v5.tar
+docker compose --profile gpu up --no-build -d openjev
+curl --fail http://127.0.0.1:8000/health/ready
+```
+
+Compose использует тег `tender-openjev:4b-v5`; образ предназначен для `linux/amd64`.
+Веса находятся в отдельном постоянном томе и не увеличивают архив образа.
+
 При первом старте сервис скачивает около 9.1 GB весов и небольшие файлы модели с
 фиксированной ревизии. Все SHA256 и размеры, включая официальный Python-код и tokenizer,
 закреплены в `openjev_service/adapter/model_manifest.json`. Файлы скачиваются во временный
