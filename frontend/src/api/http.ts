@@ -66,5 +66,4 @@ export const sellerApi: SellerApi = {
     send("PATCH", `${SESSIONS}/${encodeURIComponent(id)}/facts/${encodeURIComponent(key)}`, {
       value_code: valueCode,
     }),
-  export: (id) => send("POST", `${SESSIONS}/${encodeURIComponent(id)}/export`),
 };

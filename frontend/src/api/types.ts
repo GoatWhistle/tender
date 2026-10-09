@@ -191,14 +191,6 @@ export type SessionState = {
   next_question: Question | null;
 };
 
-export type ExportedCard = {
-  draft: boolean;
-  position_code: string | null;
-  position_name: string | null;
-  characteristics: { code: string; name: string; value: string; value_code: string | null }[];
-  missing_required: string[];
-};
-
 export interface SellerApi {
   create(text: string): Promise<SessionState>;
   get(id: string): Promise<SessionState>;
@@ -207,5 +199,4 @@ export interface SellerApi {
   answer(id: string, questionId: string, option: string | null): Promise<SessionState>;
   /** valueCode — новое значение из допустимых или null — удалить факт */
   editFact(id: string, key: string, valueCode: string | null): Promise<SessionState>;
-  export(id: string): Promise<ExportedCard>;
 }

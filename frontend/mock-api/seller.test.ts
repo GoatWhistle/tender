@@ -63,12 +63,13 @@ describe("мок карточки поставщика", () => {
     expect(st.issues[0].detail).toMatch(/стол письменный/);
   });
 
-  it("«не знаю» оставляет черновик, экспорт помечает его", () => {
+  it("«не знаю» оставляет черновик с незаполненными обязательными полями", () => {
     const api = seller();
     let st = api.create("Шуруповерт с ударом");
     while (st.next_question) st = api.answer(st.session_id, st.next_question.id, null);
     expect(st.status).toBe("draft");
-    expect(api.export(st.session_id).draft).toBe(true);
+    expect(st.card_complete).toBe(false);
+    expect(st.missing_required.length).toBeGreaterThan(0);
   });
 
   it("правка факта значением из справочника", () => {

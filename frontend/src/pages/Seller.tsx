@@ -150,13 +150,11 @@ function Cards({
   busy,
   answer,
   edit,
-  exportCard,
 }: {
   state: SessionState;
   busy: boolean;
   answer: (questionId: string, option: string | null) => void;
   edit: (key: string, valueCode: string | null) => void;
-  exportCard: () => void;
 }) {
   const q = state.next_question;
   const cards: { key: string; node: JSX.Element }[] = [];
@@ -239,12 +237,9 @@ function Cards({
           </h2>
           <p className="card-x__text">
             {done
-              ? "Проверьте значения в таблице ниже и выгрузите карточку."
-              : `Не заполнено: ${state.missing_required.join(", ")}. Допишите в описании или выберите значение в таблице — или сохраните черновик.`}
+              ? `Позиция КТРУ ${state.position.code} — «${state.position.name}». Проверьте значения в карточке товара.`
+              : `Не заполнено: ${state.missing_required.join(", ")}. Допишите в описании или выберите значение в карточке товара.`}
           </p>
-          <button className="pill pill--dark" disabled={busy} onClick={exportCard}>
-            {done ? "Выгрузить карточку" : "Сохранить черновик"}
-          </button>
         </article>
       ),
     });
@@ -473,27 +468,11 @@ function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
   );
 }
 
-function download(name: string, data: unknown) {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
 export function Seller() {
   const { state, busy, error, run, reset } = useSession();
   const id = state?.session_id;
   const edit = (key: string, code: string | null) => run(() => sellerApi.editFact(id!, key, code));
 
-  const exportCard = async () => {
-    if (!id) return;
-    const card = await sellerApi.export(id);
-    download(`${card.draft ? "draft" : "card"}-${card.position_code ?? id}.json`, card);
-  };
 
   return (
     <>
@@ -534,7 +513,6 @@ export function Seller() {
                 busy={busy}
                 answer={(q, o) => run(() => sellerApi.answer(id!, q, o))}
                 edit={edit}
-                exportCard={exportCard}
               />
               <button className="textlink seller__reset" onClick={reset}>
                 Начать новую карточку

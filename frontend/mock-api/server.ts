@@ -56,7 +56,6 @@ function sessionRoute(method: string, path: string, body: Body): unknown {
     return seller.answer(id, body.question_id ?? "", body.option ?? null);
   if (method === "PATCH" && action === "facts" && key)
     return seller.editFact(id, key, body.value_code ?? null);
-  if (method === "POST" && action === "export") return seller.export(id);
   throw new Missing(path);
 }
 

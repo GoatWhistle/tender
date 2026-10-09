@@ -3,7 +3,6 @@
 // найти ошибки, сузить кандидатов КТРУ и задать один следующий вопрос.
 import type {
   Candidate,
-  ExportedCard,
   Fact,
   Issue,
   Message,
@@ -727,23 +726,5 @@ export function createSeller(positions: SPosition[]) {
       return bump(s);
     },
 
-    export(id: string): ExportedCard {
-      const state = analyze(session(id));
-      const pos = state.position ? positions.find((p) => p.code === state.position!.code) : undefined;
-      return {
-        draft: !state.card_complete,
-        position_code: state.position?.code ?? null,
-        position_name: state.position?.name ?? null,
-        characteristics: state.facts
-          .filter((f) => f.state === "accepted")
-          .map((f) => ({
-            code: pos?.characteristics.find((c) => c.name === f.key)?.code ?? f.key,
-            name: f.name,
-            value: f.value,
-            value_code: f.value_code,
-          })),
-        missing_required: state.missing_required,
-      };
-    },
   };
 }
