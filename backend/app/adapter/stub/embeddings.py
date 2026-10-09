@@ -28,11 +28,14 @@ class StubEmbeddings(Scripted):
     def dimension(self) -> int:
         return self._dimension
 
-    def embed(self, texts: Sequence[str]) -> EmbeddingBatch:
+    def embed_queries(self, texts: Sequence[str]) -> EmbeddingBatch:
         self._raise_fault()
         if self.reply is not None:
             return self.reply
         return EmbeddingBatch(vectors=tuple(self._vector(t) for t in texts), revision=self.revision)
+
+    def embed_documents(self, texts: Sequence[str]) -> EmbeddingBatch:
+        return self.embed_queries(texts)
 
     def _vector(self, text: str) -> Vector:
         counts = [0.0] * self._dimension

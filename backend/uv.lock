@@ -1325,15 +1325,17 @@ source = { virtual = "." }
 dependencies = [
     { name = "alembic" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "lxml" },
+    { name = "numpy" },
     { name = "pydantic-settings" },
+    { name = "scikit-learn" },
     { name = "sqlalchemy" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "lxml-stubs" },
     { name = "mypy" },
     { name = "pytest" },
@@ -1341,35 +1343,31 @@ dev = [
     { name = "types-openpyxl" },
 ]
 evals = [
-    { name = "numpy" },
     { name = "openpyxl" },
-    { name = "scikit-learn" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "alembic", specifier = ">=1.16" },
     { name = "fastapi", specifier = ">=0.115" },
+    { name = "httpx", specifier = ">=0.28" },
     { name = "lxml", specifier = ">=5.0" },
+    { name = "numpy", specifier = ">=1.26" },
     { name = "pydantic-settings", specifier = ">=2.8" },
+    { name = "scikit-learn", specifier = ">=1.5" },
     { name = "sqlalchemy", specifier = ">=2" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.34" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx", specifier = ">=0.28" },
     { name = "lxml-stubs", specifier = ">=0.5" },
     { name = "mypy", specifier = ">=1.15" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "ruff", specifier = ">=0.11" },
     { name = "types-openpyxl", specifier = ">=3.1" },
 ]
-evals = [
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "openpyxl", specifier = ">=3.1" },
-    { name = "scikit-learn", specifier = ">=1.5" },
-]
+evals = [{ name = "openpyxl", specifier = ">=3.1" }]
 
 [[package]]
 name = "threadpoolctl"

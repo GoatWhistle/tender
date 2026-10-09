@@ -207,7 +207,6 @@ MODEL_LIBRARIES = {
     "flagembedding": "FlagEmbedding",
     "accelerate": "accelerate",
     "onnxruntime": "onnxruntime",
-    "numpy": "numpy",
     "vllm": "vllm",
     "openai": "openai",
 }
@@ -261,3 +260,14 @@ def test_product_does_not_import_evals() -> None:
         if _within(module, EVALS.banned)
     ]
     assert found == []
+
+
+INDEX_LIBRARIES = Rule(banned=("numpy", "sklearn"))
+
+
+def test_index_libraries_live_only_in_adapters() -> None:
+    app_dir = BACKEND_DIR / "app"
+    packages = [p for p in app_dir.iterdir() if (p / "__init__.py").is_file()]
+    assert [
+        v for p in packages if p.name != "adapter" for v in violations(p, INDEX_LIBRARIES)
+    ] == []

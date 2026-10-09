@@ -33,3 +33,8 @@ class ModelFailure(DomainError):
 
     code = "technical_error"
     message = "Модель недоступна или вернула невалидный ответ"
+
+
+class ModelNotConfigured(ModelFailure):
+    code = "model_not_configured"
+    message = "Модель эмбеддингов не настроена: задайте EMBEDDINGS_URL"

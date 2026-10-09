@@ -67,11 +67,13 @@ class CheckedEmbeddings:
     def dimension(self) -> int:
         return _call(lambda: self._inner.dimension)
 
-    def embed(self, texts: Sequence[str]) -> EmbeddingBatch:
-        return _call(lambda: self._embed(texts))
+    def embed_queries(self, texts: Sequence[str]) -> EmbeddingBatch:
+        return _call(lambda: self._check(texts, self._inner.embed_queries(texts)))
 
-    def _embed(self, texts: Sequence[str]) -> EmbeddingBatch:
-        batch = self._inner.embed(texts)
+    def embed_documents(self, texts: Sequence[str]) -> EmbeddingBatch:
+        return _call(lambda: self._check(texts, self._inner.embed_documents(texts)))
+
+    def _check(self, texts: Sequence[str], batch: EmbeddingBatch) -> EmbeddingBatch:
         dimension = self._inner.dimension
         if len(batch.vectors) != len(texts):
             raise _invalid(f"{len(batch.vectors)} векторов на {len(texts)} текстов")
