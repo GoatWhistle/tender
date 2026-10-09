@@ -1,6 +1,7 @@
 """Справочник КТРУ из XML-выгрузки ЕИС — реализация порта `CatalogSource`. lxml импортирует
 только этот модуль. Структура XML — `data/yandex_disk/КТРУ/Описание структуры xml с КТРУ.docx`."""
 
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 from lxml import etree
@@ -96,12 +97,12 @@ def _t(el: etree._Element, path: str) -> str | None:
     return r.text.strip() if r is not None and r.text else None
 
 
-def _f(s: str | None) -> float | None:
+def _f(s: str | None) -> Decimal | None:
     if s is None:
         return None
     try:
-        return float(s.replace(",", "."))
-    except ValueError:
+        return Decimal(s.replace(",", "."))
+    except InvalidOperation:
         return None
 
 

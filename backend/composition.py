@@ -21,6 +21,7 @@ from app.usecase.interface import (
     FactExtractor,
     GroupSearcher,
     LexicalIndex,
+    ModelFactExtractor,
     SearchVectorsRepository,
     SessionsRepository,
     UnitOfWork,
@@ -65,11 +66,14 @@ def build_usecases[U: UnitOfWork](
     embeddings: Embeddings | None = None,
     aliases_source: AliasesSource | None = None,
     searcher: GroupSearcher | None = None,
+    fact_extractor: FactExtractor | None = None,
 ) -> Usecases[U]:
     r = repositories
     vectors_factory = r.saved_vectors
     snapshot = SearchSnapshot()
     sessions_factory = r.sessions
+    if sessions_factory is not None and fact_extractor is None:
+        raise ValueError("Для сессий нужен FactExtractor")
 
     def group_search(uow: U) -> GroupSearch:
         return GroupSearch(
@@ -86,10 +90,14 @@ def build_usecases[U: UnitOfWork](
     return Usecases(
         sessions=(
             lambda uow: Sessions(
-                uow, sessions_factory(uow), searcher or group_search(uow), r.catalog(uow)
+                uow,
+                sessions_factory(uow),
+                searcher or group_search(uow),
+                r.catalog(uow),
+                fact_extractor,
             )
         )
-        if sessions_factory
+        if sessions_factory and fact_extractor is not None
         else None,
         build_search_vectors=(
             lambda uow: BuildSearchVectors(uow, r.catalog(uow), vectors_factory(uow), embeddings)
@@ -122,5 +130,5 @@ def checked_decision(decision: DecisionBackend) -> DecisionBackend:
     return CheckedDecisionBackend(decision)
 
 
-def checked_extractor(extractor: FactExtractor) -> FactExtractor:
+def checked_extractor(extractor: ModelFactExtractor) -> ModelFactExtractor:
     return CheckedFactExtractor(extractor)

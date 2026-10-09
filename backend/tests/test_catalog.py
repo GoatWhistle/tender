@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -31,9 +32,9 @@ def test_xml_keeps_actual_characteristics_and_bounds(ktru_dir: Path) -> None:
     assert length is not None and length.quantitative
     (value,) = length.values
     assert (value.min, value.min_op, value.max, value.max_op) == (
-        1,
+        Decimal(1),
         Bound.greater_or_equal,
-        2,
+        Decimal(2),
         Bound.less,
     )
     assert value.label() == "≥ 1 и < 2 Метр"
@@ -53,9 +54,9 @@ def test_kind_decides_multiple_choice_not_choice_type(ktru_dir: Path) -> None:
 
 
 def test_range_bounds_are_open_or_closed() -> None:
-    value = Value(code="v", min=1, min_op=Bound.greater, max=2)
+    value = Value(code="v", min=Decimal(1), min_op=Bound.greater, max=Decimal(2))
 
-    assert [value.contains(x) for x in (1, 1.5, 2, 2.5)] == [False, True, True, False]
+    assert [value.contains(Decimal(str(x))) for x in (1, 1.5, 2, 2.5)] == [False, True, True, False]
 
 
 def test_json_snapshot_round_trips(ktru_dir: Path, tmp_path: Path) -> None:
@@ -179,3 +180,36 @@ def test_broken_parent_link_is_reported_by_sync(
     hammer = client.get(f"/api/v1/positions/{HAMMER_CODE}").json()
     assert hammer["group"] == "25.73.30.120-00000000"
     assert client.get("/api/v1/groups/25.73.30.120-00000000").status_code == 404
+
+
+def test_exact_decimal_has_no_float_tolerance() -> None:
+    value = Value(code="precise", concrete=Decimal("1.00000000001"))
+    assert value.contains(Decimal("1.00000000001"))
+    assert not value.contains(Decimal("1.00000000002"))
+
+
+def test_precise_decimal_round_trips_xml_json_database(settings: Settings, tmp_path: Path) -> None:
+    from sqlalchemy.orm import Session
+
+    from app.repository.catalog import SqlCatalog
+    from app.repository.database import create_db_engine
+    from app.repository.unit_of_work import SqlUnitOfWork
+    from tests.conftest import TABLE_CODE
+
+    exact = "1.123456789012345678901234567890123456789"
+    xml = settings.ktru_xml_dir / "Мебель.xml"
+    xml.write_text(xml.read_text().replace("<oos:min>1</oos:min>", f"<oos:min>{exact}</oos:min>"))
+    source = XmlKtruSource(settings.ktru_xml_dir).load()
+    dump_json(source, tmp_path / "snapshot.json")
+    assert JsonKtruSource(tmp_path / "snapshot.json").load() == source
+    sync_catalog(settings)
+    engine = create_db_engine(settings.database_url)
+    try:
+        with Session(engine) as session, SqlUnitOfWork(session):
+            position = SqlCatalog(session).position(TABLE_CODE)
+            assert position is not None
+            length = position.char("Длина")
+            assert length is not None
+            assert length.values[0].min == Decimal(exact)
+    finally:
+        engine.dispose()

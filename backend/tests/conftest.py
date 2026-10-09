@@ -15,7 +15,7 @@ from alembic import command
 from alembic.config import Config
 from fastapi.testclient import TestClient
 
-from app.domain.catalog import CATEGORIES
+from app.domain.catalog import CATEGORIES, Group
 from main import create_app, sync_catalog
 from settings import BACKEND_DIR, Settings
 
@@ -158,3 +158,93 @@ def client(settings: Settings) -> Iterator[TestClient]:
 def synced(settings: Settings) -> Settings:
     sync_catalog(settings)
     return settings
+
+
+@pytest.fixture
+def table_group() -> "Group":
+    from decimal import Decimal
+
+    from app.domain.catalog import Characteristic, CharacteristicKind, Group, Position, Value
+
+    def leaf(code: str, maximum: str, material: str) -> Position:
+        return Position(
+            code,
+            "Стол",
+            "Мебель",
+            "",
+            "",
+            False,
+            "tables",
+            (),
+            (),
+            (
+                Characteristic(
+                    "width",
+                    "Ширина",
+                    True,
+                    True,
+                    CharacteristicKind.single,
+                    (
+                        Value(
+                            "width-range",
+                            min=Decimal("900"),
+                            max=Decimal(maximum),
+                            unit="мм",
+                            unit_code="003",
+                        ),
+                    ),
+                ),
+                Characteristic(
+                    "material",
+                    "Вид материала столешницы",
+                    False,
+                    True,
+                    CharacteristicKind.single,
+                    (Value("material", text=material),),
+                ),
+            ),
+        )
+
+    root = Position("tables", "Стол", "Мебель", "", "", True, None, (), ())
+    return Group(root, (leaf("table-small", "1100", "ДСП"), leaf("table-large", "1400", "ЛДСП")))
+
+
+@pytest.fixture
+def facts_api(settings: Settings, table_group: Group) -> Iterator[TestClient]:
+    from app.adapter.facts import DeterministicFactExtractor
+    from app.domain.catalog import Position
+    from app.domain.search import MethodContribution, SearchHit, SearchResult
+    from composition import build_usecases
+    from main import sql_repositories
+
+    class Source:
+        def load(self) -> list[Position]:
+            return [table_group.position, *table_group.leaves]
+
+    class Search:
+        def run(
+            self, description: str, category: str | None = None, limit: int = 10
+        ) -> SearchResult:
+            return SearchResult(
+                description,
+                (
+                    SearchHit(
+                        table_group.position,
+                        MethodContribution.of(1),
+                        MethodContribution.of(None),
+                        MethodContribution.of(None),
+                    ),
+                ),
+            )
+
+    source = Source()
+    sync_catalog(settings, source)
+    app = create_app(settings, source)
+    app.state.usecases = build_usecases(
+        sql_repositories(),
+        catalog_source=source,
+        searcher=Search(),
+        fact_extractor=DeterministicFactExtractor(),
+    )
+    with TestClient(app) as client:
+        yield client

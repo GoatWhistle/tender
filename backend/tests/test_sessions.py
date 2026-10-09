@@ -3,6 +3,7 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
+from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
 from app.domain.errors import ModelFailure
 from app.domain.search import MethodContribution, SearchHit, SearchResult
@@ -78,7 +79,10 @@ def search_api(synced: Settings) -> Iterator[tuple[TestClient, SearchStub]]:
     search = SearchStub(synced)
     app = create_app(synced)
     app.state.usecases = build_usecases(
-        sql_repositories(), catalog_source=XmlKtruSource(synced.ktru_xml_dir), searcher=search
+        sql_repositories(),
+        catalog_source=XmlKtruSource(synced.ktru_xml_dir),
+        searcher=search,
+        fact_extractor=DeterministicFactExtractor(),
     )
     with TestClient(app) as client:
         yield client, search
@@ -173,6 +177,7 @@ def test_memory_scenario(settings: Settings) -> None:
         ),
         catalog_source=source,
         searcher=SearchStub(settings),
+        fact_extractor=DeterministicFactExtractor(),
     )
     usecases.catalog_sync(uow).run()
     assert usecases.sessions is not None
@@ -239,7 +244,10 @@ def test_snapshot_survives_application_restart(synced: Settings) -> None:
     search = SearchStub(synced)
     app = create_app(synced)
     app.state.usecases = build_usecases(
-        sql_repositories(), catalog_source=XmlKtruSource(synced.ktru_xml_dir), searcher=search
+        sql_repositories(),
+        catalog_source=XmlKtruSource(synced.ktru_xml_dir),
+        searcher=search,
+        fact_extractor=DeterministicFactExtractor(),
     )
     with TestClient(app) as client:
         sid = client.post("/api/v1/sessions").json()["session_id"]

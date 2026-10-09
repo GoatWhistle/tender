@@ -1,11 +1,14 @@
 """SQLite-хранилище снимков; блокировка записи предшествует чтению ревизии."""
 
+import json
 from dataclasses import asdict
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
+from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck
 from app.domain.search import MethodContribution
 from app.domain.sessions import (
     Alternative,
@@ -42,7 +45,21 @@ def decode(data: dict[str, Any]) -> SessionState:
             )
             for a in data["alternatives"]
         ),
-        candidates=tuple(Candidate(**c) for c in data["candidates"]),
+        candidates=tuple(
+            Candidate(
+                c["code"],
+                c["name"],
+                c["excluded"],
+                ExclusionReason(**c["reason"]) if c.get("reason") else None,
+                tuple(c.get("matched_facts", [])),
+                tuple(
+                    RuleCheck(check["fact_id"], CheckResult(check["result"]))
+                    for check in c.get("checks", [])
+                ),
+            )
+            for c in data["candidates"]
+        ),
+        facts=tuple(_fact(f) for f in data.get("facts", [])),
         candidate_counts=CandidateCounts(**data["candidate_counts"]),
         errors=tuple(AnalysisError(**e) for e in data["errors"]),
         warnings=tuple(data["warnings"]),
@@ -98,8 +115,23 @@ class SqlSessions:
             SessionRevision(
                 session_id=state.session_id,
                 revision=state.revision,
-                snapshot=asdict(state),
+                snapshot=json.loads(json.dumps(asdict(state), default=_decimal_json)),
                 idempotency_key=revision.idempotency_key,
                 request_text=revision.request_text,
             )
         )
+
+
+def _decimal_json(value: object) -> str:
+    if isinstance(value, Decimal):
+        return str(value)
+    raise TypeError(f"Неподдержанный тип снимка: {type(value).__name__}")
+
+
+def _fact(data: dict[str, Any]) -> Fact:
+    value = data["value"]
+    if data["kind"] == "number":
+        value = Decimal(value)
+    elif data["kind"] == "range":
+        value = (Decimal(value[0]), Decimal(value[1]))
+    return Fact(**{**data, "value": value, "source": FactSource(**data["source"])})

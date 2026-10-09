@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.adapter.aliases import CsvAliasesSource
 from app.adapter.embeddings import OpenAIEmbeddings
+from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
 from app.adapter.search import MatrixIndex, TfidfIndex
 from app.controller.catalog import groups_router
@@ -53,6 +54,7 @@ def production_usecases(
     embeddings = checked_embeddings(embeddings) if embeddings is not None else None
     return build_usecases(
         sql_repositories(),
+        fact_extractor=DeterministicFactExtractor(),
         lexical=TfidfIndex() if embeddings is not None else None,
         vector=MatrixIndex(
             embeddings, model=settings.embeddings_model, revision=settings.embeddings_revision
