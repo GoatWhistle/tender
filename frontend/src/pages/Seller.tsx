@@ -117,7 +117,7 @@ function Composer({
         }}
       />
       <div className="composer__bar">
-        <span className="composer__hint">Enter — отправить, Shift + Enter — новая строка</span>
+        <span className="composer__hint">Enter — отправить · Shift + Enter — перенос</span>
         <button className="pill pill--dark" disabled={busy || !text.trim()}>
           {busy ? "Анализ…" : state ? "Дополнить" : "Подобрать КТРУ"}
         </button>
@@ -159,12 +159,11 @@ function Cards({
   exportCard: () => void;
 }) {
   const q = state.next_question;
-  const cards: { key: string; node: JSX.Element; wide?: boolean }[] = [];
+  const cards: { key: string; node: JSX.Element }[] = [];
 
   if (q)
     cards.push({
       key: q.id,
-      wide: q.options.length > 4,
       node: (
         <article className="card-x card-x--question">
           <p className="card-x__eyebrow">Уточнение</p>
@@ -257,7 +256,7 @@ function Cards({
       {cards.map((c, n) => (
         <div
           key={c.key}
-          className={c.wide ? "cards__item cards__item--wide" : "cards__item"}
+          className="cards__item"
           style={{ animationDelay: `${n * 60}ms` }}
         >
           {c.node}
@@ -303,7 +302,6 @@ function Characteristics({
                 <th scope="col">Характеристика</th>
                 <th scope="col">Из описания</th>
                 <th scope="col">Значение по КТРУ</th>
-                <th scope="col">Источник</th>
               </tr>
             </thead>
             <tbody>
@@ -318,6 +316,7 @@ function Characteristics({
                     </th>
                     <td data-label="Из описания" className="ftable__quote">
                       {f?.quote ? `«${f.quote}»` : "—"}
+                      <span className="ptable__sub">{f ? SOURCE[f.source] : "Не указано"}</span>
                     </td>
                     <td data-label="Значение">
                       {f && (
@@ -353,9 +352,6 @@ function Characteristics({
                           {f && <option value="__remove">Удалить значение</option>}
                         </select>
                       )}
-                    </td>
-                    <td data-label="Источник" className="ftable__source">
-                      {f ? SOURCE[f.source] : "Не указано"}
                     </td>
                   </tr>
                 );
@@ -514,38 +510,49 @@ export function Seller() {
         </p>
       </section>
 
-      <div className="seller">
-        <Composer
-          state={state}
-          busy={busy}
-          onSubmit={(text) => run(() => (id ? sellerApi.message(id, text) : sellerApi.create(text)))}
-        />
+      <div className={state ? "seller seller--split" : "seller"}>
+        <div className="seller__input">
+          <Composer
+            state={state}
+            busy={busy}
+            onSubmit={(text) =>
+              run(() => (id ? sellerApi.message(id, text) : sellerApi.create(text)))
+            }
+          />
 
-        {error && (
-          <div className="notice" role="alert">
-            <p className="notice__title">Не получилось</p>
-            <p>{error}</p>
-          </div>
-        )}
+          {error && (
+            <div className="notice" role="alert">
+              <p className="notice__title">Не получилось</p>
+              <p>{error}</p>
+            </div>
+          )}
+
+          {state && (
+            <>
+              <Cards
+                state={state}
+                busy={busy}
+                answer={(q, o) => run(() => sellerApi.answer(id!, q, o))}
+                edit={edit}
+                exportCard={exportCard}
+              />
+              <button className="textlink seller__reset" onClick={reset}>
+                Начать новую карточку
+              </button>
+            </>
+          )}
+        </div>
 
         {state && (
-          <>
-            <Cards
-              state={state}
-              busy={busy}
-              answer={(q, o) => run(() => sellerApi.answer(id!, q, o))}
-              edit={edit}
-              exportCard={exportCard}
-            />
+          <aside
+            className={busy ? "seller__card is-stale" : "seller__card"}
+            aria-label="Карточка товара"
+            aria-busy={busy}
+          >
             <Summary state={state} busy={busy} />
-            <div className={busy ? "seller__details is-stale" : "seller__details"}>
-              <Characteristics state={state} busy={busy} edit={edit} />
-              <Candidates state={state} />
-            </div>
-            <button className="textlink seller__reset" onClick={reset}>
-              Начать новую карточку
-            </button>
-          </>
+            <Characteristics state={state} busy={busy} edit={edit} />
+            <Candidates state={state} />
+          </aside>
         )}
       </div>
     </>
