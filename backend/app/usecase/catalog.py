@@ -4,8 +4,10 @@
 запуск справочник не дублирует.
 """
 
-from app.domain.catalog import Position
-from app.domain.errors import CatalogEmpty, PositionNotFound
+from dataclasses import dataclass
+
+from app.domain.catalog import Group, Position, outside_tree
+from app.domain.errors import CatalogEmpty, GroupNotFound, PositionNotFound
 from app.usecase.interface import CatalogRepository, CatalogSource, UnitOfWork
 
 
@@ -25,6 +27,19 @@ class CatalogQueries:
         with self._uow:
             return self._catalog.positions(category)
 
+    def groups(self, category: str | None = None) -> list[Position]:
+        with self._uow:
+            return self._catalog.groups(category)
+
+    def group(self, code: str) -> Group:
+        """Группа с конечными позициями; позиция, которая не группа, — `GroupNotFound`."""
+        with self._uow:
+            found = self._catalog.position(code)
+            children = self._catalog.children(code)
+        if found is None or not found.is_group:
+            raise GroupNotFound()
+        return Group.of(found, children)
+
     def ready(self) -> int:
         """Число позиций; пустой справочник — `CatalogEmpty`: без него анализ не работает."""
         with self._uow:
@@ -34,15 +49,23 @@ class CatalogQueries:
         return count
 
 
+@dataclass(frozen=True)
+class SyncReport:
+    positions: int
+    # Позиции, чья группа не найдена: родитель отсутствует в справочнике или сам не группа.
+    # Они хранятся, но ни в одну группу не входят.
+    outside_tree: tuple[Position, ...] = ()
+
+
 class CatalogSync:
     def __init__(self, uow: UnitOfWork, catalog: CatalogRepository, source: CatalogSource) -> None:
         self._uow = uow
         self._catalog = catalog
         self._source = source
 
-    def run(self) -> int:
-        """Кладёт справочник источника в хранилище; возвращает число позиций."""
+    def run(self) -> SyncReport:
+        """Кладёт справочник источника в хранилище."""
         positions = self._source.load()
         with self._uow:
             self._catalog.replace(positions)
-        return len(positions)
+        return SyncReport(len(positions), tuple(outside_tree(positions)))

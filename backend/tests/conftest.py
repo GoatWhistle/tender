@@ -2,7 +2,9 @@
 схемой из миграций и приложение на ней.
 
 Набор не ходит в сеть и не читает выгрузки организаторов: `ktru_dir` пишет XML той же структуры,
-что у ЕИС, на две позиции.
+что у ЕИС. Дерево групп: стол — позиция без родителя и без потомков, шкаф — шаблон с двумя
+потомками, халат — шаблон без потомков, топор — позиция без родителя, у молотка родитель
+отсутствует в справочнике.
 """
 
 from collections.abc import Iterator
@@ -34,7 +36,8 @@ TABLE = """
   <oos:characteristics>
     <oos:characteristic>
       <oos:code>ch-material</oos:code><oos:name>Материал столешницы</oos:name>
-      <oos:type>1</oos:type><oos:isRequired>true</oos:isRequired><oos:choiceType>1</oos:choiceType>
+      <oos:type>1</oos:type><oos:kind>2</oos:kind><oos:isRequired>true</oos:isRequired>
+      <oos:choiceType>2</oos:choiceType>
       <oos:values>
         <oos:value><oos:valueCode>v-ldsp</oos:valueCode>
           <oos:qualityDescription>ЛДСП</oos:qualityDescription></oos:value>
@@ -44,7 +47,8 @@ TABLE = """
     </oos:characteristic>
     <oos:characteristic>
       <oos:code>ch-length</oos:code><oos:name>Длина</oos:name>
-      <oos:type>2</oos:type><oos:isRequired>false</oos:isRequired><oos:choiceType>1</oos:choiceType>
+      <oos:type>2</oos:type><oos:kind>1</oos:kind><oos:isRequired>false</oos:isRequired>
+      <oos:choiceType>1</oos:choiceType>
       <oos:values>
         <oos:value><oos:valueCode>v-len</oos:valueCode>
           <oos:OKEI><oos:code>006</oos:code><oos:name>Метр</oos:name></oos:OKEI>
@@ -72,10 +76,52 @@ AXE = """
 """
 
 TABLE_CODE = "31.01.11.150-00000001"
+CABINET_CODE = "31.01.12.110-00000001"
+CABINET_CHILDREN = ["31.01.12.110-00000002", "31.01.12.110-00000003"]
+ROBE_CODE = "14.12.30.160-00000001"
+AXE_CODE = "25.73.30.110-00000002"
+HAMMER_CODE = "25.73.30.120-00000005"
+
+
+def position(code: str, name: str, *, template: bool = False, parent: str | None = None) -> str:
+    parent_info = f"<oos:parentPositionInfo><oos:code>{parent}</oos:code></oos:parentPositionInfo>"
+    return f"""
+<oos:position><oos:data>
+  <oos:code>{code}</oos:code>
+  <oos:name>{name}</oos:name>
+  <oos:OKPD2><oos:code>{code.split("-")[0]}</oos:code><oos:name>{name}</oos:name></oos:OKPD2>
+  <oos:isTemplate>{str(template).lower()}</oos:isTemplate>
+  {parent_info if parent else ""}
+</oos:data></oos:position>
+"""
+
+
+CABINET = position(CABINET_CODE, "Шкаф для одежды", template=True).replace(
+    "</oos:data>",
+    """<oos:characteristics><oos:characteristic>
+    <oos:code>ch-cab</oos:code><oos:name>Материал</oos:name>
+    <oos:type>1</oos:type><oos:kind>3</oos:kind><oos:choiceType>2</oos:choiceType>
+  </oos:characteristic></oos:characteristics></oos:data>""",
+)
+# Старая выгрузка без `kind`: вид характеристики берётся из `choiceType`.
+ROBE = position(ROBE_CODE, "Халат производственный", template=True).replace(
+    "</oos:data>",
+    """<oos:characteristics><oos:characteristic>
+    <oos:code>ch-size</oos:code><oos:name>Размер</oos:name>
+    <oos:type>1</oos:type><oos:choiceType>2</oos:choiceType>
+  </oos:characteristic></oos:characteristics></oos:data>""",
+)
+FURNITURE = (
+    TABLE
+    + CABINET
+    + position(CABINET_CHILDREN[0], "Шкаф для одежды металлический", parent=CABINET_CODE)
+    + position(CABINET_CHILDREN[1], "Шкаф для одежды деревянный", parent=CABINET_CODE)
+)
+TOOLS = AXE + position(HAMMER_CODE, "Молоток", parent="25.73.30.120-00000000")
 
 
 def write_ktru(directory: Path) -> Path:
-    positions = {"Мебель": TABLE, "Инструменты": AXE}
+    positions = {"Мебель": FURNITURE, "Одежда": ROBE, "Инструменты": TOOLS}
     directory.mkdir(parents=True, exist_ok=True)
     for category in CATEGORIES:
         text = HEAD + positions.get(category, "") + TAIL

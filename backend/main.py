@@ -7,6 +7,7 @@
 и старт контейнера, и командная строка (`python -c 'import main; main.sync_catalog()'`).
 """
 
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, closing
 
@@ -14,12 +15,14 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.adapter.ktru_xml import XmlKtruSource
+from app.controller.catalog import groups_router
 from app.controller.catalog import router as catalog_router
 from app.controller.errors import install_error_handlers
 from app.controller.health import router as health_router
 from app.repository.catalog import SqlCatalog
 from app.repository.database import create_db_engine
 from app.repository.unit_of_work import SqlUnitOfWork
+from app.usecase.catalog import SyncReport
 from app.usecase.interface import CatalogSource
 from composition import Repositories, Usecases, build_usecases
 from settings import Settings
@@ -65,19 +68,26 @@ def create_app(
     install_error_handlers(app)
     app.include_router(health_router)
     app.include_router(catalog_router)
+    app.include_router(groups_router)
     return app
 
 
 def sync_catalog(
     settings: Settings | None = None, catalog_source: CatalogSource | None = None
-) -> int:
-    """Кладёт справочник КТРУ в базу; возвращает число позиций. Схема должна быть на месте —
-    `alembic upgrade head`."""
+) -> SyncReport:
+    """Кладёт справочник КТРУ в базу. Схема должна быть на месте — `alembic upgrade head`.
+    Позиции вне дерева групп пишутся в лог предупреждением."""
     settings = settings or Settings()
     engine = create_db_engine(settings.database_url)
     try:
         usecases = production_usecases(settings, catalog_source)
         with closing(SqlUnitOfWork(Session(engine))) as uow:
-            return usecases.catalog_sync(uow).run()
+            report = usecases.catalog_sync(uow).run()
     finally:
         engine.dispose()
+    log = logging.getLogger(__name__)
+    for p in report.outside_tree:
+        log.warning(
+            "Позиция КТРУ %s вне групп: родитель %s не найден или не группа", p.code, p.parent
+        )
+    return report

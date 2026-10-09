@@ -22,6 +22,11 @@ class CatalogEmpty(DomainError):
     message = "Справочник КТРУ не загружен"
 
 
+class GroupNotFound(DomainError):
+    code = "group_not_found"
+    message = "Группа КТРУ не найдена"
+
+
 class ModelFailure(DomainError):
     """Модель не ответила, ответила с ошибкой или невалидно: это технический сбой, а не
     решение. Исходное исключение адаптера — в `__cause__`."""
