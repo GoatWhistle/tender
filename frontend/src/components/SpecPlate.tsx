@@ -1,23 +1,21 @@
-// «Табличка оборудования» на месте фото: рисунок категории, сетка и маркировка кода КТРУ.
+// Визуал вместо фото: светлое поле с оттенком категории, рисунок категории и код КТРУ.
+import type { ReactNode } from "react";
 import { byName } from "../lib/categories";
 import { Glyph } from "./Glyph";
 
 type Props = {
   category: string;
   code: string;
-  caption?: string;
-  size?: "card" | "hero";
+  size?: "card" | "hero" | "tile";
+  children?: ReactNode;
 };
 
-export function SpecPlate({ category, code, caption, size = "card" }: Props) {
+export function SpecPlate({ category, code, size = "card", children }: Props) {
   return (
-    <div className={`plate plate--${size}`}>
-      <div className="plate__grid" aria-hidden="true" />
+    <div className={`plate plate--${size} plate--${byName(category)?.slug ?? "none"}`}>
       <Glyph category={category} className="plate__glyph" />
-      <span className="plate__mark plate__mark--tl">{byName(category)?.index ?? "00"}</span>
-      <span className="plate__mark plate__mark--tr">{category}</span>
-      <span className="plate__mark plate__mark--bl">КТРУ {code}</span>
-      {caption && <span className="plate__mark plate__mark--br">{caption}</span>}
+      <span className="plate__chip">КТРУ {code}</span>
+      {children}
     </div>
   );
 }

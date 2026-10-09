@@ -8,7 +8,7 @@ export function ErrorBlock({ error, retry }: { error: Error; retry?: () => void 
       <div className="notice">
         <p className="notice__title">Не найдено</p>
         <p>Такой записи в каталоге нет. Возможно, её сняли с витрины.</p>
-        <Link className="textlink" to="/catalog">
+        <Link className="pill pill--dark" to="/catalog">
           В каталог
         </Link>
       </div>
@@ -18,7 +18,7 @@ export function ErrorBlock({ error, retry }: { error: Error; retry?: () => void 
       <p className="notice__title">Каталог не ответил</p>
       <p>{error.message}</p>
       {retry && (
-        <button className="btn btn--outline" onClick={retry}>
+        <button className="pill pill--dark" onClick={retry}>
           Повторить
         </button>
       )}

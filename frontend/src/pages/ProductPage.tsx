@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type Product } from "../api";
 import { CardSkeleton, ProductCard } from "../components/ProductCard";
+import { Ring } from "../components/Ring";
 import { SpecPlate } from "../components/SpecPlate";
 import { ErrorBlock } from "../components/States";
 import { byName } from "../lib/categories";
@@ -12,7 +13,7 @@ function CopyCode({ code }: { code: string }) {
   const [done, setDone] = useState(false);
   return (
     <button
-      className="btn btn--outline-light"
+      className="pill pill--dark"
       onClick={() =>
         navigator.clipboard?.writeText(code).then(() => {
           setDone(true);
@@ -37,13 +38,11 @@ function Characteristics({ p }: { p: Product }) {
         </h2>
         <div className="fill">
           <p className="fill__text">
-            Обязательные: {p.required_filled} из {p.required_total}
+            Обязательные
+            <br />
+            заполнены: {p.required_filled} из {p.required_total}
           </p>
-          <div className="fill__bar" aria-hidden="true">
-            {Array.from({ length: p.required_total }, (_, i) => (
-              <span key={i} className={i < p.required_filled ? "is-on" : ""} />
-            ))}
-          </div>
+          <Ring filled={p.required_filled} total={p.required_total} size={64} />
         </div>
       </div>
       <dl className="specs__table">
@@ -107,22 +106,22 @@ export function ProductPage() {
 
   if (state.status === "error") return <ErrorBlock error={state.error} />;
   const p = state.status === "ok" ? state.data : undefined;
-  if (!p) return <section className="hero hero--empty" aria-busy="true" />;
+  if (!p) return <section className="phero phero--empty" aria-busy="true" />;
 
   const cat = byName(p.category);
   return (
     <>
-      <section className="hero hero--product">
-        <div className="hero__visual">
-          <SpecPlate category={p.category} code={p.position_code} caption={p.id} size="hero" />
+      <section className="phero">
+        <div className="phero__visual">
+          <SpecPlate category={p.category} code={p.position_code} size="hero" />
         </div>
-        <div className="hero__panel">
-          <nav className="crumbs crumbs--light" aria-label="Путь">
+        <div className="phero__panel">
+          <nav className="crumbs" aria-label="Путь">
             <Link to={`/catalog/${cat?.slug}`}>{p.category}</Link>
             <span>/</span>
             <Link to={`/catalog/${cat?.slug}?position=${p.position_code}`}>{p.position_name}</Link>
           </nav>
-          <h1 className="hero__title">{p.title}</h1>
+          <h1 className="phero__title">{p.title}</h1>
           <dl className="facts">
             <div>
               <dt>Цена</dt>

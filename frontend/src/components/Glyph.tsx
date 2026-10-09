@@ -37,8 +37,9 @@ export function Glyph({ category, className }: { category: string; className?: s
       viewBox="0 0 112 112"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1"
-      strokeLinecap="square"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       vectorEffect="non-scaling-stroke"
       aria-hidden="true"
     >
@@ -50,23 +51,16 @@ export function Glyph({ category, className }: { category: string; className?: s
 export function Arrow({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path d="M4 12h15M13 6l6 6-6 6" strokeWidth="1.25" strokeLinecap="square" />
+      <path d="M5 12h14M13 6l6 6-6 6" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-export function Triangle({ className }: { className?: string }) {
+export function Search({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 32 32" fill="none" stroke="currentColor" aria-hidden="true">
-      <path d="M9 5l17 11-17 11z" strokeWidth="1.25" strokeLinejoin="miter" />
-    </svg>
-  );
-}
-
-export function Plus({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 10 10" stroke="currentColor" aria-hidden="true">
-      <path d="M5 1v8M1 5h8" strokeWidth="1" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <circle cx="11" cy="11" r="6.5" strokeWidth="1.75" />
+      <path d="m16 16 4 4" strokeWidth="1.75" strokeLinecap="round" />
     </svg>
   );
 }

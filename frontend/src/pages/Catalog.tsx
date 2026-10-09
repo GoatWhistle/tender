@@ -248,7 +248,7 @@ export function Catalog() {
       <div className="catalog">
         <aside className={filtersOpen ? "catalog__filters is-open" : "catalog__filters"}>
           <button
-            className="btn btn--outline catalog__toggle"
+            className="pill pill--light catalog__toggle"
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
@@ -291,7 +291,7 @@ export function Catalog() {
             <Empty>
               <p className="notice__title">Ничего не нашлось</p>
               <p>Уберите часть фильтров или измените запрос.</p>
-              <button className="btn btn--outline" onClick={() => setParams(new URLSearchParams())}>
+              <button className="pill pill--dark" onClick={() => setParams(new URLSearchParams())}>
                 Сбросить всё
               </button>
             </Empty>
