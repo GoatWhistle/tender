@@ -42,7 +42,7 @@ from app.domain.search import normalize  # noqa: E402
 EXPORTS = REPO / "data" / "yandex_disk" / "Примеры выгрузок"
 CATEGORIES = ("Инструменты", "Мебель", "Одежда")
 TABLE = REPO / "evals" / "datasets" / "ste_heads_v1.csv"
-HOLDOUT = REPO / "evals" / "datasets" / "ste_holdout_ids.txt"
+HOLDOUT = REPO / "evals" / "datasets" / "ste_holdout_v1_ids.txt"
 DATABASE = REPO / "artifacts" / "ktru-search.sqlite3"
 ALIASES = REPO / "data" / "aliases.csv"
 REPORTS = REPO / "evals" / "reports"
@@ -65,6 +65,9 @@ _NOT_BRAND = """ооо оао зао пао нпо тов ип общество 
 NOT_BRAND = frozenset(_NOT_BRAND.split())
 CODE = re.compile(r"\d{2}\.\d{2}\.\d{2}\.\d{3}-\d{8}")
 LABELS = ("group", "none", "generic", "skip")
+# Промах поиска — размеченная группа не первая хотя бы в 2 примерах из 3: сессия берёт первую.
+MISSES = 2
+TOP1 = re.compile(r"\[top1 (?P<first>\d+)/(?P<of>\d+), top5 \d+/\d+\]$")
 SEPARATOR = " | "
 REF_SEPARATOR = "; "
 
@@ -333,11 +336,28 @@ class AliasPlan:
     none: list[TableRow] = field(default_factory=list)
 
 
+def top1_count(top5: str, code: str) -> tuple[int, int]:
+    """Сколько примеров головы дали группу `code` первой и сколько примеров всего — из `top5`.
+    Группы нет в `top5` — `(0, число примеров)`; пустой `top5` — `(0, 0)`, фильтр не
+    применяется."""
+    examples = 0
+    for part in top5.split(SEPARATOR) if top5 else ():
+        match = TOP1.search(part)
+        if match is None:
+            continue
+        examples = int(match["of"])
+        if part.startswith(code + " "):
+            return int(match["first"]), examples
+    return 0, examples
+
+
 def plan_aliases(
     rows: Sequence[TableRow], existing: Sequence[Alias], groups: Collection[str]
 ) -> AliasPlan:
     """Строки словаря из пометок `group:<код>`: проверенные, источник — первый пример головы.
-    Код не группа справочника или голова уже в словаре — пропуск; голова на разные группы —
+    Синоним нужен только там, где поиск промахивается: группа не первая хотя бы в `MISSES`
+    примерах, иначе пропуск. Код не группа справочника или голова уже в словаре — пропуск;
+    голова на разные группы —
     `AliasConflict`; пометка вне `group:<код>`/`none`/`generic`/`skip`/пусто — `ValueError`."""
     plan = AliasPlan()
     labeled: list[tuple[TableRow, str]] = []
@@ -367,8 +387,12 @@ def plan_aliases(
     known = {normalize(a.alias) for a in existing}
     for row, code in labeled:
         alias = normalize(row.head)
+        first, examples = top1_count(row.top5, code)
         if code not in groups:
             plan.skipped.append(Skipped(row.head, f"код {code} не группа справочника"))
+        elif examples and examples - first < MISSES:
+            reason = f"поиск уже ставит группу первой: {first}/{examples} примеров"
+            plan.skipped.append(Skipped(row.head, reason))
         elif alias in known:
             plan.skipped.append(Skipped(row.head, "голова уже в словаре"))
         else:
