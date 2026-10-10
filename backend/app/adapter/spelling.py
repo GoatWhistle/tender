@@ -1,6 +1,8 @@
 """Подключаемый Qwen через OpenAI-совместимый chat/completions."""
 
 import json
+from collections.abc import Iterator
+from contextlib import contextmanager
 
 import httpx
 
@@ -13,6 +15,13 @@ from app.domain.sessions import Message
 class QwenSpelling:
     def __init__(self, url: str, model: str, api_key: str | None = None) -> None:
         self._url, self._model, self._key = url.rstrip("/"), model, api_key
+        self._http = httpx.Client(timeout=30)
+
+    @contextmanager
+    def _client(self) -> Iterator[httpx.Client]:
+        # Один клиент на адаптер: создание httpx.Client — десятки миллисекунд (SSL-контекст),
+        # а соединение с сервисом модели переиспользуется между вызовами. Клиент потокобезопасен.
+        yield self._http
 
     def suggest(self, message: Message) -> tuple[SpellingSuggestion, ...]:
         schema = {
@@ -37,7 +46,7 @@ class QwenSpelling:
             "additionalProperties": False,
         }
         try:
-            with httpx.Client(timeout=30) as client:
+            with self._client() as client:
                 response = client.post(
                     self._url + "/chat/completions",
                     headers={"Authorization": f"Bearer {self._key}"} if self._key else {},

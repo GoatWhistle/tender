@@ -1,7 +1,8 @@
 """OpenAI-совместимый сервис эмбеддингов: инструкция только запросам, нормализация векторов."""
 
 import math
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 
 import httpx
 
@@ -34,8 +35,13 @@ class OpenAIEmbeddings:
         self._revision = revision
         self._instruction = query_instruction
         self._batch_size = batch_size
-        self._timeout = timeout
-        self._transport = transport
+        self._http = httpx.Client(timeout=timeout, transport=transport, trust_env=False)
+
+    @contextmanager
+    def _client(self) -> Iterator[httpx.Client]:
+        # Один клиент на адаптер: создание httpx.Client — десятки миллисекунд (SSL-контекст),
+        # а соединение с сервисом модели переиспользуется между вызовами. Клиент потокобезопасен.
+        yield self._http
 
     @property
     def dimension(self) -> int:
@@ -53,9 +59,7 @@ class OpenAIEmbeddings:
 
     def _embed(self, texts: Sequence[str]) -> EmbeddingBatch:
         vectors: list[Vector] = []
-        with httpx.Client(
-            timeout=self._timeout, transport=self._transport, trust_env=False
-        ) as client:
+        with self._client() as client:
             for start in range(0, len(texts), self._batch_size):
                 batch = list(texts[start : start + self._batch_size])
                 response = client.post(
@@ -76,8 +80,8 @@ class OpenAIEmbeddings:
         return EmbeddingBatch(tuple(vectors), self._revision)
 
     def health(self) -> ModelHealth:
-        with httpx.Client(timeout=10, transport=self._transport, trust_env=False) as client:
-            response = client.get(f"{self._url}/models", headers=self._headers)
+        with self._client() as client:
+            response = client.get(f"{self._url}/models", headers=self._headers, timeout=10)
             response.raise_for_status()
             ready = any(row["id"] == self._model for row in response.json()["data"])
         return ModelHealth(self._model, self._revision, ready)
