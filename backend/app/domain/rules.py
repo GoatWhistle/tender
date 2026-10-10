@@ -6,7 +6,14 @@ from decimal import Decimal
 from fractions import Fraction
 
 from app.domain.catalog import Bound, Characteristic, Position, Value
-from app.domain.facts import CheckResult, ExclusionReason, Fact, RuleCheck, normalized
+from app.domain.facts import (
+    CheckResult,
+    ExclusionReason,
+    Fact,
+    RuleCheck,
+    component_key,
+    normalized,
+)
 from app.domain.units import UNITS
 
 
@@ -277,7 +284,13 @@ def selection_conflict(position: Position, facts: Sequence[Fact]) -> ExclusionRe
             for f in facts
             if f.accepted and f.characteristic_name == characteristic.name and f.kind == "text"
         ]
-        values = list(dict.fromkeys(str(f.value) for f in selected))
+        by_component: dict[str | None, list[Fact]] = {}
+        for fact in selected:
+            by_component.setdefault(component_key(fact), []).append(fact)
+        conflicting = next(
+            (items for items in by_component.values() if len({str(f.value) for f in items}) > 1), []
+        )
+        values = list(dict.fromkeys(str(f.value) for f in conflicting))
         if len(values) > 1:
             given = ", ".join(values)
             return ExclusionReason(

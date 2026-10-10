@@ -219,11 +219,16 @@ def group_api(settings: Settings) -> Iterator[Callable[..., TestClient]]:
     from app.adapter.value_aliases import ReviewedValueAliases
     from app.domain.catalog import Position
     from app.domain.search import MethodContribution, SearchHit, SearchResult
-    from app.usecase.interface import SpellingService
+    from app.usecase.interface import FactExtractor, SpellingService
     from composition import build_usecases
     from main import sql_repositories
 
-    def build(group: Group, *, spelling: SpellingService | None = None) -> TestClient:
+    def build(
+        group: Group,
+        *,
+        spelling: SpellingService | None = None,
+        fact_extractor: FactExtractor | None = None,
+    ) -> TestClient:
         class Source:
             def load(self) -> list[Position]:
                 return [group.position, *group.leaves]
@@ -247,7 +252,8 @@ def group_api(settings: Settings) -> Iterator[Callable[..., TestClient]]:
             sql_repositories(),
             catalog_source=source,
             searcher=Search(),
-            fact_extractor=DeterministicFactExtractor(ReviewedValueAliases().all()),
+            fact_extractor=fact_extractor
+            or DeterministicFactExtractor(ReviewedValueAliases().all()),
             enum_matcher=DamerauMatcher(),
             value_aliases=ReviewedValueAliases(),
             spelling=spelling,

@@ -84,7 +84,7 @@ def merge(
     parsed: Sequence[Fact], dialog: Sequence[DialogTurn], messages: Sequence[str]
 ) -> tuple[Fact, ...]:
     """Факты парсера и ответов по порядку событий: ответ замещает факты по тому же полю из
-    сообщений до него, значение из более позднего сообщения замещает ответ. `messages` — ID
+    сообщений до него; позднее сообщение остаётся для проверки конфликта. `messages` — ID
     сообщений по порядку."""
     order = {m: i for i, m in enumerate(messages)}
 
@@ -96,15 +96,14 @@ def merge(
         if turn.fact is None:
             continue
         name = turn.fact.characteristic_name
-        later = False
         for i, fact in enumerate(facts):
             if fact.characteristic_name != name or fact.status == "superseded":
                 continue
             if fact.origin == "parser" and newer(fact, turn):
-                later = True
+                continue
             else:
                 facts[i] = replace(fact, status="superseded")
-        facts.append(replace(turn.fact, status="superseded") if later else turn.fact)
+        facts.append(turn.fact)
     # Привязанный факт парсера бывает `ambiguous` только из-за противоречия; если противоречащие
     # ему значения замещены, он снова принят.
     conflicting: dict[str, int] = {}
@@ -138,14 +137,20 @@ def skipped(dialog: Sequence[DialogTurn], messages: int) -> list[str]:
 
 
 def derive(
-    position: Position, facts: Sequence[Fact], *, unconfirmed: frozenset[str] = frozenset()
+    position: Position,
+    facts: Sequence[Fact],
+    *,
+    suppressed: set[str | None] | None = None,
+    unconfirmed: frozenset[str] = frozenset(),
 ) -> tuple[tuple[Fact, ...], tuple[RequiredField, ...]]:
     """Для выбранной позиции: обязательные поля с единственным допустимым значением
     заполняются из каталога, остальные без принятого факта — недостающие."""
     known = {f.characteristic_name for f in facts if f.accepted}
-    disputed = set(_conflicts(list(facts))) | {
-        f.characteristic_name for f in facts if f.normalization_rule == "explicit_unverified"
-    }
+    disputed = (
+        (suppressed or set())
+        | set(_conflicts(list(facts)))
+        | {f.characteristic_name for f in facts if f.normalization_rule == "explicit_unverified"}
+    )
     derived: list[Fact] = []
     missing: list[RequiredField] = []
     for characteristic in position.characteristics:
@@ -178,7 +183,7 @@ def next_step(
             if not characteristic.required or name in known or name in off:
                 continue
             options = _options(name, remaining, "")
-            if len(options) > 1:
+            if options:
                 return Step(_question(question_id, "required", name, [o for o, _ in options]))
         return Step(None)
     repeated = {t.characteristic for t in dialog if t.fact is None}

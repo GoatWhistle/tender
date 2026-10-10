@@ -14,6 +14,9 @@ from app.domain import errors as e
 
 STATUS: dict[type[e.DomainError], int] = {
     e.DomainError: 400,
+    e.StaleRevision: 409,
+    e.InvalidFactEdit: 422,
+    e.FactNotFound: 404,
     e.SessionNotFound: 404,
     e.IdempotencyConflict: 409,
     e.StaleQuestion: 409,

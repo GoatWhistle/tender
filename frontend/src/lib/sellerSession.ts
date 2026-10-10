@@ -3,9 +3,10 @@
 import {
   ApiError,
   NetworkError,
-  type EnumAction,
   type SellerApi,
   type SessionState,
+  type FactMutation,
+  type EnumAction,
 } from "../api/types";
 
 /** Предел бэкенда для текста сообщения, в символах. */
@@ -53,6 +54,8 @@ function failureOf(error: unknown): Failure {
         text: "Отправьте описание ещё раз.",
         details: [],
       };
+    if (error.code === "invalid_fact_edit")
+      return { title: "Правка не применена", text: error.message, details: [] };
     if (error.status === 422)
       return {
         title: "Сервер не принял данные",
@@ -233,6 +236,31 @@ export function createSellerSession(
           if (mine === epoch) answering = false;
         }
       }, null);
+    },
+    async mutate(factId: string | null, body: FactMutation): Promise<boolean> {
+      const state = view.state;
+      if (!state || view.busy) return false;
+      let saved = false;
+      const mine = epoch;
+      await run(async () => {
+        try {
+          const next = await api.mutate(state.session_id, factId, body);
+          saved = true;
+          return next;
+        } catch (e) {
+          if (e instanceof ApiError && e.code === "stale_revision") {
+            const current = await api.get(state.session_id);
+            if (mine === epoch && view.sessionId === state.session_id) set({ state: current });
+          }
+          throw e;
+        }
+      }, null);
+      return mine === epoch && saved;
+    },
+    recalculate(): Promise<void> {
+      const state = view.state;
+      if (!state || view.busy) return Promise.resolve();
+      return run(() => api.recalculate(state.session_id, state.revision), null);
     },
     resolveEnum(proposalId: string, action: EnumAction, values: string[] = []): Promise<void> {
       const state = view.state;
