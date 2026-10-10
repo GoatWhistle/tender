@@ -33,7 +33,8 @@ default-groups = ["dev", "evals"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+# `..` — скрипты замеров `evals/` для их тестов; продукт `evals` не импортирует.
+pythonpath = [".", ".."]
 addopts = "-ra --strict-markers"
 
 [tool.ruff]
@@ -52,6 +53,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
+mypy_path = ".."
 exclude = ["migrations/"]
 
 [[tool.mypy.overrides]]
