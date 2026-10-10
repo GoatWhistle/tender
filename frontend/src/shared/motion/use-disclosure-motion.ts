@@ -1,8 +1,11 @@
 import { useLayoutEffect, useRef, useState } from "react"
-export function useDisclosureMotion(initialOpen: boolean) {
+export function useDisclosureMotion<T extends HTMLElement = HTMLDivElement>(
+  initialOpen: boolean,
+  offset = "-4px",
+) {
   const [open, setOpen] = useState(initialOpen)
   const [present, setPresent] = useState(initialOpen)
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<T>(null)
   function toggle() {
     if (!open) setPresent(true)
     setOpen(!open)
@@ -21,12 +24,12 @@ export function useDisclosureMotion(initialOpen: boolean) {
     const animation = element.animate(
       open
         ? [
-            { opacity: 0, transform: "translateY(-4px)" },
+            { opacity: 0, transform: `translateY(${offset})` },
             { opacity: 1, transform: "translateY(0)" },
           ]
         : [
             { opacity: 1, transform: "translateY(0)" },
-            { opacity: 0, transform: "translateY(-4px)" },
+            { opacity: 0, transform: `translateY(${offset})` },
           ],
       {
         duration: Number.parseFloat(tokens.getPropertyValue(open ? "--dur-base" : "--dur-exit")),
@@ -43,6 +46,6 @@ export function useDisclosureMotion(initialOpen: boolean) {
       cancelled = true
       animation.cancel()
     }
-  }, [open, present])
+  }, [open, present, offset])
   return { ref, open, present, toggle }
 }

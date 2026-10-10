@@ -14,11 +14,23 @@
   overflow-wrap: anywhere;
   overscroll-behavior: contain;
 }
+.historyClip {
+  overflow: hidden;
+  padding: 0 calc(clamp(var(--space-page), 8vw, 160px) + var(--space-4));
+  margin-bottom: calc(-1 * var(--space-4));
+}
 .history {
-  max-height: 20vh;
+  max-height: 32vh;
   overflow: auto;
   display: grid;
   gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: var(--line) solid var(--border-default);
+  border-bottom: 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--surface-inset);
+  overscroll-behavior: contain;
 }
 .history p {
   display: grid;
@@ -26,4 +38,27 @@
   white-space: pre-line;
   overflow-wrap: anywhere;
   min-width: 0;
+}
+.historyToggle {
+  width: var(--control-size-large);
+  height: var(--control-size-large);
+  min-height: var(--control-size-large);
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+}
+.historyToggle[aria-expanded="true"] {
+  background: var(--surface-user);
+  color: var(--action-text);
+}
+@media (max-width: 47.99rem) {
+  .historyClip {
+    padding: 0 calc(var(--space-page) + var(--space-3));
+    margin-bottom: calc(-1 * var(--space-3));
+  }
+  .historyToggle {
+    width: var(--control-size);
+    height: var(--control-size);
+    min-height: var(--control-size);
+  }
 }

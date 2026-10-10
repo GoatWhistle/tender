@@ -1,4 +1,4 @@
-import type { RefObject } from "react"
+import type { ReactNode, RefObject } from "react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/shared/ui/button"
 import styles from "./composer.module.css"
@@ -11,6 +11,7 @@ interface ComposerProps {
   readonly busy: boolean
   readonly started: boolean
   readonly inputRef: RefObject<HTMLTextAreaElement | null>
+  readonly actions?: ReactNode
 }
 
 export function Composer({
@@ -21,6 +22,7 @@ export function Composer({
   started,
   inputRef,
   placeholder,
+  actions,
 }: ComposerProps) {
   const { t } = useTranslation(["portal"])
   return (
@@ -52,6 +54,7 @@ export function Composer({
           }}
         />
         <span className={styles.count}>{t("portal:limit", { count: value.length })}</span>
+        {actions}
         <Button
           className={styles.send}
           type="submit"

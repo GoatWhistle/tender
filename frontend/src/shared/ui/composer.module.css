@@ -62,13 +62,12 @@
     padding: var(--space-3) var(--space-page) max(var(--space-2), env(safe-area-inset-bottom));
   }
   .composer {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    flex-wrap: wrap;
     gap: var(--space-2);
     padding: var(--space-3);
   }
   .composer textarea {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
     padding: var(--space-2) 0;
     min-height: var(--control-size);
     max-height: 96px;
@@ -78,7 +77,7 @@
     height: var(--space-16);
   }
   .count {
-    justify-self: end;
+    margin-left: auto;
     height: var(--control-size);
     padding-inline: var(--space-2);
   }
