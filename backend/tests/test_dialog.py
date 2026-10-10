@@ -233,7 +233,7 @@ def test_option_from_stale_catalog_is_not_resolved() -> None:
     assert answer_fact(step.question, "missing", [SMALL, LARGE], ()) is None
 
 
-def test_later_message_supersedes_answer_and_restores_conflicting_fact() -> None:
+def test_later_message_keeps_answer_for_conflict_check() -> None:
     old, new = parsed("Ширина", "1000", 0), parsed("Ширина", "1300", 10)
     old = replace(old, source=FactSource("m1", "1000", 0, 4))
     new = replace(new, source=FactSource("m2", "1300", 10, 14))
@@ -243,7 +243,7 @@ def test_later_message_supersedes_answer_and_restores_conflicting_fact() -> None
     assert [(f.origin, f.status) for f in merged] == [
         ("parser", "superseded"),
         ("parser", "accepted_from_text"),
-        ("user", "superseded"),
+        ("user", "confirmed_by_user"),
     ]
 
 

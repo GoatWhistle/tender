@@ -57,6 +57,7 @@ class Candidate:
     reason: ExclusionReason | None = None
     matched_facts: tuple[str, ...] = ()
     checks: tuple[RuleCheck, ...] = ()
+    returned_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -78,6 +79,18 @@ class UnsupportedRule:
 class AnalysisError:
     code: str
     message: str
+
+
+@dataclass(frozen=True)
+class FactEvent:
+    action: str
+    revision: int
+    created_at: str
+    before: tuple[Fact, ...]
+    after: tuple[Fact, ...]
+    group: str
+    restored_from: str | None = None
+    message_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -103,6 +116,11 @@ class SessionState:
     common_fields: tuple[CommonField, ...] = ()
     unanswered: tuple[str, ...] = ()
     unsupported_rules: tuple[UnsupportedRule, ...] = ()
+    fact_history: tuple[FactEvent, ...] = ()
+    results_stale: bool = False
+    analysis_revision: int | None = None
+    editable_fields: tuple[str, ...] = ()
+
     enum_proposals: tuple[EnumProposal, ...] = ()
     enum_resolutions: tuple[EnumResolution, ...] = ()
 

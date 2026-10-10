@@ -25,6 +25,7 @@ FactStatus = Literal[
     "derived_from_catalog",
     # замещён ответом пользователя по тому же полю: остаётся в истории, в проверках не участвует
     "superseded",
+    "deleted",
 ]
 ACCEPTED = frozenset(
     {"accepted_from_text", "accepted_from_model", "confirmed_by_user", "derived_from_catalog"}
@@ -48,6 +49,9 @@ class Fact:
     origin: Literal["parser", "user", "catalog", "decision"] = "parser"
     status: FactStatus = "accepted_from_text"
     bounds: Value | None = None
+    component: str | None = None
+    superseded_by: str | None = None
+
     model_revision: str | None = None
     model_score: float | None = None
 
@@ -83,3 +87,17 @@ class ExclusionReason:
 
 def normalized(text: str) -> str:
     return text.lower().replace("ё", "е")
+
+
+def component_key(fact: Fact) -> str | None:
+    text = normalized(fact.component or fact.characteristic_name or "")
+    for stem, name in (
+        ("столешниц", "столешница"),
+        ("каркас", "каркас"),
+        ("ножк", "ножки"),
+        ("основан", "основание"),
+        ("обивк", "обивка"),
+    ):
+        if stem in text:
+            return name
+    return fact.component

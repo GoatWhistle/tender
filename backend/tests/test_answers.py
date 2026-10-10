@@ -174,13 +174,14 @@ def test_numeric_interval_answer_and_required_fields_survive_snapshot(
     assert client.get(f"/api/v1/sessions/{sid}").json() == skipped
 
 
-def test_later_description_overrides_answer(facts_api: TestClient) -> None:
+def test_later_description_conflicts_with_answer(facts_api: TestClient) -> None:
     sid, state = start(facts_api, "стол")
     answered = choose(facts_api, sid, state, "ЛДСП")
     assert [c["code"] for c in answered["candidates"] if not c["excluded"]] == ["table-large"]
     url = f"/api/v1/sessions/{sid}/messages"
     corrected = facts_api.post(url, json={"text": "столешница дсп"}).json()
-    assert corrected["status"] == "resolved"
-    assert [c["code"] for c in corrected["candidates"] if not c["excluded"]] == ["table-small"]
+    assert corrected["status"] == "conflict"
+    assert corrected["candidate_counts"]["compatible"] == 2
+    assert corrected["next_question"]["kind"] == "conflict"
     answer = next(f for f in corrected["facts"] if f["origin"] == "user")
-    assert answer["status"] == "superseded"
+    assert answer["status"] == "ambiguous"

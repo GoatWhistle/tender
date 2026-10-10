@@ -535,3 +535,54 @@ def test_enum_confirmation_replaces_diagnostic_hypothesis(
     assert confirmed["errors"] == []
     assert confirmed["candidate_counts"]["compatible"] == 1
     assert any(f["status"] == "confirmed_by_user" for f in confirmed["facts"])
+
+
+def test_confirmed_enum_can_be_edited_deleted_and_reanalyzed(enum_api: TestClient) -> None:
+    url, state = describe(enum_api, "Материал: сталь")
+    accepted = enum_api.post(
+        url + "/enum-resolutions",
+        json={
+            "expected_revision": state["revision"],
+            "proposal_id": state["enum_proposals"][0]["id"],
+            "action": "accept",
+        },
+    ).json()
+    assert accepted["fact_history"][-1]["action"] == "confirm"
+    fact = next(f for f in accepted["facts"] if f["status"] == "confirmed_by_user")
+    edited = enum_api.patch(
+        url + "/facts/" + fact["id"],
+        json={
+            "expected_revision": accepted["revision"],
+            "action": "edit",
+            "characteristic_name": "Материал",
+            "raw_value": "Дерево",
+        },
+    ).json()
+    assert [c["code"] for c in edited["candidates"] if not c["excluded"]] == ["wood"]
+    current = next(f for f in edited["facts"] if f["status"] == "confirmed_by_user")
+    deleted = enum_api.patch(
+        url + "/facts/" + current["id"],
+        json={"expected_revision": edited["revision"], "action": "delete"},
+    ).json()
+    assert deleted["candidate_counts"]["compatible"] == 2
+    repeated = enum_api.post(
+        url + "/recalculate", json={"expected_revision": deleted["revision"]}
+    ).json()
+    assert repeated["candidate_counts"]["compatible"] == 2
+    assert enum_api.get(url).json() == repeated
+
+
+def test_new_text_conflicts_with_confirmed_enum(enum_api: TestClient) -> None:
+    url, state = describe(enum_api, "Материал: сталь")
+    accepted = enum_api.post(
+        url + "/enum-resolutions",
+        json={
+            "expected_revision": state["revision"],
+            "proposal_id": state["enum_proposals"][0]["id"],
+            "action": "accept",
+        },
+    ).json()
+    assert accepted["status"] == "resolved"
+    contradictory = enum_api.post(url + "/messages", json={"text": "Материал: дерево"}).json()
+    assert contradictory["status"] == "conflict"
+    assert contradictory["candidate_counts"]["compatible"] == 2

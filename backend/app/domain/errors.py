@@ -62,4 +62,14 @@ class OptionNotFound(DomainError):
 
 class StaleRevision(DomainError):
     code = "stale_revision"
-    message = "Ревизия устарела: перечитайте сессию"
+    message = "Сессия изменилась: сравните актуальные факты перед повторной правкой"
+
+
+class InvalidFactEdit(DomainError):
+    code = "invalid_fact_edit"
+    message = "Проверьте значение, характеристику и часть товара"
+
+
+class FactNotFound(DomainError):
+    code = "fact_not_found"
+    message = "Факт не найден или уже изменён"

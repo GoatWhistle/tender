@@ -24,7 +24,7 @@ _DIMENSIONS = re.compile(rf"{_NUMBER}(?:\s*[×xх*]\s*{_NUMBER})+", re.IGNORECAS
 
 
 def _unsafe(text: str, start: int, raw: str) -> str | None:
-    left = re.findall(r"\w+", normalized(text[:start]))[-2:]
+    left = re.findall(r"\w+", normalized(re.split(r"[,.;]", text[:start])[-1]))[-2:]
     if any(word in {"не", "без"} for word in left):
         return "фрагмент с отрицанием не разобран"
     if (left and left[-1] in {"до", "от", "более", "менее"}) or (
@@ -45,6 +45,22 @@ def _binding(text: str, start: int, names: set[str]) -> tuple[str | None, str | 
                 exact = [n for n in candidates if normalized(n) == concept]
                 return concept, exact[0] if len(exact) == 1 else None
     return None, None
+
+
+_COMPONENTS = {
+    "столешниц": "столешница",
+    "каркас": "каркас",
+    "ножк": "ножки",
+    "основан": "основание",
+    "обивк": "обивка",
+}
+
+
+def _component(text: str, start: int, end: int) -> str | None:
+    left = re.split(r"[,.;\n]", text[:start])[-1]
+    right = re.split(r"[,.;\n]", text[end:])[0]
+    names = {name for stem, name in _COMPONENTS.items() if stem in normalized(left + " " + right)}
+    return next(iter(names)) if len(names) == 1 else None
 
 
 class DeterministicFactExtractor:
@@ -223,6 +239,15 @@ class DeterministicFactExtractor:
                             status="accepted_from_text" if name else "ambiguous",
                         )
                     )
+        by_id = {m.id: m.text for m in messages}
+        facts = [
+            replace(
+                f, component=_component(by_id[f.source.message_id], f.source.start, f.source.end)
+            )
+            if f.source is not None
+            else f
+            for f in facts
+        ]
         order = {m.id: i for i, m in enumerate(messages)}
 
         def place(fact: Fact) -> tuple[int, int]:
@@ -231,19 +256,23 @@ class DeterministicFactExtractor:
 
         facts.sort(key=place)
         unique: list[Fact] = []
-        seen: dict[str, set[object]] = {}
+        seen: dict[tuple[str, str | None], set[object]] = {}
         for fact in facts:
             name = fact.characteristic_name
             if name is not None:
                 key = _canonical(fact)
-                if key in seen.setdefault(name, set()):
+                if key in seen.setdefault((name, fact.component), set()):
                     continue
-                seen[name].add(key)
+                seen[(name, fact.component)].add(key)
             unique.append(fact)
-        conflicts = {name for name, values in seen.items() if len(values) > 1}
-        warnings.extend(f"противоречивые значения поля {name}" for name in sorted(conflicts))
+        conflicts = {key for key, values in seen.items() if len(values) > 1}
+        warnings.extend(
+            f"противоречивые значения поля {name}" for name in sorted({key[0] for key in conflicts})
+        )
         return tuple(
-            replace(f, status="ambiguous") if f.characteristic_name in conflicts else f
+            replace(f, status="ambiguous")
+            if (f.characteristic_name, f.component) in conflicts
+            else f
             for f in unique
         ), tuple(dict.fromkeys(warnings))
 
