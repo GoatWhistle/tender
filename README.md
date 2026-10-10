@@ -23,6 +23,8 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
     repository/          хранилища на SQLite, ORM всех таблиц (`orm/`), in-memory (`memory/`)
   migrations/            миграции схемы
   tests/                 тесты через HTTP API и сценарии на in-memory хранилищах
+frontend/                React + Vite: экран поставщика `/sell` на API сессий, витрина на мок-сервисе
+                         — frontend/README.md
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
 evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
@@ -62,10 +64,22 @@ uv run uvicorn --factory main:create_app --reload  # http://localhost:8000/api/d
 uv run python build_var.py                         # var/ktru.json, var/vocab.json для evals/
 ```
 
+Фронтенд — Node 22+, npm. `/api` Vite проксирует на бэкенд `http://localhost:8000`; экран
+поставщика и контракт — [`frontend/README.md`](frontend/README.md).
+
+```bash
+cd frontend
+npm ci
+npm run dev           # http://localhost:5173, экран поставщика — /sell
+npm run build         # typecheck и сборка в frontend/dist
+npm run format        # Prettier переписывает файлы
+```
+
 Проверки перед PR:
 
 ```bash
 cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest
+cd frontend && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build
 ```
 
 ### Образцы
