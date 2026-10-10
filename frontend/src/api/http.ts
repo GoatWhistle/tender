@@ -75,4 +75,14 @@ export const sellerApi: SellerApi = {
       headers: { "content-type": "application/json", "Idempotency-Key": idempotencyKey },
       body: JSON.stringify({ text }),
     }),
+  answer: (id, questionId, optionId) =>
+    sessionRequest(`${session(id)}/answers`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(
+        optionId === null
+          ? { question_id: questionId, unknown: true }
+          : { question_id: questionId, option_id: optionId },
+      ),
+    }),
 };

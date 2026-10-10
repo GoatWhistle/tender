@@ -3,7 +3,7 @@
 // действие. Данные — `SessionState` бэкенда как есть; статусы и счётчики UI не вычисляет.
 import { useEffect, useMemo, useSyncExternalStore, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { sellerApi, type SessionState } from "../api";
+import { sellerApi, type Question, type SessionState } from "../api";
 import { plural } from "../lib/format";
 import {
   MAX_TEXT,
@@ -21,11 +21,13 @@ const EXAMPLES = [
   "Бумага для офисной техники А4, плотность 80 г/м²",
 ];
 
-/** Подписи известных статусов; зарезервированные и незнакомые — нейтральной подписью. */
+/** Подписи известных статусов (тексты — по #3); зарезервированные и незнакомые — нейтральной. */
 const STATUS: Record<string, string> = {
   draft: "Ждём описание",
   needs_clarification: "Нужно уточнение",
-  resolved: "Позиция определена",
+  resolved: "Код определён",
+  ambiguous_in_catalog: "Несколько позиций",
+  conflict: "Нет совместимых позиций",
   technical_error: "Технический сбой",
 };
 
@@ -141,25 +143,96 @@ function FailureCard({ failure }: { failure: Failure }) {
   );
 }
 
-/** Что делать дальше: по статусу из ответа. Вопросы и ответы — следующими тикетами. */
-function NextStep({ state }: { state: SessionState }) {
-  const { status, path } = state;
-  let title: string;
-  let text: string;
+function QuestionCard({
+  question,
+  busy,
+  onAnswer,
+}: {
+  question: Question;
+  busy: boolean;
+  onAnswer: (optionId: string | null) => void;
+}) {
+  const id = `question-${question.question_id}`;
+  return (
+    <fieldset className="question" aria-labelledby={id} disabled={busy}>
+      <legend id={id} className="card-x__title">
+        {question.text}
+      </legend>
+      <div className="question__options">
+        {question.options.map((o) => (
+          <button key={o.id} type="button" className="example" onClick={() => onAnswer(o.id)}>
+            {o.label}
+          </button>
+        ))}
+        {question.allow_unknown && (
+          <button type="button" className="example example--muted" onClick={() => onAnswer(null)}>
+            Не знаю
+          </button>
+        )}
+      </div>
+    </fieldset>
+  );
+}
+
+function Missing({ state }: { state: SessionState }) {
+  if (state.status !== "resolved") return null;
+  if (state.card_complete) return <p className="card-x__text">Карточка заполнена.</p>;
+  return (
+    <div className="card-x__list">
+      <p className="card-x__text">Не заполнены обязательные характеристики:</p>
+      <ul>
+        {state.missing_required.map((m) => (
+          <li key={m.characteristic}>{m.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Что делать дальше: по статусу и вопросу из ответа; UI ничего не пересчитывает. */
+function NextStep({
+  state,
+  busy,
+  onAnswer,
+}: {
+  state: SessionState;
+  busy: boolean;
+  onAnswer: (optionId: string | null) => void;
+}) {
+  const { status, path, next_question: question } = state;
+  const compatible = state.candidates.filter((c) => !c.excluded);
+  let title: string | null = null;
+  let text: string | null = null;
+  let list: { key: string; label: string; note?: string }[] = [];
   if (status === "draft") {
     title = "Опишите товар";
     text = "Что это, материал, размеры, мощность — своими словами.";
   } else if (!path) {
     title = "Группа КТРУ не найдена";
     text = "Опишите товар подробнее: назначение, материал, ключевые свойства.";
-  } else if (status === "needs_clarification") {
-    title = `В группе осталось ${positions(path.positions)}`;
-    text = "Допишите в описании характеристики, которые отличают ваш товар.";
   } else if (status === "resolved") {
-    const chosen = state.candidates.find((c) => !c.excluded);
-    title = "Позиция КТРУ определена";
-    text = chosen ? `${chosen.code} — «${chosen.name}».` : "Осталась одна позиция.";
-  } else {
+    const chosen = compatible[0];
+    title = chosen ? `Код определён: ${chosen.code}` : "Код определён";
+    text = chosen ? `«${chosen.name}».` : null;
+  } else if (status === "ambiguous_in_catalog") {
+    title = `${positions(compatible.length)} не различаются по справочнику`;
+    text = state.common_fields.length
+      ? "Совпадают по полям: " +
+        state.common_fields.map((f) => `${f.characteristic} — ${f.values.join(", ")}`).join("; ") +
+        "."
+      : "У позиций нет полей, по которым их можно различить.";
+    list = compatible.map((c) => ({ key: c.code, label: c.name, note: c.code }));
+  } else if (status === "conflict") {
+    title = "Ни одна позиция группы не подходит";
+    text = "Исправьте значения в описании — причины ниже.";
+    list = state.candidates.map((c) => ({ key: c.code, label: c.name, note: c.reason?.text }));
+  } else if (status === "needs_clarification" && !question) {
+    title = `В группе осталось ${positions(compatible.length)}`;
+    text = state.unanswered.length
+      ? `Их различают: ${state.unanswered.join(", ")}. Допишите эти сведения в описание.`
+      : "Допишите в описании характеристики, которые отличают ваш товар.";
+    list = compatible.map((c) => ({ key: c.code, label: c.name, note: c.code }));
+  } else if (status !== "needs_clarification") {
     title = statusLabel(status);
     text = "Проверьте группу и позиции в карточке справа.";
   }
@@ -169,10 +242,24 @@ function NextStep({ state }: { state: SessionState }) {
         <span className="status__dot" aria-hidden="true" />
         {statusLabel(status)}
       </p>
-      <h2 className="card-x__title">{title}</h2>
-      <p className="card-x__text">{text}</p>
-      {state.next_question != null && (
-        <p className="card-x__text">Уточняющие вопросы пока отвечаются только описанием.</p>
+      {title && <h2 className="card-x__title">{title}</h2>}
+      {text && <p className="card-x__text">{text}</p>}
+      {list.length > 0 && (
+        <ul className="cands">
+          {list.map((x) => (
+            <li key={x.key} className="cand">
+              <span className="cand__name">{x.label}</span>
+              {x.note && <span className="cand__reason">{x.note}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+      <Missing state={state} />
+      {question && <QuestionCard question={question} busy={busy} onAnswer={onAnswer} />}
+      {state.unsupported_rules.length > 0 && (
+        <p className="card-x__quote">
+          Не проверены правила: {state.unsupported_rules.map((r) => r.characteristic).join(", ")}
+        </p>
       )}
       {state.warnings.map((w) => (
         <p key={w} className="card-x__quote">
@@ -183,14 +270,22 @@ function NextStep({ state }: { state: SessionState }) {
   );
 }
 
-function NextAction({ view }: { view: SellerView }) {
-  const { state, failure } = view;
+function NextAction({ view, store }: { view: SellerView; store: SellerSession }) {
+  const { state, failure, busy } = view;
   if (!failure && (!state || state.status === "technical_error")) return null;
+  const onAnswer = (optionId: string | null) => void store.answer(optionId);
   return (
     <section className="cards" aria-label="Следующее действие" aria-live="polite">
-      <div className="cards__item">
-        {failure ? <FailureCard failure={failure} /> : state && <NextStep state={state} />}
-      </div>
+      {failure && (
+        <div className="cards__item">
+          <FailureCard failure={failure} />
+        </div>
+      )}
+      {state && state.status !== "technical_error" && (
+        <div className="cards__item">
+          <NextStep state={state} busy={busy} onAnswer={onAnswer} />
+        </div>
+      )}
     </section>
   );
 }
@@ -223,17 +318,38 @@ function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
   );
 }
 
+const ORIGIN: Record<string, string> = {
+  parser: "из описания",
+  user: "ваш ответ",
+  catalog: "из справочника",
+};
+
 function Characteristics({ state }: { state: SessionState }) {
+  const facts = state.facts.filter((f) => f.characteristic_name && f.status !== "superseded");
   return (
     <section aria-labelledby="facts-title">
       <h2 id="facts-title" className="block-title">
         Характеристики
       </h2>
-      <p className="muted">
-        {state.facts.length
-          ? `Извлечено: ${state.facts.length}.`
-          : "Пока не извлекаются. Здесь появятся значения из описания, приведённые к справочнику КТРУ."}
-      </p>
+      {facts.length ? (
+        <ul className="cands">
+          {facts.map((f) => (
+            <li key={f.id} className="cand">
+              <span className="cand__name">{f.characteristic_name}</span>
+              <span className="cand__code">
+                {f.raw_unit && f.kind !== "interval" ? `${f.raw_value} ${f.raw_unit}` : f.raw_value}
+              </span>
+              <span className="cand__reason">
+                {f.status === "ambiguous" ? "противоречит другому значению" : ORIGIN[f.origin]}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted">
+          Пока нет. Здесь появятся значения из описания и ответов, приведённые к справочнику КТРУ.
+        </p>
+      )}
     </section>
   );
 }
@@ -291,6 +407,7 @@ function Candidates({ state }: { state: SessionState }) {
                   <li key={c.code} className={c.excluded ? "cand cand--out" : "cand"}>
                     <span className="cand__name">{c.name}</span>
                     <span className="cand__code">{c.code}</span>
+                    {c.reason && <span className="cand__reason">{c.reason.text}</span>}
                   </li>
                 ))}
               </ul>
@@ -337,7 +454,7 @@ export function Seller() {
       <div className={state ? "seller seller--split" : "seller"}>
         <div className="seller__input">
           <Composer view={view} store={store} />
-          <NextAction view={view} />
+          <NextAction view={view} store={store} />
           {(state || view.sessionId) && (
             <button type="button" className="textlink seller__reset" onClick={store.reset}>
               Начать новую карточку

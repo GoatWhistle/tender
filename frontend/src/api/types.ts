@@ -110,12 +110,15 @@ export class NotFound extends Error {}
 export type SessionStatus =
   | "draft"
   | "needs_clarification"
+  /** «Код определён»: осталась одна позиция; заполненность карточки — `card_complete` */
   | "resolved"
-  | "technical_error"
-  /** зарезервированы бэкендом, пока не выставляются */
-  | "out_of_scope"
+  /** позиции неразличимы по полям справочника — `common_fields` */
   | "ambiguous_in_catalog"
-  | "conflict";
+  /** нет совместимых позиций */
+  | "conflict"
+  | "technical_error"
+  /** зарезервирован бэкендом, пока не выставляется */
+  | "out_of_scope";
 
 export type SessionMessage = { id: string; text: string; created_at: string };
 
@@ -135,7 +138,61 @@ export type Alternative = {
   methods: Record<string, MethodContribution>;
 };
 
-export type Candidate = { code: string; name: string; excluded: boolean };
+export type ExclusionReason = {
+  fact_id: string;
+  characteristic: string;
+  allowed: string;
+  given: string;
+  text: string;
+};
+
+export type Candidate = {
+  code: string;
+  name: string;
+  excluded: boolean;
+  reason: ExclusionReason | null;
+};
+
+export type FactStatus =
+  "accepted_from_text" | "ambiguous" | "confirmed_by_user" | "derived_from_catalog" | "superseded";
+
+export type Fact = {
+  id: string;
+  characteristic_name: string | null;
+  raw_value: string;
+  raw_unit: string | null;
+  /** decimal-строка, диапазон из двух строк или текст */
+  value: string | [string, string];
+  unit_code: string | null;
+  kind: "number" | "range" | "text" | "interval";
+  origin: "parser" | "user" | "catalog";
+  status: FactStatus;
+  source: { message_id: string; quote: string; start: number; end: number } | null;
+};
+
+export type QuestionOption = { id: string; label: string };
+
+export type Question = {
+  question_id: string;
+  kind: "conflict" | "discriminate" | "required";
+  characteristic: string;
+  text: string;
+  options: QuestionOption[];
+  allow_unknown: boolean;
+};
+
+export type DialogTurn = {
+  question_id: string;
+  kind: Question["kind"];
+  characteristic: string;
+  revision: number;
+  messages: number;
+  /** null — «не знаю» */
+  option_id: string | null;
+  fact: Fact | null;
+  /** группа вопроса: после смены группы ответ не применяется */
+  group: string;
+};
 
 export type AnalysisError = { code: string; message: string };
 
@@ -149,12 +206,19 @@ export type SessionState = {
   alternatives: Alternative[];
   candidates: Candidate[];
   candidate_counts: { in_group: number; compatible: number; excluded_by_rules: number };
-  /** пока всегда пуст */
-  facts: unknown[];
+  facts: Fact[];
   errors: AnalysisError[];
   warnings: string[];
-  /** пока всегда null */
-  next_question: unknown;
+  next_question: Question | null;
+  dialog: DialogTurn[];
+  /** код определён и обязательные поля выбранной позиции заполнены */
+  card_complete: boolean;
+  missing_required: { characteristic: string; name: string }[];
+  /** только при `ambiguous_in_catalog` */
+  common_fields: { characteristic: string; values: string[] }[];
+  /** различающие характеристики, на которые ответили «не знаю» */
+  unanswered: string[];
+  unsupported_rules: { position: string; characteristic: string }[];
 };
 
 export interface SellerApi {
@@ -163,6 +227,8 @@ export interface SellerApi {
   get(id: string): Promise<SessionState>;
   /** idempotencyKey — заголовок `Idempotency-Key`, свой на каждую попытку */
   message(id: string, text: string, idempotencyKey: string): Promise<SessionState>;
+  /** optionId = null — «не знаю»; вопрос не из последней ревизии — 409 `stale_question` */
+  answer(id: string, questionId: string, optionId: string | null): Promise<SessionState>;
 }
 
 /** Ответ API с телом ошибки `{code, message}` или без него (422 FastAPI, 5xx прокси). */

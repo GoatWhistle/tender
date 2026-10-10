@@ -5,6 +5,8 @@ from decimal import Decimal
 from enum import StrEnum
 from typing import Literal
 
+from app.domain.catalog import Value
+
 
 @dataclass(frozen=True)
 class FactSource:
@@ -12,6 +14,17 @@ class FactSource:
     quote: str
     start: int
     end: int
+
+
+FactStatus = Literal[
+    "accepted_from_text",
+    "ambiguous",
+    "confirmed_by_user",
+    "derived_from_catalog",
+    # замещён ответом пользователя по тому же полю: остаётся в истории, в проверках не участвует
+    "superseded",
+]
+ACCEPTED = frozenset({"accepted_from_text", "confirmed_by_user", "derived_from_catalog"})
 
 
 @dataclass(frozen=True)
@@ -23,11 +36,19 @@ class Fact:
     raw_unit: str | None
     value: Decimal | tuple[Decimal, Decimal] | str
     unit_code: str | None
-    kind: Literal["number", "range", "text"]
-    source: FactSource
+    # interval — ответ значением каталога: `value` — его подпись, границы — в `bounds`
+    kind: Literal["number", "range", "text", "interval"]
+    # у ответа пользователя без цитаты и у значения из каталога источника в тексте нет
+    source: FactSource | None
     normalization_rule: str
-    origin: Literal["parser"] = "parser"
-    status: Literal["accepted_from_text", "ambiguous"] = "accepted_from_text"
+    origin: Literal["parser", "user", "catalog"] = "parser"
+    status: FactStatus = "accepted_from_text"
+    bounds: Value | None = None
+
+    @property
+    def accepted(self) -> bool:
+        """Факт принят и привязан к характеристике: им можно исключать позиции."""
+        return self.status in ACCEPTED and self.characteristic_name is not None
 
 
 class CheckResult(StrEnum):

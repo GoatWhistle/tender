@@ -1615,6 +1615,50 @@ fieldset {
   background: var(--cloud-deep);
 }
 
+.question {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.question legend {
+  padding: 0;
+  margin-bottom: 12px;
+  font-size: 17px;
+}
+
+.question__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.question .example {
+  background: var(--paper);
+}
+
+.question .example:hover {
+  background: var(--cloud-deep);
+}
+
+.question .example--muted {
+  color: var(--gray);
+}
+
+.question:disabled .example {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.card-x__list ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
 /* карточки уточнений и замечаний выпадают из-под поля ввода */
 .cards {
   display: grid;
@@ -1757,6 +1801,7 @@ fieldset {
 }
 
 .status--draft .status__dot,
+.status--conflict .status__dot,
 .status--technical_error .status__dot {
   background: var(--coral);
 }

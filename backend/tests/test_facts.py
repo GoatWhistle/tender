@@ -23,9 +23,10 @@ def test_decimal_number_binding_and_original_quote(table_group: Group) -> None:
     assert material.value == "лдсп"
     for fact in facts:
         source = fact.source
+        assert source is not None
         assert source.message_id == "m1"
         assert text[source.start : source.end] == source.quote
-    assert width.source.quote == "1,2 м"
+    assert width.source is not None and width.source.quote == "1,2 м"
 
 
 @pytest.mark.parametrize("raw", ["100–120", "100-120", "от 100 до 120"])
@@ -138,7 +139,7 @@ def test_duplicates_in_equivalent_units_keep_first_quote(table_group: Group) -> 
         table_group,
     )
     assert len(facts) == 1
-    assert facts[0].source.message_id == "first"
+    assert facts[0].source is not None and facts[0].source.message_id == "first"
     assert not warnings
 
 
@@ -188,8 +189,9 @@ def test_unicode_normalization_preserves_coordinates(table_group: Group) -> None
     text = "İ🙂 БЕРЕЗА"
     facts, _ = DeterministicFactExtractor().extract((Message("m", text, ""),), group)
     assert facts[0].value == "береза"
-    assert facts[0].source.start == 3
-    assert facts[0].source.quote == text[3:9] == "БЕРЕЗА"
+    source = facts[0].source
+    assert source is not None and source.start == 3
+    assert source.quote == text[3:9] == "БЕРЕЗА"
 
 
 def test_overlapping_quality_values_keep_longest(table_group: Group) -> None:

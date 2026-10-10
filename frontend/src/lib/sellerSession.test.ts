@@ -16,6 +16,12 @@ function state(patch: Partial<SessionState> = {}): SessionState {
     errors: [],
     warnings: [],
     next_question: null,
+    dialog: [],
+    card_complete: false,
+    missing_required: [],
+    common_fields: [],
+    unanswered: [],
+    unsupported_rules: [],
     ...patch,
   };
 }
@@ -43,6 +49,7 @@ function fakeApi(overrides: Partial<SellerApi> = {}) {
     create: vi.fn<SellerApi["create"]>(async () => state()),
     get: vi.fn<SellerApi["get"]>(async (id) => state({ session_id: id })),
     message: vi.fn<SellerApi["message"]>(async () => resolved(1, "A")),
+    answer: vi.fn<SellerApi["answer"]>(async () => resolved(3, "A")),
     ...overrides,
   };
 }
@@ -336,5 +343,83 @@ describe("createSellerSession", () => {
     listener.mockClear();
     s.setDraft("Стол");
     expect(listener).not.toHaveBeenCalled();
+  });
+
+  describe("ответ на вопрос", () => {
+    const question = {
+      question_id: "q1",
+      kind: "discriminate" as const,
+      characteristic: "Материал",
+      text: "Какое значение «Материал» у товара?",
+      options: [{ id: "o1", label: "ДСП" }],
+      allow_unknown: true,
+    };
+    const asked = state({ revision: 1, status: "needs_clarification", next_question: question });
+
+    async function opened(api: ReturnType<typeof fakeApi>) {
+      vi.mocked(api.get).mockResolvedValueOnce(asked);
+      const s = createSellerSession(api, newKey);
+      await s.open("s1");
+      return s;
+    }
+
+    it("отправляет вариант или «не знаю» на вопрос текущей ревизии", async () => {
+      const api = fakeApi();
+      const s = await opened(api);
+      const next = { ...question, question_id: "q2" };
+      vi.mocked(api.answer).mockResolvedValueOnce({ ...asked, revision: 2, next_question: next });
+      s.setDraft("недописанное");
+      await s.answer("o1");
+      expect(api.answer).toHaveBeenCalledWith("s1", "q1", "o1");
+      expect(s.view()).toMatchObject({ busy: false, failure: null, draft: "недописанное" });
+      expect(s.view().state?.next_question).toEqual(next);
+      await s.answer(null);
+      expect(api.answer).toHaveBeenLastCalledWith("s1", "q2", null);
+      expect(s.view().state?.revision).toBe(3);
+    });
+
+    it("без вопроса ничего не отправляет", async () => {
+      const api = fakeApi();
+      const s = createSellerSession(api, newKey);
+      await s.answer("o1");
+      expect(api.answer).not.toHaveBeenCalled();
+    });
+
+    it("на устаревший вопрос перечитывает сессию без ошибки", async () => {
+      const fresh = state({ revision: 4, status: "resolved" });
+      const api = fakeApi({
+        answer: vi.fn<SellerApi["answer"]>(async () => {
+          throw new ApiError(409, "stale_question", "Вопрос устарел");
+        }),
+      });
+      const s = await opened(api);
+      vi.mocked(api.get).mockResolvedValueOnce(fresh);
+      await s.answer("o1");
+      expect(api.get).toHaveBeenLastCalledWith("s1");
+      expect(s.view()).toMatchObject({ state: fresh, failure: null, busy: false });
+    });
+
+    it("сбой ответа показывается как сбой, вопрос остаётся", async () => {
+      const api = fakeApi({
+        answer: vi.fn<SellerApi["answer"]>(async () => {
+          throw new NetworkError("Failed to fetch");
+        }),
+      });
+      const s = await opened(api);
+      await s.answer("o1");
+      expect(s.view().failure?.title).toBe("Нет связи с сервером");
+      expect(s.view().state).toBe(asked);
+    });
+
+    it("повторный клик во время ответа не отправляет второй запрос", async () => {
+      const pending = deferred<SessionState>();
+      const api = fakeApi({ answer: vi.fn<SellerApi["answer"]>(() => pending.promise) });
+      const s = await opened(api);
+      const first = s.answer("o1");
+      void s.answer("o1");
+      pending.resolve(resolved(2, "A"));
+      await first;
+      expect(api.answer).toHaveBeenCalledOnce();
+    });
   });
 });

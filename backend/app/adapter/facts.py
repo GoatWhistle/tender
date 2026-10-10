@@ -132,7 +132,12 @@ class DeterministicFactExtractor:
                         )
                     )
         order = {m.id: i for i, m in enumerate(messages)}
-        facts.sort(key=lambda f: (order[f.source.message_id], f.source.start))
+
+        def place(fact: Fact) -> tuple[int, int]:
+            assert fact.source is not None, "у факта парсера всегда есть цитата"
+            return order[fact.source.message_id], fact.source.start
+
+        facts.sort(key=place)
         unique: list[Fact] = []
         seen: dict[str, set[object]] = {}
         for fact in facts:
