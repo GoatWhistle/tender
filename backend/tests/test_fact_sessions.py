@@ -81,7 +81,7 @@ def test_range_is_saved_as_decimal_strings(facts_api: TestClient) -> None:
     assert facts_api.get(url).json() == state
 
 
-def test_unsupported_rule_blocks_resolution_without_a_fact(
+def test_single_position_with_unsupported_rule_is_resolved_with_warning(
     facts_api: TestClient, settings: "Settings", table_group: "Group"
 ) -> None:
     from dataclasses import replace
@@ -103,7 +103,8 @@ def test_unsupported_rule_blocks_resolution_without_a_fact(
     sync_catalog(settings, Source())
     sid = facts_api.post("/api/v1/sessions").json()["session_id"]
     state = facts_api.post(f"/api/v1/sessions/{sid}/messages", json={"text": "стол"}).json()
-    assert state["status"] == "needs_clarification"
+    assert state["status"] == "resolved"
+    assert state["unsupported_rules"] == [{"position": leaf.code, "characteristic": "Ширина"}]
     assert state["candidate_counts"]["compatible"] == 1
     assert any(c["result"] == "unsupported" for c in state["candidates"][0]["checks"])
     assert not state["candidates"][0]["excluded"]

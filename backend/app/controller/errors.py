@@ -16,6 +16,8 @@ STATUS: dict[type[e.DomainError], int] = {
     e.DomainError: 400,
     e.SessionNotFound: 404,
     e.IdempotencyConflict: 409,
+    e.StaleQuestion: 409,
+    e.OptionNotFound: 422,
     e.PositionNotFound: 404,
     e.GroupNotFound: 404,
     e.CatalogEmpty: 503,

@@ -94,12 +94,15 @@ export function createSellerSession(
   // ключ последней попытки: повтор того же текста после сбоя в пути идёт с ним же — если
   // сервер успел сохранить сообщение, он вернёт ту же ревизию, а не создаст дубль
   let retry: { text: string; key: string } | null = null;
+  // ответ в пути: повторный клик по варианту не шлёт второй ответ на тот же вопрос
+  let answering = false;
 
   const newEpoch = () => {
     epoch++;
     pending = 0;
     session = null;
     retry = null;
+    answering = false;
     inflight.clear();
   };
 
@@ -201,6 +204,26 @@ export function createSellerSession(
           }
         }
       }, text);
+    },
+    /** Ответить на вопрос показанной ревизии; `null` — «не знаю». Черновик не трогается.
+     *  Вопрос устарел (409 `stale_question`) — показываем сессию как она есть на сервере. */
+    answer(optionId: string | null): Promise<void> {
+      const state = view.state;
+      const question = state?.next_question;
+      if (!state || !question || answering) return Promise.resolve();
+      answering = true;
+      const mine = epoch;
+      return run(async () => {
+        try {
+          return await api.answer(state.session_id, question.question_id, optionId);
+        } catch (e) {
+          if (e instanceof ApiError && e.code === "stale_question")
+            return await api.get(state.session_id);
+          throw e;
+        } finally {
+          if (mine === epoch) answering = false;
+        }
+      }, null);
     },
     /** Восстановить сессию по идентификатору из адреса. */
     open(id: string): Promise<void> {

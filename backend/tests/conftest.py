@@ -7,7 +7,7 @@
 отсутствует в справочнике.
 """
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path
 
 import pytest
@@ -210,41 +210,48 @@ def table_group() -> "Group":
 
 
 @pytest.fixture
-def facts_api(settings: Settings, table_group: Group) -> Iterator[TestClient]:
+def group_api(settings: Settings) -> Iterator[Callable[[Group], TestClient]]:
+    """Клиент на справочнике из одной группы; поиск всегда находит её, факты — парсером."""
+    from contextlib import ExitStack
+
     from app.adapter.facts import DeterministicFactExtractor
     from app.domain.catalog import Position
     from app.domain.search import MethodContribution, SearchHit, SearchResult
     from composition import build_usecases
     from main import sql_repositories
 
-    class Source:
-        def load(self) -> list[Position]:
-            return [table_group.position, *table_group.leaves]
+    def build(group: Group) -> TestClient:
+        class Source:
+            def load(self) -> list[Position]:
+                return [group.position, *group.leaves]
 
-    class Search:
-        def run(
-            self, description: str, category: str | None = None, limit: int = 10
-        ) -> SearchResult:
-            return SearchResult(
-                description,
-                (
-                    SearchHit(
-                        table_group.position,
-                        MethodContribution.of(1),
-                        MethodContribution.of(None),
-                        MethodContribution.of(None),
-                    ),
-                ),
-            )
+        class Search:
+            def run(
+                self, description: str, category: str | None = None, limit: int = 10
+            ) -> SearchResult:
+                hit = SearchHit(
+                    group.position,
+                    MethodContribution.of(1),
+                    MethodContribution.of(None),
+                    MethodContribution.of(None),
+                )
+                return SearchResult(description, (hit,))
 
-    source = Source()
-    sync_catalog(settings, source)
-    app = create_app(settings, source)
-    app.state.usecases = build_usecases(
-        sql_repositories(),
-        catalog_source=source,
-        searcher=Search(),
-        fact_extractor=DeterministicFactExtractor(),
-    )
-    with TestClient(app) as client:
-        yield client
+        source = Source()
+        sync_catalog(settings, source)
+        app = create_app(settings, source)
+        app.state.usecases = build_usecases(
+            sql_repositories(),
+            catalog_source=source,
+            searcher=Search(),
+            fact_extractor=DeterministicFactExtractor(),
+        )
+        return stack.enter_context(TestClient(app))
+
+    with ExitStack() as stack:
+        yield build
+
+
+@pytest.fixture
+def facts_api(group_api: Callable[[Group], TestClient], table_group: Group) -> TestClient:
+    return group_api(table_group)

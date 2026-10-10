@@ -48,3 +48,13 @@ class SessionNotFound(DomainError):
 class IdempotencyConflict(DomainError):
     code = "idempotency_conflict"
     message = "Ключ идемпотентности уже использован с другим текстом"
+
+
+class StaleQuestion(DomainError):
+    code = "stale_question"
+    message = "Вопрос устарел: перечитайте сессию"
+
+
+class OptionNotFound(DomainError):
+    code = "option_not_found"
+    message = "Такого варианта ответа у вопроса нет"

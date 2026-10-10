@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from app.domain.dialog import CommonField, DialogTurn, Question, RequiredField
 from app.domain.facts import ExclusionReason, Fact, RuleCheck
 from app.domain.search import MethodContribution
 
@@ -64,6 +65,14 @@ class CandidateCounts:
 
 
 @dataclass(frozen=True)
+class UnsupportedRule:
+    """Правило совместимой позиции, которое проверка не поддерживает: предупреждение."""
+
+    position: str
+    characteristic: str
+
+
+@dataclass(frozen=True)
 class AnalysisError:
     code: str
     message: str
@@ -82,7 +91,15 @@ class SessionState:
     facts: tuple[Fact, ...] = ()
     errors: tuple[AnalysisError, ...] = ()
     warnings: tuple[str, ...] = ()
-    next_question: None = None
+    next_question: Question | None = None
+    # история вопросов и ответов, включая «не знаю»: из неё пересчитываются факты ответов
+    dialog: tuple[DialogTurn, ...] = ()
+    # «код определён» (`resolved`) и «карточка заполнена» — разные вещи
+    card_complete: bool = False
+    missing_required: tuple[RequiredField, ...] = ()
+    common_fields: tuple[CommonField, ...] = ()
+    unanswered: tuple[str, ...] = ()
+    unsupported_rules: tuple[UnsupportedRule, ...] = ()
 
 
 @dataclass(frozen=True)
