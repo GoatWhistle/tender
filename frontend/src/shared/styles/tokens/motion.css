@@ -17,6 +17,7 @@
   --dur-step: 260ms;
   --dur-step-flow: 2600ms;
   --dur-spin: 900ms;
+  --dur-step-arrow: 1400ms;
   --press-scale: 0.97;
   --enter-offset: 4px;
   --stagger: 40ms;
@@ -28,6 +29,10 @@
   --motion-step-glow: step-glow var(--dur-step-flow) linear infinite;
   --motion-step-flow: step-flow var(--dur-step-flow) linear infinite;
   --motion-spin: spin var(--dur-spin) linear infinite;
+  --motion-step-arrow: step-arrow var(--dur-step-arrow) var(--ease-rank-reveal) infinite;
+  --motion-step-march: step-march calc(var(--dur-step-arrow) / 2) linear infinite;
+  --motion-step-nudge: step-nudge var(--dur-step-arrow) var(--ease-out) infinite;
+  --motion-step-target: step-halo var(--dur-step-arrow) var(--ease-out) infinite;
 }
 :root[data-input="keyboard"] {
   --dur-press: 0ms;
@@ -65,6 +70,11 @@
     --motion-step-glow: none;
     --motion-step-flow: none;
     --dur-spin: 1ms;
+    --dur-step-arrow: 1ms;
+    --motion-step-arrow: none;
+    --motion-step-march: none;
+    --motion-step-nudge: none;
+    --motion-step-target: none;
     --press-scale: 1;
     --enter-offset: 0px;
     --stagger: 0ms;

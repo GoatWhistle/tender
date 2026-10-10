@@ -4,12 +4,15 @@ import styles from "./stepper.module.css"
 export function Stepper({
   current,
   complete = false,
+  busy = false,
 }: {
   readonly current: number
   readonly complete?: boolean
+  readonly busy?: boolean
 }) {
   const { t } = useTranslation(["portal"])
   const steps = t("portal:steps", { returnObjects: true })
+  const from = busy ? Math.min(current, steps.length - 2) : -1
   return (
     <nav className={styles.nav} aria-label={t("portal:stepsLabel")}>
       <ol className={styles.steps}>
@@ -19,14 +22,17 @@ export function Stepper({
             className={styles.step}
             data-active={index === current && !complete}
             data-complete={index < current || complete}
+            data-target={index === from + 1}
             aria-current={index === current ? "step" : undefined}
           >
             <span className={styles.circle}>
               {index < current || complete ? <Icon name="check" size={16} /> : index + 1}
             </span>
-            <span>{label}</span>
-            {index === current && !complete && index < steps.length - 1 && (
-              <span className={styles.flow} aria-hidden="true" />
+            <span className={styles.label}>{label}</span>
+            {index === from && (
+              <span className={styles.arrow} aria-hidden="true">
+                <Icon name="chevron" size={16} />
+              </span>
             )}
           </li>
         ))}

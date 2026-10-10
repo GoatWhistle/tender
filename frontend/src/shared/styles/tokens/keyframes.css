@@ -78,6 +78,29 @@
     transform: translateX(100%) scaleX(0.24);
   }
 }
+@keyframes step-arrow {
+  from {
+    transform: translate(-100%, -50%);
+  }
+  to {
+    transform: translate(250%, -50%);
+  }
+}
+@keyframes step-march {
+  to {
+    background-position: 12px 0;
+  }
+}
+@keyframes step-nudge {
+  0%,
+  55%,
+  100% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
 @keyframes flash {
   from {
     opacity: 1;

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useRagWorkflow } from "@/entities/rag"
 import { ApiError } from "@/shared/api/client"
-import { Spinner } from "@/shared/motion/primitives"
 import { Button } from "@/shared/ui/button"
 import { CatalogArtwork } from "@/shared/ui/catalog-artwork/catalog-artwork"
 import { Composer } from "@/shared/ui/composer"
@@ -51,14 +50,11 @@ export function RagWorkflow() {
   } as const
   return (
     <section className={styles.workspace} aria-label={t("portal:workspace")}>
-      <Stepper current={step} complete={session?.stage === "done"} />
+      <Stepper current={step} complete={session?.stage === "done"} busy={flow.busy} />
       <div ref={scroll} className={styles.content}>
         {flow.busy && (
           <div className={styles.loading} role="status">
-            <Spinner />
-            <div>
-              <span>{t(status[flow.operation as keyof typeof status])}</span>
-            </div>
+            <span>{t(status[flow.operation as keyof typeof status])}</span>
           </div>
         )}
         {flow.busy && !search && (
