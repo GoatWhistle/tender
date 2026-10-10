@@ -7,6 +7,7 @@ from app.domain.diagnostics import Diagnostic
 from app.domain.dialog import CommonField, DialogTurn, Question, RequiredField
 from app.domain.enum_mapping import EnumProposal, EnumResolution
 from app.domain.facts import ExclusionReason, Fact, RuleCheck
+from app.domain.group_validation import GroupCheck
 from app.domain.search import MethodContribution
 
 
@@ -31,6 +32,7 @@ class Message:
 class GroupRef:
     code: str
     name: str
+    role: str = "group_template"
 
 
 @dataclass(frozen=True)
@@ -58,6 +60,7 @@ class Candidate:
     matched_facts: tuple[str, ...] = ()
     checks: tuple[RuleCheck, ...] = ()
     returned_reason: str | None = None
+    role: str = "ktru_position"
 
 
 @dataclass(frozen=True)
@@ -121,6 +124,7 @@ class SessionState:
     analysis_revision: int | None = None
     editable_fields: tuple[str, ...] = ()
 
+    group_checks: tuple[GroupCheck, ...] = ()
     enum_proposals: tuple[EnumProposal, ...] = ()
     enum_resolutions: tuple[EnumResolution, ...] = ()
 

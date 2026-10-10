@@ -78,3 +78,10 @@ HTTP-проверки: `cd backend && uv run pytest tests/test_enum_sessions.py 
 При изменении диагностики выполни HTTP-прогон размеченных fixtures:
 `cd backend && uv run python ../evals/errors/run.py`. Контракт и ограничения замера —
 `docs/sessions.md`, настройки орфографии — `backend/.env.example`.
+
+### Проверка назначения групп
+
+При изменении выбора группы читай контракт в `docs/sessions.md` и методику в
+`evals/reports/2026-10-10-group-validation.md`. HTTP-регрессии:
+`cd backend && uv run pytest tests/test_group_validation.py tests/test_openjev_http.py`.
+Реальный парный прогон: `backend/.venv/bin/python evals/groups/run.py --output var/group-validation.json`.

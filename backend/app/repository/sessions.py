@@ -13,6 +13,8 @@ from app.domain.diagnostics import Diagnostic, DiagnosticScope, RuleRef
 from app.domain.dialog import CommonField, DialogTurn, Question, QuestionOption, RequiredField
 from app.domain.enum_mapping import EnumProposal, EnumResolution, EnumSelection
 from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck
+from app.domain.group_validation import GroupCheck
+from app.domain.inference import Verdict
 from app.domain.search import MethodContribution
 from app.domain.sessions import (
     Alternative,
@@ -76,6 +78,10 @@ def decode(data: dict[str, Any]) -> SessionState:
                 }
             )
             for e in data.get("fact_history", [])
+        ),
+        group_checks=tuple(
+            GroupCheck(**{**c, "verdict": Verdict(c["verdict"])})
+            for c in data.get("group_checks", [])
         ),
         results_stale=data.get("results_stale", False),
         analysis_revision=data.get("analysis_revision"),

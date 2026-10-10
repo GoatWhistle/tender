@@ -104,6 +104,11 @@ class CheckedDecisionBackend:
         for answer in batch.answers:
             at = f"вопрос {answer.question_id}"
             _check_distribution(answer.probabilities, options[answer.question_id], at)
+            if answer.support_scores is not None and (
+                set(answer.support_scores) != set(options[answer.question_id])
+                or not all(math.isfinite(p) and 0 <= p <= 1 for p in answer.support_scores.values())
+            ):
+                raise _invalid(f"{at}: неверные абсолютные оценки поддержки")
             if answer.selected is not None and answer.selected not in answer.probabilities:
                 raise _invalid(f"{at}: выбран неизвестный вариант {answer.selected}")
             if answer.truncated:

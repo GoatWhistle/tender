@@ -114,7 +114,10 @@ class DecisionBackend(Protocol):
     `app.adapter.stub`."""
 
     def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
-        """По ответу на каждый вопрос пакета: распределение по `option_ids`, выбор или отказ."""
+        """По ответу на каждый вопрос: распределение по `option_ids`, выбор или отказ.
+        `support_scores`, если доступны, — независимые оценки поддержки до нормализации,
+        с теми же ID и значениями [0, 1]; их сумма не обязана равняться единице.
+        """
         ...
 
     def verify(self, context: str, claims: Sequence[Claim]) -> ClaimBatch:

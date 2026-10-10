@@ -56,7 +56,12 @@ class OpenJevDecision:
                 data = response.json()
                 revisions.add(_revision(data))
                 answers.append(
-                    ChoiceAnswer(question.question_id, data["probabilities"], data["choice"])
+                    ChoiceAnswer(
+                        question.question_id,
+                        data["probabilities"],
+                        data["choice"],
+                        support_scores=data.get("support_probabilities"),
+                    )
                 )
         return ChoiceBatch(tuple(answers), _single_revision(revisions))
 

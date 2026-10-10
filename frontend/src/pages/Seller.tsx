@@ -335,11 +335,12 @@ function NextStep({
     title = "Опишите товар";
     text = "Что это, материал, размеры, мощность — своими словами.";
   } else if (!path) {
-    title = "Группа КТРУ не найдена";
+    title =
+      status === "needs_clarification" ? "Уточните назначение товара" : "Группа КТРУ не найдена";
     text = "Опишите товар подробнее: назначение, материал, ключевые свойства.";
   } else if (status === "resolved") {
     const chosen = compatible[0];
-    title = chosen ? `Код определён: ${chosen.code}` : "Код определён";
+    title = chosen ? `Позиция КТРУ: ${chosen.code}` : "Код определён";
     text = chosen ? `«${chosen.name}».` : null;
   } else if (status === "ambiguous_in_catalog") {
     title = `${positions(compatible.length)} не различаются по справочнику`;
@@ -435,13 +436,13 @@ function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
           {path?.group.name ??
             (status === "technical_error"
               ? "Анализ не выполнен"
-              : status === "draft"
-                ? "Группа КТРУ не выбрана"
+              : status === "draft" || status === "needs_clarification"
+                ? "Группа КТРУ не подтверждена"
                 : "Группа КТРУ не найдена")}
         </p>
         {path && (
           <p className="summary__code">
-            {path.group.code} · {path.category}
+            Группа/шаблон · {path.group.code} · {path.category}
           </p>
         )}
       </div>
@@ -546,7 +547,9 @@ function Candidates({ state }: { state: SessionState }) {
             ? "Анализ не выполнен из-за сбоя — кандидатов пока нет."
             : status === "draft"
               ? "Появятся после первого описания."
-              : "Группа не найдена: допишите описание."}
+              : status === "needs_clarification"
+                ? "Сначала уточните назначение — группа ещё не подтверждена."
+                : "Группа не найдена: допишите описание."}
         </p>
       ) : (
         <>
@@ -556,7 +559,7 @@ function Candidates({ state }: { state: SessionState }) {
               {path.category}
             </li>
             <li>
-              <span className="path__label">Группа {path.group.code}</span>
+              <span className="path__label">Группа/шаблон {path.group.code}</span>
               {path.group.name}
             </li>
             <li>
@@ -579,12 +582,12 @@ function Candidates({ state }: { state: SessionState }) {
           </p>
           {candidates.length > 0 && (
             <details className="excluded" open={candidates.length <= 5}>
-              <summary>Позиции группы: {candidates.length}</summary>
+              <summary>Позиции КТРУ: {candidates.length}</summary>
               <ul className="cands">
                 {candidates.map((c) => (
                   <li key={c.code} className={c.excluded ? "cand cand--out" : "cand"}>
                     <span className="cand__name">{c.name}</span>
-                    <span className="cand__code">{c.code}</span>
+                    <span className="cand__code">Позиция КТРУ · {c.code}</span>
                     {c.returned_reason && (
                       <span className="cand__returned">{c.returned_reason}</span>
                     )}
@@ -598,13 +601,22 @@ function Candidates({ state }: { state: SessionState }) {
       )}
       {alternatives.length > 0 && (
         <details className="excluded">
-          <summary>Другие группы: {alternatives.length}</summary>
+          <summary>Проверенные группы/шаблоны: {alternatives.length}</summary>
           <ul className="cands">
             {alternatives.map((a) => (
               <li key={a.code} className="cand cand--alt">
                 <span className="cand__name">{a.name}</span>
-                <span className="cand__code">{a.code}</span>
-                <span className="cand__reason">{a.category}</span>
+                <span className="cand__code">Группа/шаблон · {a.code}</span>
+                <span className="cand__reason">
+                  {a.category} ·{" "}
+                  {
+                    {
+                      supported: "Соответствует",
+                      contradicted: "Противоречит",
+                      not_stated: "Недостаточно информации",
+                    }[state.group_checks?.find((c) => c.code === a.code)?.verdict ?? "not_stated"]
+                  }
+                </span>
               </li>
             ))}
           </ul>

@@ -12,6 +12,7 @@ from app.domain.dialog import (
     CommonField,
     DialogTurn,
     Question,
+    QuestionOption,
     RequiredField,
     answer_fact,
     common_fields,
@@ -33,7 +34,8 @@ from app.domain.errors import (
 )
 from app.domain.fact_edits import INACTIVE, FactInput, apply_history, reconcile
 from app.domain.facts import CheckResult, Fact, FactSource, RuleCheck, component_key, normalized
-from app.domain.inference import ChoiceOption, ChoiceQuestion
+from app.domain.group_validation import GroupPolicy
+from app.domain.inference import ChoiceOption, ChoiceQuestion, Verdict
 from app.domain.rules import check_rule, explain, selection_conflict, supported
 from app.domain.search import SearchResult
 from app.domain.sessions import (
@@ -52,6 +54,7 @@ from app.domain.sessions import (
 )
 from app.usecase.diagnostics import Diagnostics
 from app.usecase.enum_mapping import EnumMapper
+from app.usecase.group_validation import verify_groups
 from app.usecase.interface import (
     CatalogRepository,
     DecisionBackend,
@@ -79,7 +82,7 @@ OUT_OF_SCOPE = "Описание не похоже на товар: опишит
 
 class Sessions:
     """`min_similarity` — косинус ближайшей группы, ниже которого текст сразу вне справочника;
-    выше него `decision` проверяет, описан ли товар. Без `decision` проверяется только порог."""
+    выше него `decision` проверяет, описан ли товар. Для выбора назначения модель обязательна."""
 
     def __init__(
         self,
@@ -93,7 +96,12 @@ class Sessions:
         spelling: SpellingService | None = None,
         decision: DecisionBackend | None = None,
         min_similarity: float = 0.0,
+        group_top_k: int = 10,
     ) -> None:
+        if group_top_k not in (5, 10):
+            raise ValueError("group_top_k должен быть 5 или 10")
+        self._group_top_k = group_top_k
+        self._group_policy = GroupPolicy()
         self._enum_mapper = enum_mapper
         self._spelling = spelling
         self._diagnostics = diagnostics
@@ -139,9 +147,6 @@ class Sessions:
                 dialog=previous.dialog,
                 enum_resolutions=previous.enum_resolutions,
                 fact_history=previous.fact_history,
-                facts=previous.facts,
-                candidates=previous.candidates,
-                path=previous.path,
                 errors=tuple(
                     e
                     for e in previous.errors
@@ -155,28 +160,176 @@ class Sessions:
                     errors=(*state.errors, *spelling_diagnostics(self._spelling, messages[-1])),
                 )
             try:
-                description = "\n".join(m.text for m in messages)
-                result = self._search.run(description, category=None, limit=5)
-                if not result.groups:
-                    raise CatalogEmpty()
-                if self._out_of_scope(description, result):
-                    state = replace(
-                        state,
-                        status=SessionStatus.OUT_OF_SCOPE,
-                        path=None,
-                        candidates=(),
-                        next_question=None,
-                        card_complete=False,
-                        warnings=(*result.messages, OUT_OF_SCOPE),
-                    )
-                else:
-                    group = self._catalog_group(result.groups[0].group)
-                    state = self._correct_text(_with_alternatives(state, result), previous, group)
-                    state = self._analyze(state, group)
+                state = self._select_group(state, previous)
             except (ModelFailure, CatalogEmpty) as error:
                 state = _failed(state, error)
             self._sessions.save(Revision(state, key, text))
             return state
+
+    def _select_group(self, state: SessionState, previous: SessionState) -> SessionState:
+        # Сохраняем исходные сообщения и ответы о назначении в порядке событий.
+        parts = []
+        for count, message in enumerate(state.messages, 1):
+            parts.append(message.text)
+            parts.extend(
+                t.clarification
+                for t in state.dialog
+                if t.kind == "purpose" and t.messages == count and t.clarification is not None
+            )
+        description = "\n".join(parts)
+        result = self._search.run(description, category=None, limit=self._group_top_k)
+        # Порт поиска возвращает группы; защищаемся и от дублей/дочерних позиций адаптера.
+        hits = []
+        seen: set[str] = set()
+        for hit in result.groups:
+            code = hit.group.group
+            if code in seen:
+                continue
+            selected = self._catalog.position(code)
+            if selected is None or not selected.is_group:
+                raise ModelFailure("Поиск вернул неизвестную группу")
+            seen.add(code)
+            hits.append(replace(hit, group=selected))
+            if len(hits) == self._group_top_k:
+                break
+        result = replace(result, groups=tuple(hits))
+        state = replace(
+            state,
+            path=None,
+            candidates=(),
+            candidate_counts=CandidateCounts(),
+            facts=(),
+            alternatives=(),
+            group_checks=(),
+            next_question=None,
+            enum_proposals=(),
+            missing_required=(),
+            common_fields=(),
+            unanswered=(),
+            unsupported_rules=(),
+            editable_fields=(),
+            normalizations=(),
+            card_complete=False,
+            errors=tuple(
+                e
+                for e in state.errors
+                if (isinstance(e, Diagnostic) and not e.rule_ref)
+                or (isinstance(e, AnalysisError) and e.code.startswith("spelling_"))
+            ),
+            warnings=result.messages,
+        )
+        if not hits:
+            return self._purpose_question(state)
+        if self._out_of_scope(description, result):
+            return replace(
+                state,
+                status=SessionStatus.OUT_OF_SCOPE,
+                results_stale=False,
+                analysis_revision=state.revision,
+                warnings=(*result.messages, OUT_OF_SCOPE),
+            )
+        groups = tuple(self._catalog_group(h.group) for h in hits)
+        checks = verify_groups(
+            self._decision, description, groups, state.revision, self._group_policy
+        )
+        latest_purpose = next((t for t in reversed(state.dialog) if t.kind == "purpose"), None)
+        clarified_code = (
+            latest_purpose.option_id
+            if latest_purpose is not None and latest_purpose.messages == len(state.messages)
+            else None
+        )
+        selected_code = self._group_policy.select(checks, clarified_code)
+        state = replace(state, group_checks=checks)
+        # Пять лучших проверенных альтернатив: соответствие, затем исходный retrieval-ранг.
+        rank = {Verdict.supported: 0, Verdict.not_stated: 1, Verdict.contradicted: 2}
+        ordered = sorted(zip(hits, checks, strict=True), key=lambda pair: rank[pair[1].verdict])
+        state = replace(
+            state,
+            alternatives=tuple(
+                Alternative(
+                    h.group.code,
+                    h.group.name,
+                    h.group.category,
+                    h.score,
+                    {"lexical": h.lexical, "vector": h.vector, "synonym": h.synonym},
+                )
+                for h, _ in ordered
+                if h.group.code != selected_code
+            )[:5],
+        )
+        if selected_code is None:
+            return self._purpose_question(state)
+        group = next(g for g in groups if g.position.code == selected_code)
+        state = self._correct_text(state, previous, group)
+        return self._analyze(state, group)
+
+    def _purpose_question(self, state: SessionState) -> SessionState:
+        possible = [c for c in state.group_checks if c.verdict != Verdict.contradicted]
+        return replace(
+            state,
+            status=SessionStatus.NEEDS_CLARIFICATION,
+            results_stale=False,
+            analysis_revision=state.revision,
+            next_question=Question(
+                f"purpose:{state.revision}",
+                "purpose",
+                "Назначение",
+                "Для какого назначения нужен товар? Выберите подходящее или уточните в сообщении.",
+                (
+                    *tuple(QuestionOption(c.code, c.name) for c in possible),
+                    QuestionOption("other", "Другое"),
+                ),
+            ),
+        )
+
+    def _answer_purpose(
+        self,
+        previous: SessionState,
+        question: Question,
+        option_id: str | None,
+    ) -> SessionState:
+        if option_id is not None and option_id not in {o.id for o in question.options}:
+            raise OptionNotFound()
+        clarification = next((o.label for o in question.options if o.id == option_id), None)
+        if option_id == "other":
+            clarification = "Другое назначение; предложенные варианты не подходят"
+        elif clarification is not None:
+            clarification = "Уточнение назначения пользователем: " + clarification
+        turn = DialogTurn(
+            question.question_id,
+            "purpose",
+            "Назначение",
+            previous.revision + 1,
+            len(previous.messages),
+            option_id,
+            clarification=clarification,
+        )
+        state = replace(previous, revision=previous.revision + 1, dialog=(*previous.dialog, turn))
+        if option_id is None or option_id == "other":
+            # Без нового назначения повторять тот же вопрос/проверку бессмысленно.
+            state = replace(
+                state,
+                next_question=None,
+                analysis_revision=state.revision,
+                warnings=(*state.warnings, "Опишите назначение товара в сообщении"),
+            )
+        else:
+            try:
+                state = self._select_group(state, previous)
+            except (ModelFailure, CatalogEmpty) as error:
+                state = _failed(
+                    replace(
+                        state,
+                        path=None,
+                        candidates=(),
+                        candidate_counts=CandidateCounts(),
+                        group_checks=(),
+                        alternatives=(),
+                    ),
+                    error,
+                )
+        self._sessions.save(Revision(state))
+        return state
 
     def _out_of_scope(self, description: str, result: SearchResult) -> bool:
         """Найденное по коду КТРУ или проверенному синониму в справочнике заведомо есть."""
@@ -198,6 +351,12 @@ class Sessions:
             if previous is None:
                 raise SessionNotFound()
             question = previous.next_question
+            if (
+                question is not None
+                and question.question_id == question_id
+                and question.kind == "purpose"
+            ):
+                return self._answer_purpose(previous, question, option_id)
             if question is None or question.question_id != question_id or previous.path is None:
                 raise StaleQuestion()
             code = previous.path.group.code
@@ -458,7 +617,10 @@ class Sessions:
             previous = self._current(session_id, expected_revision)
             state = replace(previous, revision=previous.revision + 1)
             try:
-                state = self._analyze(state, self._group(state), extend=False)
+                if state.path is None:
+                    state = self._select_group(state, previous)
+                else:
+                    state = self._analyze(state, self._group(state), extend=False)
                 state = replace(
                     state,
                     candidates=tuple(
@@ -840,23 +1002,6 @@ class Sessions:
                 if not supported(c)
             ),
         )
-
-
-def _with_alternatives(state: SessionState, result: SearchResult) -> SessionState:
-    return replace(
-        state,
-        alternatives=tuple(
-            Alternative(
-                hit.group.code,
-                hit.group.name,
-                hit.group.category,
-                hit.score,
-                {"lexical": hit.lexical, "vector": hit.vector, "synonym": hit.synonym},
-            )
-            for hit in result.groups[1:5]
-        ),
-        warnings=result.messages,
-    )
 
 
 def _record_change(

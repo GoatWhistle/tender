@@ -21,7 +21,7 @@ from app.domain.rules import canonical, check_rule, supported
 OPTION_PENALTY = 0.05  # за каждый вариант сверх двух
 REPEAT_PENALTY = 0.3  # вопрос, на который уже ответили «не знаю», после смены контекста
 
-QuestionKind = Literal["conflict", "discriminate", "required"]
+QuestionKind = Literal["conflict", "discriminate", "required", "purpose"]
 
 
 @dataclass(frozen=True)
@@ -56,6 +56,7 @@ class DialogTurn:
     option_id: str | None = None
     fact: Fact | None = None
     group: str = ""
+    clarification: str | None = None
 
 
 @dataclass(frozen=True)

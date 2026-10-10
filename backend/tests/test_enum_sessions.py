@@ -26,6 +26,7 @@ from app.usecase.sessions import RELEVANCE
 from composition import build_usecases
 from main import create_app, sql_repositories, sync_catalog
 from settings import Settings
+from tests.group_decision import ConfirmedGroup
 
 
 class Decision(StubDecisionBackend):
@@ -44,6 +45,10 @@ class Decision(StubDecisionBackend):
             # Отсев текстов не о товаре: описания здесь — товары, вопрос не записывается.
             relevant = ChoiceAnswer("relevance", {"product": 1.0, "junk": 0.0}, "product")
             return ChoiceBatch((relevant,), self.revision)
+        if all(q.question_id.startswith("group:") for q in questions):
+            return ConfirmedGroup(questions[0].question_id.removeprefix("group:")).choose(
+                context, questions
+            )
         self.questions.append(tuple(questions))
         answers = []
         for q in questions:

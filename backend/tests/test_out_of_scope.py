@@ -19,6 +19,8 @@ from app.repository.memory.unit_of_work import MemoryStore, MemoryUnitOfWork
 from app.usecase.sessions import OUT_OF_SCOPE, Sessions
 from composition import Repositories, build_usecases
 from settings import Settings
+from tests.conftest import CABINET_CODE, TABLE_CODE
+from tests.group_decision import ConfirmedGroup
 from tests.test_sessions import SearchStub
 
 
@@ -62,6 +64,10 @@ class CountingDecision(StubDecisionBackend):
 
     def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
         self.calls += any(q.question_id == "relevance" for q in questions)
+        if all(q.question_id.startswith("group:") for q in questions):
+            return ConfirmedGroup(TABLE_CODE if "\n" in context else CABINET_CODE).choose(
+                context, questions
+            )
         return super().choose(context, questions)
 
 

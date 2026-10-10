@@ -124,7 +124,7 @@ export type SessionMessage = { id: string; text: string; created_at: string };
 
 export type NarrowingPath = {
   category: string;
-  group: { code: string; name: string };
+  group: { code: string; name: string; role?: "group_template" };
   positions: number;
 };
 
@@ -147,6 +147,7 @@ export type ExclusionReason = {
 };
 
 export type Candidate = {
+  role?: "ktru_position";
   code: string;
   name: string;
   excluded: boolean;
@@ -194,7 +195,7 @@ export type QuestionOption = { id: string; label: string };
 
 export type Question = {
   question_id: string;
-  kind: "conflict" | "discriminate" | "required";
+  kind: "conflict" | "discriminate" | "required" | "purpose";
   characteristic: string;
   text: string;
   options: QuestionOption[];
@@ -204,6 +205,7 @@ export type Question = {
 export type DialogTurn = {
   question_id: string;
   kind: Question["kind"];
+  clarification?: string | null;
   characteristic: string;
   revision: number;
   messages: number;
@@ -246,6 +248,17 @@ export type SessionState = {
   status: SessionStatus | (string & {});
   messages: SessionMessage[];
   path: NarrowingPath | null;
+  group_checks?: {
+    code: string;
+    name: string;
+    verdict: "supported" | "contradicted" | "not_stated";
+    scores: Record<string, number>;
+    support_scores: Record<string, number> | null;
+    criterion: string;
+    model_revision: string;
+    analysis_revision: number;
+    role: "group_template";
+  }[];
   alternatives: Alternative[];
   candidates: Candidate[];
   candidate_counts: { in_group: number; compatible: number; excluded_by_rules: number };
