@@ -22,6 +22,7 @@ function state(patch: Partial<SessionState> = {}): SessionState {
     common_fields: [],
     unanswered: [],
     unsupported_rules: [],
+    enum_proposals: [],
     ...patch,
   };
 }
@@ -46,6 +47,7 @@ function deferred<T>() {
 
 function fakeApi(overrides: Partial<SellerApi> = {}) {
   return {
+    resolveEnum: vi.fn<SellerApi["resolveEnum"]>(async () => resolved(3, "A")),
     create: vi.fn<SellerApi["create"]>(async () => state()),
     get: vi.fn<SellerApi["get"]>(async (id) => state({ session_id: id })),
     message: vi.fn<SellerApi["message"]>(async () => resolved(1, "A")),
@@ -422,6 +424,19 @@ describe("createSellerSession", () => {
       expect(api.answer).toHaveBeenCalledOnce();
     });
   });
+});
+
+it("подтверждает предложение показанной ревизии и обновляет устаревшую сессию", async () => {
+  const resolveEnum = vi.fn().mockRejectedValue(new ApiError(409, "stale_revision", "Устарело"));
+  const api = fakeApi({ get: vi.fn().mockResolvedValue(resolved(4, "A")), resolveEnum });
+  const store = createSellerSession(api);
+  await store.open("s1");
+  store.setDraft("Черновик дополнения");
+  await store.resolveEnum("enum:4:0", "accept");
+  expect(resolveEnum).toHaveBeenCalledWith("s1", 4, "enum:4:0", "accept", []);
+  expect(api.get).toHaveBeenCalledTimes(2);
+  expect(store.view().draft).toBe("Черновик дополнения");
+  expect(store.view().failure).toBeNull();
 });
 
 it("диагностика характеристики не превращает успешный анализ в технический сбой", async () => {

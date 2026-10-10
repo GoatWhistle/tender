@@ -1,0 +1,2288 @@
+{
+  "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+  "url": "http://127.0.0.1:18080",
+  "algorithm": "enum_decision_v1",
+  "dataset_sha256": {
+    "dev_v1.json": "a8a7f11678d97b80f6ad0ebe4c22bb4c5632dac9e96789bad30f5bb3d3aac092",
+    "enum_holdout_v1.json": "8f1a3662a5d4c140b7d1618398480f506d32b9a697749a3069f854e655475732"
+  },
+  "dev": [
+    {
+      "id": "mebel-01",
+      "latency_seconds": 11.138156124972738,
+      "errors": [],
+      "gold": [
+        [
+          "вид материала столешницы",
+          "лдсп"
+        ],
+        [
+          "тип каркаса",
+          "металлический"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип каркаса",
+          "value": "металлический",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9936868571076346
+        },
+        {
+          "field": "вид материала столешницы",
+          "value": "дсп",
+          "correct": false,
+          "eligible": false,
+          "score": 0.1209630973703933
+        },
+        {
+          "field": "вид материала столешницы",
+          "value": "лдсп",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8603699670578135
+        },
+        {
+          "field": "вид материала каркаса",
+          "value": "металл",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5417342176396966
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Стол письменный на металлическом каркасе, столешница ЛДСП"
+      ]
+    },
+    {
+      "id": "mebel-02",
+      "latency_seconds": 10.820102417026646,
+      "errors": [],
+      "gold": [
+        [
+          "вид материала столешницы",
+          "массив дерева"
+        ],
+        [
+          "тип каркаса",
+          "деревянный"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид материала столешницы",
+          "value": "массив дерева",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9678480420623945
+        },
+        {
+          "field": "вид материала каркаса",
+          "value": "массив дерева",
+          "correct": false,
+          "eligible": false,
+          "score": 0.7766951506070962
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Стол письменный деревянный, столешница из массива дерева"
+      ]
+    },
+    {
+      "id": "mebel-03",
+      "latency_seconds": 10.35265299997991,
+      "errors": [],
+      "gold": [
+        [
+          "назначение стола письменного",
+          "для руководителя"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "назначение стола письменного",
+          "value": "для руководителя",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8547718227456075
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Письменный стол для руководителя"
+      ]
+    },
+    {
+      "id": "mebel-04",
+      "latency_seconds": 6.413564791029785,
+      "errors": [],
+      "gold": [
+        [
+          "вид товара",
+          "секция шкафа"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид товара",
+          "value": "секция шкафа",
+          "correct": true,
+          "eligible": false,
+          "score": 0.0952288895246817
+        },
+        {
+          "field": "вид товара",
+          "value": "шкаф",
+          "correct": false,
+          "eligible": false,
+          "score": 0.607214137239897
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Шкаф для одежды металлический, секция шкафа для наращивания"
+      ]
+    },
+    {
+      "id": "mebel-05",
+      "latency_seconds": 5.714308750000782,
+      "errors": [],
+      "gold": [],
+      "predictions": [
+        {
+          "field": "вид товара",
+          "value": "шкаф",
+          "correct": false,
+          "eligible": false,
+          "score": 0.6776369969468994
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Шкаф для одежды металлический, высота 1,8 м, глубина 50 см"
+      ]
+    },
+    {
+      "id": "mebel-06",
+      "latency_seconds": 5.88966625003377,
+      "errors": [],
+      "gold": [
+        [
+          "тип каркаса",
+          "металлический"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип каркаса",
+          "value": "металлический",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7375997299487453
+        },
+        {
+          "field": "вид материала каркаса",
+          "value": "сталь",
+          "correct": false,
+          "eligible": false,
+          "score": 0.9718370512373962
+        },
+        {
+          "field": "вид материала полок",
+          "value": "металл",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5403899630954977
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Стеллаж офисный металлический, 12 полок в секции"
+      ]
+    },
+    {
+      "id": "mebel-07",
+      "latency_seconds": 8.397391166014131,
+      "errors": [],
+      "gold": [
+        [
+          "наличие механизма раскладывания",
+          "да"
+        ],
+        [
+          "тип каркаса",
+          "деревянный"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип каркаса",
+          "value": "деревянный",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9896167462326378
+        },
+        {
+          "field": "наличие механизма раскладывания",
+          "value": "да",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9112183102538574
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Диван раскладной на деревянном каркасе"
+      ]
+    },
+    {
+      "id": "mebel-08",
+      "latency_seconds": 7.606369499990251,
+      "errors": [],
+      "gold": [
+        [
+          "наличие механизма раскладывания",
+          "нет"
+        ],
+        [
+          "тип каркаса",
+          "металлический"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Диван без механизма раскладывания, каркас металлический"
+      ]
+    },
+    {
+      "id": "mebel-09",
+      "latency_seconds": 9.684424082981423,
+      "errors": [],
+      "gold": [
+        [
+          "тип дивана",
+          "прямой"
+        ],
+        [
+          "тип каркаса",
+          "металлический"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип дивана",
+          "value": "прямой",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7802968170723527
+        },
+        {
+          "field": "тип каркаса",
+          "value": "металлический",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9519771921333013
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Диван прямой на металлокаркасе"
+      ]
+    },
+    {
+      "id": "mebel-10",
+      "latency_seconds": 4.588582750002388,
+      "errors": [],
+      "gold": [
+        [
+          "вид материала столешницы",
+          "стекло закаленное"
+        ],
+        [
+          "тип каркаса",
+          "деревянный"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип каркаса",
+          "value": "деревянный",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9317544049553997
+        },
+        {
+          "field": "вид материала столешницы",
+          "value": "стекло закаленное",
+          "correct": true,
+          "eligible": false,
+          "score": 0.987708111230168
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Журнальный стол, каркас деревянный, столешница из закалённого стекла"
+      ]
+    },
+    {
+      "id": "mebel-11",
+      "latency_seconds": 4.649717916036025,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Журнальный столик"
+      ]
+    },
+    {
+      "id": "mebel-12",
+      "latency_seconds": 4.168568249966484,
+      "errors": [],
+      "gold": [
+        [
+          "тип вешалки",
+          "напольная костюмная"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип вешалки",
+          "value": "напольная",
+          "correct": false,
+          "eligible": false,
+          "score": 0.36534646079333066
+        },
+        {
+          "field": "тип вешалки",
+          "value": "напольная костюмная",
+          "correct": true,
+          "eligible": false,
+          "score": 0.3621195254615144
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Вешалка напольная костюмная металлическая"
+      ]
+    },
+    {
+      "id": "mebel-13",
+      "latency_seconds": 4.357072999991942,
+      "errors": [],
+      "gold": [
+        [
+          "тип вешалки",
+          "настенная"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип вешалки",
+          "value": "настенная",
+          "correct": true,
+          "eligible": false,
+          "score": 0.49748305690802586
+        },
+        {
+          "field": "дополнительная комплектация",
+          "value": "крючки",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5733470916748047
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Вешалка настеная металлическая для одежды"
+      ]
+    },
+    {
+      "id": "mebel-14",
+      "latency_seconds": 7.229505583003629,
+      "errors": [],
+      "gold": [
+        [
+          "тип конструкции",
+          "угловая"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип конструкции",
+          "value": "угловая",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8084149741704358
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Банкетка угловая, материал корпуса: бамбук"
+      ]
+    },
+    {
+      "id": "mebel-15",
+      "latency_seconds": 4.372058500011917,
+      "errors": [],
+      "gold": [],
+      "predictions": [
+        {
+          "field": "вид материала корпуса",
+          "value": "массив дерева",
+          "correct": false,
+          "eligible": false,
+          "score": 0.88741534948349
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Шкаф детский для одежды деревянный, 3 секции"
+      ]
+    },
+    {
+      "id": "mebel-16",
+      "latency_seconds": 6.315717499994207,
+      "errors": [],
+      "gold": [
+        [
+          "возрастная категория",
+          "для учащихся младшего школьного возраста"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "возрастная категория",
+          "value": "для учащихся младшего школьного возраста",
+          "correct": true,
+          "eligible": false,
+          "score": 0.787245481343359
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Стол обеденный школьный для младших школьников"
+      ]
+    },
+    {
+      "id": "mebel-17",
+      "latency_seconds": 4.776779290987179,
+      "errors": [],
+      "gold": [
+        [
+          "вид тумбы",
+          "для оргтехники"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид тумбы",
+          "value": "для оргтехники",
+          "correct": true,
+          "eligible": false,
+          "score": 0.6829992347012982
+        },
+        {
+          "field": "вид материала корпуса",
+          "value": "массив дерева",
+          "correct": false,
+          "eligible": false,
+          "score": 0.7559810876846313
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Тумба офисная деревянная для оргтехники"
+      ]
+    },
+    {
+      "id": "mebel-18",
+      "latency_seconds": 5.677082957990933,
+      "errors": [],
+      "gold": [
+        [
+          "тип каркаса",
+          "деревянный"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип каркаса",
+          "value": "деревянный",
+          "correct": true,
+          "eligible": false,
+          "score": 0.934543282649075
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Табуретка деревянная"
+      ]
+    },
+    {
+      "id": "mebel-19",
+      "latency_seconds": 14.166670625039842,
+      "errors": [],
+      "gold": [
+        [
+          "тип каркаса",
+          "металлический"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип каркаса",
+          "value": "деревянный",
+          "correct": false,
+          "eligible": false,
+          "score": 0.985958624252216
+        },
+        {
+          "field": "комплектация",
+          "value": "заглушки кабель-каналов",
+          "correct": false,
+          "eligible": false,
+          "score": 0.41156870126724243
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Стол компьютерный на деревянном каркасе",
+        "Поправка: каркас не деревянный, а металлический"
+      ]
+    },
+    {
+      "id": "instr-01",
+      "latency_seconds": 6.532575833029114,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от сети"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип питания",
+          "value": "от сети",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8646503205965984
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Дрель ручная электрическая сетевая"
+      ]
+    },
+    {
+      "id": "instr-02",
+      "latency_seconds": 6.032993042026646,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от аккумулятора"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип питания",
+          "value": "от аккумулятора",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8498764145216945
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Дрель электрическая аккумуляторная"
+      ]
+    },
+    {
+      "id": "instr-03",
+      "latency_seconds": 6.356294833996799,
+      "errors": [],
+      "gold": [],
+      "predictions": [
+        {
+          "field": "тип питания",
+          "value": "от сети",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5429806940876999
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Дрель электрическая"
+      ]
+    },
+    {
+      "id": "instr-04",
+      "latency_seconds": 6.270846750005148,
+      "errors": [],
+      "gold": [
+        [
+          "вид",
+          "углошлифовальная машина"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Болгарка 125 мм"
+      ]
+    },
+    {
+      "id": "instr-05",
+      "latency_seconds": 7.720064375025686,
+      "errors": [],
+      "gold": [
+        [
+          "вид",
+          "углошлифовальная машина"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид",
+          "value": "углошлифовальная машина",
+          "correct": true,
+          "eligible": false,
+          "score": 0.3285805722614818
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Углошлифовальная машина с диском 76 мм"
+      ]
+    },
+    {
+      "id": "instr-06",
+      "latency_seconds": 10.891526541963685,
+      "errors": [],
+      "gold": [
+        [
+          "вид",
+          "ленточношлифовальная ручная машина"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид",
+          "value": "ленточношлифовальная ручная машина",
+          "correct": true,
+          "eligible": false,
+          "score": 0.5383269786834717
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Шлифмашина ленточная"
+      ]
+    },
+    {
+      "id": "instr-07",
+      "latency_seconds": 7.0711928340024315,
+      "errors": [],
+      "gold": [],
+      "predictions": [
+        {
+          "field": "вид",
+          "value": "углошлифовальная машина",
+          "correct": false,
+          "eligible": false,
+          "score": 0.16681628011438304
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Шлифовальная машина"
+      ]
+    },
+    {
+      "id": "instr-08",
+      "latency_seconds": 6.63462108297972,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от аккумуляторных батарей"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип обрабатываемого материала",
+          "value": "дерево",
+          "correct": false,
+          "eligible": false,
+          "score": 0.931207001209259
+        },
+        {
+          "field": "тип обрабатываемого материала",
+          "value": "металл",
+          "correct": false,
+          "eligible": false,
+          "score": 0.7304646372795105
+        },
+        {
+          "field": "тип питания",
+          "value": "от аккумуляторных батарей",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7057405497749061
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Пила сабельная аккумуляторная"
+      ]
+    },
+    {
+      "id": "instr-09",
+      "latency_seconds": 8.77738862496335,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от сети"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип питания",
+          "value": "от сети",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9965898187152018
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Пила торцовочная, работает от сети 220 В"
+      ]
+    },
+    {
+      "id": "instr-10",
+      "latency_seconds": 4.123904542007949,
+      "errors": [],
+      "gold": [
+        [
+          "вид пилы",
+          "классическая"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид пилы",
+          "value": "классическая",
+          "correct": true,
+          "eligible": false,
+          "score": 0.5864391255035317
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Пила ручная по дереву, классическая"
+      ]
+    },
+    {
+      "id": "instr-11",
+      "latency_seconds": 3.6079770830110647,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Пила ручная, вид пилы: ленточная"
+      ]
+    },
+    {
+      "id": "instr-12",
+      "latency_seconds": 4.165395583026111,
+      "errors": [],
+      "gold": [
+        [
+          "исполнение",
+          "концевая"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "исполнение",
+          "value": "концевая",
+          "correct": true,
+          "eligible": false,
+          "score": 0.3077979137271152
+        },
+        {
+          "field": "исполнение",
+          "value": "торцевая",
+          "correct": false,
+          "eligible": false,
+          "score": 0.21654211861133144
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Фреза концевая"
+      ]
+    },
+    {
+      "id": "instr-13",
+      "latency_seconds": 5.169283416005783,
+      "errors": [],
+      "gold": [
+        [
+          "исполнение",
+          "дисковая"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Фреза дисковая, не концевая"
+      ]
+    },
+    {
+      "id": "instr-14",
+      "latency_seconds": 5.210941291006748,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от аккумулятора"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип питания",
+          "value": "от аккумулятора",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8733762380313244
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Фрезер ручной электрический аккумуляторный"
+      ]
+    },
+    {
+      "id": "instr-15",
+      "latency_seconds": 4.423530415981077,
+      "errors": [],
+      "gold": [
+        [
+          "тип хвостовика",
+          "sds+"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип хвостовика",
+          "value": "sds+",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7011351294257662
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Бур для перфоратора SDS-plus, диаметр 8 мм"
+      ]
+    },
+    {
+      "id": "instr-16",
+      "latency_seconds": 0.009387666010297835,
+      "errors": [],
+      "gold": [
+        [
+          "тип хвостовика",
+          "sds+"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Бур для перфоратора SDS-plus диаметром 7,5 мм"
+      ]
+    },
+    {
+      "id": "instr-17",
+      "latency_seconds": 2.949698458018247,
+      "errors": [],
+      "gold": [
+        [
+          "тип конструкции",
+          "двухскоростная"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип конструкции",
+          "value": "двухскоростная",
+          "correct": true,
+          "eligible": false,
+          "score": 0.76945658334583
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Дрель ручная механическая двухскоростная"
+      ]
+    },
+    {
+      "id": "instr-18",
+      "latency_seconds": 3.826922292006202,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от аккумулятора"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип питания",
+          "value": "от аккумулятора",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7126154114745763
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Пистолет клеевой электрический от акумулятора"
+      ]
+    },
+    {
+      "id": "instr-19",
+      "latency_seconds": 14.62782720796531,
+      "errors": [],
+      "gold": [
+        [
+          "тип питания",
+          "от аккумуляторных батарей"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип обрабатываемого материала",
+          "value": "дерево",
+          "correct": false,
+          "eligible": false,
+          "score": 0.9726247191429138
+        },
+        {
+          "field": "тип питания",
+          "value": "от сети",
+          "correct": false,
+          "eligible": false,
+          "score": 0.8897532919904783
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Пила сабельная от сети",
+        "Нет, ошибся — пила аккумуляторная"
+      ]
+    },
+    {
+      "id": "odezhda-01",
+      "latency_seconds": 3.350625167018734,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "женский"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "женский",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9142307645211122
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Халат производственный женский"
+      ]
+    },
+    {
+      "id": "odezhda-02",
+      "latency_seconds": 3.696912584011443,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "мужской"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "мужской",
+          "correct": true,
+          "eligible": false,
+          "score": 0.6655726757130392
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Халат рабочий мужской, рост 182-188"
+      ]
+    },
+    {
+      "id": "odezhda-03",
+      "latency_seconds": 3.7230487499618903,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Халат производственный"
+      ]
+    },
+    {
+      "id": "odezhda-04",
+      "latency_seconds": 5.26035904197488,
+      "errors": [],
+      "gold": [
+        [
+          "вид ткани",
+          "джинса"
+        ],
+        [
+          "материал изделия",
+          "ткань"
+        ],
+        [
+          "половой признак",
+          "мужские"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "мужские",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8579661370771402
+        },
+        {
+          "field": "материал изделия",
+          "value": "ткань",
+          "correct": true,
+          "eligible": false,
+          "score": 0.6197742862911928
+        },
+        {
+          "field": "вид ткани",
+          "value": "джинса",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8230285607300696
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Брюки мужские из ткани, джинса"
+      ]
+    },
+    {
+      "id": "odezhda-05",
+      "latency_seconds": 6.061823665979318,
+      "errors": [],
+      "gold": [
+        [
+          "материал изделия",
+          "трикотажное полотно"
+        ],
+        [
+          "половой признак",
+          "женские"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "женские",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8436313292901013
+        },
+        {
+          "field": "материал изделия",
+          "value": "трикотажное полотно",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8922703081657233
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Брюки женские трикотажные"
+      ]
+    },
+    {
+      "id": "odezhda-06",
+      "latency_seconds": 5.763101958029438,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "женские"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "женские",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8749321845111164
+        },
+        {
+          "field": "вид основного сырья (волокна) в составе ткани/трикотажного полотна",
+          "value": "ацетат",
+          "correct": false,
+          "eligible": false,
+          "score": 0.4578094780445099
+        },
+        {
+          "field": "вид основного сырья (волокна) в составе ткани/трикотажного полотна",
+          "value": "мохер",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5071022510528564
+        },
+        {
+          "field": "вид основного сырья (волокна) в составе ткани/трикотажного полотна",
+          "value": "полиамид",
+          "correct": false,
+          "eligible": false,
+          "score": 0.44401195645332336
+        },
+        {
+          "field": "вид основного сырья (волокна) в составе ткани/трикотажного полотна",
+          "value": "полиэфир",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5383009314537048
+        },
+        {
+          "field": "вид основного сырья (волокна) в составе ткани/трикотажного полотна",
+          "value": "триацетат",
+          "correct": false,
+          "eligible": false,
+          "score": 0.6642371416091919
+        },
+        {
+          "field": "вид основного сырья (волокна) в составе ткани/трикотажного полотна",
+          "value": "шелк",
+          "correct": false,
+          "eligible": false,
+          "score": 0.3904496133327484
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Брюки женские"
+      ]
+    },
+    {
+      "id": "odezhda-07",
+      "latency_seconds": 4.47963587497361,
+      "errors": [],
+      "gold": [
+        [
+          "назначение",
+          "мужская"
+        ],
+        [
+          "российский размер",
+          "52"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "российский размер",
+          "value": "52",
+          "correct": true,
+          "eligible": false,
+          "score": 0.680301700943207
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Куртка зимняя мужская из текстильных материалов, размер 52"
+      ]
+    },
+    {
+      "id": "odezhda-08",
+      "latency_seconds": 4.46785091701895,
+      "errors": [],
+      "gold": [
+        [
+          "назначение",
+          "женская"
+        ],
+        [
+          "российский размер",
+          "48"
+        ],
+        [
+          "тип утеплителя",
+          "искусственный утеплитель"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "российский размер",
+          "value": "48",
+          "correct": true,
+          "eligible": false,
+          "score": 0.6288551300356102
+        },
+        {
+          "field": "тип утеплителя",
+          "value": "искусственный утеплитель",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8802956938743591
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Куртка зимняя женская текстильная на синтепоне, размер 48"
+      ]
+    },
+    {
+      "id": "odezhda-09",
+      "latency_seconds": 2.5904837499838322,
+      "errors": [],
+      "gold": [
+        [
+          "назначение",
+          "мужской"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Костюм спортивный мужской"
+      ]
+    },
+    {
+      "id": "odezhda-10",
+      "latency_seconds": 2.7051041669910774,
+      "errors": [],
+      "gold": [
+        [
+          "назначение",
+          "универсальный"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Костюм спортивный унисекс"
+      ]
+    },
+    {
+      "id": "odezhda-11",
+      "latency_seconds": 2.963848416984547,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "для мальчика"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "для мальчика",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7863712242925267
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Футболка трикотажная детская для мальчика"
+      ]
+    },
+    {
+      "id": "odezhda-12",
+      "latency_seconds": 3.572712625027634,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "женские"
+        ],
+        [
+          "российский размер",
+          "46"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "женские",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7647620819473203
+        },
+        {
+          "field": "российский размер",
+          "value": "46",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7254115316325562
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Шорты женские, размер 46"
+      ]
+    },
+    {
+      "id": "odezhda-13",
+      "latency_seconds": 3.663360541977454,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "мужские"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "мужские",
+          "correct": true,
+          "eligible": false,
+          "score": 0.6056170657454726
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Шорты мужские размер 36"
+      ]
+    },
+    {
+      "id": "odezhda-14",
+      "latency_seconds": 3.9136715410277247,
+      "errors": [],
+      "gold": [
+        [
+          "вид изделия",
+          "бейсболка"
+        ],
+        [
+          "половой признак",
+          "мужская"
+        ],
+        [
+          "сезон",
+          "лето"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид изделия",
+          "value": "бейсболка",
+          "correct": true,
+          "eligible": false,
+          "score": 0.284927541556016
+        },
+        {
+          "field": "вид изделия",
+          "value": "шапка",
+          "correct": false,
+          "eligible": false,
+          "score": 0.25318261457028046
+        },
+        {
+          "field": "вид изделия",
+          "value": "шляпа (панама)",
+          "correct": false,
+          "eligible": false,
+          "score": 0.12894333049611945
+        },
+        {
+          "field": "половой признак",
+          "value": "мужская",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8422139787471494
+        },
+        {
+          "field": "тип основного материала",
+          "value": "натуральная ткань или натуральное трикотажное полотно",
+          "correct": false,
+          "eligible": false,
+          "score": 0.7077358365058899
+        },
+        {
+          "field": "тип основного материала",
+          "value": "синтетическая ткань или синтетическое трикотажное полотно",
+          "correct": false,
+          "eligible": false,
+          "score": 0.6307846307754517
+        },
+        {
+          "field": "тип основного материала",
+          "value": "смесовая ткань или смесовое трикотажное полотно",
+          "correct": false,
+          "eligible": false,
+          "score": 0.6126580834388733
+        },
+        {
+          "field": "сезон",
+          "value": "лето",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8191960335264117
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Бейсболка мужская летняя"
+      ]
+    },
+    {
+      "id": "odezhda-15",
+      "latency_seconds": 2.7882959169801325,
+      "errors": [],
+      "gold": [
+        [
+          "назначение",
+          "женская"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "размер",
+          "value": "55",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5439303517341614
+        },
+        {
+          "field": "размер",
+          "value": "57",
+          "correct": false,
+          "eligible": false,
+          "score": 0.45226672291755676
+        },
+        {
+          "field": "размер",
+          "value": "60",
+          "correct": false,
+          "eligible": false,
+          "score": 0.4510839581489563
+        },
+        {
+          "field": "размер",
+          "value": "62",
+          "correct": false,
+          "eligible": false,
+          "score": 0.45804667472839355
+        },
+        {
+          "field": "размер",
+          "value": "63",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5178489089012146
+        },
+        {
+          "field": "тип основного материала",
+          "value": "текстиль",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5950382351875305
+        },
+        {
+          "field": "конструктивные особенности",
+          "value": "завязки",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5736335515975952
+        },
+        {
+          "field": "конструктивные особенности",
+          "value": "козырек",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5251607298851013
+        },
+        {
+          "field": "конструктивные особенности",
+          "value": "подворот",
+          "correct": false,
+          "eligible": false,
+          "score": 0.5065828561782837
+        },
+        {
+          "field": "конструктивные особенности",
+          "value": "подкладка",
+          "correct": false,
+          "eligible": false,
+          "score": 0.9044224619865417
+        },
+        {
+          "field": "конструктивные особенности",
+          "value": "регулировка размера головного убора",
+          "correct": false,
+          "eligible": false,
+          "score": 0.7436871528625488
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Шапка женская зимняя"
+      ]
+    },
+    {
+      "id": "odezhda-17",
+      "latency_seconds": 4.6673018330475315,
+      "errors": [],
+      "gold": [
+        [
+          "хозяйственного назначения",
+          "да"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "вид материала",
+          "value": "каучук",
+          "correct": false,
+          "eligible": false,
+          "score": 0.148011267651584
+        },
+        {
+          "field": "вид материала",
+          "value": "резина",
+          "correct": false,
+          "eligible": false,
+          "score": 0.7855473641818543
+        },
+        {
+          "field": "хозяйственного назначения",
+          "value": "да",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8112835765245265
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Перчатки резиновые хозяйственные"
+      ]
+    },
+    {
+      "id": "odezhda-18",
+      "latency_seconds": 4.99571783299325,
+      "errors": [],
+      "gold": [
+        [
+          "хозяйственного назначения",
+          "нет"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Перчатки резиновые, не для хозяйственных работ"
+      ]
+    },
+    {
+      "id": "odezhda-19",
+      "latency_seconds": 3.251241541991476,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "мужской"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "мужской",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7653297134437083
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Халат производственый мужкой"
+      ]
+    },
+    {
+      "id": "odezhda-20",
+      "latency_seconds": 9.924045416002627,
+      "errors": [],
+      "gold": [
+        [
+          "половой признак",
+          "для мальчика"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "половой признак",
+          "value": "для девочки",
+          "correct": false,
+          "eligible": false,
+          "score": 0.6411877780189926
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Футболка трикотажная детская для девочки",
+        "Ой, нет — для мальчика"
+      ]
+    }
+  ],
+  "holdout": [
+    {
+      "id": "enum-holdout-01",
+      "latency_seconds": 1.8287288750289008,
+      "errors": [],
+      "gold": [
+        [
+          "материал",
+          "сталь"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал",
+          "value": "сталь",
+          "correct": true,
+          "eligible": true,
+          "score": 0.9973300695419312
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Материал: стальной"
+      ]
+    },
+    {
+      "id": "enum-holdout-02",
+      "latency_seconds": 1.8012547499965876,
+      "errors": [],
+      "gold": [
+        [
+          "материал",
+          "сталь"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал",
+          "value": "сталь",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9913968925185781
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Табурет целиком из стали"
+      ]
+    },
+    {
+      "id": "enum-holdout-03",
+      "latency_seconds": 1.9149658330134116,
+      "errors": [],
+      "gold": [
+        [
+          "материал",
+          "алюминий"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал",
+          "value": "алюминий",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9912279635224351
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Алюминиевый стеллаж"
+      ]
+    },
+    {
+      "id": "enum-holdout-04",
+      "latency_seconds": 1.7922658339957707,
+      "errors": [],
+      "gold": [
+        [
+          "материал",
+          "дерево"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал",
+          "value": "дерево",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9945712032947139
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Деревянный стул"
+      ]
+    },
+    {
+      "id": "enum-holdout-05",
+      "latency_seconds": 1.798300750029739,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Стул не деревянный"
+      ]
+    },
+    {
+      "id": "enum-holdout-06",
+      "latency_seconds": 1.8358527920208871,
+      "errors": [],
+      "gold": [],
+      "predictions": [
+        {
+          "field": "материал",
+          "value": "дерево",
+          "correct": false,
+          "eligible": false,
+          "score": 0.9589870271758361
+        }
+      ],
+      "exact": false,
+      "messages": [
+        "Деревянная столешница, стальные ножки"
+      ]
+    },
+    {
+      "id": "enum-holdout-07",
+      "latency_seconds": 1.85224970796844,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Материал не сообщается"
+      ]
+    },
+    {
+      "id": "enum-holdout-08",
+      "latency_seconds": 2.0037103749928065,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Красный офисный стул"
+      ]
+    },
+    {
+      "id": "enum-holdout-09",
+      "latency_seconds": 1.9680908329901285,
+      "errors": [],
+      "gold": [
+        [
+          "материал верха",
+          "натуральная кожа"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал верха",
+          "value": "натуральная кожа",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9941757505548825
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Верх ботинок из натуральной кожи"
+      ]
+    },
+    {
+      "id": "enum-holdout-10",
+      "latency_seconds": 1.7817904590046965,
+      "errors": [],
+      "gold": [
+        [
+          "материал верха",
+          "искусственная кожа"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал верха",
+          "value": "искусственная кожа",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9423303652054675
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Ботинки с верхом из кожзаменителя"
+      ]
+    },
+    {
+      "id": "enum-holdout-11",
+      "latency_seconds": 1.8851405829773284,
+      "errors": [],
+      "gold": [
+        [
+          "материал верха",
+          "текстиль"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал верха",
+          "value": "текстиль",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7607852325531173
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Верх обуви текстильный"
+      ]
+    },
+    {
+      "id": "enum-holdout-12",
+      "latency_seconds": 1.9974031660240144,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Обувь без натуральной кожи"
+      ]
+    },
+    {
+      "id": "enum-holdout-13",
+      "latency_seconds": 1.8044228330254555,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Подошва из натуральной кожи, верх не описан"
+      ]
+    },
+    {
+      "id": "enum-holdout-14",
+      "latency_seconds": 2.2135078749852255,
+      "errors": [],
+      "gold": [
+        [
+          "тип кровати",
+          "двухъярусная"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип кровати",
+          "value": "двухъярусная",
+          "correct": true,
+          "eligible": false,
+          "score": 0.7466255236272359
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Кровать в два яруса"
+      ]
+    },
+    {
+      "id": "enum-holdout-15",
+      "latency_seconds": 2.063507584040053,
+      "errors": [],
+      "gold": [
+        [
+          "тип кровати",
+          "двухъярусная"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип кровати",
+          "value": "двухъярусная",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9435879129731652
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Двухъярусная кровать"
+      ]
+    },
+    {
+      "id": "enum-holdout-16",
+      "latency_seconds": 2.3466648340108804,
+      "errors": [],
+      "gold": [
+        [
+          "тип кровати",
+          "одноярусная"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "тип кровати",
+          "value": "одноярусная",
+          "correct": true,
+          "eligible": false,
+          "score": 0.8729852042723587
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Кровать с одним ярусом"
+      ]
+    },
+    {
+      "id": "enum-holdout-17",
+      "latency_seconds": 2.0178676249925047,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Кровать не двухъярусная"
+      ]
+    },
+    {
+      "id": "enum-holdout-18",
+      "latency_seconds": 1.9262478329474106,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Кровать для детской комнаты"
+      ]
+    },
+    {
+      "id": "enum-holdout-19",
+      "latency_seconds": 1.1763171250349842,
+      "errors": [],
+      "gold": [
+        [
+          "состав ткани",
+          "полиэстер"
+        ],
+        [
+          "состав ткани",
+          "хлопок"
+        ]
+      ],
+      "predictions": [],
+      "exact": false,
+      "messages": [
+        "Ткань состоит из хлопка и полиэстера"
+      ]
+    },
+    {
+      "id": "enum-holdout-20",
+      "latency_seconds": 0.9784452500171028,
+      "errors": [],
+      "gold": [
+        [
+          "состав ткани",
+          "шерсть"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "состав ткани",
+          "value": "шерсть",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9871863126754761
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Шерстяная ткань"
+      ]
+    },
+    {
+      "id": "enum-holdout-21",
+      "latency_seconds": 0.9225633339956403,
+      "errors": [],
+      "gold": [
+        [
+          "состав ткани",
+          "хлопок"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "состав ткани",
+          "value": "хлопок",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9915372133255005
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Ткань хлопковая"
+      ]
+    },
+    {
+      "id": "enum-holdout-22",
+      "latency_seconds": 0.925585666031111,
+      "errors": [],
+      "gold": [],
+      "predictions": [],
+      "exact": true,
+      "messages": [
+        "Ткань без шерсти"
+      ]
+    },
+    {
+      "id": "enum-holdout-23",
+      "latency_seconds": 2.7069130839663558,
+      "errors": [],
+      "gold": [
+        [
+          "материал ножек",
+          "сталь"
+        ],
+        [
+          "материал столешницы",
+          "дерево"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал столешницы",
+          "value": "дерево",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9971149374882724
+        },
+        {
+          "field": "материал ножек",
+          "value": "сталь",
+          "correct": true,
+          "eligible": false,
+          "score": 0.995506530036603
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Столешница деревянная, ножки стальные"
+      ]
+    },
+    {
+      "id": "enum-holdout-24",
+      "latency_seconds": 2.288027750037145,
+      "errors": [],
+      "gold": [
+        [
+          "материал ножек",
+          "дерево"
+        ],
+        [
+          "материал столешницы",
+          "стекло"
+        ]
+      ],
+      "predictions": [
+        {
+          "field": "материал столешницы",
+          "value": "стекло",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9968590810545818
+        },
+        {
+          "field": "материал ножек",
+          "value": "дерево",
+          "correct": true,
+          "eligible": false,
+          "score": 0.9908916136727831
+        }
+      ],
+      "exact": true,
+      "messages": [
+        "Столешница стеклянная, ножки деревянные"
+      ]
+    }
+  ],
+  "auto_acceptance_enabled": false,
+  "vram": null,
+  "calibration": [
+    {
+      "threshold": 0.5,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    },
+    {
+      "threshold": 0.8,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    },
+    {
+      "threshold": 0.9,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    },
+    {
+      "threshold": 0.95,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    },
+    {
+      "threshold": 0.99,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    },
+    {
+      "threshold": 0.995,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    },
+    {
+      "threshold": 0.999,
+      "cases": 57,
+      "technical_errors": 0,
+      "exact_cases": 28,
+      "predictions": 95,
+      "correct_predictions": 50,
+      "gold_values": 65,
+      "accepted": 0,
+      "correct_accepted": 0,
+      "precision_lower_95": 0.0,
+      "auto_coverage_of_predictions": 0.0,
+      "latency_p50_seconds": 5.169283416005783,
+      "latency_p95_seconds": 11.138156124972738
+    }
+  ],
+  "selected_threshold": null,
+  "dev_summary": {
+    "cases": 57,
+    "technical_errors": 0,
+    "exact_cases": 28,
+    "predictions": 95,
+    "correct_predictions": 50,
+    "gold_values": 65,
+    "accepted": 0,
+    "correct_accepted": 0,
+    "precision_lower_95": 0.0,
+    "auto_coverage_of_predictions": 0.0,
+    "latency_p50_seconds": 5.169283416005783,
+    "latency_p95_seconds": 11.138156124972738
+  },
+  "holdout_summary": {
+    "cases": 24,
+    "technical_errors": 0,
+    "exact_cases": 22,
+    "predictions": 17,
+    "correct_predictions": 16,
+    "gold_values": 18,
+    "accepted": 0,
+    "correct_accepted": 0,
+    "precision_lower_95": 0.0,
+    "auto_coverage_of_predictions": 0.0,
+    "latency_p50_seconds": 1.8686951454728842,
+    "latency_p95_seconds": 2.3466648340108804
+  }
+}

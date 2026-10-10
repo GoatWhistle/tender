@@ -15,6 +15,7 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.adapter.aliases import CsvAliasesSource
+from app.adapter.decision import OpenJevDecision
 from app.adapter.embeddings import OpenAIEmbeddings
 from app.adapter.enum_similarity import DamerauMatcher
 from app.adapter.facts import DeterministicFactExtractor
@@ -28,6 +29,7 @@ from app.controller.errors import install_error_handlers
 from app.controller.health import router as health_router
 from app.controller.search import router as search_router
 from app.controller.sessions import router as sessions_router
+from app.domain.enum_mapping import AutoAcceptance
 from app.repository.aliases import SqlAliases
 from app.repository.catalog import SqlCatalog
 from app.repository.database import create_db_engine
@@ -57,6 +59,14 @@ def production_usecases(
     embeddings = checked_embeddings(embeddings) if embeddings is not None else None
     return build_usecases(
         sql_repositories(),
+        decision=OpenJevDecision(settings.decision_url, timeout=settings.decision_timeout)
+        if settings.decision_url
+        else None,
+        enum_policy=AutoAcceptance(
+            settings.decision_auto_accept_threshold, settings.decision_revision
+        )
+        if settings.decision_auto_accept_enabled
+        else AutoAcceptance(),
         fact_extractor=DeterministicFactExtractor(ReviewedValueAliases().all()),
         enum_matcher=DamerauMatcher(),
         value_aliases=ReviewedValueAliases(),
