@@ -308,7 +308,42 @@ export type FactMutation = Partial<FactValue> & {
   diagnostic_index?: number;
 };
 
+export type DraftState = {
+  state: SessionState;
+  input_text: string;
+  saved_revision: number | null;
+  saved_at: string | null;
+};
+export type DraftSummary = {
+  session_id: string;
+  title: string;
+  revision: number;
+  saved_revision: number;
+  saved_at: string;
+};
+export type CardExport = {
+  format: "ste_demo_v1";
+  document_kind: "card" | "draft";
+  session_id: string;
+  revision: number;
+  ktru_code: string | null;
+  group: NarrowingPath["group"] | null;
+  card_complete: boolean;
+  missing_required: SessionState["missing_required"];
+  results_stale: boolean;
+  catalog_version: string | null;
+  catalog_snapshot: string | null;
+  characteristics: {
+    fact: Fact;
+    catalog_refs: { position_code: string; characteristic_code: string; name: string }[];
+  }[];
+};
+
 export interface SellerApi {
+  exportCard(id: string, revision: number): Promise<CardExport>;
+  saveDraft(id: string, revision: number, inputText: string): Promise<DraftState>;
+  openDraft(id: string): Promise<DraftState>;
+  drafts(): Promise<DraftSummary[]>;
   mutate(id: string, factId: string | null, body: FactMutation): Promise<SessionState>;
   recalculate(id: string, revision: number): Promise<SessionState>;
   /** Подтвердить предложение в ожидаемой ревизии сессии. */

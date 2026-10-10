@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.controller.deps import SessionsDep
 from app.controller.errors import error_responses
+from app.domain.drafts import DraftState, DraftSummary
 from app.domain.errors import (
     FactNotFound,
     IdempotencyConflict,
@@ -16,6 +17,7 @@ from app.domain.errors import (
     StaleQuestion,
     StaleRevision,
 )
+from app.domain.exports import CardExport
 from app.domain.fact_edits import FactInput
 from app.domain.sessions import SessionState
 
@@ -25,6 +27,11 @@ router = APIRouter(prefix="/api/v1/sessions", tags=["Сессии"])
 @router.post("")
 def create(sessions: SessionsDep) -> SessionState:
     return sessions.create()
+
+
+@router.get("/drafts")
+def drafts(sessions: SessionsDep) -> list[DraftSummary]:
+    return sessions.drafts()
 
 
 @router.get("/{session_id}", responses=error_responses(SessionNotFound))
@@ -176,3 +183,27 @@ def resolve_enum(
     return sessions.resolve_enum(
         session_id, body.expected_revision, body.proposal_id, body.action, body.values
     )
+
+
+@router.post("/{session_id}/export", responses=error_responses(SessionNotFound, StaleRevision))
+def export(
+    session_id: str, sessions: SessionsDep, body: RevisionRequest | None = None
+) -> CardExport:
+    """Демонстрационный JSON СТЕ; не официальный формат Портала Поставщиков."""
+    return sessions.export(session_id, body.expected_revision if body else None)
+
+
+class DraftRequest(RevisionRequest):
+    input_text: str = Field(max_length=100_000)
+
+
+@router.put("/{session_id}/draft", responses=error_responses(SessionNotFound, StaleRevision))
+def save_draft(session_id: str, body: DraftRequest, sessions: SessionsDep) -> DraftState:
+    """Сохранить текст ввода без анализа и создания ревизии."""
+    return sessions.save_draft(session_id, body.expected_revision, body.input_text)
+
+
+@router.get("/{session_id}/draft", responses=error_responses(SessionNotFound))
+def open_draft(session_id: str, sessions: SessionsDep) -> DraftState:
+    """Последнее состояние сессии и отдельно сохранённый ввод; без пересчёта."""
+    return sessions.open_draft(session_id)

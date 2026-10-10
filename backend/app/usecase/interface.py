@@ -10,6 +10,7 @@ from typing import Protocol, Self
 from app.domain.aliases import Alias
 from app.domain.catalog import Group, Position
 from app.domain.diagnostics import SpellingSuggestion, ValueAlias
+from app.domain.drafts import SavedDraft
 from app.domain.facts import Fact
 from app.domain.inference import (
     ChoiceBatch,
@@ -175,6 +176,12 @@ class SessionsRepository(Protocol):
     def replay(self, session_id: str, key: str) -> Revision | None: ...
 
     def save(self, revision: Revision) -> None: ...
+
+    def save_draft(self, draft: SavedDraft) -> None: ...
+
+    def draft(self, session_id: str) -> SavedDraft | None: ...
+
+    def drafts(self) -> list[SavedDraft]: ...
 
 
 class GroupSearcher(Protocol):

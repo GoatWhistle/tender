@@ -2403,3 +2403,44 @@ main > .notice {
   color: #276748;
   font-size: 0.85rem;
 }
+
+.seller-actions {
+  margin: 20px 0;
+}
+.seller-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.seller-actions p {
+  font-size: 13px;
+  margin-top: 12px;
+}
+.saved-drafts {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.saved-drafts h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.saved-drafts ul {
+  list-style: none;
+  padding: 0;
+}
+.saved-draft {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 0;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.saved-draft small {
+  color: var(--gray);
+}

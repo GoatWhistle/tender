@@ -40,6 +40,12 @@ it("редактор модельного факта показывает при
   };
   const reply = async () => state;
   const store = createSellerSession({
+    exportCard: async () => {
+      throw new Error("Не используется");
+    },
+    drafts: async () => [],
+    saveDraft: async () => ({ state, input_text: "", saved_revision: 1, saved_at: "" }),
+    openDraft: async () => ({ state, input_text: "", saved_revision: null, saved_at: null }),
     create: reply,
     get: reply,
     message: reply,

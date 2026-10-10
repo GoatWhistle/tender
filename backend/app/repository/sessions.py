@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.domain.catalog import Bound, Value
 from app.domain.diagnostics import Diagnostic, DiagnosticScope, RuleRef
 from app.domain.dialog import CommonField, DialogTurn, Question, QuestionOption, RequiredField
+from app.domain.drafts import SavedDraft
 from app.domain.enum_mapping import EnumProposal, EnumResolution, EnumSelection
 from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck, Verification
 from app.domain.group_validation import GroupCheck
@@ -21,6 +22,7 @@ from app.domain.sessions import (
     AnalysisError,
     Candidate,
     CandidateCounts,
+    CatalogRef,
     FactEvent,
     GroupRef,
     Message,
@@ -30,7 +32,12 @@ from app.domain.sessions import (
     SessionStatus,
     UnsupportedRule,
 )
-from app.repository.orm.sessions import AnalysisSession, SessionMessage, SessionRevision
+from app.repository.orm.sessions import (
+    AnalysisSession,
+    SessionDraft,
+    SessionMessage,
+    SessionRevision,
+)
 
 
 def decode(data: dict[str, Any]) -> SessionState:
@@ -86,6 +93,7 @@ def decode(data: dict[str, Any]) -> SessionState:
         results_stale=data.get("results_stale", False),
         analysis_revision=data.get("analysis_revision"),
         editable_fields=tuple(data.get("editable_fields", [])),
+        catalog_refs=tuple(CatalogRef(**r) for r in data.get("catalog_refs", [])),
         candidate_counts=CandidateCounts(**data["candidate_counts"]),
         errors=tuple(_diagnostic(e) if "kind" in e else AnalysisError(**e) for e in data["errors"]),
         normalizations=tuple(_diagnostic(e) for e in data.get("normalizations", [])),
@@ -141,6 +149,23 @@ class SqlSessions:
             .limit(1)
         )
         return decode(row.snapshot) if row else None
+
+    def save_draft(self, draft: SavedDraft) -> None:
+        self._session.merge(SessionDraft(**asdict(draft)))
+
+    def draft(self, session_id: str) -> SavedDraft | None:
+        row = self._session.get(SessionDraft, session_id)
+        return (
+            SavedDraft(row.session_id, row.saved_revision, row.input_text, row.saved_at)
+            if row
+            else None
+        )
+
+    def drafts(self) -> list[SavedDraft]:
+        rows = self._session.scalars(
+            select(SessionDraft).order_by(SessionDraft.saved_at.desc(), SessionDraft.session_id)
+        )
+        return [SavedDraft(r.session_id, r.saved_revision, r.input_text, r.saved_at) for r in rows]
 
     def replay(self, session_id: str, key: str) -> Revision | None:
         row = self._session.scalar(

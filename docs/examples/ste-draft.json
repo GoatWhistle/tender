@@ -1,0 +1,61 @@
+{
+  "session_id": "e632ca26-ba36-472a-8be2-0cdd2ea784d6",
+  "revision": 2,
+  "document_kind": "draft",
+  "ktru_code": "table-large",
+  "group": {
+    "code": "tables",
+    "name": "Стол",
+    "role": "group_template"
+  },
+  "card_complete": false,
+  "missing_required": [
+    {
+      "characteristic": "width",
+      "name": "Ширина"
+    }
+  ],
+  "results_stale": false,
+  "characteristics": [
+    {
+      "fact": {
+        "id": "efa4bf71-2352-4ff5-a084-394e797fd689:19:23",
+        "field": "Вид материала столешницы",
+        "characteristic_name": "Вид материала столешницы",
+        "raw_value": "ЛДСП",
+        "raw_unit": null,
+        "value": "лдсп",
+        "unit_code": null,
+        "kind": "text",
+        "source": {
+          "message_id": "efa4bf71-2352-4ff5-a084-394e797fd689",
+          "quote": "ЛДСП",
+          "start": 19,
+          "end": 23
+        },
+        "normalization_rule": "lower; ё→е",
+        "origin": "parser",
+        "status": "accepted_from_text",
+        "bounds": null,
+        "component": null,
+        "superseded_by": null,
+        "model_revision": null,
+        "model_score": null,
+        "verification": null,
+        "negated": false,
+        "uncertain": false,
+        "requires_binding": false
+      },
+      "catalog_refs": [
+        {
+          "position_code": "table-large",
+          "characteristic_code": "material",
+          "name": "Вид материала столешницы"
+        }
+      ]
+    }
+  ],
+  "format": "ste_demo_v1",
+  "catalog_version": null,
+  "catalog_snapshot": null
+}
