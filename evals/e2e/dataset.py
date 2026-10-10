@@ -2,7 +2,8 @@
 
 `dev_v1.json` — 60 кейсов разработки, `ste_holdout_v1.csv` — holdout реальных СТЕ; формат —
 `evals/datasets/README.md`. Проверка ловит то, что разметчик проверить глазами не успеет:
-группы и коды существуют и связаны, характеристики и значения есть у допустимых позиций,
+группы и коды существуют и связаны, среди групп нет обобщённых позиций уровня ОКПД2,
+характеристики и значения есть у допустимых позиций,
 `out_of_range` действительно вне правил, а набор кодов совпадает с позициями, которым не
 противоречат размеченные факты.
 
@@ -94,6 +95,13 @@ class Catalog:
         self.groups = {
             p.code: Group.of(p, children[p.code]) for p in positions if p.is_group
         }
+        # Обобщённая позиция уровня ОКПД2: без потомков и характеристик — заполнять по ней
+        # нечего, подходящей группой в разметке не считается.
+        self.generic = {
+            code
+            for code, g in self.groups.items()
+            if g.leaves == (g.position,) and not g.position.characteristics
+        }
 
     @classmethod
     def load(cls) -> "Catalog":
@@ -160,6 +168,8 @@ def check_dev(data: dict[str, Any], catalog: Catalog) -> tuple[list[str], list[s
             if g not in catalog.groups:
                 bad(f"{g} — не группа КТРУ")
                 continue
+            if g in catalog.generic:
+                bad(f"{g} — обобщённая позиция без характеристик")
             leaves.update({p.code: p for p in catalog.groups[g].leaves})
         for code in case["codes"]:
             if code not in leaves:
@@ -245,6 +255,10 @@ def check_holdout(rows: list[HoldoutRow], catalog: Catalog) -> list[str]:
         for g in r.groups:
             if g not in catalog.groups:
                 problems.append(f"holdout {r.ste_id}: {g} — не группа КТРУ")
+            elif g in catalog.generic:
+                problems.append(
+                    f"holdout {r.ste_id}: {g} — обобщённая позиция без характеристик"
+                )
     return problems
 
 
