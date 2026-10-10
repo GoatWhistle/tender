@@ -19,6 +19,7 @@ export function Conversation({
   return (
     <section className={styles.conversation} aria-label={t("rag:conversation")}>
       <div className={styles.feedback}>
+        <p className={styles.hint}>{t("rag:conversationHint")}</p>
         {messages.length > 0 && (
           <Disclosure title={t("rag:conversationHistory")} status={null}>
             <div className={styles.history}>
@@ -31,14 +32,16 @@ export function Conversation({
             </div>
           </Disclosure>
         )}
-        <p className={styles.reply} role="status" aria-live="polite">
-          {latest ? <BackendText>{latest.text}</BackendText> : t("rag:conversationHint")}
-        </p>
+        {latest && (
+          <p className={styles.reply} role="status" aria-live="polite">
+            <BackendText>{latest.text}</BackendText>
+          </p>
+        )}
       </div>
       <Composer
         value={flow.draft}
         onChange={flow.setDraft}
-        onSubmit={() => flow.describe(flow.draft, () => flow.setDraft(""))}
+        onSubmit={() => flow.describe(flow.draft)}
         busy={flow.busy}
         started
         inputRef={inputRef}

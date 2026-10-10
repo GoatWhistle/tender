@@ -467,6 +467,54 @@
         }
       }
     },
+    "/sessions/{session_id}/messages/{review_id}/confirm": {
+      "post": {
+        "summary": "Confirm Message",
+        "operationId": "confirm_message_sessions__session_id__messages__review_id__confirm_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Review Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/{session_id}/extras": {
       "post": {
         "summary": "Add Extra",
@@ -1171,6 +1219,45 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "MessageReviewOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "original": {
+            "type": "string",
+            "title": "Original"
+          },
+          "corrected": {
+            "type": "string",
+            "title": "Corrected"
+          },
+          "fixes": {
+            "items": {
+              "$ref": "#/components/schemas/FixOut"
+            },
+            "type": "array",
+            "title": "Fixes"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Issues"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "original",
+          "corrected",
+          "fixes",
+          "issues"
+        ],
+        "title": "MessageReviewOut"
+      },
       "PickIn": {
         "properties": {
           "code": {
@@ -1342,6 +1429,16 @@
       },
       "SessionOut": {
         "properties": {
+          "message_review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageReviewOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "messages": {
             "items": {
               "$ref": "#/components/schemas/ChatMessageOut"

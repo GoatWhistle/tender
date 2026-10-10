@@ -5,6 +5,7 @@ from enum import StrEnum
 from rag.clarify import FIXED, Question, answer, extract, narrow, questions
 from rag.comparison import differences
 from rag.ktru import value_text
+from rag.message_review import MessageReview
 from rag.models import Position
 from rag.preprocess import Fix, preprocess
 from rag.rerank import Ranked, rerank
@@ -49,6 +50,7 @@ class Session:
     message: str | None = None
     selection_reason: str | None = None
     messages: list[dict[str, str]] = field(default_factory=list)
+    message_review: MessageReview | None = None
 
     @property
     def question(self) -> Question | None:

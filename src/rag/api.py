@@ -17,6 +17,7 @@ from rag.comparison import display_differences
 from rag.discovery import DiscoveryOut
 from rag.index import CODES, POSITIONS, RAW, VECTORS
 from rag.ktru import value_text
+from rag.message_review import fingerprint, review
 from rag.search import Index
 from rag.session import InputError, Session, Stage, StageError
 from rag.spec import Extra
@@ -111,7 +112,16 @@ class ChatMessageOut(BaseModel):
     text: str
 
 
+class MessageReviewOut(BaseModel):
+    id: str
+    original: str
+    corrected: str
+    fixes: list[FixOut]
+    issues: list[str]
+
+
 class SessionOut(BaseModel):
+    message_review: MessageReviewOut | None = None
     messages: list[ChatMessageOut]
     id: str
     stage: Stage
@@ -186,7 +196,15 @@ def _question(q: Question) -> QuestionOut:
 def view(s: Session) -> SessionOut:
     p = s.position
     comparison = display_differences(s.leaves)
+    pending = s.message_review
     return SessionOut(
+        message_review=MessageReviewOut(
+            id=pending.id,
+            original=pending.original,
+            corrected=pending.corrected,
+            fixes=[FixOut(before=f.before, after=f.after, kind=f.kind) for f in pending.fixes],
+            issues=pending.issues,
+        ) if pending else None,
         messages=[ChatMessageOut(**m) for m in s.messages],
         id=s.id,
         stage=s.stage,
@@ -332,7 +350,29 @@ async def describe(session_id: str, body: TextIn) -> SessionOut:
 async def message(session_id: str, body: TextIn, request: Request) -> SessionOut:
     s, lock = _get(session_id)
     async with lock:
-        await conversation.respond(s, require_index(request), body.text)
+        text = body.text.strip()
+        if not text or len(text) > 4000:
+            raise InputError("сообщение должно содержать от 1 до 4000 символов")
+        pending = await review(s, text)
+        if pending.fixes or pending.issues:
+            s.message_review = pending
+        else:
+            await conversation.respond(s, require_index(request), text)
+            s.message_review = None
+    return view(s)
+
+
+@app.post("/sessions/{session_id}/messages/{review_id}/confirm")
+async def confirm_message(session_id: str, review_id: str, request: Request) -> SessionOut:
+    s, lock = _get(session_id)
+    async with lock:
+        pending = s.message_review
+        if pending is None or pending.id != review_id or pending.fingerprint != fingerprint(s):
+            raise StageError("карточка изменилась, отправьте дополнение на проверку заново")
+        if pending.issues:
+            raise InputError("уточните замечания и отправьте дополнение заново")
+        await conversation.respond(s, require_index(request), pending.corrected)
+        s.message_review = None
     return view(s)
 
 

@@ -10,6 +10,7 @@ import { Stepper } from "@/shared/ui/stepper"
 import { Clarification } from "./clarification"
 import { Conversation } from "./conversation"
 import { DescriptionReview } from "./description-review"
+import { MessageReview } from "./message-review/message-review"
 import { SearchResults } from "./search-results"
 import { Specification } from "./specification"
 import { Summary } from "./summary"
@@ -23,6 +24,7 @@ export function RagWorkflow() {
   const scroll = useRef<HTMLDivElement>(null)
   const { search, session } = flow
   const review = search?.stage === "review" && !flow.busy
+  const messageReviewId = session?.message_review?.id
   const stage = session?.stage ?? search?.stage ?? "start"
   const step = session
     ? session.stage === "done" || preview
@@ -34,8 +36,8 @@ export function RagWorkflow() {
       ? 1
       : 0
   useEffect(() => {
-    if (stage && scroll.current) scroll.current.scrollTop = 0
-  }, [stage])
+    if ((stage || messageReviewId) && scroll.current) scroll.current.scrollTop = 0
+  }, [stage, messageReviewId])
   useEffect(() => {
     if (!session) setPreview(false)
   }, [session])
@@ -91,6 +93,9 @@ export function RagWorkflow() {
             choose={flow.choose}
             automatic={flow.automatic}
           />
+        )}
+        {session?.message_review && (
+          <MessageReview flow={flow} onEdit={() => input.current?.focus()} />
         )}
         {session && ["clarify", "pick", "failed"].includes(session.stage) && (
           <Clarification key={session.question?.name ?? session.stage} flow={flow} />

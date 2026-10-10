@@ -175,6 +175,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sessions/{session_id}/messages/{review_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Message */
+        post: operations["confirm_message_sessions__session_id__messages__review_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessions/{session_id}/extras": {
         parameters: {
             query?: never;
@@ -450,6 +467,19 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** MessageReviewOut */
+        MessageReviewOut: {
+            /** Id */
+            id: string;
+            /** Original */
+            original: string;
+            /** Corrected */
+            corrected: string;
+            /** Fixes */
+            fixes: components["schemas"]["FixOut"][];
+            /** Issues */
+            issues: string[];
+        };
         /** PickIn */
         PickIn: {
             /** Code */
@@ -513,6 +543,7 @@ export interface components {
         };
         /** SessionOut */
         SessionOut: {
+            message_review?: components["schemas"]["MessageReviewOut"] | null;
             /** Messages */
             messages: components["schemas"]["ChatMessageOut"][];
             /** Id */
@@ -953,6 +984,38 @@ export interface operations {
                 "application/json": components["schemas"]["TextIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_message_sessions__session_id__messages__review_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

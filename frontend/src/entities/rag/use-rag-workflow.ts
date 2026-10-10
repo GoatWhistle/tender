@@ -58,7 +58,9 @@ export function useRagWorkflow() {
         ),
       )
       setVerdict(null)
-      setDraft("")
+      setDraft((current) =>
+        current === search.description || current === search.corrected ? "" : current,
+      )
     })
   }
   function answer(body: { option: number } | { text: string }) {
@@ -100,7 +102,7 @@ export function useRagWorkflow() {
       ),
     )
   }
-  function describe(text: string, done: () => void) {
+  function describe(text: string) {
     if (!session || !text.trim()) return
     run("answering", async () => {
       const updated = unwrap(
@@ -112,7 +114,22 @@ export function useRagWorkflow() {
       setSession(updated)
       if (updated.stage !== "done") setResult(null)
       setVerdict(null)
-      done()
+      if (!updated.message_review) setDraft((current) => (current === text ? "" : current))
+    })
+  }
+  function confirmMessage() {
+    if (!session?.message_review) return
+    const pending = session.message_review
+    run("answering", async () => {
+      const updated = unwrap(
+        await api.POST("/sessions/{session_id}/messages/{review_id}/confirm", {
+          params: { path: { session_id: session.id, review_id: pending.id } },
+        }),
+      )
+      setSession(updated)
+      setResult(null)
+      setVerdict(null)
+      setDraft((current) => (current === pending.original ? "" : current))
     })
   }
   function addExtra(body: Extra, done: () => void) {
@@ -158,7 +175,12 @@ export function useRagWorkflow() {
     task.reset()
   }
   return {
-    automatic,
+    automatic:
+      automatic &&
+      (!search ||
+        !draft.trim() ||
+        draft.trim() === search.description ||
+        draft.trim() === search.corrected),
     search,
     session,
     draft,
@@ -175,6 +197,7 @@ export function useRagWorkflow() {
     pick,
     values,
     describe,
+    confirmMessage,
     addExtra,
     removeExtra,
     finish,

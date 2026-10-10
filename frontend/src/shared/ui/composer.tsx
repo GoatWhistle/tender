@@ -38,7 +38,6 @@ export function Composer({
           rows={1}
           aria-label={t("portal:inputLabel")}
           maxLength={4000}
-          disabled={busy}
           value={value}
           placeholder={
             placeholder ?? t(started ? "portal:clarifyPlaceholder" : "portal:placeholder")

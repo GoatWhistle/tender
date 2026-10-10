@@ -27,3 +27,10 @@
   overflow-wrap: anywhere;
   min-width: 0;
 }
+
+.hint {
+  margin-bottom: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+}

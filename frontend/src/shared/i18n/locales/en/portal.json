@@ -11,7 +11,7 @@
   "later": "Coming later",
   "stepCount": "Step {{current}} of 4",
   "introTitle": "What product would you like to add?",
-  "introText": "Describe it in your own words. We will review your description and find a matching catalog item.",
+  "introText": "Tell us what you know: purpose, material and dimensions. We will check the description and fill the characteristics. You can add more later.",
   "exampleLabel": "For example",
   "example": "Metal wardrobe, height 1000 m, depth 0.55 m",
   "tryExample": "Use example",

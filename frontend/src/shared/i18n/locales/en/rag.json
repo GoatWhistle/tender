@@ -5,7 +5,7 @@
   "searching": "Searching the catalog",
   "ranking": "Finding the best matches",
   "selecting": "Preparing questions for this product",
-  "answering": "Reading your additional details",
+  "answering": "Checking your addition and characteristics",
   "updating": "Saving values",
   "validating": "Checking the additional characteristic",
   "saving": "Preparing the product card",
@@ -82,8 +82,8 @@
   "conversationHistory": "Conversation history",
   "you": "You",
   "assistant": "Assistant",
-  "conversationHint": "Add information or ask to edit fields. I will use the current card values.",
-  "conversationPlaceholder": "For example: change width to 60 cm, clear color, or add product details…",
+  "conversationHint": "Describe all characteristics here in your own words. Add or correct details at any step.",
+  "conversationPlaceholder": "For example: metal cabinet, height 1000 mm, two doors…",
   "catalogLoading": "Loading catalog position",
   "catalogError": "Could not load the catalog position.",
   "catalogRetry": "Retry",
@@ -97,5 +97,8 @@
   "catalogNewTab": "Open catalog details in a new tab",
   "catalogSingle": "Single value",
   "catalogMultiple": "Multiple values",
-  "catalogBack": "Back to catalog search"
+  "catalogBack": "Back to catalog search",
+  "messageReviewTitle": "Review your addition",
+  "applyMessage": "Apply addition",
+  "checkMessage": "Check addition"
 }
