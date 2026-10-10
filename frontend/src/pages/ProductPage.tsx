@@ -79,10 +79,7 @@ function Characteristics({ p }: { p: Product }) {
 }
 
 function Related({ p }: { p: Product }) {
-  const state = useAsync(
-    () => api.products({ position: p.position_code, pageSize: 5 }),
-    [p.id],
-  );
+  const state = useAsync(() => api.products({ position: p.position_code, pageSize: 5 }), [p.id]);
   const items = state.data?.items.filter((x) => x.id !== p.id).slice(0, 4);
   if (items && !items.length) return null;
   return (

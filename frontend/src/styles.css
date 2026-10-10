@@ -768,7 +768,13 @@ fieldset {
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--gutter);
   scrollbar-width: none;
-  mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - 64px), transparent);
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--gutter),
+    #000 calc(100% - 64px),
+    transparent
+  );
 }
 
 .rail::-webkit-scrollbar {

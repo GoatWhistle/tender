@@ -13,7 +13,8 @@
 ## Build, Test, and Development Commands
 
 Команды — `README.md`, «Разработка». Проверки перед PR:
-`cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest`.
+`cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest`;
+фронтенд — `cd frontend && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build`.
 
 Отдельный GPU-сервис — `services/openjev/`, порт runtime — `openjev_service/usecase/interface.py`.
 Запуск: `docker compose --profile gpu up --build -d openjev`; документация и проверки —

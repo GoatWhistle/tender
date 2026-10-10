@@ -69,9 +69,7 @@ function Footer() {
     <footer className="footer">
       <div className="footer__brand">
         <p className="footer__name">Каталог СТЕ</p>
-        <p className="footer__lead">
-          Товары с характеристиками, приведёнными к справочнику КТРУ.
-        </p>
+        <p className="footer__lead">Товары с характеристиками, приведёнными к справочнику КТРУ.</p>
       </div>
       <div className="footer__cols">
         <div>

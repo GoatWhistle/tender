@@ -50,15 +50,32 @@ export function Glyph({ category, className }: { category: string; className?: s
 
 export function Arrow({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path d="M5 12h14M13 6l6 6-6 6" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        d="M5 12h14M13 6l6 6-6 6"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
 
 export function Search({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
       <circle cx="11" cy="11" r="6.5" strokeWidth="1.75" />
       <path d="m16 16 4 4" strokeWidth="1.75" strokeLinecap="round" />
     </svg>

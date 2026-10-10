@@ -29,20 +29,21 @@ const product = (id: string, price: number, values: Record<string, string>) => (
   offers: 1,
   supplier: "ООО",
   values: Object.fromEntries(
-    Object.entries(values).map(([ch, v]) => [ch, { value_code: v, label: v, unit: null, number: null }]),
+    Object.entries(values).map(([ch, v]) => [
+      ch,
+      { value_code: v, label: v, unit: null, number: null },
+    ]),
   ),
 });
 
-const api = createCatalog(
-  {
-    positions: [position],
-    products: [
-      product("a", 300, { color: "white", legs: "4" }),
-      product("b", 100, { color: "black", legs: "4" }),
-      product("c", 200, { legs: "2" }),
-    ],
-  },
-);
+const api = createCatalog({
+  positions: [position],
+  products: [
+    product("a", 300, { color: "white", legs: "4" }),
+    product("b", 100, { color: "black", legs: "4" }),
+    product("c", 200, { legs: "2" }),
+  ],
+});
 
 describe("мок витрины", () => {
   it("фильтр: И между характеристиками, ИЛИ внутри", () => {
@@ -80,8 +81,8 @@ describe("мок витрины", () => {
   });
 
   it("поиск по названию и коду позиции", () => {
-    expect((api.products({ q: "стол b" })).total).toBe(1);
-    expect((api.products({ q: "P1" })).total).toBe(3);
+    expect(api.products({ q: "стол b" }).total).toBe(1);
+    expect(api.products({ q: "P1" }).total).toBe(3);
   });
 
   it("неизвестный товар — Missing", () => {

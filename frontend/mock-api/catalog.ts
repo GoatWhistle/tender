@@ -15,7 +15,10 @@ import { CATEGORIES } from "../src/lib/categories.ts";
 export class Missing extends Error {}
 
 export type RawPosition = Omit<Position, "products" | "min_price">;
-export type RawProduct = Omit<Product, "position" | "position_name" | "required_filled" | "required_total">;
+export type RawProduct = Omit<
+  Product,
+  "position" | "position_name" | "required_filled" | "required_total"
+>;
 
 export type Fixtures = { positions: RawPosition[]; products: RawProduct[] };
 
@@ -72,8 +75,7 @@ export function createCatalog(data: Fixtures) {
     const filters = query.position ? (query.filters ?? {}) : {};
     const base = data.products.filter(
       (x) =>
-        (!query.category || x.category === query.category) &&
-        (!query.q || matchesText(x, query.q)),
+        (!query.category || x.category === query.category) && (!query.q || matchesText(x, query.q)),
     );
 
     const counts = new Map<string, number>();

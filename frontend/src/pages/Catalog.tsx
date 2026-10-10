@@ -96,12 +96,15 @@ function Filters({
       <fieldset className="facet">
         <legend className="facet__name">Позиция КТРУ</legend>
         <label className="check check--radio">
-          <input type="radio" name="position" checked={!position} onChange={() => setPosition(null)} />
+          <input
+            type="radio"
+            name="position"
+            checked={!position}
+            onChange={() => setPosition(null)}
+          />
           <span className="check__box" aria-hidden="true" />
           <span className="check__label">Все позиции</span>
-          <span className="check__count">
-            {data.positions.reduce((n, p) => n + p.count, 0)}
-          </span>
+          <span className="check__count">{data.positions.reduce((n, p) => n + p.count, 0)}</span>
         </label>
         {data.positions.map((p) => (
           <label key={p.code} className="check check--radio">
@@ -149,7 +152,9 @@ function ActiveFilters({
     const [ch, v] = f.split(":");
     const facet = data.facets.find((x) => x.code === ch);
     const value = facet?.values.find((x) => x.code === v);
-    return facet && value ? [{ f, text: `${facet.name}: ${shortLabel(value.label, value.unit)}` }] : [];
+    return facet && value
+      ? [{ f, text: `${facet.name}: ${shortLabel(value.label, value.unit)}` }]
+      : [];
   });
   if (!chips.length) return null;
   return (
@@ -216,9 +221,7 @@ export function Catalog() {
   // в колонках — обязательные характеристики позиции, затем остальные, не больше трёх
   const info = positionInfo.data?.code === positionCode ? positionInfo.data : undefined;
   const columns = info
-    ? [...info.characteristics]
-        .sort((a, b) => Number(b.required) - Number(a.required))
-        .slice(0, 3)
+    ? [...info.characteristics].sort((a, b) => Number(b.required) - Number(a.required)).slice(0, 3)
     : [];
 
   if (slug && !category) return <ErrorBlock error={new Error("Нет такой категории")} />;
@@ -285,7 +288,9 @@ export function Catalog() {
                 value={sort}
                 onChange={(e) =>
                   update((p) =>
-                    e.target.value === "relevance" ? p.delete("sort") : p.set("sort", e.target.value),
+                    e.target.value === "relevance"
+                      ? p.delete("sort")
+                      : p.set("sort", e.target.value),
                   )
                 }
               >
