@@ -26,7 +26,7 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
 frontend/                React + Vite: экран поставщика `/sell` на API сессий, витрина на мок-сервисе
                          — frontend/README.md
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
-evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
+evals/                   замеры: наборы `datasets/`, скрипты `smoke/`, `catalog/`, `e2e/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
 artifacts/               подготовленная SQLite КТРУ с реальными векторами Qwen (в git)
 services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
@@ -133,3 +133,24 @@ python3 evals/server/bench_llm_typos_api.py --help
 Измеренные отчёты: `evals/reports/2026-10-10-openjev-typos-api.md` и
 `evals/reports/2026-10-10-qwen4b-typos-api.md`. Это development-оценка опечаток;
 качество остальных классов на приложении ещё не измерено.
+
+### Сквозной замер
+
+Набор разработки `evals/datasets/dev_v1.json` (60 кейсов) и holdout реальных СТЕ
+`evals/datasets/ste_holdout_v1.csv` (60 строк) проходят через HTTP API продукта: сессия по
+сообщениям и поиск групп. Формат наборов и как проверять разметку —
+[`evals/datasets/README.md`](evals/datasets/README.md).
+
+```bash
+cd backend
+uv run python ../evals/e2e/dataset.py                    # разметка против справочника КТРУ
+uv run python ../evals/e2e/run.py --embeddings-url http://127.0.0.1:8001/v1  # отчёт в evals/reports/
+uv run python ../evals/e2e/run.py --stub-embeddings      # проверка прогона без модели
+cd .. && python3 -m unittest discover -s tests/evals -v  # подсчёт метрик
+```
+
+Отчёт — `evals/reports/<дата>-e2e.md` и `.json`: R@1/5/10 групп отдельно по набору и по
+holdout, «вне КТРУ», точность и доля выданных кодов, сохранённая неоднозначность, факты,
+статусы и разбивка по тегам. Классы ошибок и число вопросов до кода — «пропущено», пока
+продукт их не отдаёт (#17, #15). Holdout выбирает `evals/e2e/sample_holdout.py` с
+фиксированным seed; существующую разметку он не перетирает.
