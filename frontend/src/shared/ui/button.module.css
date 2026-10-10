@@ -28,7 +28,7 @@
 }
 .primary {
   background: var(--action-primary);
-  border-color: var(--action-text);
+  border-color: var(--action-primary);
   color: var(--text-on-action);
 }
 .secondary {
@@ -51,6 +51,7 @@
   }
   .primary:hover:not(:disabled) {
     background: var(--action-hover);
+    border-color: var(--action-hover);
   }
   .ghost:hover:not(:disabled),
   .row:hover:not(:disabled) {

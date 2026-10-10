@@ -70,7 +70,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--action-primary);
+  background: var(--accent-bar);
   transform-origin: left center;
   transition: width var(--dur-panel) var(--ease-out);
 }

@@ -12,8 +12,9 @@
   --text-secondary: var(--ink-700);
   --text-muted: var(--ink-450);
   --text-on-action: var(--white);
-  --action-primary: var(--blue-600);
-  --action-hover: var(--blue-900);
+  --action-primary: var(--red-600);
+  --action-hover: var(--red-800);
+  --accent-bar: var(--blue-600);
   --action-text: var(--blue-600);
   --border-default: var(--blue-150);
   --border-strong: var(--blue-200);
@@ -43,8 +44,9 @@
   --text-secondary: #c6d4e8;
   --text-muted: #94a4bd;
   --text-on-action: #fff;
-  --action-primary: #4d7fc4;
-  --action-hover: #6a97d6;
+  --action-primary: #e3443a;
+  --action-hover: #f05a50;
+  --accent-bar: #6a97d6;
   --action-text: #9dbfe9;
   --border-default: #2e405e;
   --border-strong: #3d5276;
