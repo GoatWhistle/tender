@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import type { Search } from "@/entities/rag"
 import { useRankedMotion } from "@/shared/motion/use-ranked-motion"
 import { useRankedReveal } from "@/shared/motion/use-ranked-reveal"
+import { RejectedCandidates } from "./search-candidate/rejected-candidates"
 import { SearchCandidate } from "./search-candidate/search-candidate"
 import styles from "./search-results.module.css"
 
@@ -60,6 +61,9 @@ export function SearchResults({
           </li>
         ))}
       </ol>
+      {phase === "ready" && (
+        <RejectedCandidates candidates={search.rejected} offset={search.candidates.length} />
+      )}
       {!visible.length && <p>{t("portal:emptyText")}</p>}
     </section>
   )

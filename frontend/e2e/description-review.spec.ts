@@ -13,6 +13,7 @@ const search = {
   issues: [],
   candidates: [],
   auto_select_code: null,
+  rejected: [],
   auto_select_reason: null,
 }
 

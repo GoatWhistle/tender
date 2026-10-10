@@ -443,6 +443,8 @@ export interface components {
             issues: string[];
             /** Candidates */
             candidates: components["schemas"]["SearchCandidate"][];
+            /** Rejected */
+            rejected: components["schemas"]["SearchCandidate"][];
             /** Auto Select Code */
             auto_select_code: string | null;
             /** Auto Select Reason */

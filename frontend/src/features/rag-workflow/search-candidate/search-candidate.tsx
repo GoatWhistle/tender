@@ -17,24 +17,31 @@ export function SearchCandidate({
   readonly index: number
   readonly ready: boolean
   readonly disabled: boolean
-  readonly choose: (code: string) => void
+  readonly choose?: (code: string) => void
 }) {
   const { t } = useTranslation("rag")
+  const rejected = !choose
   return (
-    <div className={styles.row} data-ready={ready}>
+    <div className={styles.row} data-ready={ready && !rejected} data-rejected={rejected}>
       <span className={styles.lead}>
         <span className={styles.number}>{index + 1}</span>
         <CategoryIcon code={candidate.code} />
       </span>
       <div className={styles.identity}>
-        <Button
-          variant="row"
-          className={styles.name}
-          disabled={disabled}
-          onClick={() => choose(candidate.code)}
-        >
-          <BackendText>{candidate.name}</BackendText>
-        </Button>
+        {choose ? (
+          <Button
+            variant="row"
+            className={styles.name}
+            disabled={disabled}
+            onClick={() => choose(candidate.code)}
+          >
+            <BackendText>{candidate.name}</BackendText>
+          </Button>
+        ) : (
+          <span className={styles.name}>
+            <BackendText>{candidate.name}</BackendText>
+          </span>
+        )}
         <a
           data-rank-code
           className={styles.code}
@@ -51,7 +58,7 @@ export function SearchCandidate({
           </p>
         )}
       </div>
-      {ready && (
+      {ready && choose && (
         <>
           <div className={styles.comparison} data-rank-differences>
             <CandidateDifferences differences={candidate.differences} compact />

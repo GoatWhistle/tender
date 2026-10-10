@@ -48,6 +48,7 @@ class DiscoveryOut(BaseModel):
     fixes: list[SearchFix]
     issues: list[str]
     candidates: list[SearchCandidate]
+    rejected: list[SearchCandidate]
     auto_select_code: str | None
     auto_select_reason: str | None
 
@@ -85,6 +86,18 @@ def view(search: Discovery) -> DiscoveryOut:
             )
             for r in search.ranked[:5]
         ]
+    rejected = [
+        SearchCandidate(
+            id=r.hit.position.code,
+            code=r.hit.position.code,
+            name=r.hit.position.name,
+            okpd2=r.hit.position.okpd2,
+            relevance=r.relevance,
+            reason=r.reason,
+            differences={},
+        )
+        for r in (search.ranked[5:] if search.stage == "ranked" else [])
+    ]
     return DiscoveryOut(
         id=search.id,
         stage=search.stage,
@@ -96,6 +109,7 @@ def view(search: Discovery) -> DiscoveryOut:
         ],
         issues=search.pre.issues,
         candidates=candidates,
+        rejected=rejected,
         auto_select_code=search.auto_select_code,
         auto_select_reason=search.auto_select_reason,
     )

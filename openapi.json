@@ -1179,6 +1179,13 @@
             "type": "array",
             "title": "Candidates"
           },
+          "rejected": {
+            "items": {
+              "$ref": "#/components/schemas/SearchCandidate"
+            },
+            "type": "array",
+            "title": "Rejected"
+          },
           "auto_select_code": {
             "anyOf": [
               {
@@ -1211,6 +1218,7 @@
           "fixes",
           "issues",
           "candidates",
+          "rejected",
           "auto_select_code",
           "auto_select_reason"
         ],

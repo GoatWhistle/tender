@@ -12,6 +12,11 @@ const candidates = Array.from({ length: 20 }, (_, index) => ({
   differences: { Материал: "Металл", Высота: "120 см", Отделения: "2", Ширина: "60 см" },
 }))
 const ranked = candidates.slice(0, 5).reverse()
+const rejected = candidates.slice(5).map((candidate) => ({
+  ...candidate,
+  reason: `${candidate.name} — снаряд, не шкаф`,
+  differences: {},
+}))
 const search = {
   id: "rank-preview",
   description: "Шкаф для одежды",
@@ -20,6 +25,7 @@ const search = {
   issues: [],
   auto_select_code: null,
   auto_select_reason: null,
+  rejected: [],
 }
 
 for (const mobile of [false, true]) {
@@ -62,7 +68,7 @@ for (const mobile of [false, true]) {
       }
       if (url.endsWith("/rerank")) {
         await ranking
-        return route.fulfill({ json: { ...search, stage: "ranked", candidates: ranked } })
+        return route.fulfill({ json: { ...search, stage: "ranked", candidates: ranked, rejected } })
       }
       return route.fulfill({
         json: { ...search, stage: url.endsWith("/searches") ? "review" : "candidates", candidates },
@@ -118,6 +124,28 @@ for (const mobile of [false, true]) {
         .evaluateAll((rows) => rows.map((row) => row.getAttribute("data-id"))),
     ).toEqual(ranked.map((candidate) => candidate.id))
     await expect(page.getByText(/Ещё различий/)).toHaveCount(0)
+    const more = page.getByRole("button", {
+      name: portal.rejectedTitle.replace("{{count}}", String(rejected.length)),
+    })
+    await expect(page.getByRole("list", { name: portal.rejectedLabel })).toHaveCount(0)
+    await more.click()
+    const rest = page.getByRole("list", { name: portal.rejectedLabel })
+    await expect(rest.locator("li")).toHaveCount(rejected.length)
+    await expect(rest.locator("li").first()).toContainText("6")
+    await expect(rest.getByRole("button")).toHaveCount(0)
+    const reason = rest.getByText(rejected[0]?.reason ?? "")
+    await expect(reason).toBeVisible()
+    expect(await reason.evaluate((node) => getComputedStyle(node).color)).not.toBe(
+      await page
+        .locator("h2")
+        .first()
+        .evaluate((node) => getComputedStyle(node).color),
+    )
+    const pageAxe = await new AxeBuilder({ page })
+      .include("main")
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze()
+    expect(pageAxe.violations).toEqual([])
     if (!mobile) {
       const evidence = await page.evaluate(() =>
         JSON.parse(document.documentElement.dataset.rankEvidence ?? "{}"),
