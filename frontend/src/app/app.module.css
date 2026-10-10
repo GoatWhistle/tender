@@ -2,15 +2,19 @@
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--surface-panel);
+  background: var(--surface-page);
 }
 .header {
-  height: 80px;
+  position: relative;
+  z-index: 2;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   gap: var(--space-6);
-  padding: 0 var(--space-page);
+  padding-inline: var(--layout-inline);
+  background: var(--surface-panel);
   border-bottom: var(--line) solid var(--border-default);
+  box-shadow: var(--shadow-header);
   flex-shrink: 0;
 }
 .headerDivider {
@@ -21,6 +25,7 @@
   font-weight: var(--weight-regular);
   color: var(--text-muted);
   font-size: var(--font-sm);
+  line-height: var(--line-height-body);
 }
 .controls {
   display: flex;
@@ -40,9 +45,7 @@
 }
 @media (max-width: 47.99rem) {
   .header {
-    padding: 0 var(--space-6);
-    height: 72px;
-    gap: var(--space-2);
+    gap: var(--space-3);
   }
   .headerDivider {
     display: none;

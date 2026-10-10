@@ -2,14 +2,20 @@
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.7fr);
   align-items: start;
-  gap: var(--space-5) var(--space-12);
-  padding-block: var(--space-4);
+  gap: var(--space-6) var(--space-10);
+  padding: var(--space-8);
+  border: var(--line) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-card);
 }
 .review header {
   grid-column: 1 / -1;
 }
 .review h2 {
   font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
 }
 .content {
   display: flex;
@@ -46,7 +52,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-5);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .before > span,
 .after > span {

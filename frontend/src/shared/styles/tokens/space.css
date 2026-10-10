@@ -12,12 +12,25 @@
 }
 
 :root {
-  --space-page: var(--space-6);
+  --grid-columns: 12;
+  --grid-gutter: var(--space-6);
+  --layout-max: 1320px;
+  --layout-gutter: var(--space-6);
+  --space-page: var(--layout-gutter);
+  --layout-inline: max(var(--layout-gutter), calc((100% - var(--layout-max)) / 2));
+  --measure-text: 72ch;
   --control-size: 48px;
   --control-size-large: 56px;
+  --header-height: 80px;
 }
-@media (min-width: 75rem) {
+@media (min-width: 48rem) {
   :root {
-    --space-page: var(--space-8);
+    --layout-gutter: var(--space-8);
+  }
+}
+@media (max-width: 47.99rem) {
+  :root {
+    --grid-columns: 8;
+    --header-height: 72px;
   }
 }

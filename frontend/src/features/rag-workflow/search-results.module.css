@@ -5,6 +5,8 @@
 }
 .results h2 {
   font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
 }
 .results > p {
   padding: var(--space-8) 0;
@@ -12,19 +14,36 @@
 }
 .list {
   list-style: none;
-  padding: 0;
+  padding: var(--space-2);
   margin: 0;
   display: flex;
   flex-direction: column;
-  border-top: var(--line) solid var(--border-default);
+  gap: var(--space-1);
+  border: var(--line) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-card);
 }
 .list > li {
   min-width: 0;
-  border-bottom: var(--line) solid var(--border-default);
-  background: var(--surface-panel);
+  border-radius: var(--radius-md);
+}
+.list > li + li {
+  position: relative;
+}
+.list > li + li::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--space-6);
+  top: calc(var(--space-1) / -2 - var(--line) / 2);
+  border-top: var(--line) solid var(--border-default);
 }
 .list > li[data-state="exiting"] {
   background: var(--surface-danger);
+}
+.list > li[data-state="exiting"]::before,
+.list > li:has(button:focus-visible)::before {
+  border-color: transparent;
 }
 .list > li:has(button:focus-visible) {
   background: var(--surface-hover);

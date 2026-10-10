@@ -2,7 +2,7 @@
   padding: var(--space-5);
   background: var(--surface-panel);
   border-radius: var(--radius-md);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .details h3 {
   font-size: var(--font-md);

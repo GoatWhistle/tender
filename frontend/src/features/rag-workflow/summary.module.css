@@ -1,10 +1,17 @@
 .summary {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
+  padding: var(--space-8);
+  border: var(--line) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-card);
 }
 .summary h2 {
   font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
 }
 .summary h3 {
   font-size: var(--font-md);
@@ -28,7 +35,7 @@
   gap: var(--space-6);
   padding: var(--space-4) 0;
   border-bottom: var(--line) solid var(--border-default);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .values dt {
   color: var(--text-secondary);
@@ -46,8 +53,13 @@
   padding-block: var(--space-4);
 }
 @media (max-width: 47.99rem) {
+  .summary {
+    padding: var(--space-5);
+    gap: var(--space-5);
+  }
   .values > div {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    padding: var(--space-3) 0;
   }
 }

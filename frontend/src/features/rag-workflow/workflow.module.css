@@ -6,9 +6,10 @@
   min-height: 0;
 }
 .content {
-  padding: var(--space-6) var(--space-page);
+  padding-inline: var(--layout-inline);
+  padding-block: var(--space-8);
   overscroll-behavior: contain;
-  scroll-padding-block: var(--space-6);
+  scroll-padding-block: var(--space-8);
   scrollbar-gutter: stable;
   overflow: auto;
   min-height: 0;
@@ -16,7 +17,7 @@
 }
 .intro {
   min-height: auto;
-  padding-block: var(--space-8);
+  padding-block: var(--space-10);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,15 +27,47 @@
 }
 .intro h2 {
   font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
 }
 .intro > p {
-  max-width: 48ch;
+  max-width: 56ch;
   color: var(--text-muted);
 }
+.clarify {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.examples {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 100%;
+}
+.examples > p {
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+.examples > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.examples button {
+  border-color: var(--border-default);
+  color: var(--action-text);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-regular);
+  text-align: left;
+}
 .error {
-  margin-top: var(--space-5);
-  padding: var(--space-4);
+  margin-top: var(--space-6);
+  padding: var(--space-5);
   border-radius: var(--radius-md);
+  border: var(--line) solid var(--status-danger);
   background: var(--surface-danger);
   display: flex;
   gap: var(--space-3);
@@ -43,13 +76,23 @@
 }
 @media (max-width: 47.99rem) {
   .content {
-    padding: var(--space-4) var(--space-6);
+    padding-block: var(--space-5);
+  }
+  .intro {
+    padding-block: var(--space-4);
+    gap: var(--space-4);
+  }
+  .examples > div {
+    width: 100%;
+  }
+  .examples button {
+    width: 100%;
   }
 }
 
 .error p {
   color: var(--text-primary);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-semibold);
 }
 
 .workspace:has(.intro) .content {

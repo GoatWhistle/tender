@@ -54,7 +54,7 @@ h2,
 h3 {
   line-height: var(--line-height-heading);
   text-wrap: balance;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 input,
 textarea {

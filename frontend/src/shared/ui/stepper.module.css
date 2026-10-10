@@ -1,7 +1,9 @@
 .nav {
   flex-shrink: 0;
-  padding: var(--space-5) var(--space-page);
+  padding-inline: var(--layout-inline);
+  padding-block: var(--space-5);
   background: var(--surface-panel);
+  border-bottom: var(--line) solid var(--border-default);
 }
 .steps {
   display: grid;

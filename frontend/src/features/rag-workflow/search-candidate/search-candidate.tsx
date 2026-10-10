@@ -31,22 +31,22 @@ export function SearchCandidate({
         >
           <BackendText>{candidate.name}</BackendText>
         </Button>
-        <a
-          data-rank-code
-          className={styles.code}
-          href={`/catalog/${encodeURIComponent(candidate.code)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={t("catalogNewTab")}
-        >
-          {candidate.code}
-        </a>
         {ready && candidate.reason && (
           <p>
             <BackendText>{candidate.reason}</BackendText>
           </p>
         )}
       </div>
+      <a
+        data-rank-code
+        className={styles.code}
+        href={`/catalog/${encodeURIComponent(candidate.code)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={t("catalogNewTab")}
+      >
+        {candidate.code}
+      </a>
       {ready && (
         <>
           <div className={styles.comparison} data-rank-differences>

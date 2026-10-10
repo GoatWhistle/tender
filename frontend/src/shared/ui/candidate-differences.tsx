@@ -16,7 +16,7 @@ export function CandidateDifferences({
   const entries = Object.entries(differences)
   if (!entries.length) return null
   return (
-    <div className={styles.comparison}>
+    <div className={compact ? `${styles.comparison} ${styles.compact}` : styles.comparison}>
       <dl>
         {(expanded ? entries : entries.slice(0, 3)).map(([name, value]) => (
           <div key={name}>

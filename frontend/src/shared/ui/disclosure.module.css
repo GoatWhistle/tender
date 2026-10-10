@@ -14,7 +14,7 @@
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   text-align: left;
 }
 .status {

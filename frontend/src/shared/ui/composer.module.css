@@ -1,15 +1,19 @@
 .form {
-  padding: var(--space-4) clamp(var(--space-page), 8vw, 160px)
-    max(var(--space-3), env(safe-area-inset-bottom));
+  padding-inline: var(--layout-inline);
+  padding-top: var(--space-4);
+  padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  background: var(--surface-page);
 }
 .composer {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-3) var(--space-2) var(--space-3) var(--space-5);
-  border: var(--line-strong) solid var(--border-default);
+  border: var(--line) solid var(--border-strong);
   border-radius: var(--radius-xl);
   background: var(--surface-panel);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--dur-hover) var(--ease-hover);
 }
 .composer textarea {
   width: 100%;
@@ -59,7 +63,8 @@
 }
 @media (max-width: 47.99rem) {
   .form {
-    padding: var(--space-3) var(--space-page) max(var(--space-2), env(safe-area-inset-bottom));
+    padding-top: var(--space-3);
+    padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
   }
   .composer {
     display: grid;
