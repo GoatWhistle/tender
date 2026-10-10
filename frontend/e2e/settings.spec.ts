@@ -35,3 +35,28 @@ test("переключатель языка переводит интерфей�
   await expect(page.locator("html")).toHaveAttribute("lang", "ru");
   await expect(page.getByRole("heading", { level: 1, name: t("store:title") })).toBeVisible();
 });
+
+test("иконки сайта и манифест доступны", async ({ page, request }) => {
+  await page.goto("/");
+  const hrefs = await page
+    .locator("link[rel~='icon'], link[rel='apple-touch-icon'], link[rel='manifest']")
+    .evaluateAll((links) => links.map((link) => link.getAttribute("href") ?? ""));
+  expect(hrefs).toEqual(
+    expect.arrayContaining([
+      "/favicon.ico",
+      "/favicon.svg",
+      "/apple-touch-icon.png",
+      "/site.webmanifest",
+    ]),
+  );
+  const manifest = (await (await request.get("/site.webmanifest")).json()) as {
+    icons: { src: string }[];
+  };
+  for (const href of [...hrefs, ...manifest.icons.map((icon) => icon.src), "/og-image.png"]) {
+    expect((await request.get(href)).status(), href).toBe(200);
+  }
+  await expect(page.locator("meta[property='og:image']")).toHaveAttribute(
+    "content",
+    /og-image\.png$/,
+  );
+});

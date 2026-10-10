@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Карточка товара по КТРУ из описания своими словами" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#18202d" />
+    <meta name="application-name" content="Портал поставщиков" />
+    <meta name="apple-mobile-web-app-title" content="Портал" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Портал поставщиков" />
+    <meta property="og:title" content="Карточка товара по КТРУ из описания своими словами" />
+    <meta
+      property="og:description"
+      content="Опишите товар, как привыкли: система подберёт позицию КТРУ и заполнит характеристики из справочника."
+    />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Логотип Портала поставщиков и подпись: карточка товара по КТРУ из описания своими словами"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Карточка товара по КТРУ из описания своими словами" />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
     <link
       rel="preload"
       href="/fonts/open-sans/open-sans-cyrillic-wght-normal.woff2"
@@ -15,14 +42,14 @@
     <title>Портал поставщиков</title>
     <script>
       (function () {
-        var choice = "system";
+        var theme = null;
         try {
-          choice = localStorage.getItem("portal-theme") || "system";
+          theme = localStorage.getItem("portal-theme");
         } catch (e) {}
-        var dark =
-          choice === "dark" ||
-          (choice === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        if (theme !== "light" && theme !== "dark") {
+          theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = theme;
       })();
     </script>
   </head>

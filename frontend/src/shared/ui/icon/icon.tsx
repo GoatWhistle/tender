@@ -8,7 +8,6 @@ import close from "./assets/close.svg";
 import done from "./assets/done.svg";
 import edit from "./assets/edit.svg";
 import history from "./assets/history.svg";
-import monitor from "./assets/monitor.svg";
 import moon from "./assets/moon.svg";
 import note from "./assets/note.svg";
 import plus from "./assets/plus.svg";
@@ -28,7 +27,6 @@ const MONO = {
   close,
   edit,
   history,
-  monitor,
   moon,
   note,
   plus,

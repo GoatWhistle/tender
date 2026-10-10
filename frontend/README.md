@@ -21,6 +21,8 @@ npm run format                            # Prettier переписывает ф
 ```
 
 `/api/v1/storefront` Vite отправляет в `STOREFRONT_URL`, остальной `/api` — в `API_URL`.
+`SITE_URL` (например `https://portal.example.org`) при сборке делает адреса `og:image` и
+`og:url` абсолютными — без него превью в соцсетях и мессенджерах не подтянет картинку.
 Бэкенд для `/sell` — корневой `README.md`, «Разработка». e2e поднимают мок и Vite на своих
 портах и подменяют API сессий фикстурами (`e2e/fixtures/sell.ts`), GPU и бэкенд не нужны.
 
@@ -33,13 +35,22 @@ npm run format                            # Prettier переписывает ф
   `catalog-search`. `src/entities` — `position`, `product`.
 - `src/shared` — токены `styles/tokens`, примитивы `ui/`, движение `motion/` (`Collapse`,
   `usePresence`, `useLoadingIndicator`, `withViewTransition`, `motionMs`), тексты
-  `i18n/locales/ru`, хуки `hooks/`.
+  `i18n/locales`, тема `theme/`, хуки `hooks/`.
 
 Стили — CSS Modules на токенах; токены объявлены на `:root:has([data-portal])` и не задевают
 `/sell/classic`. Все появления и исчезновения — через `Collapse` (вход `@starting-style`,
 выход до размонтирования), смена шага мастера — View Transitions, загрузка — затемнение через
 200 мс и скелетон, спиннер через 400 мс. Уменьшенное движение и ввод с клавиатуры схлопывают
 длительности.
+
+Тема — светлая или тёмная, переключатель в шапке; без сохранённого выбора первая тема берётся из
+системы, скрипт в `index.html` ставит её до отрисовки. Язык — RU или EN, словари
+`src/shared/i18n/locales`.
+
+Иконки сайта в `public/`: `favicon.ico` (16, 32, 48), `favicon.svg`, `apple-touch-icon.png`,
+`icon-192/512.png` и маскируемая для Android, `site.webmanifest`, превью для соцсетей
+`og-image.png` 1200×630. Все собирает из логотипа `src/shared/assets/portal-logo.svg`
+команда `cd presentation && npm run favicons`; тексты и цвета — `presentation/favicons/favicons.json`.
 
 ## Мастер поставщика `/sell`
 

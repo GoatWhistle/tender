@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="frontend/src/shared/assets/portal-logo.svg" alt="Портал поставщиков" width="300" height="66">
+</p>
+
 <h1 align="center">Карточка товара по КТРУ из описания своими словами</h1>
 
 <p align="center">
