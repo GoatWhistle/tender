@@ -11,10 +11,17 @@
   font-weight: var(--weight-medium);
   white-space: nowrap;
 }
-.badge[data-origin="description"],
+.badge[data-origin="description"] {
+  background: var(--surface-info);
+  color: var(--status-info);
+}
 .badge[data-origin="assistant"] {
   background: var(--surface-user);
   color: var(--action-text);
+}
+.badge[data-origin="manual"] {
+  background: var(--surface-warning);
+  color: var(--status-warning);
 }
 .hidden {
   position: absolute;

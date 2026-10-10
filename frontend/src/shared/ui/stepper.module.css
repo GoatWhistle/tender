@@ -42,9 +42,9 @@
   border-color: var(--brand-red);
 }
 .step[data-complete="true"] .circle {
-  background: var(--surface-user);
-  color: var(--action-text);
-  border-color: var(--border-user);
+  background: var(--surface-success);
+  color: var(--status-success);
+  border-color: var(--surface-success);
 }
 .label {
   flex-shrink: 0;

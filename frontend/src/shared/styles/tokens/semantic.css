@@ -6,6 +6,9 @@
   --surface-user: var(--pale-blue);
   --surface-hover: var(--ice-blue);
   --surface-danger: var(--red-pale);
+  --surface-success: var(--green-pale);
+  --surface-info: var(--sea-pale);
+  --surface-warning: var(--orange-pale);
   --text-primary: var(--black);
   --text-secondary: var(--gray-strong);
   --text-muted: var(--gray-text);
@@ -21,8 +24,8 @@
   --brand-gray: var(--gray-logo);
   --status-success: var(--green-dark);
   --status-danger: var(--red-dark);
-  --status-info: var(--sea-dark);
-  --status-warning: var(--orange);
+  --status-info: var(--sea-deep);
+  --status-warning: var(--orange-deep);
   --focus-ring: var(--main-blue);
   --scrollbar-thumb-color: var(--gray-light);
 }
@@ -34,6 +37,9 @@
   --surface-user: #233a5e;
   --surface-hover: #1f2c45;
   --surface-danger: #4a2626;
+  --surface-success: #173a30;
+  --surface-info: #15363b;
+  --surface-warning: #3d2a18;
   --text-primary: #eef2f8;
   --text-secondary: #cdd6e4;
   --text-muted: #9aa6b8;

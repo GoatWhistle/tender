@@ -25,7 +25,7 @@
 }
 .list > li[data-best="true"] {
   --category-icon-surface: var(--surface-panel);
-  background: var(--surface-user);
+  background: var(--surface-success);
 }
 .list > li[data-state="exiting"] {
   background: var(--surface-danger);
