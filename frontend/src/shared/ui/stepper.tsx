@@ -31,7 +31,7 @@ export function Stepper({
             <span className={styles.label}>{label}</span>
             {index === from && (
               <span className={styles.arrow} aria-hidden="true">
-                <Icon name="chevron" size={16} />
+                <Icon name="chevron" size={22} />
               </span>
             )}
           </li>

@@ -64,38 +64,35 @@
   align-items: center;
   justify-content: flex-end;
   flex: 1;
-  min-width: var(--space-6);
-  height: 16px;
+  min-width: var(--space-8);
+  height: 22px;
   margin-inline: var(--space-2) calc(var(--space-2) - var(--space-6));
   color: var(--action-primary);
   overflow: hidden;
 }
-.arrow::before {
+.arrow::before,
+.arrow::after {
   content: "";
   position: absolute;
-  inset-inline: 0 6px;
+  inset-inline: 0 10px;
   top: 50%;
   height: var(--line-strong);
   transform: translateY(-50%);
+  border-radius: var(--radius-round);
+}
+.arrow::before {
   background: repeating-linear-gradient(90deg, var(--border-user) 0 6px, transparent 6px 12px);
   animation: var(--motion-step-march);
 }
 .arrow::after {
-  content: "";
-  position: absolute;
-  inset-inline-start: 0;
-  top: 50%;
-  width: 40%;
-  height: var(--line-strong);
-  transform: translate(-100%, -50%);
-  background: linear-gradient(90deg, transparent, var(--action-primary));
-  border-radius: var(--radius-round);
+  background: linear-gradient(90deg, transparent, var(--action-primary)) no-repeat;
+  background-size: 40% 100%;
+  background-position-x: -67%;
   animation: var(--motion-step-arrow);
 }
 .arrow > svg {
   position: relative;
   flex-shrink: 0;
-  margin-inline-end: -4px;
   animation: var(--motion-step-nudge);
 }
 @media (max-width: 47.99rem) {

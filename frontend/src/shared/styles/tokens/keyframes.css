@@ -80,10 +80,10 @@
 }
 @keyframes step-arrow {
   from {
-    transform: translate(-100%, -50%);
+    background-position-x: -67%;
   }
   to {
-    transform: translate(250%, -50%);
+    background-position-x: 167%;
   }
 }
 @keyframes step-march {
