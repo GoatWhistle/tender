@@ -30,6 +30,7 @@ export function Field({
       <div className={styles.inputWrap}>
         <input
           {...props}
+          data-focus="container"
           id={id}
           required={required}
           aria-invalid={issue}

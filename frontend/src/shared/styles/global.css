@@ -44,7 +44,7 @@ body {
   outline-offset: 4px;
 }
 
-:root[data-input="keyboard"] input:focus-visible {
+:root[data-input="keyboard"] input:focus-visible:not([data-focus="container"]) {
   outline: var(--line-strong) solid var(--focus-ring);
   outline-offset: 4px;
 }

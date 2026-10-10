@@ -56,6 +56,8 @@
 
 .inputWrap:has(input:focus-visible) {
   border-color: var(--focus-ring);
+  outline: var(--line-strong) solid var(--focus-ring);
+  outline-offset: 4px;
 }
 .inputWrap input::placeholder {
   color: var(--text-muted);
