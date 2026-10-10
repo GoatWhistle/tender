@@ -66,3 +66,7 @@ Keep secrets and machine-specific settings out of version control. Provide examp
 `python3 -m unittest discover -s tests/evals -v` и `ruff check evals/errors tests/evals`.
 Для прогона и подсчёта метрик читай раздел «Оценка русских ошибок» в `README.md`;
 контракты и правила разметки — §§8.8, 9.3, 15.6 и 16.1 `docs/Предлагаемое решение.md`.
+
+При изменении диагностики выполни HTTP-прогон размеченных fixtures:
+`cd backend && uv run python ../evals/errors/run.py`. Контракт и ограничения замера —
+`docs/sessions.md`, настройки орфографии — `backend/.env.example`.

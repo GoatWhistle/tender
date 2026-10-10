@@ -9,6 +9,7 @@ from typing import Protocol, Self
 
 from app.domain.aliases import Alias
 from app.domain.catalog import Group, Position
+from app.domain.diagnostics import SpellingSuggestion, ValueAlias
 from app.domain.facts import Fact
 from app.domain.inference import (
     ChoiceBatch,
@@ -185,3 +186,15 @@ class FactExtractor(Protocol):
     def extract(
         self, messages: Sequence[Message], group: Group
     ) -> tuple[tuple[Fact, ...], tuple[str, ...]]: ...
+
+
+class EnumMatcher(Protocol):
+    def rank(self, value: str, allowed: Sequence[str]) -> tuple[tuple[str, int], ...]: ...
+
+
+class SpellingService(Protocol):
+    def suggest(self, message: Message) -> tuple[SpellingSuggestion, ...]: ...
+
+
+class ValueAliases(Protocol):
+    def all(self) -> tuple[ValueAlias, ...]: ...

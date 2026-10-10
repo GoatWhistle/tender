@@ -9,6 +9,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.domain.catalog import Bound, Value
+from app.domain.diagnostics import Diagnostic, DiagnosticScope, RuleRef
 from app.domain.dialog import CommonField, DialogTurn, Question, QuestionOption, RequiredField
 from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck
 from app.domain.search import MethodContribution
@@ -64,7 +65,8 @@ def decode(data: dict[str, Any]) -> SessionState:
         ),
         facts=tuple(_fact(f) for f in data.get("facts", [])),
         candidate_counts=CandidateCounts(**data["candidate_counts"]),
-        errors=tuple(AnalysisError(**e) for e in data["errors"]),
+        errors=tuple(_diagnostic(e) if "kind" in e else AnalysisError(**e) for e in data["errors"]),
+        normalizations=tuple(_diagnostic(e) for e in data.get("normalizations", [])),
         warnings=tuple(data["warnings"]),
         next_question=_question(data["next_question"]) if data.get("next_question") else None,
         dialog=tuple(
@@ -185,3 +187,20 @@ def _value(data: dict[str, Any]) -> Value:
 
 def _question(data: dict[str, Any]) -> Question:
     return Question(**{**data, "options": tuple(QuestionOption(**o) for o in data["options"])})
+
+
+def _diagnostic(data: dict[str, Any]) -> Diagnostic:
+    return Diagnostic(
+        **{
+            **data,
+            "source": FactSource(**data["source"]),
+            "scope": DiagnosticScope(
+                **{**data["scope"], "position_codes": tuple(data["scope"]["position_codes"])}
+            ),
+            "rule_ref": tuple(
+                RuleRef(**{**r, "value_codes": tuple(r["value_codes"])}) for r in data["rule_ref"]
+            ),
+            "expected": tuple(data["expected"]),
+            "candidates": tuple(data["candidates"]),
+        }
+    )

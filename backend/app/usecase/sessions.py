@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from uuid import uuid4
 
 from app.domain.catalog import Group, Position
+from app.domain.diagnostics import Diagnostic
 from app.domain.dialog import (
     CommonField,
     DialogTurn,
@@ -39,13 +40,16 @@ from app.domain.sessions import (
     SessionStatus,
     UnsupportedRule,
 )
+from app.usecase.diagnostics import Diagnostics
 from app.usecase.interface import (
     CatalogRepository,
     FactExtractor,
     GroupSearcher,
     SessionsRepository,
+    SpellingService,
     UnitOfWork,
 )
+from app.usecase.spelling import spelling_diagnostics
 
 
 class Sessions:
@@ -56,7 +60,11 @@ class Sessions:
         search: GroupSearcher,
         catalog: CatalogRepository,
         fact_extractor: FactExtractor,
+        diagnostics: Diagnostics | None = None,
+        spelling: SpellingService | None = None,
     ) -> None:
+        self._spelling = spelling
+        self._diagnostics = diagnostics
         self._fact_extractor = fact_extractor
         self._search = search
         self._catalog = catalog
@@ -91,8 +99,22 @@ class Sessions:
                 Message(str(uuid4()), text, datetime.now(UTC).isoformat()),
             )
             state = SessionState(
-                session_id, previous.revision + 1, messages=messages, dialog=previous.dialog
+                session_id,
+                previous.revision + 1,
+                messages=messages,
+                dialog=previous.dialog,
+                errors=tuple(
+                    e
+                    for e in previous.errors
+                    if (isinstance(e, Diagnostic) and not e.rule_ref)
+                    or (isinstance(e, AnalysisError) and e.code.startswith("spelling_"))
+                ),
             )
+            if self._spelling is not None:
+                state = replace(
+                    state,
+                    errors=(*state.errors, *spelling_diagnostics(self._spelling, messages[-1])),
+                )
             try:
                 result = self._search.run(
                     "\n".join(m.text for m in messages), category=None, limit=5
@@ -205,6 +227,9 @@ class Sessions:
                 common = common_fields(remaining)
             else:
                 status = SessionStatus.NEEDS_CLARIFICATION
+        diagnostics = (
+            self._diagnostics.run(facts, group, state.messages) if self._diagnostics else ()
+        )
         return replace(
             state,
             status=status,
@@ -213,7 +238,33 @@ class Sessions:
             candidates=candidates,
             candidate_counts=CandidateCounts(count, len(remaining), count - len(remaining)),
             warnings=(*state.warnings, *warnings) if extend else state.warnings,
-            errors=(),
+            errors=(
+                *tuple(d for d in diagnostics if d.kind != "synonym"),
+                *tuple(
+                    e
+                    for e in state.errors
+                    if (isinstance(e, AnalysisError) and e.code.startswith("spelling_"))
+                    or (
+                        isinstance(e, Diagnostic)
+                        and not e.rule_ref
+                        and not any(
+                            d.source.message_id == e.source.message_id
+                            and d.source.start < e.source.end
+                            and e.source.start < d.source.end
+                            for d in diagnostics
+                        )
+                        and not any(
+                            f.accepted
+                            and f.source is not None
+                            and f.source.message_id == e.source.message_id
+                            and f.source.start < e.source.end
+                            and e.source.start < f.source.end
+                            for f in facts
+                        )
+                    )
+                ),
+            ),
+            normalizations=tuple(d for d in diagnostics if d.kind == "synonym"),
             next_question=question,
             card_complete=status == SessionStatus.RESOLVED and not missing,
             missing_required=missing,
@@ -232,7 +283,7 @@ def _failed(state: SessionState, error: ModelFailure | CatalogEmpty) -> SessionS
     return replace(
         state,
         status=SessionStatus.TECHNICAL_ERROR,
-        errors=(AnalysisError(error.code, error.message),),
+        errors=(AnalysisError(error.code, error.message), *state.errors),
         next_question=None,
     )
 
