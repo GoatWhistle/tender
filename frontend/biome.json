@@ -3,6 +3,7 @@
     "includes": [
       "**",
       "!src/shared/api/schema.gen.ts",
+      "!src/shared/assets/icons",
       "!dist",
       "!node_modules",
       "!test-results",
