@@ -1,0 +1,327 @@
+{
+  "metrics": {
+    "all": {
+      "candidates": 30,
+      "correct": 9,
+      "incorrect": 21,
+      "accepted": 9,
+      "missed_errors": 1,
+      "correct_not_autoaccepted": 1,
+      "precision": 0.8888888888888888,
+      "precision_wilson95": [
+        0.5649937852319399,
+        0.9801096286728695
+      ],
+      "coverage": 0.3,
+      "verified": 17,
+      "verifier_missed_errors": 6,
+      "verifier_rejected_correct": 0
+    },
+    "actual": {
+      "candidates": 22,
+      "correct": 7,
+      "incorrect": 15,
+      "accepted": 6,
+      "missed_errors": 0,
+      "correct_not_autoaccepted": 1,
+      "precision": 1.0,
+      "precision_wilson95": [
+        0.6096569663469354,
+        0.9999999999999999
+      ],
+      "coverage": 0.2727272727272727,
+      "verified": 10,
+      "verifier_missed_errors": 3,
+      "verifier_rejected_correct": 0
+    },
+    "controlled": {
+      "candidates": 8,
+      "correct": 2,
+      "incorrect": 6,
+      "accepted": 3,
+      "missed_errors": 1,
+      "correct_not_autoaccepted": 0,
+      "precision": 0.6666666666666666,
+      "precision_wilson95": [
+        0.2076549551264879,
+        0.9385096847238394
+      ],
+      "coverage": 0.375,
+      "verified": 7,
+      "verifier_missed_errors": 3,
+      "verifier_rejected_correct": 0
+    }
+  },
+  "observations": [
+    {
+      "case": "raised-surface",
+      "controlled": false,
+      "correct": true,
+      "reason": "82 см явно указаны как расстояние от пола до верха",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "raised-surface-low",
+      "controlled": false,
+      "correct": true,
+      "reason": "68 см от пола до поверхности",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "meter",
+      "controlled": false,
+      "correct": true,
+      "reason": "0,82 м от пола до верха",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "range",
+      "controlled": false,
+      "correct": false,
+      "reason": "raw_value содержит слова и единицу вместо числового диапазона a..b",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "missing",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустая высота",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "missing",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустой материал ножек",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "missing",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустой материал столешницы",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "missing",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустой цвет",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "deadline",
+      "controlled": false,
+      "correct": false,
+      "reason": "срок доставки перенесён в высоту",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "negative",
+      "controlled": false,
+      "correct": false,
+      "reason": "raw_value содержит отрицание и единицу; положительный факт не следует",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "uncertain",
+      "controlled": false,
+      "correct": false,
+      "reason": "значение только предполагается; нельзя принять как определённую высоту",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "mass",
+      "controlled": false,
+      "correct": false,
+      "reason": "материал ножек не указан; значение не указано не является фактом",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "separate-parts",
+      "controlled": false,
+      "correct": false,
+      "reason": "у материала ножек выдумана единица длины 004",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "separate-parts",
+      "controlled": false,
+      "correct": true,
+      "reason": "столешница из стекла явно названа",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "top-glass",
+      "controlled": false,
+      "correct": false,
+      "reason": "у материала столешницы выдумана единица длины 004; также raw_value нормализован вместо извлечения",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "paint",
+      "controlled": false,
+      "correct": true,
+      "reason": "оранжевый цвет явно относится к столу; пустая единица трактуется как отсутствие",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "paint-missing",
+      "controlled": false,
+      "correct": false,
+      "reason": "окраску ещё не определили не является значением цвета",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "dialog",
+      "controlled": false,
+      "correct": true,
+      "reason": "второе сообщение задаёт высоту ранее названного стола",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "correction",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустое значение и цитата",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "correction",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустое значение и цитата",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "correction",
+      "controlled": false,
+      "correct": false,
+      "reason": "пустое значение и цитата",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "followup",
+      "controlled": false,
+      "correct": true,
+      "reason": "доставка вечером не отменяет ранее указанную высоту",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "controlled-valid",
+      "controlled": true,
+      "correct": true,
+      "reason": "явная высота",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "controlled-fiction",
+      "controlled": true,
+      "correct": false,
+      "reason": "дни изготовления не высота; единица выдумана",
+      "accepted": false,
+      "verified": false,
+      "verifier_pass": false
+    },
+    {
+      "case": "controlled-negative",
+      "controlled": true,
+      "correct": false,
+      "reason": "потеряно отрицание",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": false
+    },
+    {
+      "case": "controlled-part",
+      "controlled": true,
+      "correct": false,
+      "reason": "материал ножек перенесён на столешницу",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": false
+    },
+    {
+      "case": "controlled-color",
+      "controlled": true,
+      "correct": true,
+      "reason": "явный цвет стола",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "controlled-other-product",
+      "controlled": true,
+      "correct": false,
+      "reason": "цвет шкафа перенесён на стол",
+      "accepted": true,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "controlled-stale",
+      "controlled": true,
+      "correct": false,
+      "reason": "82 заменено на 68 в связанном исправлении",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": true
+    },
+    {
+      "case": "controlled-uncertain",
+      "controlled": true,
+      "correct": false,
+      "reason": "приблизительное значение требует уточнения",
+      "accepted": false,
+      "verified": true,
+      "verifier_pass": true
+    }
+  ]
+}

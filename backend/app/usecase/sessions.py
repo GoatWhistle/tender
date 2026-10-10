@@ -52,6 +52,7 @@ from app.domain.sessions import (
 )
 from app.usecase.diagnostics import Diagnostics
 from app.usecase.enum_mapping import EnumMapper
+from app.usecase.extraction import VerifiedExtractor, explicit_model_correction
 from app.usecase.interface import (
     CatalogRepository,
     DecisionBackend,
@@ -91,9 +92,11 @@ class Sessions:
         enum_mapper: EnumMapper | None = None,
         diagnostics: Diagnostics | None = None,
         spelling: SpellingService | None = None,
+        verified_extractor: VerifiedExtractor | None = None,
         decision: DecisionBackend | None = None,
         min_similarity: float = 0.0,
     ) -> None:
+        self._verified_extractor = verified_extractor
         self._enum_mapper = enum_mapper
         self._spelling = spelling
         self._diagnostics = diagnostics
@@ -398,6 +401,8 @@ class Sessions:
                 if (
                     old.characteristic_name is None
                     or old.normalization_rule == "correction_needs_binding"
+                    or old.requires_binding
+                    or old.negated
                 ):
                     raise InvalidFactEdit(
                         "Сначала укажите характеристику и часть товара в редакторе"
@@ -680,12 +685,57 @@ class Sessions:
                     f
                     for f in state.facts
                     if f.origin == "decision"
+                    and f.verification is None
                     and f.status in {"proposed", "accepted_from_model"}
                     and f.characteristic_name not in skip
                 )
                 proposals = tuple(p for p in state.enum_proposals if p.characteristic not in skip)
             facts = reconcile(
                 apply_history((*facts, *mapped), state.fact_history, selected.code), group
+            )
+            active = [f for f in facts if f.status not in INACTIVE]
+            candidates = tuple(_candidate(p, active) for p in leaves)
+            remaining = [p for p, c in zip(leaves, candidates, strict=True) if not c.excluded]
+        if self._verified_extractor is not None:
+            generated = (
+                self._verified_extractor.run(
+                    state.messages, facts, group, remaining, state.revision, state.fact_history
+                )
+                if extend
+                else tuple(
+                    f for f in state.facts if f.normalization_rule == "verified_extraction_v1"
+                )
+            )
+            if extend and explicit_model_correction(state.messages, facts):
+                for new in generated:
+                    if (
+                        not new.accepted
+                        or new.source is None
+                        or new.source.message_id != state.messages[-1].id
+                    ):
+                        continue
+                    targets = [
+                        f
+                        for f in facts
+                        if f.accepted
+                        and f.characteristic_name == new.characteristic_name
+                        and component_key(f) == component_key(new)
+                    ]
+                    if len(targets) == 1:
+                        pending = [
+                            f
+                            for f in facts
+                            if f.status == "ambiguous"
+                            and f.normalization_rule == "correction_needs_binding"
+                            and f.source
+                            and f.source.message_id == new.source.message_id
+                        ]
+                        state = _record_change(
+                            state, "text_correction", (*targets, *pending), (new,), selected.code
+                        )
+            warnings = (*warnings, *self._verified_extractor.warnings)
+            facts = reconcile(
+                apply_history((*facts, *generated), state.fact_history, selected.code), group
             )
             active = [f for f in facts if f.status not in INACTIVE]
             candidates = tuple(_candidate(p, active) for p in leaves)
@@ -718,8 +768,16 @@ class Sessions:
         elif len(remaining) == 1:
             status = SessionStatus.RESOLVED
             suppressed = {f.characteristic_name for f in facts if f.status == "deleted"}
-            unconfirmed = frozenset(p.characteristic for p in proposals) | frozenset(
-                name for name, r in resolutions.items() if not r.facts and name in locked
+            unconfirmed = (
+                frozenset(
+                    f.characteristic_name
+                    for f in active
+                    if f.status == "proposed" and f.characteristic_name
+                )
+                | frozenset(p.characteristic for p in proposals)
+                | frozenset(
+                    name for name, r in resolutions.items() if not r.facts and name in locked
+                )
             )
             derived, missing = derive(
                 remaining[0], active, suppressed=suppressed, unconfirmed=unconfirmed

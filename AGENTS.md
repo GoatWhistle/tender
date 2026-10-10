@@ -78,3 +78,12 @@ HTTP-проверки: `cd backend && uv run pytest tests/test_enum_sessions.py 
 При изменении диагностики выполни HTTP-прогон размеченных fixtures:
 `cd backend && uv run python ../evals/errors/run.py`. Контракт и ограничения замера —
 `docs/sessions.md`, настройки орфографии — `backend/.env.example`.
+
+### Извлечение и verifier
+
+При изменении extractor, verifier-порога или привязки модельных фактов читай
+[контракт](docs/sessions.md#проверяемое-извлечение-свободных-значений) и
+[независимый замер](evals/reports/2026-10-10-verified-extraction.md).
+HTTP-проверки: `cd backend && uv run pytest tests/test_extraction_sessions.py tests/test_extractor_http.py`.
+Замер и разметка ответов — `evals/extraction/`; команды — README, «Свободное извлечение и verifier».
+Сохраняй исходный holdout-отчёт; повтор после исправления отмечай как регрессионный.
