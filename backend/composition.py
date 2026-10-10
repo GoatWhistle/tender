@@ -11,7 +11,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from app.domain.enum_mapping import AutoAcceptance
-from app.usecase.catalog import CatalogQueries, CatalogSync
+from app.usecase.catalog import CatalogQueries, CatalogSync, SnapshotCatalog
 from app.usecase.diagnostics import Diagnostics
 from app.usecase.enum_mapping import EnumMapper
 from app.usecase.extraction import VerificationPolicy, VerifiedExtractor
@@ -113,7 +113,7 @@ def build_usecases[U: UnitOfWork](
                 uow,
                 sessions_factory(uow),
                 searcher or group_search(uow),
-                r.catalog(uow),
+                SnapshotCatalog(r.catalog(uow), snapshot),
                 fact_extractor,
                 enum_mapper=EnumMapper(checked_decision(decision), enum_policy or AutoAcceptance())
                 if decision
@@ -144,7 +144,7 @@ def build_usecases[U: UnitOfWork](
         if vectors_factory is not None and embeddings is not None
         else None,
         group_search=group_search,
-        catalog_queries=lambda uow: CatalogQueries(uow, r.catalog(uow)),
+        catalog_queries=lambda uow: CatalogQueries(uow, SnapshotCatalog(r.catalog(uow), snapshot)),
         catalog_sync=lambda uow: CatalogSync(
             uow,
             r.catalog(uow),

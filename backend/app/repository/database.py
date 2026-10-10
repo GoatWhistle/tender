@@ -36,6 +36,11 @@ def create_db_engine(url: str, **kwargs: Any) -> Engine:
     def _foreign_keys(connection: sqlite3.Connection, _: ConnectionPoolEntry) -> None:
         cursor = connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
+        # WAL: чтение не ждёт записи, фиксация — без fsync журнала на каждую транзакцию.
+        # NORMAL в WAL не теряет данных при падении процесса, только при отключении питания.
+        if database and database != ":memory:":
+            cursor.execute("PRAGMA journal_mode=WAL")
+            cursor.execute("PRAGMA synchronous=NORMAL")
         cursor.close()
 
     return engine

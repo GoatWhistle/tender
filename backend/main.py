@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.adapter.aliases import CsvAliasesSource
-from app.adapter.decision import OpenJevDecision
+from app.adapter.decision import CachedDecision, OpenJevDecision
 from app.adapter.embeddings import OpenAIEmbeddings
 from app.adapter.enum_similarity import DamerauMatcher
 from app.adapter.extractor import QwenExtractor
@@ -61,7 +61,10 @@ def production_usecases(
     embeddings = checked_embeddings(embeddings) if embeddings is not None else None
     return build_usecases(
         sql_repositories(),
-        decision=OpenJevDecision(settings.decision_url, timeout=settings.decision_timeout)
+        decision=CachedDecision(
+            OpenJevDecision(settings.decision_url, timeout=settings.decision_timeout),
+            settings.decision_cache_size,
+        )
         if settings.decision_url
         else None,
         model_extractor=QwenExtractor(

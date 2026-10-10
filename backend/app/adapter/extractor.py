@@ -1,6 +1,8 @@
 """Qwen3.5-9B за strict API vLLM/XGrammar; повторные попытки принадлежат сценарию."""
 
 import json
+from collections.abc import Iterator
+from contextlib import contextmanager
 from dataclasses import asdict
 from typing import Any
 
@@ -23,20 +25,19 @@ class QwenExtractor:
         transport: httpx.BaseTransport | None = None,
     ) -> None:
         self._url = base_url.rstrip("/")
-        self._revision, self._timeout, self._key, self._transport = (
-            revision,
-            timeout,
-            api_key,
-            transport,
+        self._revision = revision
+        self._http = httpx.Client(
+            base_url=self._url,
+            timeout=timeout,
+            transport=transport,
+            headers={"Authorization": f"Bearer {api_key}"} if api_key else {},
         )
 
-    def _client(self) -> httpx.Client:
-        return httpx.Client(
-            base_url=self._url,
-            timeout=self._timeout,
-            transport=self._transport,
-            headers={"Authorization": f"Bearer {self._key}"} if self._key else {},
-        )
+    @contextmanager
+    def _client(self) -> Iterator[httpx.Client]:
+        # Один клиент на адаптер: создание httpx.Client — десятки миллисекунд (SSL-контекст),
+        # а соединение с сервисом модели переиспользуется между вызовами. Клиент потокобезопасен.
+        yield self._http
 
     def health(self) -> ModelHealth:
         with self._client() as client:

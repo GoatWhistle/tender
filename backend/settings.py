@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     decision_auto_accept_enabled: bool = True
     decision_auto_accept_threshold: float = Field(default=0.90, ge=0, le=1)
     decision_revision: str = "a20448012c213128955ca0c693e7c943865cab77"
+    # Ответов decision-модели в памяти: пересчёт сессии повторяет вопросы по тем же сообщениям.
+    decision_cache_size: int = Field(default=4096, ge=1)
 
     extractor_url: str | None = None
     extractor_api_key: SecretStr | None = None

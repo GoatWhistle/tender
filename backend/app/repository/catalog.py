@@ -1,15 +1,14 @@
 """Справочник КТРУ на SQLite — реализация порта `CatalogRepository`."""
 
+from collections import defaultdict
 from collections.abc import Iterable
 from typing import Any
 
-from sqlalchemy import delete, func, insert, or_, select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import ColumnElement, delete, func, insert, or_, select, true
+from sqlalchemy.orm import Session
 
 from app.domain.catalog import Bound, Characteristic, CharacteristicKind, Position, Value
 from app.repository.orm.catalog import AllowedValue, CatalogPosition, PositionCharacteristic
-
-_LOAD = selectinload(CatalogPosition.characteristics).selectinload(PositionCharacteristic.values)
 
 
 class SqlCatalog:
@@ -17,37 +16,82 @@ class SqlCatalog:
         self._session = session
 
     def position(self, code: str) -> Position | None:
-        row = self._session.scalar(
-            select(CatalogPosition).where(CatalogPosition.code == code).options(_LOAD)
-        )
-        return _position(row) if row is not None else None
+        found = self._load(CatalogPosition.code == code)
+        return found[0] if found else None
 
     def positions(self, category: str | None = None) -> list[Position]:
-        query = select(CatalogPosition).options(_LOAD).order_by(CatalogPosition.code)
-        if category is not None:
-            query = query.where(CatalogPosition.category == category)
-        return [_position(r) for r in self._session.scalars(query)]
+        return self._load(_in_category(category))
 
     def groups(self, category: str | None = None) -> list[Position]:
         # Определение группы — `Position.is_group`: шаблон или позиция без родителя.
-        query = (
-            select(CatalogPosition)
-            .where(or_(CatalogPosition.is_template, CatalogPosition.parent.is_(None)))
-            .options(_LOAD)
-            .order_by(CatalogPosition.code)
+        return self._load(
+            or_(CatalogPosition.is_template, CatalogPosition.parent.is_(None)),
+            _in_category(category),
         )
-        if category is not None:
-            query = query.where(CatalogPosition.category == category)
-        return [_position(r) for r in self._session.scalars(query)]
 
     def children(self, code: str) -> list[Position]:
-        query = (
-            select(CatalogPosition)
-            .where(CatalogPosition.parent == code)
-            .options(_LOAD)
-            .order_by(CatalogPosition.code)
+        return self._load(CatalogPosition.parent == code)
+
+    def _load(self, *where: ColumnElement[bool]) -> list[Position]:
+        # Чтение ядром: справочник — десятки тысяч значений, ORM-объекты на каждое чтение
+        # стоят секунды. Три запроса: позиции, их характеристики, значения характеристик.
+        codes = select(CatalogPosition.code).where(*where)
+        chars = PositionCharacteristic.__table__
+        values = AllowedValue.__table__
+        by_char: dict[int, list[Value]] = defaultdict(list)
+        for v in self._session.execute(
+            select(values)
+            .join(chars, values.c.characteristic_id == chars.c.id)
+            .where(chars.c.position_code.in_(codes))
+            .order_by(values.c.characteristic_id, values.c.ordinal)
+        ):
+            by_char[v.characteristic_id].append(
+                Value(
+                    code=v.code,
+                    text=v.text,
+                    unit=v.unit,
+                    unit_code=v.unit_code,
+                    concrete=v.concrete,
+                    min=v.min,
+                    min_op=Bound(v.min_op) if v.min_op else None,
+                    max=v.max,
+                    max_op=Bound(v.max_op) if v.max_op else None,
+                )
+            )
+        by_position: dict[str, list[Characteristic]] = defaultdict(list)
+        for c in self._session.execute(
+            select(chars)
+            .where(chars.c.position_code.in_(codes))
+            .order_by(chars.c.position_code, chars.c.ordinal)
+        ):
+            by_position[c.position_code].append(
+                Characteristic(
+                    code=c.code,
+                    name=c.name,
+                    quantitative=c.quantitative,
+                    required=c.required,
+                    kind=CharacteristicKind(c.kind),
+                    values=tuple(by_char.get(c.id, ())),
+                )
+            )
+        rows = self._session.execute(
+            select(CatalogPosition.__table__).where(*where).order_by(CatalogPosition.code)
         )
-        return [_position(r) for r in self._session.scalars(query)]
+        return [
+            Position(
+                code=r.code,
+                name=r.name,
+                category=r.category,
+                okpd2=r.okpd2,
+                okpd2_name=r.okpd2_name,
+                is_template=r.is_template,
+                parent=r.parent,
+                units=tuple(r.units),
+                rubrics=tuple(r.rubrics),
+                characteristics=tuple(by_position.get(r.code, ())),
+            )
+            for r in rows
+        ]
 
     def count(self) -> int:
         return self._session.scalar(select(func.count()).select_from(CatalogPosition)) or 0
@@ -113,40 +157,5 @@ class SqlCatalog:
                 self._session.execute(insert(table), batch)
 
 
-def _value(v: AllowedValue) -> Value:
-    return Value(
-        code=v.code,
-        text=v.text,
-        unit=v.unit,
-        unit_code=v.unit_code,
-        concrete=v.concrete,
-        min=v.min,
-        min_op=Bound(v.min_op) if v.min_op else None,
-        max=v.max,
-        max_op=Bound(v.max_op) if v.max_op else None,
-    )
-
-
-def _position(row: CatalogPosition) -> Position:
-    return Position(
-        code=row.code,
-        name=row.name,
-        category=row.category,
-        okpd2=row.okpd2,
-        okpd2_name=row.okpd2_name,
-        is_template=row.is_template,
-        parent=row.parent,
-        units=tuple(row.units),
-        rubrics=tuple(row.rubrics),
-        characteristics=tuple(
-            Characteristic(
-                code=c.code,
-                name=c.name,
-                quantitative=c.quantitative,
-                required=c.required,
-                kind=CharacteristicKind(c.kind),
-                values=tuple(_value(v) for v in c.values),
-            )
-            for c in row.characteristics
-        ),
-    )
+def _in_category(category: str | None) -> ColumnElement[bool]:
+    return CatalogPosition.category == category if category is not None else true()

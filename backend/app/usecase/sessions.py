@@ -2,6 +2,7 @@
 
 import re
 from collections.abc import Sequence
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import replace
 from datetime import UTC, datetime
 from uuid import uuid4
@@ -72,6 +73,8 @@ from app.usecase.spelling import spelling_diagnostics
 
 # Вопрос decision-модели, описан ли товар: ближайшая группа есть у любой строки, и косинус
 # мусора доходит до косинуса настоящих товаров (evals/reports/2026-10-10-out-of-scope.md).
+# Фоновые вызовы моделей, не зависящие от основного разбора сообщения.
+_BACKGROUND = ThreadPoolExecutor(max_workers=8, thread_name_prefix="session-background")
 RELEVANCE = ChoiceQuestion(
     "relevance",
     "Что это за текст?",
@@ -206,19 +209,26 @@ class Sessions:
                     or (isinstance(e, AnalysisError) and e.code.startswith("spelling_"))
                 ),
             )
-            if self._spelling is not None:
-                state = replace(
-                    state,
-                    errors=(*state.errors, *spelling_diagnostics(self._spelling, messages[-1])),
-                )
+            # Орфография — отдельная модель и от выбора группы не зависит: идёт параллельно
+            # поиску и проверке групп, результат присоединяется до разбора фактов.
+            spelling = (
+                _BACKGROUND.submit(spelling_diagnostics, self._spelling, messages[-1])
+                if self._spelling is not None
+                else None
+            )
             try:
-                state = self._select_group(state, previous)
+                state = self._select_group(state, previous, spelling)
             except (ModelFailure, CatalogEmpty) as error:
-                state = _failed(state, error)
+                state = _failed(_with_spelling(state, spelling), error)
             self._sessions.save(Revision(state, key, text))
             return state
 
-    def _select_group(self, state: SessionState, previous: SessionState) -> SessionState:
+    def _select_group(
+        self,
+        state: SessionState,
+        previous: SessionState,
+        spelling: Future[tuple[Diagnostic | AnalysisError, ...]] | None = None,
+    ) -> SessionState:
         # Сохраняем исходные сообщения и ответы о назначении в порядке событий.
         parts = []
         for count, message in enumerate(state.messages, 1):
@@ -271,10 +281,10 @@ class Sessions:
             warnings=result.messages,
         )
         if not hits:
-            return self._purpose_question(state)
+            return self._purpose_question(_with_spelling(state, spelling))
         if self._out_of_scope(description, result):
             return replace(
-                state,
+                _with_spelling(state, spelling),
                 status=SessionStatus.OUT_OF_SCOPE,
                 results_stale=False,
                 analysis_revision=state.revision,
@@ -309,6 +319,7 @@ class Sessions:
                 if h.group.code != selected_code
             )[:5],
         )
+        state = _with_spelling(state, spelling)
         if selected_code is None:
             return self._purpose_question(state)
         group = next(g for g in groups if g.position.code == selected_code)
@@ -1149,6 +1160,13 @@ def _record_change(
         results_stale=True,
         card_complete=False,
     )
+
+
+def _with_spelling(
+    state: SessionState, spelling: Future[tuple[Diagnostic | AnalysisError, ...]] | None
+) -> SessionState:
+    """Диагностики орфографии из фоновой проверки — в конец ошибок, как при вызове на месте."""
+    return replace(state, errors=(*state.errors, *spelling.result())) if spelling else state
 
 
 def _failed(state: SessionState, error: ModelFailure | CatalogEmpty) -> SessionState:
