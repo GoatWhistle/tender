@@ -50,7 +50,9 @@ ANSWER_PROMPT = (
     "нумеруются с 1. Характеристики, о которых в ответе ничего нет, оставь пустым массивом; "
     "если ответ противоречит вариантам или человек не знает — тоже пустым. В comment — одно "
     "короткое предложение, обращённое к человеку на «вы»: что выбрано или почему выбрать "
-    "нельзя; если он просит то, чего нет среди характеристик, так и скажи."
+    "нельзя; если он просит то, чего нет среди характеристик, так и скажи. В полях n — точное "
+    "число, если человек его назвал, в единицах характеристики (3 кВт при единице «Ватт» — "
+    "3000); иначе null."
 )
 
 
@@ -176,9 +178,13 @@ async def extract(
     return out
 
 
+def _exact(q: Question) -> bool:
+    return bool(q.ranges) and not q.multiple
+
+
 async def answer(
     reply: str, qs: list[Question], model: str = "haiku"
-) -> tuple[dict[str, tuple[str, ...]], str]:
+) -> tuple[dict[str, tuple[str, ...]], dict[str, float], str]:
     properties: dict = {
         f"c{n}": {
             "type": "array",
@@ -187,6 +193,11 @@ async def answer(
             **({} if q.multiple else {"maxItems": 1}),
         }
         for n, q in enumerate(qs, 1)
+    }
+    properties |= {
+        f"n{n}": {"type": ["number", "null"], "description": q.name}
+        for n, q in enumerate(qs, 1)
+        if _exact(q)
     }
     properties["comment"] = {"type": "string"}
     schema = {
@@ -199,6 +210,8 @@ async def answer(
     for n, q in enumerate(qs, 1):
         options = "\n".join(f"  {j}. {o}" for j, o in enumerate(q.options, 1))
         many = "можно несколько" if q.multiple else "ровно один"
+        if _exact(q):
+            many += f"; точное число — n{n}, единица: {q.ranges[0].unit or 'нет'}"
         blocks.append(f"c{n}: {q.name} ({many})\n{options}")
     prompt = "Характеристики:\n\n" + "\n\n".join(blocks) + f"\n\nОтвет:\n{reply}"
     out = await structured(prompt, ANSWER_PROMPT, schema, model)
@@ -207,4 +220,9 @@ async def answer(
         got = tuple(dict.fromkeys(c for c in out.get(f"c{n}", []) if c in q.options))
         if got and (q.multiple or len(got) == 1):
             picked[q.name] = got
-    return picked, out["comment"]
+    numbers = {
+        q.name: float(x)
+        for n, q in enumerate(qs, 1)
+        if _exact(q) and isinstance(x := out.get(f"n{n}"), int | float)
+    }
+    return picked, numbers, out["comment"]

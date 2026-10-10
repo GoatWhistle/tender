@@ -203,7 +203,7 @@ async def reply(s: Session, index: Index, text: str) -> None:
     q = s.question
     if q is None:
         raise StageError("вопросов нет")
-    got, s.message = await answer(text, questions(s.leaves, s.answers))
+    got, _, s.message = await answer(text, questions(s.leaves, s.answers))
     if got:
         s.answers.update({name: values[0] for name, values in got.items()})
         s.context.append(text)
@@ -280,7 +280,11 @@ async def describe(s: Session, text: str, name: str | None = None) -> None:
         qs = [q for q in qs if q.name == name]
         if not qs:
             raise InputError(f"у позиции нет изменяемой характеристики «{name}»")
-    got, s.message = await answer(text, qs)
+    got, numbers, s.message = await answer(text, qs)
+    for q in qs:
+        if q.name in numbers and (label := match(q, numbers[q.name])):
+            got[q.name] = (label,)
+            s.numbers[q.name] = numbers[q.name]
     s.chosen.update(got)
     s.origins.update(dict.fromkeys(got, Origin.ASSISTANT))
 
