@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 import type { RagWorkflowState } from "@/entities/rag/use-rag-workflow"
 import { Button } from "@/shared/ui/button"
+import { CategoryIcon } from "@/shared/ui/category-icon/category-icon"
 import { Icon } from "@/shared/ui/icon"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./summary.module.css"
@@ -46,10 +47,15 @@ export function Summary({
       {done && <Icon name="success" size={32} />}
       <h2>{t(done ? "rag:done" : "rag:previewTitle")}</h2>
       <p>{t(done ? "rag:doneHint" : "rag:previewHint")}</p>
-      <h3>
-        <BackendText>{session.position.name}</BackendText>
-      </h3>
-      <p>{session.position.code}</p>
+      <div className={styles.position}>
+        <CategoryIcon code={session.position.code} size="lg" />
+        <div>
+          <h3>
+            <BackendText>{session.position.name}</BackendText>
+          </h3>
+          <p>{session.position.code}</p>
+        </div>
+      </div>
       {groups
         .filter((group) => group.values.length > 0)
         .map((group) => (

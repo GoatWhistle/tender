@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { api, unwrap } from "@/shared/api/client"
 import { Spinner } from "@/shared/motion/primitives"
 import { Button } from "@/shared/ui/button"
+import { CategoryIcon } from "@/shared/ui/category-icon/category-icon"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./catalog-position.module.css"
 
@@ -31,6 +32,7 @@ export function CatalogPosition({ code }: { readonly code: string }) {
   return (
     <section className={styles.details} aria-label={t("catalogContents")}>
       <header>
+        <CategoryIcon code={position.code} size="lg" />
         <p>{position.code}</p>
         <h2>
           <BackendText>{position.name}</BackendText>

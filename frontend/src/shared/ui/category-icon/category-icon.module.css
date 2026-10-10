@@ -1,0 +1,15 @@
+.tile {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-md);
+  background: var(--surface-user);
+  color: var(--action-text);
+}
+.tile[data-size="lg"] {
+  width: var(--control-size-large);
+  height: var(--control-size-large);
+  border-radius: var(--radius-lg);
+}

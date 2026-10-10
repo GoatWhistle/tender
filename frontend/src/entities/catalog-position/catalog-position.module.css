@@ -63,7 +63,14 @@
 }
 
 .details header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-5);
   margin-bottom: var(--space-8);
+}
+.details header > span {
+  grid-row: span 2;
 }
 .details header > p {
   color: var(--text-secondary);
