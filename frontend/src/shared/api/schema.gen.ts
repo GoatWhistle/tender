@@ -613,6 +613,8 @@ export interface components {
             accepted: boolean;
             /** Problems */
             problems: string[];
+            /** Warnings */
+            warnings: string[];
             fixed: components["schemas"]["ExtraIn"] | null;
             session: components["schemas"]["SessionOut"];
         };

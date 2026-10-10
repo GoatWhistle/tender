@@ -113,6 +113,15 @@ export function Extras({ flow }: { readonly flow: RagWorkflowState }) {
           )}
         </div>
       )}
+      {flow.verdict?.accepted && flow.verdict.warnings.length > 0 && (
+        <div role="status" className={styles.verdict}>
+          {flow.verdict.warnings.map((warning) => (
+            <p key={warning}>
+              <BackendText>{warning}</BackendText>
+            </p>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

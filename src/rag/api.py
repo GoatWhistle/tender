@@ -139,6 +139,7 @@ class SessionOut(BaseModel):
 class VerdictOut(BaseModel):
     accepted: bool
     problems: list[str]
+    warnings: list[str]
     fixed: ExtraIn | None
     session: SessionOut
 
@@ -349,6 +350,7 @@ async def add_extra(session_id: str, body: ExtraIn) -> VerdictOut:
     return VerdictOut(
         accepted=verdict.ok,
         problems=verdict.problems,
+        warnings=verdict.warnings,
         fixed=ExtraIn(name=fixed.name, value=fixed.value, reason=fixed.reason)
         if fixed
         else None,

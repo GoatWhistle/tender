@@ -11,21 +11,30 @@ from rag.search import Index
 KINDS = {"1": "неизменяемая", "2": "выбор одного значения", "3": "выбор нескольких значений"}
 
 SYSTEM_PROMPT = (
-    "Ты эксперт по описанию объекта закупки по 44-ФЗ. Заказчик выбрал позицию КТРУ и хочет "
-    "добавить характеристику, которой нет в КТРУ (п. 5 Правил использования КТРУ, ПП РФ "
-    "№ 145). Проверь её корректность. Отклоняй, если характеристика:\n"
+    "Ты проверяешь карточку товара на портале поставщиков. Поставщик выбрал позицию КТРУ и "
+    "добавляет характеристику своего товара, которой нет в КТРУ (п. 5 Правил использования "
+    "КТРУ, ПП РФ № 145). Характеристика описывает конкретный товар поставщика, поэтому одно "
+    "конкретное значение — норма. Отклоняй (ok=false) только если характеристика:\n"
     "- дублирует или переименовывает характеристику КТРУ — её надо менять в КТРУ, а не "
     "добавлять;\n"
     "- противоречит неизменяемым или выбранным значениям КТРУ или другим добавленным "
     "характеристикам;\n"
-    "- указывает товарный знак, модель, производителя, страну происхождения или иное, что "
-    "ведёт к одному поставщику (ст. 33 44-ФЗ);\n"
+    "- указывает товарный знак, модель, производителя или страну происхождения (ст. 33 "
+    "44-ФЗ);\n"
     "- не относится к этому товару или его назначению;\n"
     "- субъективна и не проверяется при приёмке («качественный», «современный», «удобный»);\n"
-    "- имеет физически неправдоподобное значение или неверную единицу измерения;\n"
-    "- не имеет обоснования или обоснование не объясняет потребность заказчика.\n"
-    "Если характеристику можно исправить, предложи исправленные название и значение в fixed_name "
-    "и fixed_value, иначе оставь их пустыми. Если всё корректно, ok=true, problems пустой."
+    "- имеет физически неправдоподобное значение или неверную единицу измерения.\n"
+    "Обоснование необязательно: пустое или «так сказал поставщик» — не причина отклонять. "
+    "Если КТРУ не задаёт характеристик, дублировать и противоречить нечему. Не отклоняй за "
+    "нетипичность или неполноту формулировки. В warnings — не больше двух коротких "
+    "практических советов по уточнению названия или значения, без слов об обосновании и "
+    "конкуренции; если советовать нечего, пустой массив. В problems — только причины "
+    "отклонения из списка. "
+    "Если характеристику можно исправить, предложи исправленные название и значение в "
+    "fixed_name и fixed_value, иначе оставь их пустыми. Не придумывай значение, которого нет "
+    "во вводе: исправлять можно только название, единицу или запись. Если всё корректно, "
+    "ok=true, problems "
+    "пустой."
 )
 
 VALIDATE_SCHEMA = {
@@ -33,10 +42,11 @@ VALIDATE_SCHEMA = {
     "properties": {
         "ok": {"type": "boolean"},
         "problems": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}},
         "fixed_name": {"type": "string"},
         "fixed_value": {"type": "string"},
     },
-    "required": ["ok", "problems", "fixed_name", "fixed_value"],
+    "required": ["ok", "problems", "warnings", "fixed_name", "fixed_value"],
     "additionalProperties": False,
 }
 
@@ -52,6 +62,7 @@ class Extra:
 class Verdict:
     ok: bool
     problems: list[str]
+    warnings: list[str]
     fixed: Extra | None
     result: ResultMessage
 
@@ -78,6 +89,8 @@ def card(p: Position, chosen: dict[str, tuple[str, ...]], extras: list[Extra]) -
         picked = chosen.get(c.name)
         now = f"; выбрано: {'; '.join(picked)}" if picked else ""
         lines.append(f"- {c.name} ({KINDS.get(c.kind, c.kind)}): {values}{now}")
+    if not p.characteristics:
+        lines.append("- нет")
     if extras:
         lines.append("Уже добавлены заказчиком:")
         lines.extend(f"- {e.name}: {e.value} (обоснование: {e.reason})" for e in extras)
@@ -93,7 +106,7 @@ async def validate(
 ) -> Verdict:
     prompt = (
         f"{card(p, chosen, extras)}\n\nНовая характеристика:\n"
-        f"Название: {new.name}\nЗначение: {new.value}\nОбоснование: {new.reason}"
+        f"Название: {new.name}\nЗначение: {new.value}\nОбоснование: {new.reason or 'не указано'}"
     )
     result: ResultMessage | None = None
     with tempfile.TemporaryDirectory(prefix="rag-agent-") as cwd:
@@ -115,6 +128,7 @@ async def validate(
         raise RuntimeError(result.errors or result.result)
     out = result.structured_output
     fixed = None
-    if not out["ok"] and out["fixed_name"].strip() and out["fixed_value"].strip():
+    ok = out["ok"] and not out["problems"]
+    if not ok and out["fixed_name"].strip() and out["fixed_value"].strip():
         fixed = Extra(out["fixed_name"].strip(), out["fixed_value"].strip(), new.reason)
-    return Verdict(out["ok"], list(out["problems"]), fixed, result)
+    return Verdict(ok, list(out["problems"]), list(out["warnings"]), fixed, result)

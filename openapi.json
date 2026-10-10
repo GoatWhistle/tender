@@ -1646,6 +1646,13 @@
             "type": "array",
             "title": "Problems"
           },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
           "fixed": {
             "anyOf": [
               {
@@ -1664,6 +1671,7 @@
         "required": [
           "accepted",
           "problems",
+          "warnings",
           "fixed",
           "session"
         ],

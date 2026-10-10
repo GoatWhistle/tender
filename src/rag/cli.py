@@ -60,6 +60,8 @@ async def add_extra(s: Session) -> None:
         verdict = await ss.add_extra(s, new)
         if verdict.ok:
             print("  добавлено")
+            for warning in verdict.warnings:
+                print(f"   ~ {warning}")
             return
         print("  отклонено:")
         for problem in verdict.problems:

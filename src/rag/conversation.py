@@ -136,8 +136,13 @@ async def respond(s: Session, index: Index, text: str) -> None:
         if verdict.ok:
             draft.extras = [*others, extra]
             changes.append(f"{extra.name}: {extra.value}")
+            notices.extend(verdict.warnings)
         else:
             notices.extend(verdict.problems)
+            if verdict.fixed:
+                notices.append(
+                    f"Можно добавить так: {verdict.fixed.name}: {verdict.fixed.value}"
+                )
     draft.context.append(text)
     if editing and changes:
         draft.stage = Stage.SPEC
