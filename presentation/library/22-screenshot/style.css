@@ -1,0 +1,19 @@
+#screenshot .ss {
+  grid-template-columns: 1.6fr 1fr;
+}
+
+#screenshot .ss-list {
+  gap: 36px;
+}
+
+#screenshot .ss-list li {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 20px;
+}
+
+#screenshot .ss-list b {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--fs-body);
+}

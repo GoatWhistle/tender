@@ -1,0 +1,102 @@
+#errors .tf {
+  display: grid;
+  grid-template-columns: 0.8fr auto 1.25fr;
+  align-items: center;
+  gap: 40px;
+  height: 100%;
+}
+
+#errors .tf-quotes {
+  display: grid;
+  gap: 22px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg);
+}
+
+#errors .tf-fields {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 22px 28px;
+  align-items: center;
+  margin: 12px 0 0;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+#errors .tf-fields dd {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  margin: 0;
+}
+
+#errors .tf-cell {
+  padding: 8px 16px;
+  border: 1px solid var(--deck-line);
+  color: var(--deck-fg);
+  white-space: nowrap;
+}
+
+#errors .tf-cell.is-error {
+  border-color: var(--border-error);
+  background: var(--surface-error);
+}
+
+#errors .body {
+  bottom: 230px;
+}
+
+#errors .tf-err {
+  position: relative;
+  display: inline-block;
+}
+
+#errors .tf-err::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 4px;
+  background: var(--deck-danger);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+#errors .tf-err.is-syn::after {
+  background: var(--deck-success);
+}
+
+#errors.play .tf-err::after {
+  animation: errors-underline 0.5s var(--ease-out) var(--u, 1s) both;
+}
+
+#errors.play .tf-cell.is-error,
+#errors.play .tf-cell.is-ok {
+  animation: errors-flash 0.9s var(--ease-out) var(--u, 1s) both;
+}
+
+@keyframes errors-underline {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes errors-flash {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(6px);
+    box-shadow: 0 0 0 6px var(--surface-error);
+  }
+  100% {
+    transform: none;
+    box-shadow: 0 0 0 0 var(--surface-error);
+  }
+}

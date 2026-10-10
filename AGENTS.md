@@ -30,6 +30,9 @@ CPU strict-проверки:
 Фронтенд — `frontend/`: перед любой работой в нём прочитай
 [`.claude/frontend-rules.md`](.claude/frontend-rules.md).
 
+Презентация и речь защиты — `presentation/`: правила и команды — [`presentation/AGENTS.md`](presentation/AGENTS.md),
+регламент и критерии — `context/`. Токены деки из фронта: `cd frontend && npm run tokens:export`.
+
 ## Coding Style & Naming Conventions
 
 Комментариев в коде нет нигде, ни во фронтенде, ни в бэкенде, ни в сервисах: ни строчных, ни

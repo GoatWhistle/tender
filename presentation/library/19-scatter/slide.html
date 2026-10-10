@@ -1,0 +1,30 @@
+<section class="slide" id="scatter" data-title="Карта компромисса">
+  <h2 class="title a">{{Каждый вариант оценён по двум осям}}, <em>{{выбран лучший допустимый}}</em></h2>
+
+  <div class="body is-tall">
+    <div class="grid is-split-r">
+      <svg class="chart sc" viewBox="0 0 1000 620" aria-hidden="true">
+        <path class="axis" d="M60 20 V560 H980" />
+        <text x="60" y="600">{{Стоимость}}</text>
+        <text x="0" y="14">{{Выпуск}}</text>
+        <g class="f" style="--d:0.4s">
+          <circle class="dot" cx="140" cy="420" r="9" /><circle class="dot" cx="190" cy="360" r="9" /><circle class="dot" cx="230" cy="470" r="9" /><circle class="dot" cx="280" cy="300" r="9" /><circle class="dot" cx="320" cy="410" r="9" /><circle class="dot" cx="360" cy="250" r="9" /><circle class="dot" cx="400" cy="350" r="9" /><circle class="dot" cx="430" cy="460" r="9" /><circle class="dot" cx="470" cy="210" r="9" /><circle class="dot" cx="510" cy="300" r="9" /><circle class="dot" cx="560" cy="390" r="9" /><circle class="dot" cx="600" cy="170" r="9" /><circle class="dot" cx="640" cy="260" r="9" /><circle class="dot" cx="690" cy="330" r="9" /><circle class="dot" cx="730" cy="140" r="9" /><circle class="dot" cx="780" cy="230" r="9" /><circle class="dot" cx="830" cy="300" r="9" /><circle class="dot" cx="880" cy="120" r="9" />
+        </g>
+        <g class="f" style="--d:0.8s">
+          <circle class="dot is-danger" cx="250" cy="160" r="9" /><circle class="dot is-danger" cx="380" cy="120" r="9" /><circle class="dot is-danger" cx="520" cy="90" r="9" />
+        </g>
+        <circle class="ping only-motion" style="--d:1.4s;color:var(--deck-accent)" cx="600" cy="170" r="26" />
+        <circle class="dot is-accent pop" style="--d:1.2s" cx="600" cy="170" r="16" />
+        <text x="630" y="160" class="is-accent is-strong">{{Выбранный план}}</text>
+      </svg>
+      <div class="stack is-center">
+        <div class="legend is-col a" style="--d:0.5s">
+          <span><i></i>{{Допустимый вариант}}</span>
+          <span><i class="is-danger"></i>{{Нарушает предел}}</span>
+          <span><i class="is-accent"></i>{{Выбранный}}</span>
+        </div>
+        <p class="caption a" style="--d:0.9s">{{Почему выбран именно он: какой критерий, какой запас до предела}}</p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+#kpi-bars .kb-left {
+  gap: 20px;
+}
+
+#kpi-bars .kb-left .card {
+  padding: 24px 32px;
+}
+
+#kpi-bars .kpi-value {
+  font-size: 64px;
+}
+
+#kpi-bars .kb-meter {
+  --label: 260px;
+  --value: 150px;
+  margin-top: 16px;
+}

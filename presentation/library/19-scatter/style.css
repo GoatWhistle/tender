@@ -1,0 +1,5 @@
+#scatter .legend.is-col {
+  display: grid;
+  gap: 16px;
+  font-size: var(--fs-caption);
+}

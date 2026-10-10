@@ -1,0 +1,101 @@
+#final .final-field {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+}
+
+#final .final-field rect {
+  fill: none;
+  stroke: var(--deck-line);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+#final .final-field rect.is-accent {
+  stroke: var(--logo-accent);
+  stroke-width: 3;
+}
+
+#final .final-field rect.is-base {
+  stroke: var(--logo-base);
+}
+
+#final.play .final-field rect {
+  animation: final-tile 0.9s var(--ease-out) var(--d, 0s) both;
+}
+
+#final.play .final-field rect.is-accent {
+  animation:
+    final-tile 0.9s var(--ease-out) var(--d, 0s) both,
+    final-breathe 4s var(--ease-in-out) calc(var(--d, 0s) + 1s) infinite alternate;
+}
+
+@keyframes final-tile {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-45deg);
+  }
+  to {
+    opacity: var(--o, 0.6);
+    transform: none;
+  }
+}
+
+@keyframes final-breathe {
+  to {
+    transform: scale(0.82);
+  }
+}
+
+#final .final-lockup {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 120px;
+  gap: 28px;
+  --mark-size: 104px;
+  --word-size: 96px;
+  --word-d: 0.45s;
+}
+
+#final .final-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 272px;
+  margin: 0;
+  text-align: center;
+  font-size: var(--fs-lead);
+  color: var(--deck-fg-2);
+}
+
+#final .qr-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 390px;
+  width: fit-content;
+  margin: 0 auto;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: 36px 44px 30px;
+  border-radius: var(--radius-lg);
+  background: var(--deck-raised);
+  box-shadow: var(--shadow-float);
+  color: var(--deck-fg);
+  text-decoration: none;
+}
+
+#final .qr-card .qr {
+  width: 400px;
+}
+
+#final .qr-card .mono {
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+  white-space: nowrap;
+}

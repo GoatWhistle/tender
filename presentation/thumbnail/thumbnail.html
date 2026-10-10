@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>Video thumbnails</title>
+<link rel="stylesheet" href="../src/core/css/tokens.css">
+<link rel="stylesheet" href="../src/core/css/fonts.css">
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: grid;
+  gap: 40px;
+  padding: 40px;
+  background: var(--neutral-500);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+template,
+#icons {
+  display: none;
+}
+
+.thumb {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  background: var(--surface-base);
+  color: var(--text-primary);
+}
+
+.lockup {
+  position: absolute;
+  left: 72px;
+  top: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 34px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-secondary);
+}
+
+.lockup .mark {
+  width: 44px;
+  height: 44px;
+}
+
+.mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mark-base {
+  fill: var(--text-primary);
+}
+
+.mark-accent {
+  fill: var(--action-primary);
+}
+
+.hook {
+  font-size: 118px;
+  font-weight: var(--weight-bold);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.hook em {
+  font-style: normal;
+  color: var(--action-primary);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 64px;
+  padding: 0 28px 0 22px;
+  border-radius: var(--radius-pill);
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+  font-size: 32px;
+  font-weight: var(--weight-semibold);
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.frame {
+  position: absolute;
+  overflow: hidden;
+  border: 3px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-float);
+}
+
+.frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.frame.is-empty::after {
+  content: "";
+  position: absolute;
+  inset: 32px;
+  border: 3px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.layout-shot .copy {
+  position: absolute;
+  left: 72px;
+  top: 172px;
+  width: 540px;
+  display: grid;
+  justify-items: start;
+  gap: 44px;
+}
+
+.layout-shot .frame {
+  left: 660px;
+  top: 96px;
+  width: 820px;
+  height: 560px;
+  transform: rotate(-3deg);
+}
+
+.zoom {
+  position: absolute;
+  left: 720px;
+  top: 370px;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  border: 10px solid var(--action-primary);
+  border-radius: 50%;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-float);
+}
+
+.zoom img {
+  position: absolute;
+  max-width: none;
+}
+
+.layout-number .value {
+  position: absolute;
+  left: 64px;
+  top: 150px;
+  width: 800px;
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-size: 240px;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--action-primary);
+  white-space: nowrap;
+}
+
+.layout-number .caption {
+  position: absolute;
+  left: 72px;
+  top: 440px;
+  width: 700px;
+  font-size: 92px;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.layout-number .frame {
+  left: 920px;
+  top: 150px;
+  width: 640px;
+  height: 460px;
+  transform: rotate(4deg);
+}
+
+.layout-versus .side {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 640px;
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  padding: 0 72px 150px;
+}
+
+.layout-versus .before {
+  left: 0;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+.layout-versus .after {
+  right: 0;
+  padding-left: 120px;
+  padding-right: 56px;
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+}
+
+.layout-versus .label {
+  font-size: 44px;
+  font-weight: var(--weight-semibold);
+}
+
+.layout-versus .value {
+  font-size: 150px;
+  font-weight: var(--weight-bold);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.layout-versus .before .value {
+  text-decoration: line-through;
+  text-decoration-thickness: 10px;
+}
+
+.layout-versus .turn {
+  position: absolute;
+  left: 576px;
+  top: 222px;
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+  border: 8px solid var(--action-primary);
+  border-radius: 50%;
+  background: var(--surface-base);
+  color: var(--text-primary);
+}
+
+.layout-versus .turn .icon {
+  width: 64px;
+  height: 64px;
+  stroke-width: 2.8;
+}
+
+.layout-versus .lockup {
+  top: 48px;
+  z-index: 1;
+}
+
+.layout-mark {
+  display: grid;
+  place-items: center;
+  padding-bottom: 130px;
+}
+
+.layout-mark .big {
+  width: 220px;
+  height: 220px;
+}
+
+.layout-mark .hook {
+  max-width: 1000px;
+}
+
+.layout-mark .trace {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  height: 3px;
+  background: var(--border-subtle);
+}
+
+.layout-mark .center {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 40px;
+  padding: 0 48px;
+  text-align: center;
+  background: var(--surface-base);
+}
+
+.corner {
+  position: absolute;
+  left: 72px;
+  bottom: 56px;
+}
+</style>
+</head>
+<body>
+
+<div id="out"></div>
+
+<template id="layout-shot">
+  <section class="thumb layout-shot">
+    <div class="lockup"><span class="mark" data-mark></span><span data-slot="product"></span></div>
+    <div class="copy">
+      <h1 class="hook" data-slot="hook" data-fit="3"></h1>
+      <span class="badge" data-slot="badge"></span>
+    </div>
+    <div class="frame" data-slot="shot"></div>
+    <div class="zoom" data-slot="zoom"></div>
+  </section>
+</template>
+
+<template id="layout-number">
+  <section class="thumb layout-number">
+    <div class="lockup"><span class="mark" data-mark></span><span data-slot="product"></span></div>
+    <div class="value" data-slot="value" data-fit="1"></div>
+    <div class="caption" data-slot="caption" data-fit="2"></div>
+    <div class="frame" data-slot="shot"></div>
+  </section>
+</template>
+
+<template id="layout-versus">
+  <section class="thumb layout-versus">
+    <div class="side before"><div class="label" data-slot="before-label"></div><div class="value" data-slot="before-value" data-fit="2"></div></div>
+    <div class="side after"><div class="label" data-slot="after-label"></div><div class="value" data-slot="after-value" data-fit="2"></div></div>
+    <div class="turn" data-icon-slot="arrow-right"></div>
+    <div class="lockup"><span class="mark" data-mark></span><span data-slot="product"></span></div>
+  </section>
+</template>
+
+<template id="layout-mark">
+  <section class="thumb layout-mark">
+    <span class="trace"></span>
+    <div class="center">
+      <span class="mark big" data-mark></span>
+      <h1 class="hook" data-slot="hook" data-fit="2"></h1>
+    </div>
+    <span class="badge corner" data-slot="badge"></span>
+  </section>
+</template>
+
+<div id="icons">
+  <svg class="icon" data-icon="play" viewBox="0 0 24 24"><path d="M6 3l14 9-14 9z"/></svg>
+  <svg class="icon" data-icon="arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  <svg class="icon" data-icon="radio" viewBox="0 0 24 24"><path d="M4.9 19.1a10 10 0 0 1 0-14.2M7.8 16.2a6 6 0 0 1 0-8.4M16.2 7.8a6 6 0 0 1 0 8.4M19.1 4.9a10 10 0 0 1 0 14.2"/><circle cx="12" cy="12" r="2"/></svg>
+  <svg class="icon" data-icon="code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>
+  <svg class="icon" data-icon="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+  <svg class="icon" data-icon="shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+</div>
+
+</body>
+</html>

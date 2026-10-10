@@ -42,6 +42,8 @@
   --step-todo: var(--palette-blue-300);
 
   --focus-ring: var(--palette-blue-800);
+  --logo-base: var(--palette-gray-400);
+  --logo-accent: var(--palette-red-700);
   --scrollbar-thumb: var(--palette-blue-300);
   --scrollbar-thumb-idle: var(--palette-blue-200);
   --scrollbar-thumb-hover: var(--palette-gray-500);
@@ -100,4 +102,6 @@
   --shadow-header: 0 2px 20px rgb(0 0 0 / 0.45);
   --shadow-card: 0 10px 30px rgb(0 0 0 / 0.35);
   --shadow-popup: 0 11px 70px rgb(0 0 0 / 0.55);
+  --logo-base: var(--palette-gray-400);
+  --logo-accent: var(--palette-red-700);
 }

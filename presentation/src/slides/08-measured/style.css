@@ -1,0 +1,39 @@
+#measured .kpi-value {
+  font-size: 80px;
+}
+
+#measured .kg-source {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 110px;
+}
+
+#measured .kg-bar {
+  display: block;
+  height: 8px;
+  margin-top: 18px;
+  background: var(--deck-sunken);
+  overflow: hidden;
+}
+
+#measured .kg-fill {
+  display: block;
+  height: 100%;
+  background: var(--deck-fg-3);
+  transform-origin: left;
+  transform: scaleX(var(--w, 0));
+}
+
+#measured .kpi.is-accent .kg-fill {
+  background: var(--deck-accent);
+}
+
+#measured.play .kg-fill {
+  animation: measured-grow 1.2s var(--ease-out) calc(var(--d, 0s) + 0.3s) both;
+}
+
+@keyframes measured-grow {
+  from {
+    transform: scaleX(0);
+  }
+}

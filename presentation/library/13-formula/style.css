@@ -1,0 +1,9 @@
+#formula .fm {
+  --cols: 44px 320px 1fr 380px;
+}
+
+#formula .fm-eq {
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  color: var(--deck-fg);
+}

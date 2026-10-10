@@ -1,0 +1,28 @@
+<section class="slide" id="errors" data-title="Распознавание ошибок">
+  <h2 class="title a">Ошибка в характеристике видна в ячейке, <em>рядом с тем, что допускает справочник</em></h2>
+
+  <div class="body">
+    <div class="tf">
+      <div class="card is-sunken a" style="--d:0.3s">
+        <span class="eyebrow">Пишет поставщик</span>
+        <ul class="tf-quotes">
+          <li class="a" style="--d:0.4s">Защитные свойства: <span class="tf-err" style="--u:1.3s">Взломостйокий</span></li>
+          <li class="a" style="--d:0.5s">Защитные свойства: <span class="tf-err" style="--u:1.5s">Телепатический</span></li>
+          <li class="a" style="--d:0.6s">Угол открывания двери сейфа, градус: <span class="tf-err" style="--u:1.7s" data-plain>135</span></li>
+          <li class="a" style="--d:0.7s"><span class="tf-err is-syn" style="--u:1.9s">кожзам</span></li>
+        </ul>
+      </div>
+      <span class="tile is-accent pop" style="--d:0.9s"><span class="ico" data-icon="arrow-right"></span></span>
+      <div class="card a" style="--d:1s">
+        <span class="eyebrow">Отвечает система</span>
+        <dl class="tf-fields">
+          <dt><span class="badge is-warning">Опечатка</span></dt><dd><span class="tf-cell is-error" style="--u:1.4s">Взломостйокий</span><span class="caption">исправить на «Взломостойкий»?</span></dd>
+          <dt><span class="badge is-danger">Нет в справочнике</span></dt><dd><span class="tf-cell is-error" style="--u:1.6s">Телепатический</span><span class="caption">допустимо: взломостойкий; огнестойкий</span></dd>
+          <dt><span class="badge is-danger">Вне допустимых</span></dt><dd><span class="tf-cell is-error" style="--u:1.8s" data-plain>135</span><span class="caption" data-plain>допустимо: 90; 180</span></dd>
+          <dt><span class="badge is-success">Синоним</span></dt><dd><span class="tf-cell is-ok" style="--u:2s">Искусственная кожа</span><span class="caption">проверенная строка выгрузки «Мебель»</span></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><p class="limit a" style="--d:1.7s"><b>Проверено на синтетике:</b> <span>найдено <span class="num" data-num="diag_found"></span> из <span class="num" data-num="diag_total"></span> ошибок четырёх классов, <span class="num" data-num="diag_false"></span> ложных срабатываний на контрольных. На потоке живых поставщиков не размечено</span></p></div>
+</section>

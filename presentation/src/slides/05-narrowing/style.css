@@ -1,0 +1,86 @@
+#narrowing .body {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 32px;
+}
+
+#narrowing .fc {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#narrowing .fc > .ico {
+  width: 56px;
+  height: 56px;
+  color: var(--deck-fg-3);
+}
+
+#narrowing .fc-stage {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+#narrowing .fc-stage b {
+  font-size: var(--fs-body);
+}
+
+#narrowing .fc-circle {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  border: 3px solid var(--deck-line-strong);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 44px;
+  font-weight: var(--weight-strong);
+}
+
+#narrowing .fc-circle.is-lg {
+  width: 210px;
+  height: 210px;
+}
+
+#narrowing .fc-circle.is-accent {
+  border-color: var(--deck-accent);
+  background: var(--deck-accent);
+  color: var(--deck-on-accent);
+}
+
+#narrowing .fc-why {
+  height: auto;
+}
+
+#narrowing .fc-why .card {
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+#narrowing .body {
+  bottom: 230px;
+}
+
+#narrowing .fc {
+  position: relative;
+}
+
+#narrowing .fc-flow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#narrowing .fc-dot {
+  fill: var(--deck-fg-3);
+}
+
+#narrowing .fc-dot.is-key {
+  fill: var(--deck-accent);
+}

@@ -1,0 +1,32 @@
+#chat .ch-facts {
+  height: auto;
+  margin-top: 12px;
+}
+
+#chat .ch {
+  gap: 20px;
+}
+
+#chat .ch-msg {
+  display: grid;
+  gap: 10px;
+  max-width: 900px;
+  padding: 24px 32px;
+  border-radius: var(--radius-lg);
+  background: var(--deck-raised);
+  box-shadow: var(--shadow-raised);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-snug);
+  color: var(--deck-fg);
+}
+
+#chat .ch-msg.is-user {
+  justify-self: end;
+  background: var(--deck-accent);
+  color: var(--deck-on-accent);
+}
+
+#chat .ch-tools {
+  display: flex;
+  gap: 12px;
+}

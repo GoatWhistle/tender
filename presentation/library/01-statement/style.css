@@ -1,0 +1,30 @@
+#statement .st-eyebrow {
+  position: absolute;
+  left: var(--gutter);
+  top: 250px;
+}
+
+#statement .st-text {
+  position: absolute;
+  left: var(--gutter);
+  top: 320px;
+  width: 1560px;
+  font-size: 104px;
+  font-weight: var(--weight-strong);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+
+#statement .st-proof {
+  position: absolute;
+  left: var(--gutter);
+  top: 720px;
+  width: 1300px;
+}
+
+#statement .st-source {
+  position: absolute;
+  left: var(--gutter);
+  top: 880px;
+}

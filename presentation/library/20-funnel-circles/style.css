@@ -1,0 +1,60 @@
+#funnel-circles .body {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 32px;
+}
+
+#funnel-circles .fc {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#funnel-circles .fc > .ico {
+  width: 56px;
+  height: 56px;
+  color: var(--deck-fg-3);
+}
+
+#funnel-circles .fc-stage {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+#funnel-circles .fc-stage b {
+  font-size: var(--fs-body);
+}
+
+#funnel-circles .fc-circle {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  border: 3px solid var(--deck-line-strong);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 44px;
+  font-weight: var(--weight-strong);
+}
+
+#funnel-circles .fc-circle.is-lg {
+  width: 210px;
+  height: 210px;
+}
+
+#funnel-circles .fc-circle.is-accent {
+  border-color: var(--deck-accent);
+  background: var(--deck-accent);
+  color: var(--deck-on-accent);
+}
+
+#funnel-circles .fc-why {
+  height: auto;
+}
+
+#funnel-circles .fc-why .card {
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}

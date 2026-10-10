@@ -1,0 +1,5 @@
+#cycle .dg-node b {
+  padding: 2px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--deck-bg);
+}

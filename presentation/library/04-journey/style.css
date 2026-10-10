@@ -1,0 +1,23 @@
+#journey .jr-who {
+  position: absolute;
+  left: var(--gutter);
+  top: 270px;
+}
+
+#journey .jr-steps {
+  margin-top: 40px;
+}
+
+#journey .jr-break b {
+  color: var(--deck-danger);
+}
+
+#journey .jr-cost {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 40px;
+}

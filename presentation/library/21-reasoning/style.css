@@ -1,0 +1,15 @@
+#reasoning .rs {
+  display: grid;
+  gap: 40px;
+}
+
+#reasoning .rs-row {
+  display: grid;
+  grid-template-columns: 520px auto 1fr;
+  align-items: center;
+  gap: 48px;
+}
+
+#reasoning .kpi-value {
+  font-size: 80px;
+}

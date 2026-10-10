@@ -1,0 +1,22 @@
+#stack .sk {
+  height: auto;
+  gap: 64px;
+}
+
+#stack .tbl {
+  --cols: 300px 1fr;
+}
+
+#stack .tbl-row {
+  padding: 0;
+}
+
+#stack .tbl-row b {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#stack .tbl-row b .ico {
+  color: var(--deck-accent);
+}

@@ -1,0 +1,169 @@
+.chips {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  top: var(--facts-top);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 24px;
+  border: 1px solid var(--deck-line-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+  white-space: nowrap;
+}
+
+.chip b {
+  font-weight: var(--weight-strong);
+  color: var(--deck-fg);
+}
+
+.trace {
+  fill: none;
+  stroke: var(--deck-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trace.is-muted {
+  stroke: var(--deck-line-strong);
+}
+
+.trace.is-danger {
+  stroke: var(--deck-danger);
+}
+
+.trace.is-dashed {
+  stroke-dasharray: 10 14;
+}
+
+.node {
+  fill: var(--deck-bg);
+  stroke: var(--deck-accent);
+  stroke-width: 4;
+}
+
+.node.is-filled {
+  fill: var(--deck-accent);
+}
+
+.node.is-muted {
+  stroke: var(--deck-line-strong);
+}
+
+.node.is-danger {
+  fill: var(--deck-danger);
+  stroke: var(--deck-danger);
+}
+
+.ping {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.play .ping {
+  animation: deck-ping 1.6s var(--ease-out) var(--d, 0s) infinite;
+}
+
+.runner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--deck-accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--deck-accent) 22%, transparent);
+  offset-anchor: center;
+  offset-rotate: 0deg;
+  opacity: 0;
+}
+
+.play .runner {
+  animation: deck-run var(--t, 2.4s) var(--ease-in-out) var(--d, 0s) var(--loop, 1) both;
+}
+
+.proof {
+  display: grid;
+  gap: 20px;
+}
+
+.proof li {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: baseline;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+.proof b {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-strong);
+  color: var(--deck-accent);
+}
+
+.limit {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 20px 28px;
+  border: 1px solid var(--deck-line-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+.limit b {
+  flex: none;
+  color: var(--deck-fg);
+}
+
+.qr {
+  --qr-fg: black;
+  --qr-bg: white;
+  --qr-accent: var(--deck-accent);
+  position: relative;
+  width: 420px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--qr-bg);
+}
+
+.qr-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.qr-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 17%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.svg-run {
+  offset-rotate: 0deg;
+  opacity: 0;
+}
+
+.play .svg-run {
+  animation: deck-run var(--t, 2s) var(--ease-in-out) var(--d, 0s) infinite both;
+}

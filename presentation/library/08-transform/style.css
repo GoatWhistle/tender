@@ -1,0 +1,27 @@
+#transform .tf {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 40px;
+  height: 100%;
+}
+
+#transform .tf-raw {
+  font-size: var(--fs-caption);
+  line-height: var(--lh-body);
+  color: var(--deck-fg-2);
+}
+
+#transform .tf-fields {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px 28px;
+  align-items: center;
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+#transform .tf-fields dd {
+  margin: 0;
+}

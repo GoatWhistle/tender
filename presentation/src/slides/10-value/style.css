@@ -1,0 +1,76 @@
+#value .vl {
+  position: relative;
+  width: 1680px;
+  height: 640px;
+}
+
+#value .vl-links {
+  position: absolute;
+  inset: 0;
+  width: 1680px;
+  height: 640px;
+  overflow: visible;
+}
+
+#value .vl-dot {
+  fill: var(--deck-accent);
+}
+
+#value .vl-hub {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 32px 18px 20px;
+  border: 2px solid var(--deck-accent);
+  border-radius: var(--radius-md);
+  background: var(--deck-raised);
+  box-shadow: var(--shadow-raised);
+  white-space: nowrap;
+}
+
+#value .vl-hub b {
+  display: block;
+  font-size: var(--fs-body);
+}
+
+#value .vl-ping {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--deck-accent);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+}
+
+#value .vl-cards {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 246px;
+  bottom: 0;
+  height: auto;
+}
+
+#value .vl-cards .card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+#value.play .vl-ping {
+  animation: value-ping 2.4s var(--ease-out) var(--d, 0s) infinite;
+}
+
+@keyframes value-ping {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.12, 1.4);
+  }
+}

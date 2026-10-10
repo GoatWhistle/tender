@@ -1,0 +1,110 @@
+#bpmn .bp {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  font-family: var(--font-sans);
+}
+
+#bpmn .bp-lane {
+  fill: var(--deck-raised);
+  stroke: var(--deck-line-strong);
+  stroke-width: 2;
+}
+
+#bpmn .bp-sep {
+  stroke: var(--deck-line-strong);
+  stroke-width: 2;
+}
+
+#bpmn .bp-lane-label {
+  font-size: 22px;
+  font-weight: var(--weight-strong);
+  text-anchor: middle;
+  fill: var(--deck-fg-2);
+}
+
+#bpmn .bp-flow {
+  fill: none;
+  stroke: var(--deck-fg-2);
+  stroke-width: 2.5;
+}
+
+#bpmn .bp-flow.is-accent {
+  stroke: var(--deck-accent);
+}
+
+#bpmn .bp-head {
+  fill: var(--deck-fg-2);
+}
+
+#bpmn .bp-head.is-accent {
+  fill: var(--deck-accent);
+}
+
+#bpmn .bp-task {
+  fill: var(--deck-bg);
+  stroke: var(--deck-fg);
+  stroke-width: 2.5;
+}
+
+#bpmn .bp-task.is-key {
+  stroke: var(--deck-accent);
+  stroke-width: 3.5;
+}
+
+#bpmn .bp-text {
+  font-size: 20px;
+  font-weight: var(--weight-strong);
+  text-anchor: middle;
+  fill: var(--deck-fg);
+}
+
+#bpmn .bp-event {
+  fill: var(--deck-bg);
+  stroke: var(--deck-fg);
+  stroke-width: 2.5;
+}
+
+#bpmn .bp-event.is-end {
+  stroke-width: 7;
+}
+
+#bpmn .bp-gate {
+  fill: var(--deck-bg);
+  stroke: var(--deck-fg);
+  stroke-width: 2.5;
+}
+
+#bpmn .bp-gate-x {
+  font-size: 26px;
+  font-weight: var(--weight-strong);
+  text-anchor: middle;
+  fill: var(--deck-fg);
+}
+
+#bpmn .bp-note {
+  font-size: 20px;
+  text-anchor: middle;
+  fill: var(--deck-fg-2);
+}
+
+#bpmn .bp-loop .bp-note {
+  text-anchor: start;
+  fill: var(--deck-accent);
+}
+
+#bpmn g.s {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#bpmn .bp-note.is-end {
+  text-anchor: end;
+}
+
+#bpmn .bp-token {
+  fill: var(--deck-accent);
+  stroke: var(--deck-bg);
+  stroke-width: 4;
+}

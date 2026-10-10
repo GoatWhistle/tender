@@ -1,0 +1,251 @@
+#trust .tr {
+  position: relative;
+  width: 1680px;
+  height: 580px;
+}
+
+#trust .tr-links {
+  position: absolute;
+  inset: 0;
+  width: 1680px;
+  height: 580px;
+  overflow: visible;
+}
+
+#trust .tr-link {
+  fill: none;
+  stroke: var(--deck-line-strong);
+  stroke-width: 3;
+}
+
+#trust .tr-link.is-accent {
+  stroke: var(--deck-accent);
+  stroke-width: 4;
+}
+
+#trust .tr-probe {
+  fill: var(--deck-accent);
+}
+
+#trust .tr-msg {
+  position: absolute;
+  left: 0;
+  top: 238px;
+  width: 240px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  border: 2px solid var(--deck-fg);
+  border-radius: var(--radius-md);
+  background: var(--deck-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+#trust .tr-msg > .ico {
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+
+#trust .tr-msg b {
+  display: block;
+  font-size: var(--fs-caption);
+}
+
+#trust .tr-cand {
+  position: absolute;
+  left: 380px;
+  width: 560px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  border: 1px solid var(--deck-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--deck-raised);
+  font-size: var(--fs-caption);
+}
+
+#trust .tr-cand-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#trust .tr-head {
+  position: absolute;
+  left: 1010px;
+  top: -40px;
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-strong);
+  color: var(--deck-fg-2);
+}
+
+#trust .tr-chip {
+  position: absolute;
+  left: 1016px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--deck-sunken);
+  color: var(--deck-fg-2);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+}
+
+#trust .tr-bot {
+  position: absolute;
+  left: 948px;
+  top: 30px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--deck-accent);
+  color: var(--deck-on-accent);
+  box-shadow: var(--shadow-raised);
+  opacity: 0;
+}
+
+#trust .tr-bot .ico {
+  width: 30px;
+  height: 30px;
+}
+
+#trust.play .tr-bot {
+  animation: trust-scan 1.9s var(--ease-in-out) 2.1s both;
+}
+
+@keyframes trust-scan {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(116px);
+  }
+  45% {
+    transform: translateY(232px);
+  }
+  65% {
+    transform: translateY(348px);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(464px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(464px) scale(0.6);
+  }
+}
+
+#trust .tr-gate {
+  position: absolute;
+  left: 1296px;
+  top: 30px;
+  width: 40px;
+  height: 520px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--deck-sunken);
+  border: 2px solid var(--deck-line-strong);
+}
+
+#trust .tr-lock {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--deck-raised);
+  border: 2px solid var(--deck-fg);
+  color: var(--deck-fg);
+}
+
+#trust.play .tr-lock {
+  animation: trust-shake 0.5s var(--ease-out) 4.8s both;
+}
+
+@keyframes trust-shake {
+  25% {
+    transform: rotate(-12deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-6deg);
+  }
+}
+
+#trust .tr-lock .ico {
+  width: 30px;
+  height: 30px;
+}
+
+#trust .tr-gate-label {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  translate: -50% 0;
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-strong);
+  color: var(--deck-fg-2);
+  white-space: nowrap;
+}
+
+#trust .tr-q {
+  position: absolute;
+  left: 1392px;
+  top: 160px;
+  width: 288px;
+  min-height: 260px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 24px;
+  border: 2px solid var(--deck-accent);
+  border-radius: var(--radius-md);
+  background: var(--deck-raised);
+  box-shadow: var(--shadow-float);
+}
+
+#trust .tr-q b {
+  font-size: var(--fs-caption);
+  line-height: var(--lh-snug);
+}
+
+#trust .tr-ping {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--deck-accent);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+}
+
+#trust.play .tr-ping {
+  animation: trust-ping 2.4s var(--ease-out) var(--d, 0s) infinite;
+}
+
+@keyframes trust-ping {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
