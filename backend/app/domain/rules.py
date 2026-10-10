@@ -26,6 +26,35 @@ class _Interval:
             self.high is None or low < self.high or (low == self.high and self.high_closed)
         )
 
+    def covers(self, other: "_Interval") -> bool:
+        low = self.low is None or (
+            other.low is not None
+            and (
+                other.low > self.low
+                or (other.low == self.low and (self.low_closed or not other.low_closed))
+            )
+        )
+        high = self.high is None or (
+            other.high is not None
+            and (
+                other.high < self.high
+                or (other.high == self.high and (self.high_closed or not other.high_closed))
+            )
+        )
+        return low and high
+
+    def overlaps(self, other: "_Interval") -> bool:
+        return not _below(self, other) and not _below(other, self)
+
+
+def _below(a: _Interval, b: _Interval) -> bool:
+    """Интервал `a` целиком левее `b`."""
+    return (
+        a.high is not None
+        and b.low is not None
+        and (a.high < b.low or (a.high == b.low and not (a.high_closed and b.low_closed)))
+    )
+
 
 def supported(characteristic: Characteristic) -> bool:
     if not characteristic.values:
@@ -80,6 +109,26 @@ def _interval(value: Value) -> _Interval:
     )
 
 
+def _dimension(unit_code: str | None) -> str | None:
+    return UNITS[unit_code].dimension if unit_code else None
+
+
+def canonical(value: Value) -> object:
+    """Ключ равенства допустимых значений разных позиций: текст без регистра и `ё`, число —
+    интервал в базовых единицах размерности с включённостью границ."""
+    if value.text is not None:
+        return "text", normalized(value.text)
+    interval = _interval(value)
+    return (
+        "number",
+        _dimension(value.unit_code),
+        interval.low,
+        interval.high,
+        interval.low_closed,
+        interval.high_closed,
+    )
+
+
 def _union(intervals: list[_Interval]) -> list[_Interval]:
     intervals.sort(key=lambda i: (i.low is not None, i.low or Fraction(0), not i.low_closed))
     merged: list[_Interval] = []
@@ -128,7 +177,11 @@ def _check(position: Position, fact: Fact) -> CheckResult:
             if any(normalized(v.text or "") == fact.value for v in characteristic.values)
             else CheckResult.MISMATCH
         )
-    if not characteristic.quantitative or isinstance(fact.value, str):
+    if not characteristic.quantitative:
+        return CheckResult.UNSUPPORTED
+    if fact.kind == "interval":
+        return _check_interval(characteristic, fact.bounds)
+    if isinstance(fact.value, str):
         return CheckResult.UNSUPPORTED
     unit = UNITS.get(fact.unit_code or "")
     if fact.unit_code is not None and unit is None:
@@ -138,8 +191,7 @@ def _check(position: Position, fact: Fact) -> CheckResult:
     intervals = [
         _interval(v)
         for v in characteristic.values
-        if (UNITS[v.unit_code].dimension if v.unit_code else None)
-        == (unit.dimension if unit else None)
+        if _dimension(v.unit_code) == (unit.dimension if unit else None)
     ]
     # Fraction даёт точное сравнение Decimal после пересчёта, независимо от decimal context.
     factor = Fraction(unit.factor) if unit else Fraction(1)
@@ -148,6 +200,25 @@ def _check(position: Position, fact: Fact) -> CheckResult:
     if any(i.contains(low) and i.contains(high) for i in _union(intervals)):
         return CheckResult.MATCH
     if any(i.intersects(low, high) for i in intervals):
+        return CheckResult.AMBIGUOUS
+    return CheckResult.MISMATCH
+
+
+def _check_interval(characteristic: Characteristic, bounds: Value | None) -> CheckResult:
+    """Значение каталога как ответ: внутри объединения допустимых — `match`, частично —
+    `ambiguous`."""
+    if bounds is None or (bounds.unit_code is not None and bounds.unit_code not in UNITS):
+        return CheckResult.UNSUPPORTED
+    if any((v.unit_code is None) != (bounds.unit_code is None) for v in characteristic.values):
+        return CheckResult.AMBIGUOUS
+    target = _interval(bounds)
+    dimension = _dimension(bounds.unit_code)
+    intervals = [
+        _interval(v) for v in characteristic.values if _dimension(v.unit_code) == dimension
+    ]
+    if any(i.covers(target) for i in _union(intervals)):
+        return CheckResult.MATCH
+    if any(i.overlaps(target) for i in intervals):
         return CheckResult.AMBIGUOUS
     return CheckResult.MISMATCH
 

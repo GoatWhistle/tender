@@ -93,7 +93,9 @@ def test_messages_narrow_group_and_keep_history(search_api: tuple[TestClient, Se
     sid = client.post("/api/v1/sessions").json()["session_id"]
     url = f"/api/v1/sessions/{sid}/messages"
     first = client.post(url, json={"text": " шкаф "}, headers={"Idempotency-Key": "one"}).json()
-    assert first["status"] == "needs_clarification"
+    # У потомков шкафа нет характеристик: позиции неразличимы по полям справочника.
+    assert first["status"] == "ambiguous_in_catalog"
+    assert first["common_fields"] == []
     assert first["path"] == {
         "category": "Мебель",
         "group": {"code": CABINET_CODE, "name": "Шкаф для одежды"},
@@ -184,7 +186,7 @@ def test_memory_scenario(settings: Settings) -> None:
     sessions = usecases.sessions(uow)
     initial = sessions.create()
     first = sessions.message(initial.session_id, "шкаф", "one")
-    assert first.status == "needs_clarification"
+    assert first.status == "ambiguous_in_catalog"
     assert first.candidate_counts.in_group == 2
     assert sessions.message(initial.session_id, "шкаф", "one") == first
     with pytest.raises(IdempotencyConflict):

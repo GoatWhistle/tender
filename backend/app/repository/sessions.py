@@ -8,6 +8,8 @@ from typing import Any
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
+from app.domain.catalog import Bound, Value
+from app.domain.dialog import CommonField, DialogTurn, Question, QuestionOption, RequiredField
 from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck
 from app.domain.search import MethodContribution
 from app.domain.sessions import (
@@ -21,6 +23,7 @@ from app.domain.sessions import (
     Revision,
     SessionState,
     SessionStatus,
+    UnsupportedRule,
 )
 from app.repository.orm.sessions import AnalysisSession, SessionMessage, SessionRevision
 
@@ -63,6 +66,19 @@ def decode(data: dict[str, Any]) -> SessionState:
         candidate_counts=CandidateCounts(**data["candidate_counts"]),
         errors=tuple(AnalysisError(**e) for e in data["errors"]),
         warnings=tuple(data["warnings"]),
+        next_question=_question(data["next_question"]) if data.get("next_question") else None,
+        dialog=tuple(
+            DialogTurn(**{**t, "fact": _fact(t["fact"]) if t["fact"] else None})
+            for t in data.get("dialog", [])
+        ),
+        card_complete=data.get("card_complete", False),
+        missing_required=tuple(RequiredField(**m) for m in data.get("missing_required", [])),
+        common_fields=tuple(
+            CommonField(c["characteristic"], tuple(c["values"]))
+            for c in data.get("common_fields", [])
+        ),
+        unanswered=tuple(data.get("unanswered", [])),
+        unsupported_rules=tuple(UnsupportedRule(**u) for u in data.get("unsupported_rules", [])),
     )
 
 
@@ -100,7 +116,8 @@ class SqlSessions:
         if state.revision == 0:
             self._session.add(AnalysisSession(id=state.session_id))
             self._session.flush()
-        else:
+        elif revision.request_text is not None:
+            # ревизия ответа на вопрос нового сообщения не несёт
             message = state.messages[-1]
             self._session.add(
                 SessionMessage(
@@ -134,4 +151,37 @@ def _fact(data: dict[str, Any]) -> Fact:
         value = Decimal(value)
     elif data["kind"] == "range":
         value = (Decimal(value[0]), Decimal(value[1]))
-    return Fact(**{**data, "value": value, "source": FactSource(**data["source"])})
+    source = data["source"]
+    bounds = data.get("bounds")
+    return Fact(
+        **{
+            **data,
+            "value": value,
+            "source": FactSource(**source) if source else None,
+            "bounds": _value(bounds) if bounds else None,
+        }
+    )
+
+
+def _value(data: dict[str, Any]) -> Value:
+    def number(key: str) -> Decimal | None:
+        return Decimal(data[key]) if data[key] is not None else None
+
+    def bound(key: str) -> Bound | None:
+        return Bound(data[key]) if data[key] is not None else None
+
+    return Value(
+        data["code"],
+        data["text"],
+        data["unit"],
+        data["unit_code"],
+        number("concrete"),
+        number("min"),
+        bound("min_op"),
+        number("max"),
+        bound("max_op"),
+    )
+
+
+def _question(data: dict[str, Any]) -> Question:
+    return Question(**{**data, "options": tuple(QuestionOption(**o) for o in data["options"])})

@@ -1,14 +1,31 @@
 """Сессия анализа: история сообщений, идемпотентность и снимки ревизий."""
 
+from collections.abc import Sequence
 from dataclasses import replace
 from datetime import UTC, datetime
 from uuid import uuid4
 
 from app.domain.catalog import Group, Position
-from app.domain.errors import CatalogEmpty, IdempotencyConflict, ModelFailure, SessionNotFound
+from app.domain.dialog import (
+    CommonField,
+    DialogTurn,
+    RequiredField,
+    answer_fact,
+    common_fields,
+    derive,
+    merge,
+    next_step,
+)
+from app.domain.errors import (
+    CatalogEmpty,
+    IdempotencyConflict,
+    ModelFailure,
+    OptionNotFound,
+    SessionNotFound,
+    StaleQuestion,
+)
 from app.domain.facts import CheckResult, Fact, RuleCheck
 from app.domain.rules import check_rule, explain, supported
-from app.domain.search import SearchResult
 from app.domain.sessions import (
     Alternative,
     AnalysisError,
@@ -20,6 +37,7 @@ from app.domain.sessions import (
     Revision,
     SessionState,
     SessionStatus,
+    UnsupportedRule,
 )
 from app.usecase.interface import (
     CatalogRepository,
@@ -72,65 +90,160 @@ class Sessions:
                 *previous.messages,
                 Message(str(uuid4()), text, datetime.now(UTC).isoformat()),
             )
-            state = SessionState(session_id, previous.revision + 1, messages=messages)
+            state = SessionState(
+                session_id, previous.revision + 1, messages=messages, dialog=previous.dialog
+            )
             try:
                 result = self._search.run(
                     "\n".join(m.text for m in messages), category=None, limit=5
                 )
-                state = self._analyze(state, result)
-            except (ModelFailure, CatalogEmpty) as error:
+                if not result.groups:
+                    raise CatalogEmpty()
                 state = replace(
                     state,
-                    status=SessionStatus.TECHNICAL_ERROR,
-                    errors=(AnalysisError(error.code, error.message),),
+                    alternatives=tuple(
+                        Alternative(
+                            hit.group.code,
+                            hit.group.name,
+                            hit.group.category,
+                            hit.score,
+                            {"lexical": hit.lexical, "vector": hit.vector, "synonym": hit.synonym},
+                        )
+                        for hit in result.groups[1:5]
+                    ),
+                    warnings=result.messages,
                 )
+                selected = result.groups[0].group
+                state = self._analyze(
+                    state, Group.of(selected, self._catalog.children(selected.code))
+                )
+            except (ModelFailure, CatalogEmpty) as error:
+                state = _failed(state, error)
             self._sessions.save(Revision(state, key, text))
             return state
 
-    def _analyze(self, state: SessionState, result: SearchResult) -> SessionState:
-        if not result.groups:
-            raise CatalogEmpty()
-        selected = result.groups[0].group
-        group = Group.of(selected, self._catalog.children(selected.code))
-        facts, warnings = self._fact_extractor.extract(state.messages, group)
-        candidates = tuple(_candidate(p, facts) for p in sorted(group.leaves, key=lambda p: p.code))
-        compatible = [c for c in candidates if not c.excluded]
-        status = SessionStatus.NEEDS_CLARIFICATION
-        if not compatible:
-            status = SessionStatus.CONFLICT
-        elif len(compatible) == 1 and not any(
-            c.result == CheckResult.UNSUPPORTED for c in compatible[0].checks
-        ):
-            status = SessionStatus.RESOLVED
+    def answer(self, session_id: str, question_id: str, option_id: str | None) -> SessionState:
+        """Ответ на вопрос последней ревизии: новая ревизия с полным пересчётом без поиска —
+        группа та же, текст не менялся."""
+        with self._uow:
+            previous = self._sessions.latest(session_id, lock=True)
+            if previous is None:
+                raise SessionNotFound()
+            question = previous.next_question
+            if question is None or question.question_id != question_id or previous.path is None:
+                raise StaleQuestion()
+            code = previous.path.group.code
+            selected = self._catalog.position(code)
+            if selected is None:
+                raise CatalogEmpty()
+            group = Group.of(selected, self._catalog.children(code))
+            fact = None
+            if option_id is not None:
+                if option_id not in {o.id for o in question.options}:
+                    raise OptionNotFound()
+                compatible = {c.code for c in previous.candidates if not c.excluded}
+                fact = answer_fact(
+                    question,
+                    option_id,
+                    [p for p in group.leaves if p.code in compatible],
+                    [f for f in previous.facts if f.status != "superseded"],
+                )
+                if fact is None:
+                    raise StaleQuestion()
+            revision = previous.revision + 1
+            turn = DialogTurn(
+                question_id,
+                question.kind,
+                question.characteristic,
+                revision,
+                len(previous.messages),
+                option_id,
+                fact,
+                code,
+            )
+            state = replace(previous, revision=revision, dialog=(*previous.dialog, turn))
+            try:
+                state = self._analyze(state, group, extend=False)
+            except ModelFailure as error:
+                state = _failed(state, error)
+            self._sessions.save(Revision(state))
+            return state
+
+    def _analyze(self, state: SessionState, group: Group, *, extend: bool = True) -> SessionState:
+        """Факты, кандидаты, статус и следующий вопрос; `extend` — дописать предупреждения
+        извлечения (при ответе они уже есть: текст тот же). Ответы по другой группе хранятся в
+        истории, но не применяются."""
+        selected = group.position
+        dialog = tuple(t for t in state.dialog if t.group == selected.code)
+        parsed, warnings = self._fact_extractor.extract(state.messages, group)
+        facts = merge(parsed, dialog, [m.id for m in state.messages])
+        active = [f for f in facts if f.status != "superseded"]
+        leaves = sorted(group.leaves, key=lambda p: p.code)
+        candidates = tuple(_candidate(p, active) for p in leaves)
+        remaining = [p for p, c in zip(leaves, candidates, strict=True) if not c.excluded]
         count = len(candidates)
+        question_id = f"q{state.revision}"
+        messages = len(state.messages)
+        missing: tuple[RequiredField, ...] = ()
+        common: tuple[CommonField, ...] = ()
+        unanswered: tuple[str, ...] = ()
+        question = None
+        if not remaining:
+            status = SessionStatus.CONFLICT
+        elif len(remaining) == 1:
+            status = SessionStatus.RESOLVED
+            derived, missing = derive(remaining[0], active)
+            facts = (*facts, *derived)
+            question = next_step(
+                remaining, (*active, *derived), dialog, messages, question_id
+            ).question
+        else:
+            step = next_step(remaining, active, dialog, messages, question_id)
+            question, unanswered = step.question, step.unanswered
+            if step.indistinct and question is None:
+                status = SessionStatus.AMBIGUOUS_IN_CATALOG
+                common = common_fields(remaining)
+            else:
+                status = SessionStatus.NEEDS_CLARIFICATION
         return replace(
             state,
             status=status,
             facts=facts,
             path=NarrowingPath(selected.category, GroupRef(selected.code, selected.name), count),
             candidates=candidates,
-            candidate_counts=CandidateCounts(count, len(compatible), count - len(compatible)),
-            alternatives=tuple(
-                Alternative(
-                    hit.group.code,
-                    hit.group.name,
-                    hit.group.category,
-                    hit.score,
-                    {"lexical": hit.lexical, "vector": hit.vector, "synonym": hit.synonym},
-                )
-                for hit in result.groups[1:5]
+            candidate_counts=CandidateCounts(count, len(remaining), count - len(remaining)),
+            warnings=(*state.warnings, *warnings) if extend else state.warnings,
+            errors=(),
+            next_question=question,
+            card_complete=status == SessionStatus.RESOLVED and not missing,
+            missing_required=missing,
+            common_fields=common,
+            unanswered=unanswered,
+            unsupported_rules=tuple(
+                UnsupportedRule(p.code, c.name)
+                for p in remaining
+                for c in p.characteristics
+                if not supported(c)
             ),
-            warnings=(*result.messages, *warnings),
         )
 
 
-def _candidate(position: Position, facts: tuple[Fact, ...]) -> Candidate:
+def _failed(state: SessionState, error: ModelFailure | CatalogEmpty) -> SessionState:
+    return replace(
+        state,
+        status=SessionStatus.TECHNICAL_ERROR,
+        errors=(AnalysisError(error.code, error.message),),
+        next_question=None,
+    )
+
+
+def _candidate(position: Position, facts: Sequence[Fact]) -> Candidate:
     checks = [check_rule(position, fact) for fact in facts]
     reason = next(
         (
             explain(position, fact)
             for fact, check in zip(facts, checks, strict=True)
-            if check.result == CheckResult.MISMATCH and fact.status == "accepted_from_text"
+            if check.result == CheckResult.MISMATCH and fact.accepted
         ),
         None,
     )
