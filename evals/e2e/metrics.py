@@ -50,8 +50,10 @@ def out_of_scope(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def codes(rows: list[dict[str, Any]]) -> dict[str, Any]:
-    """Итоговый код: точность среди выданных (`resolved`) и доля выданных."""
-    rows = positive(rows)
+    """Точность среди всех выданных кодов и доля выдачи среди всех кейсов.
+
+    Выдача кода товару вне КТРУ — ошибка и входит в знаменатель точности.
+    """
     issued = [r for r in rows if r["status"] == "resolved"]
     correct = sum(
         len(r["compatible"]) == 1 and r["compatible"][0] in r["gold_codes"]
@@ -115,14 +117,21 @@ def by_tag(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return result
 
 
-def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
+def summarize(
+    rows: list[dict[str, Any]], *, supports_out_of_scope: bool = False
+) -> dict[str, Any]:
+    """Отказ от классификации пока отсутствует в сценарии сессии.
+
+    После его реализации вызывающий явно включает метрику; отсутствие найденных
+    отказов само по себе не позволяет отличить неподдержанный сценарий от нулевого качества.
+    """
     dev = [r for r in rows if r["set"] == "dev"]
     holdout = [r for r in rows if r["set"] == "holdout"]
     return {
         "dev": {
             "cases": len(dev),
             "recall": recall(dev),
-            "out_of_scope": out_of_scope(dev),
+            "out_of_scope": out_of_scope(dev) if supports_out_of_scope else "пропущено",
             "codes": codes(dev),
             "gold_kept": gold_kept(dev),
             "ambiguity": ambiguity(dev),
@@ -133,7 +142,9 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "holdout": {
             "cases": len(holdout),
             "recall": recall(holdout),
-            "out_of_scope": out_of_scope(holdout),
+            "out_of_scope": out_of_scope(holdout)
+            if supports_out_of_scope
+            else "пропущено",
             "statuses": statuses(holdout),
         },
     }

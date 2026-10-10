@@ -27,10 +27,20 @@ class E2EMetricsTest(unittest.TestCase):
             row(search=["G2", "G1"]),
             row(gold_groups=[], gold_codes=[], search=["G1"], tags=["out_of_scope"]),
         ]
-        dev = summarize(rows)["dev"]
+        dev = summarize(rows, supports_out_of_scope=True)["dev"]
         self.assertEqual(dev["recall"]["R@1"], {"n": 0, "of": 1, "share": 0})
         self.assertEqual(dev["recall"]["R@5"]["n"], 1)
         self.assertEqual(dev["out_of_scope"], {"n": 0, "of": 1, "share": 0})
+
+    def test_unsupported_out_of_scope_metric_is_skipped(self):
+        summary = summarize(
+            [
+                row(gold_groups=[], gold_codes=[]),
+                row(set="holdout", gold_groups=[], gold_codes=[]),
+            ]
+        )
+        self.assertEqual(summary["dev"]["out_of_scope"], "пропущено")
+        self.assertEqual(summary["holdout"]["out_of_scope"], "пропущено")
 
     def test_issued_code_accuracy_and_coverage(self):
         rows = [
@@ -47,6 +57,16 @@ class E2EMetricsTest(unittest.TestCase):
     def test_empty_denominator_is_none(self):
         codes = summarize([row()])["dev"]["codes"]
         self.assertIsNone(codes["accuracy"]["share"])
+
+    def test_code_issued_for_out_of_scope_product_counts_as_incorrect(self):
+        rows = [
+            row(status="resolved", compatible=["C1"]),
+            row(status="resolved", compatible=["C2"], gold_groups=[], gold_codes=[]),
+            row(status="out_of_scope", compatible=[], gold_groups=[], gold_codes=[]),
+        ]
+        codes = summarize(rows)["dev"]["codes"]
+        self.assertEqual(codes["accuracy"], {"n": 1, "of": 2, "share": 0.5})
+        self.assertEqual(codes["coverage"], {"n": 2, "of": 3, "share": 2 / 3})
 
     def test_ambiguity_requires_all_gold_codes_and_no_issued_code(self):
         rows = [
