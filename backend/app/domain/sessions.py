@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from app.domain.diagnostics import Diagnostic
 from app.domain.dialog import CommonField, DialogTurn, Question, RequiredField
 from app.domain.facts import ExclusionReason, Fact, RuleCheck
 from app.domain.search import MethodContribution
@@ -89,7 +90,8 @@ class SessionState:
     candidates: tuple[Candidate, ...] = ()
     candidate_counts: CandidateCounts = CandidateCounts()
     facts: tuple[Fact, ...] = ()
-    errors: tuple[AnalysisError, ...] = ()
+    errors: tuple[AnalysisError | Diagnostic, ...] = ()
+    normalizations: tuple[Diagnostic, ...] = ()
     warnings: tuple[str, ...] = ()
     next_question: Question | None = None
     # история вопросов и ответов, включая «не знаю»: из неё пересчитываются факты ответов

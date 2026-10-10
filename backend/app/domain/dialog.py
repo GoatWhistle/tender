@@ -109,11 +109,17 @@ def merge(
     # ему значения замещены, он снова принят.
     conflicting: dict[str, int] = {}
     for fact in facts:
-        if fact.status == "ambiguous" and fact.characteristic_name is not None:
+        if (
+            fact.status == "ambiguous"
+            and fact.characteristic_name is not None
+            and fact.normalization_rule != "explicit_unverified"
+        ):
             conflicting[fact.characteristic_name] = conflicting.get(fact.characteristic_name, 0) + 1
     return tuple(
         replace(f, status="accepted_from_text")
-        if f.status == "ambiguous" and conflicting.get(f.characteristic_name or "") == 1
+        if f.status == "ambiguous"
+        and f.normalization_rule != "explicit_unverified"
+        and conflicting.get(f.characteristic_name or "") == 1
         else f
         for f in facts
     )
@@ -137,7 +143,9 @@ def derive(
     """Для выбранной позиции: обязательные поля с единственным допустимым значением
     заполняются из каталога, остальные без принятого факта — недостающие."""
     known = {f.characteristic_name for f in facts if f.accepted}
-    disputed = set(_conflicts(list(facts)))
+    disputed = set(_conflicts(list(facts))) | {
+        f.characteristic_name for f in facts if f.normalization_rule == "explicit_unverified"
+    }
     derived: list[Fact] = []
     missing: list[RequiredField] = []
     for characteristic in position.characteristics:
@@ -305,7 +313,11 @@ def _conflicts(facts: Sequence[Fact]) -> dict[str, list[Fact]]:
     """Поля с противоречивыми значениями из текста: парсер помечает их `ambiguous`."""
     by_name: dict[str, list[Fact]] = {}
     for fact in facts:
-        if fact.status == "ambiguous" and fact.characteristic_name is not None:
+        if (
+            fact.status == "ambiguous"
+            and fact.characteristic_name is not None
+            and fact.normalization_rule != "explicit_unverified"
+        ):
             by_name.setdefault(fact.characteristic_name, []).append(fact)
     return {name: group for name, group in by_name.items() if len(group) > 1}
 

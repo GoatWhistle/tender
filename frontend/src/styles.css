@@ -2312,3 +2312,26 @@ main > .notice {
     transition-duration: 0ms !important;
   }
 }
+
+/* Цитаты диагностик и предложения в следующем действии. */
+.said mark {
+  background: #ffe4a8;
+  color: inherit;
+  border-radius: 3px;
+}
+.diagnostic {
+  border-top: 1px solid #d7dce0;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  overflow-wrap: anywhere;
+}
+.diagnostic h3 {
+  font-size: 1rem;
+  margin: 0 0 0.65rem;
+}
+.diagnostic details {
+  margin: 0.7rem 0;
+}
+.diagnostic summary {
+  cursor: pointer;
+}

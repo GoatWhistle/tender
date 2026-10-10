@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     ktru_xml_dir: Path = KTRU_XML_DIR
     aliases_path: Path = REPO_DIR / "data" / "aliases.csv"
 
+    spelling_url: str | None = None
+    spelling_model: str = "qwen"
+    spelling_api_key: SecretStr | None = None
+
     embeddings_url: str | None = None
     embeddings_api_key: SecretStr | None = None
     embeddings_model: str = "qwen-embedding"

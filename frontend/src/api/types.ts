@@ -196,6 +196,29 @@ export type DialogTurn = {
 
 export type AnalysisError = { code: string; message: string };
 
+export type Diagnostic = {
+  kind: "typo" | "value_not_in_catalog" | "out_of_range" | "synonym";
+  fact_id: string | null;
+  source_quote: string;
+  source: { message_id: string; quote: string; start: number; end: number };
+  expected: string[];
+  suggestion: string | null;
+  candidates: string[];
+  rule_ref: {
+    position_code: string;
+    characteristic_code: string;
+    characteristic_name: string;
+    value_codes: string[];
+  }[];
+  scope: { group_code: string | null; position_codes: string[]; complete: boolean };
+  requires_confirmation: boolean;
+  explanation: string;
+  alias_source: string | null;
+};
+
+export const isDiagnostic = (error: AnalysisError | Diagnostic): error is Diagnostic =>
+  "kind" in error;
+
 export type SessionState = {
   session_id: string;
   revision: number;
@@ -207,7 +230,8 @@ export type SessionState = {
   candidates: Candidate[];
   candidate_counts: { in_group: number; compatible: number; excluded_by_rules: number };
   facts: Fact[];
-  errors: AnalysisError[];
+  errors: (AnalysisError | Diagnostic)[];
+  normalizations?: Diagnostic[];
   warnings: string[];
   next_question: Question | null;
   dialog: DialogTurn[];
