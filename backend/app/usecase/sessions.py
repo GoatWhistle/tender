@@ -1,5 +1,6 @@
 """Сессия анализа: история сообщений, идемпотентность и снимки ревизий."""
 
+import re
 from collections.abc import Sequence
 from dataclasses import replace
 from datetime import UTC, datetime
@@ -10,6 +11,7 @@ from app.domain.diagnostics import Diagnostic
 from app.domain.dialog import (
     CommonField,
     DialogTurn,
+    Question,
     RequiredField,
     answer_fact,
     common_fields,
@@ -19,19 +21,24 @@ from app.domain.dialog import (
 )
 from app.domain.errors import (
     CatalogEmpty,
+    FactNotFound,
     IdempotencyConflict,
+    InvalidFactEdit,
     ModelFailure,
     OptionNotFound,
     SessionNotFound,
     StaleQuestion,
+    StaleRevision,
 )
-from app.domain.facts import CheckResult, Fact, RuleCheck
+from app.domain.fact_edits import INACTIVE, FactInput, apply_history, component_key, reconcile
+from app.domain.facts import CheckResult, Fact, FactSource, RuleCheck
 from app.domain.rules import check_rule, explain, supported
 from app.domain.sessions import (
     Alternative,
     AnalysisError,
     Candidate,
     CandidateCounts,
+    FactEvent,
     GroupRef,
     Message,
     NarrowingPath,
@@ -103,6 +110,10 @@ class Sessions:
                 previous.revision + 1,
                 messages=messages,
                 dialog=previous.dialog,
+                fact_history=previous.fact_history,
+                facts=previous.facts,
+                candidates=previous.candidates,
+                path=previous.path,
                 errors=tuple(
                     e
                     for e in previous.errors
@@ -136,9 +147,9 @@ class Sessions:
                     warnings=result.messages,
                 )
                 selected = result.groups[0].group
-                state = self._analyze(
-                    state, Group.of(selected, self._catalog.children(selected.code))
-                )
+                group = Group.of(selected, self._catalog.children(selected.code))
+                state = self._correct_text(state, previous, group)
+                state = self._analyze(state, group)
             except (ModelFailure, CatalogEmpty) as error:
                 state = _failed(state, error)
             self._sessions.save(Revision(state, key, text))
@@ -183,10 +194,283 @@ class Sessions:
                 fact,
                 code,
             )
-            state = replace(previous, revision=revision, dialog=(*previous.dialog, turn))
+            history = previous.fact_history
+            if fact is not None:
+                before = tuple(
+                    replace(f, status="superseded", superseded_by=fact.id)
+                    for f in previous.facts
+                    if f.status not in INACTIVE
+                    and f.characteristic_name == fact.characteristic_name
+                    and component_key(f) == component_key(fact)
+                )
+                history = (
+                    *history,
+                    FactEvent(
+                        "confirm", revision, datetime.now(UTC).isoformat(), before, (fact,), code
+                    ),
+                )
+            state = replace(
+                previous, revision=revision, dialog=(*previous.dialog, turn), fact_history=history
+            )
             try:
                 state = self._analyze(state, group, extend=False)
             except ModelFailure as error:
+                state = _failed(state, error)
+            self._sessions.save(Revision(state))
+            return state
+
+    def _correct_text(
+        self, state: SessionState, previous: SessionState, group: Group
+    ) -> SessionState:
+        text = state.messages[-1].text.lower().strip()
+        command = re.fullmatch(r"исправь\s+.+\s+на\s+.+", text)
+        negation = re.fullmatch(r"нет,?\s+не\s+([^,]+),\s*(.+)", text)
+        if not command and not negation:
+            return state
+        parsed, _ = self._fact_extractor.extract((state.messages[-1],), group)
+        if len(parsed) != 1 or parsed[0].characteristic_name is None:
+            return self._unclear_correction(state, group, parsed)
+        new = parsed[0]
+        targets = [
+            f
+            for f in previous.facts
+            if f.status not in INACTIVE
+            and f.origin != "catalog"
+            and f.characteristic_name == new.characteristic_name
+        ]
+        if len(targets) != 1 or (negation and targets[0].raw_value.lower() != negation[1].strip()):
+            return self._unclear_correction(state, group, parsed)
+        old = targets[0]
+        new = replace(new, status="confirmed_by_user", origin="user", component=old.component)
+        event = FactEvent(
+            "text_correction",
+            state.revision,
+            datetime.now(UTC).isoformat(),
+            (replace(old, status="superseded", superseded_by=new.id),),
+            (new,),
+            group.position.code,
+        )
+        return replace(state, fact_history=(*state.fact_history, event))
+
+    def _unclear_correction(
+        self, state: SessionState, group: Group, parsed: Sequence[Fact]
+    ) -> SessionState:
+        message = state.messages[-1]
+        pending = tuple(
+            replace(f, status="ambiguous", normalization_rule="correction_needs_binding")
+            for f in parsed
+        )
+        if not pending:
+            pending = (
+                Fact(
+                    str(uuid4()),
+                    None,
+                    None,
+                    message.text,
+                    None,
+                    message.text,
+                    None,
+                    "text",
+                    FactSource(message.id, message.text, 0, len(message.text)),
+                    "correction_needs_binding",
+                    status="ambiguous",
+                ),
+            )
+        event = FactEvent(
+            "clarification",
+            state.revision,
+            datetime.now(UTC).isoformat(),
+            (),
+            pending,
+            group.position.code,
+        )
+        return replace(state, fact_history=(*state.fact_history, event))
+
+    def _group(self, state: SessionState) -> Group:
+        selected = self._catalog.position(state.path.group.code) if state.path else None
+        if selected is None:
+            raise CatalogEmpty()
+        return Group.of(selected, self._catalog.children(selected.code))
+
+    def _current(self, session_id: str, expected_revision: int) -> SessionState:
+        state = self._sessions.latest(session_id, lock=True)
+        if state is None:
+            raise SessionNotFound()
+        if state.revision != expected_revision:
+            raise StaleRevision()
+        return state
+
+    def mutate(
+        self,
+        session_id: str,
+        expected_revision: int,
+        fact_id: str | None,
+        action: str,
+        value: FactInput | None = None,
+        related_ids: tuple[str, ...] = (),
+        bindings: tuple[FactInput, ...] = (),
+        diagnostic_index: int | None = None,
+    ) -> SessionState:
+        with self._uow:
+            previous = self._current(session_id, expected_revision)
+            group = self._group(previous)
+            old = next((f for f in previous.facts if f.id == fact_id), None)
+            if fact_id is not None and old is None:
+                raise FactNotFound()
+            if old and action != "restore" and old.status in INACTIVE:
+                raise FactNotFound()
+            source = old.source if old else None
+            if action == "accept_suggestion":
+                diagnostics = [
+                    e
+                    for e in (*previous.errors, *previous.normalizations)
+                    if isinstance(e, Diagnostic)
+                ]
+                if diagnostic_index is None or not 0 <= diagnostic_index < len(diagnostics):
+                    raise InvalidFactEdit("Предложение не найдено")
+                diagnostic = diagnostics[diagnostic_index]
+                if diagnostic.fact_id != fact_id or value is None:
+                    raise InvalidFactEdit("Укажите характеристику и часть товара для предложения")
+                proposed = diagnostic.suggestion
+                if proposed is None:
+                    raise InvalidFactEdit("Выберите значение через редактор факта")
+                rendered = (
+                    f"{value.raw_value} {value.raw_unit}" if value.raw_unit else value.raw_value
+                )
+                if rendered.lower() != proposed.lower():
+                    raise InvalidFactEdit("Значение не совпадает с предложением")
+                source = diagnostic.source
+            targets = [old] if old else []
+            if related_ids:
+                related = [
+                    f for f in previous.facts if f.id in related_ids and f.status not in INACTIVE
+                ]
+                if len(related) != len(set(related_ids)):
+                    raise FactNotFound()
+                targets = list({f.id: f for f in (*targets, *related)}.values())
+            if action == "split":
+                if (
+                    len(targets) < 2
+                    or len(bindings) != len(targets)
+                    or any(not b.component for b in bindings)
+                ):
+                    raise InvalidFactEdit("Укажите часть товара для каждого спорного значения")
+                after = tuple(
+                    replace(b.fact(group), source=f.source)
+                    for b, f in zip(bindings, targets, strict=True)
+                )
+            elif action == "delete":
+                if not targets:
+                    raise FactNotFound()
+                after = ()
+            elif action in {"confirm", "restore"}:
+                if old is None:
+                    raise FactNotFound()
+                if (
+                    old.characteristic_name is None
+                    or old.normalization_rule == "correction_needs_binding"
+                ):
+                    raise InvalidFactEdit(
+                        "Сначала укажите характеристику и часть товара в редакторе"
+                    )
+                after = (
+                    replace(
+                        old,
+                        id=str(uuid4()),
+                        status="confirmed_by_user",
+                        origin="user",
+                        superseded_by=None,
+                    ),
+                )
+                # Восстановление заменяет актуальный конец цепочки, история остаётся.
+                if action == "restore":
+                    by_id = {f.id: f for f in previous.facts}
+                    chain: set[str] = set()
+                    cursor = old
+                    while cursor.superseded_by and cursor.superseded_by not in chain:
+                        chain.add(cursor.superseded_by)
+                        successor = by_id.get(cursor.superseded_by)
+                        if successor is None:
+                            break
+                        cursor = successor
+                    targets = [
+                        f
+                        for f in previous.facts
+                        if f.status not in INACTIVE
+                        and (
+                            f.id in chain
+                            or (
+                                f.characteristic_name == old.characteristic_name
+                                and component_key(f) == component_key(old)
+                            )
+                        )
+                    ]
+            elif action in {"edit", "accept_suggestion"} and value is not None:
+                after = (replace(value.fact(group), source=source),)
+            else:
+                raise InvalidFactEdit()
+            before = tuple(
+                replace(
+                    f,
+                    status="deleted" if not after else "superseded",
+                    superseded_by=after[i].id
+                    if action == "split"
+                    else after[0].id
+                    if after
+                    else None,
+                )
+                for i, f in enumerate(targets)
+            )
+            revision = previous.revision + 1
+            event = FactEvent(
+                action,
+                revision,
+                datetime.now(UTC).isoformat(),
+                before,
+                after,
+                group.position.code,
+                restored_from=old.id if action == "restore" and old else None,
+            )
+            state = replace(
+                previous,
+                revision=revision,
+                facts=apply_history(previous.facts, (event,), group.position.code),
+                fact_history=(*previous.fact_history, event),
+                results_stale=True,
+                card_complete=False,
+            )
+            try:
+                state = self._analyze(state, group, extend=False)
+            except ModelFailure as error:
+                state = _failed(state, error)
+            self._sessions.save(Revision(state))
+            return state
+
+    def recalculate(self, session_id: str, expected_revision: int) -> SessionState:
+        with self._uow:
+            previous = self._current(session_id, expected_revision)
+            state = replace(previous, revision=previous.revision + 1)
+            try:
+                state = self._analyze(state, self._group(state), extend=False)
+                state = replace(
+                    state,
+                    candidates=tuple(
+                        replace(
+                            c,
+                            returned_reason=next(
+                                (
+                                    old.returned_reason
+                                    for old in previous.candidates
+                                    if old.code == c.code
+                                ),
+                                None,
+                            )
+                            or c.returned_reason,
+                        )
+                        for c in state.candidates
+                    ),
+                )
+            except (ModelFailure, CatalogEmpty) as error:
                 state = _failed(state, error)
             self._sessions.save(Revision(state))
             return state
@@ -197,9 +481,24 @@ class Sessions:
         истории, но не применяются."""
         selected = group.position
         dialog = tuple(t for t in state.dialog if t.group == selected.code)
-        parsed, warnings = self._fact_extractor.extract(state.messages, group)
+        extracted = [self._fact_extractor.extract((message,), group) for message in state.messages]
+        parsed = tuple(f for facts, _ in extracted for f in facts)
+        warnings = tuple(dict.fromkeys(w for _, items in extracted for w in items))
         facts = merge(parsed, dialog, [m.id for m in state.messages])
-        active = [f for f in facts if f.status != "superseded"]
+        facts = reconcile(apply_history(facts, state.fact_history, selected.code), group)
+        active = [f for f in facts if f.status not in INACTIVE]
+        conflict_names = {
+            f.characteristic_name
+            for f in active
+            if f.status == "ambiguous"
+            and f.normalization_rule != "explicit_unverified"
+            and f.characteristic_name is not None
+        }
+        warnings = tuple(w for w in warnings if not w.startswith("противоречивые значения поля"))
+        warnings = (
+            *warnings,
+            *(f"противоречивые значения поля {name}" for name in sorted(conflict_names) if name),
+        )
         leaves = sorted(group.leaves, key=lambda p: p.code)
         candidates = tuple(_candidate(p, active) for p in leaves)
         remaining = [p for p, c in zip(leaves, candidates, strict=True) if not c.excluded]
@@ -214,7 +513,8 @@ class Sessions:
             status = SessionStatus.CONFLICT
         elif len(remaining) == 1:
             status = SessionStatus.RESOLVED
-            derived, missing = derive(remaining[0], active)
+            suppressed = {f.characteristic_name for f in facts if f.status == "deleted"}
+            derived, missing = derive(remaining[0], active, suppressed=suppressed)
             facts = (*facts, *derived)
             question = next_step(
                 remaining, (*active, *derived), dialog, messages, question_id
@@ -227,17 +527,61 @@ class Sessions:
                 common = common_fields(remaining)
             else:
                 status = SessionStatus.NEEDS_CLARIFICATION
+        pending_correction = next(
+            (f for f in active if f.normalization_rule == "correction_needs_binding"), None
+        )
+        if pending_correction is not None:
+            question = Question(
+                question_id,
+                "conflict",
+                pending_correction.characteristic_name or "Характеристика",
+                "Уточните исправление: укажите характеристику и часть товара в редакторе факта",
+                (),
+                False,
+            )
+        if question is not None and question.kind == "conflict":
+            status = SessionStatus.CONFLICT
+        old_candidates = {c.code: c for c in state.candidates}
+        same_group = state.path is not None and state.path.group.code == selected.code
+        candidates = tuple(
+            replace(
+                c,
+                returned_reason=(
+                    "Позиция возвращена после изменения фактов: "
+                    "прежнее ограничение больше не исключает её"
+                    if same_group
+                    and c.code in old_candidates
+                    and old_candidates[c.code].excluded
+                    and not c.excluded
+                    else None
+                ),
+            )
+            for c in candidates
+        )
         diagnostics = (
             self._diagnostics.run(facts, group, state.messages) if self._diagnostics else ()
         )
         return replace(
             state,
             status=status,
+            results_stale=False,
+            analysis_revision=state.revision,
             facts=facts,
             path=NarrowingPath(selected.category, GroupRef(selected.code, selected.name), count),
             candidates=candidates,
             candidate_counts=CandidateCounts(count, len(remaining), count - len(remaining)),
-            warnings=(*state.warnings, *warnings) if extend else state.warnings,
+            warnings=tuple(
+                dict.fromkeys(
+                    (
+                        *(
+                            w
+                            for w in state.warnings
+                            if not w.startswith("противоречивые значения поля")
+                        ),
+                        *warnings,
+                    )
+                )
+            ),
             errors=(
                 *tuple(d for d in diagnostics if d.kind != "synonym"),
                 *tuple(
@@ -285,6 +629,8 @@ def _failed(state: SessionState, error: ModelFailure | CatalogEmpty) -> SessionS
         status=SessionStatus.TECHNICAL_ERROR,
         errors=(AnalysisError(error.code, error.message), *state.errors),
         next_question=None,
+        results_stale=True,
+        card_complete=False,
     )
 
 

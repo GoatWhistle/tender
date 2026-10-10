@@ -5,7 +5,7 @@ from dataclasses import replace
 
 from app.domain.catalog import Group
 from app.domain.diagnostics import Diagnostic, close_enum, explain_diagnostic
-from app.domain.facts import CheckResult, Fact, normalized
+from app.domain.facts import CheckResult, Fact, FactSource, normalized
 from app.domain.rules import check_rule, supported
 from app.domain.sessions import Message
 from app.domain.units import UNITS
@@ -24,10 +24,15 @@ class Diagnostics:
         if any(p.is_template for p in group.leaves):
             return ()
         for fact in facts:
+            if fact.origin == "user" and fact.normalization_rule == "manual":
+                fact = replace(
+                    fact,
+                    source=FactSource("fact:" + fact.id, fact.raw_value, 0, len(fact.raw_value)),
+                )
             if (
                 fact.source is None
                 or fact.characteristic_name is None
-                or fact.status == "superseded"
+                or fact.status in {"superseded", "deleted"}
             ):
                 continue
             rules = [(p, p.char(fact.characteristic_name)) for p in group.leaves]
@@ -42,7 +47,11 @@ class Diagnostics:
                 values = sorted({v.text for _, c in known for v in c.values if v.text})
                 if any(normalized(v) == fact.value for v in values):
                     continue
-                if fact.normalization_rule not in {"explicit_field", "explicit_unverified"}:
+                if fact.normalization_rule not in {
+                    "explicit_field",
+                    "explicit_unverified",
+                    "manual",
+                }:
                     continue
                 aliases = [
                     a

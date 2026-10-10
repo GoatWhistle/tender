@@ -1,10 +1,18 @@
 // Экран поставщика: описание своими словами → группа КТРУ → оставшиеся позиции.
 // Четыре области: описание и история, характеристики, кандидаты и путь сужения, следующее
 // действие. Данные — `SessionState` бэкенда как есть; статусы и счётчики UI не вычисляет.
-import { useEffect, useMemo, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { sellerApi, type Question, type SessionState } from "../api";
 import { isDiagnostic, type Diagnostic } from "../api/types";
+import { EditableFacts, FactForm, valueOf } from "../components/FactEditor";
 import { plural } from "../lib/format";
 import {
   MAX_TEXT,
@@ -28,7 +36,7 @@ const STATUS: Record<string, string> = {
   needs_clarification: "Нужно уточнение",
   resolved: "Код определён",
   ambiguous_in_catalog: "Несколько позиций",
-  conflict: "Нет совместимых позиций",
+  conflict: "Противоречие",
   technical_error: "Технический сбой",
 };
 
@@ -167,10 +175,11 @@ const DIAGNOSTIC_LABEL = {
   synonym: "Нормализация",
 };
 
-function Diagnostics({ state }: { state: SessionState }) {
+function Diagnostics({ state, store }: { state: SessionState; store: SellerSession }) {
+  const [editing, setEditing] = useState<number | null>(null);
   return (
     <>
-      {[...state.errors.filter(isDiagnostic), ...(state.normalizations ?? [])].map((d) => (
+      {[...state.errors.filter(isDiagnostic), ...(state.normalizations ?? [])].map((d, index) => (
         <section className="diagnostic" key={`${d.source.message_id}:${d.source.start}:${d.kind}`}>
           <h3>{DIAGNOSTIC_LABEL[d.kind]}</h3>
           <p className="card-x__quote">
@@ -190,6 +199,36 @@ function Diagnostics({ state }: { state: SessionState }) {
                 ))}
               </ul>
             </details>
+          )}
+          {d.suggestion && (
+            <button
+              type="button"
+              className="example"
+              disabled={store.view().busy}
+              onClick={() => setEditing(index)}
+            >
+              Принять исправление
+            </button>
+          )}
+          {editing === index && (
+            <FactForm
+              key={`${state.session_id}:${index}`}
+              state={state}
+              store={store}
+              fact={state.facts.find((f) => f.id === d.fact_id) ?? null}
+              diagnosticIndex={index}
+              initial={(() => {
+                const f = state.facts.find((f) => f.id === d.fact_id);
+                const numeric = d.suggestion?.match(/^([+-]?[0-9.,]+)\s+(мм|см|м)$/);
+                return {
+                  ...(f ? valueOf(f) : { characteristic_name: "", kind: "text" as const }),
+                  raw_value: numeric ? numeric[1] : (d.suggestion ?? ""),
+                  raw_unit: numeric ? numeric[2] : null,
+                  kind: numeric ? ("number" as const) : ("text" as const),
+                };
+              })()}
+              onClose={() => setEditing(null)}
+            />
           )}
           {d.requires_confirmation && (
             <p className="muted">Предложение не применено. Проверьте исходное описание.</p>
@@ -279,7 +318,9 @@ function NextStep({
   state,
   busy,
   onAnswer,
+  store,
 }: {
+  store: SellerSession;
   state: SessionState;
   busy: boolean;
   onAnswer: (optionId: string | null) => void;
@@ -308,7 +349,10 @@ function NextStep({
       : "У позиций нет полей, по которым их можно различить.";
     list = compatible.map((c) => ({ key: c.code, label: c.name, note: c.code }));
   } else if (status === "conflict") {
-    title = "Ни одна позиция группы не подходит";
+    title =
+      question?.kind === "conflict"
+        ? "Уточните противоречивые характеристики"
+        : "Ни одна позиция группы не подходит";
     text = "Исправьте значения в описании — причины ниже.";
     list = state.candidates.map((c) => ({ key: c.code, label: c.name, note: c.reason?.text }));
   } else if (status === "needs_clarification" && !question) {
@@ -339,7 +383,7 @@ function NextStep({
           ))}
         </ul>
       )}
-      <Diagnostics state={state} />
+      <Diagnostics state={state} store={store} />
       <Missing state={state} />
       {question && <QuestionCard question={question} busy={busy} onAnswer={onAnswer} />}
       {state.unsupported_rules.length > 0 && (
@@ -369,7 +413,7 @@ function NextAction({ view, store }: { view: SellerView; store: SellerSession })
       )}
       {state && state.status !== "technical_error" && (
         <div className="cards__item">
-          <NextStep state={state} busy={busy} onAnswer={onAnswer} />
+          <NextStep state={state} busy={busy} onAnswer={onAnswer} store={store} />
         </div>
       )}
     </section>
@@ -401,42 +445,6 @@ function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
         )}
       </div>
     </div>
-  );
-}
-
-const ORIGIN: Record<string, string> = {
-  parser: "из описания",
-  user: "ваш ответ",
-  catalog: "из справочника",
-};
-
-function Characteristics({ state }: { state: SessionState }) {
-  const facts = state.facts.filter((f) => f.characteristic_name && f.status !== "superseded");
-  return (
-    <section aria-labelledby="facts-title">
-      <h2 id="facts-title" className="block-title">
-        Характеристики
-      </h2>
-      {facts.length ? (
-        <ul className="cands">
-          {facts.map((f) => (
-            <li key={f.id} className="cand">
-              <span className="cand__name">{f.characteristic_name}</span>
-              <span className="cand__code">
-                {f.raw_unit && f.kind !== "interval" ? `${f.raw_value} ${f.raw_unit}` : f.raw_value}
-              </span>
-              <span className="cand__reason">
-                {f.status === "ambiguous" ? "требует проверки" : ORIGIN[f.origin]}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="muted">
-          Пока нет. Здесь появятся значения из описания и ответов, приведённые к справочнику КТРУ.
-        </p>
-      )}
-    </section>
   );
 }
 
@@ -493,6 +501,9 @@ function Candidates({ state }: { state: SessionState }) {
                   <li key={c.code} className={c.excluded ? "cand cand--out" : "cand"}>
                     <span className="cand__name">{c.name}</span>
                     <span className="cand__code">{c.code}</span>
+                    {c.returned_reason && (
+                      <span className="cand__returned">{c.returned_reason}</span>
+                    )}
                     {c.reason && <span className="cand__reason">{c.reason.text}</span>}
                   </li>
                 ))}
@@ -555,7 +566,19 @@ export function Seller() {
             aria-busy={busy}
           >
             <Summary state={state} busy={busy} />
-            <Characteristics state={state} />
+            {state.results_stale && (
+              <div role="alert">
+                <p>Правки сохранены. Подбор неактуален — требуется пересчёт.</p>
+                <button
+                  className="example"
+                  disabled={busy}
+                  onClick={() => void store.recalculate()}
+                >
+                  Повторить пересчёт
+                </button>
+              </div>
+            )}
+            <EditableFacts state={state} store={store} />
             <Candidates state={state} />
           </aside>
         )}

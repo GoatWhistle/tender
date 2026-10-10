@@ -58,3 +58,18 @@ class StaleQuestion(DomainError):
 class OptionNotFound(DomainError):
     code = "option_not_found"
     message = "Такого варианта ответа у вопроса нет"
+
+
+class StaleRevision(DomainError):
+    code = "stale_revision"
+    message = "Сессия изменилась: сравните актуальные факты перед повторной правкой"
+
+
+class InvalidFactEdit(DomainError):
+    code = "invalid_fact_edit"
+    message = "Проверьте значение, характеристику и часть товара"
+
+
+class FactNotFound(DomainError):
+    code = "fact_not_found"
+    message = "Факт не найден или уже изменён"

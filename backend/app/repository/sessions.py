@@ -18,6 +18,7 @@ from app.domain.sessions import (
     AnalysisError,
     Candidate,
     CandidateCounts,
+    FactEvent,
     GroupRef,
     Message,
     NarrowingPath,
@@ -60,10 +61,23 @@ def decode(data: dict[str, Any]) -> SessionState:
                     RuleCheck(check["fact_id"], CheckResult(check["result"]))
                     for check in c.get("checks", [])
                 ),
+                c.get("returned_reason"),
             )
             for c in data["candidates"]
         ),
         facts=tuple(_fact(f) for f in data.get("facts", [])),
+        fact_history=tuple(
+            FactEvent(
+                **{
+                    **e,
+                    "before": tuple(_fact(f) for f in e["before"]),
+                    "after": tuple(_fact(f) for f in e["after"]),
+                }
+            )
+            for e in data.get("fact_history", [])
+        ),
+        results_stale=data.get("results_stale", False),
+        analysis_revision=data.get("analysis_revision"),
         candidate_counts=CandidateCounts(**data["candidate_counts"]),
         errors=tuple(_diagnostic(e) if "kind" in e else AnalysisError(**e) for e in data["errors"]),
         normalizations=tuple(_diagnostic(e) for e in data.get("normalizations", [])),

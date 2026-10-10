@@ -50,6 +50,8 @@ function fakeApi(overrides: Partial<SellerApi> = {}) {
     get: vi.fn<SellerApi["get"]>(async (id) => state({ session_id: id })),
     message: vi.fn<SellerApi["message"]>(async () => resolved(1, "A")),
     answer: vi.fn<SellerApi["answer"]>(async () => resolved(3, "A")),
+    mutate: vi.fn<SellerApi["mutate"]>(async () => resolved(4, "A")),
+    recalculate: vi.fn<SellerApi["recalculate"]>(async () => resolved(4, "A")),
     ...overrides,
   };
 }
@@ -454,4 +456,22 @@ it("диагностика характеристики не превращае�
   const failedStore = createSellerSession(fakeApi({ get: async () => failed }), newKey);
   await failedStore.open("s1");
   expect(failedStore.view().failure?.details).toEqual(["Поиск недоступен"]);
+});
+
+it("сохраняет черновик и обновляет ревизию после конфликта правки без повтора", async () => {
+  const api = fakeApi({
+    get: vi
+      .fn()
+      .mockResolvedValueOnce(state({ revision: 1 }))
+      .mockResolvedValueOnce(state({ revision: 2 })),
+    mutate: vi.fn().mockRejectedValue(new ApiError(409, "stale_revision", "Сессия изменилась")),
+  });
+  const store = createSellerSession(api);
+  await store.open("s1");
+  store.setDraft("несохранённое описание");
+  expect(await store.mutate("f1", { expected_revision: 1, action: "delete" })).toBe(false);
+  expect(store.view().draft).toBe("несохранённое описание");
+  expect(store.view().state?.revision).toBe(2);
+  expect(store.view().failure?.text).toContain("Сессия изменилась");
+  expect(api.mutate).toHaveBeenCalledTimes(1);
 });

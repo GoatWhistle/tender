@@ -2335,3 +2335,50 @@ main > .notice {
 .diagnostic summary {
   cursor: pointer;
 }
+
+.fact-editor {
+  padding: 1rem;
+  margin-block: 1rem;
+  border: 1px solid #b9c6c0;
+  border-radius: 12px;
+  background: #f4f7f5;
+}
+.fact-fields {
+  display: grid;
+  gap: 0.75rem;
+}
+.fact-fields label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+.fact-fields input,
+.fact-fields select {
+  min-width: 0;
+  width: 100%;
+  padding: 0.55rem;
+  border: 1px solid #9caea4;
+  border-radius: 6px;
+  font: inherit;
+  background: white;
+}
+.fact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.fact-history {
+  margin-top: 1rem;
+  overflow-wrap: anywhere;
+}
+.fact-history li {
+  margin-block: 1rem;
+}
+.fact-history p {
+  margin-block: 0.4rem;
+}
+.cand__returned {
+  color: #276748;
+  font-size: 0.85rem;
+}

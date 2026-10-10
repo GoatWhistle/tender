@@ -23,6 +23,7 @@ FactStatus = Literal[
     "derived_from_catalog",
     # замещён ответом пользователя по тому же полю: остаётся в истории, в проверках не участвует
     "superseded",
+    "deleted",
 ]
 ACCEPTED = frozenset({"accepted_from_text", "confirmed_by_user", "derived_from_catalog"})
 
@@ -44,6 +45,8 @@ class Fact:
     origin: Literal["parser", "user", "catalog"] = "parser"
     status: FactStatus = "accepted_from_text"
     bounds: Value | None = None
+    component: str | None = None
+    superseded_by: str | None = None
 
     @property
     def accepted(self) -> bool:

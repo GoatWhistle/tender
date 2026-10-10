@@ -151,12 +151,20 @@ export type Candidate = {
   name: string;
   excluded: boolean;
   reason: ExclusionReason | null;
+  returned_reason?: string | null;
 };
 
 export type FactStatus =
-  "accepted_from_text" | "ambiguous" | "confirmed_by_user" | "derived_from_catalog" | "superseded";
+  | "accepted_from_text"
+  | "ambiguous"
+  | "confirmed_by_user"
+  | "derived_from_catalog"
+  | "superseded"
+  | "deleted";
 
 export type Fact = {
+  component?: string | null;
+  superseded_by?: string | null;
   id: string;
   characteristic_name: string | null;
   raw_value: string;
@@ -230,6 +238,16 @@ export type SessionState = {
   candidates: Candidate[];
   candidate_counts: { in_group: number; compatible: number; excluded_by_rules: number };
   facts: Fact[];
+  fact_history?: {
+    action: string;
+    revision: number;
+    created_at: string;
+    before: Fact[];
+    after: Fact[];
+    group: string;
+  }[];
+  results_stale?: boolean;
+  analysis_revision?: number | null;
   errors: (AnalysisError | Diagnostic)[];
   normalizations?: Diagnostic[];
   warnings: string[];
@@ -245,7 +263,24 @@ export type SessionState = {
   unsupported_rules: { position: string; characteristic: string }[];
 };
 
+export type FactValue = {
+  characteristic_name: string;
+  raw_value: string;
+  raw_unit?: string | null;
+  kind: "text" | "number" | "range";
+  component?: string | null;
+};
+export type FactMutation = Partial<FactValue> & {
+  expected_revision: number;
+  action: "edit" | "delete" | "restore" | "confirm" | "split" | "accept_suggestion";
+  related_ids?: string[];
+  bindings?: FactValue[];
+  diagnostic_index?: number;
+};
+
 export interface SellerApi {
+  mutate(id: string, factId: string | null, body: FactMutation): Promise<SessionState>;
+  recalculate(id: string, revision: number): Promise<SessionState>;
   /** POST /api/v1/sessions без тела */
   create(): Promise<SessionState>;
   get(id: string): Promise<SessionState>;
