@@ -42,9 +42,14 @@ class Hit:
 
 class Index:
     def __init__(self) -> None:
-        if not VECTORS_F32.exists() or VECTORS_F32.stat().st_mtime < VECTORS.stat().st_mtime:
-            np.save(VECTORS_F32, np.load(VECTORS).astype(np.float32))
-        self.vectors = np.load(VECTORS_F32, mmap_mode="r")
+        self.vectors = np.load(VECTORS, mmap_mode="r", allow_pickle=False)
+        if VECTORS_F32.exists() and VECTORS_F32.stat().st_mtime >= VECTORS.stat().st_mtime:
+            try:
+                cached = np.load(VECTORS_F32, mmap_mode="r", allow_pickle=False)
+                if cached.shape == self.vectors.shape and cached.dtype == np.float32:
+                    self.vectors = cached
+            except (OSError, ValueError):
+                pass
         self.codes: list[str] = json.loads(CODES.read_text())
         with POSITIONS.open("rb") as f:
             self.positions: dict[str, Position] = pickle.load(f)
@@ -67,7 +72,10 @@ class Index:
     def search(self, query_vec: list[float], k: int = TOP_K) -> list[Hit]:
         q = np.asarray(query_vec, dtype=np.float32)
         q /= np.linalg.norm(q)
-        scores = self.vectors @ q
+        scores = np.empty(len(self.vectors), dtype=np.float32)
+        for start in range(0, len(self.vectors), 4096):
+            block = self.vectors[start : start + 4096].astype(np.float32, copy=False)
+            scores[start : start + len(block)] = block @ q
         top = np.argpartition(-scores, CANDIDATES)[:CANDIDATES]
         top = top[np.argsort(-scores[top])]
         groups: dict[str, Hit] = {}

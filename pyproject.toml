@@ -12,6 +12,7 @@ dependencies = [
     "fastapi>=0.143.0",
     "numpy>=2.5.3",
     "python-dotenv>=1.2.4",
+    "truststore>=0.10.4",
     "uvicorn>=0.54.0",
 ]
 

@@ -1139,6 +1139,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "numpy" },
     { name = "python-dotenv" },
+    { name = "truststore" },
     { name = "uvicorn" },
 ]
 
@@ -1149,6 +1150,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.143.0" },
     { name = "numpy", specifier = ">=2.5.3" },
     { name = "python-dotenv", specifier = ">=1.2.4" },
+    { name = "truststore", specifier = ">=0.10.4" },
     { name = "uvicorn", specifier = ">=0.54.0" },
 ]
 

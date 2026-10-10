@@ -1,0 +1,106 @@
+.spec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.spec h2 {
+  font-size: var(--font-xl);
+}
+.spec h3 {
+  font-size: var(--font-md);
+}
+.spec p {
+  color: var(--text-secondary);
+}
+.spec header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3) var(--space-6);
+}
+.spec header > p {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  font-size: var(--font-sm);
+  font-variant-numeric: tabular-nums;
+}
+.spec header > h2,
+.spec header > h3 {
+  grid-column: 1;
+}
+.spec header > h2 {
+  grid-row: 1;
+}
+.fixed {
+  margin: var(--space-4) 0 0;
+  border-top: var(--line) solid var(--border-default);
+}
+.fixed > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+  border-bottom: var(--line) solid var(--border-default);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.fixed dt {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+.fixed dd {
+  margin: 0;
+  font-size: var(--font-md);
+  font-variant-numeric: tabular-nums;
+}
+.editable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-8);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.actions > strong {
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
+  border-top: var(--line) solid var(--border-default);
+}
+@media (max-width: 63.99rem) {
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 47.99rem) {
+  .spec header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .spec header > p {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .fixed > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

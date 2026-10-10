@@ -21,3 +21,8 @@ var/
 !/legacy/design/figma/tokens/
 .impeccable/
 /data/
+/frontend/node_modules/
+/frontend/dist/
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/*.tsbuildinfo

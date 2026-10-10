@@ -1,0 +1,24 @@
+.artwork {
+  width: clamp(180px, 24vw, 320px);
+  color: var(--border-default);
+  pointer-events: none;
+  user-select: none;
+}
+.artwork svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sheet {
+  fill: var(--surface-panel);
+}
+.back {
+  fill: var(--surface-inset);
+}
+.accent {
+  stroke: var(--action-text);
+  opacity: 0.55;
+}
+.guide {
+  opacity: 0.6;
+}

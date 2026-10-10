@@ -3,6 +3,7 @@ from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 
 from rag.clarify import FIXED, Question, answer, extract, narrow, questions
+from rag.comparison import differences
 from rag.ktru import value_text
 from rag.models import Position
 from rag.preprocess import Fix, preprocess
@@ -46,6 +47,8 @@ class Session:
     extras: list[Extra] = field(default_factory=list)
     extras_allowed: bool = True
     message: str | None = None
+    selection_reason: str | None = None
+    messages: list[dict[str, str]] = field(default_factory=list)
 
     @property
     def question(self) -> Question | None:
@@ -60,7 +63,11 @@ class Session:
 
     @property
     def missing(self) -> list[str]:
-        return [q.name for q in self.characteristics if q.required and q.name not in self.chosen]
+        return [
+            q.name
+            for q in self.characteristics
+            if q.required and q.name not in self.chosen
+        ]
 
     def result(self) -> dict:
         p = self.position
@@ -93,9 +100,18 @@ async def _advance(s: Session, index: Index) -> None:
         s.message = "ни одна позиция группы не подходит под ответы"
     elif len(s.leaves) == 1:
         await _enter_spec(s, index, s.leaves[0])
+    elif (
+        not any(differences(s.leaves).values())
+        and len({no_new_features(index, p) for p in s.leaves}) == 1
+    ):
+        selected = min(s.leaves, key=lambda p: p.code)
+        s.selection_reason = "Характеристики и единицы оставшихся позиций совпадают. Сервис выбрал код автоматически."
+        await _enter_spec(s, index, selected)
     elif not questions(s.leaves, s.answers):
         s.stage = Stage.PICK
-        s.message = "различить позиции нечем, выберите код"
+        s.message = (
+            "Остались различия в параметрах позиций. Они показаны ниже для сравнения."
+        )
     else:
         s.stage = Stage.CLARIFY
 
@@ -122,6 +138,7 @@ async def start(index: Index, text: str) -> Session:
 
 
 async def _enter_group(s: Session, index: Index, p: Position) -> None:
+    s.selection_reason = None
     s.group = p
     s.leaves = index.leaves(p)
     s.context = [s.corrected]
@@ -148,9 +165,9 @@ async def reply(s: Session, index: Index, text: str) -> None:
     q = s.question
     if q is None:
         raise StageError("вопросов нет")
-    got, s.message = await answer(text, [q])
-    if q.name in got:
-        s.answers[q.name] = got[q.name][0]
+    got, s.message = await answer(text, questions(s.leaves, s.answers))
+    if got:
+        s.answers.update({name: values[0] for name, values in got.items()})
         s.context.append(text)
         await _advance(s, index)
 
@@ -163,6 +180,8 @@ async def choose(s: Session, index: Index, option: int | None) -> None:
     if option is not None and not 1 <= option <= len(q.options):
         raise InputError(f"номер варианта от 1 до {len(q.options)}")
     s.answers[q.name] = q.options[option - 1] if option else None
+    if option:
+        s.context.append(f"{q.name}: {q.options[option - 1]}")
     s.message = None
     await _advance(s, index)
 
@@ -209,7 +228,9 @@ async def describe(s: Session, text: str, name: str | None = None) -> None:
 async def add_extra(s: Session, extra: Extra) -> Verdict:
     _expect(s, Stage.SPEC)
     if not s.extras_allowed:
-        raise InputError("КТРУ запрещает дополнительные характеристики для этой позиции (noNewFeatures)")
+        raise InputError(
+            "КТРУ запрещает дополнительные характеристики для этой позиции (noNewFeatures)"
+        )
     if not extra.name.strip() or not extra.value.strip():
         raise InputError("нужны название и значение")
     verdict = await validate(s.position, s.chosen, s.extras, extra)

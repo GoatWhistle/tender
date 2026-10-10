@@ -1,0 +1,18 @@
+.page {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-6) var(--space-page);
+  overscroll-behavior: contain;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-size);
+  margin-inline: var(--space-5);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  text-decoration: none;
+}

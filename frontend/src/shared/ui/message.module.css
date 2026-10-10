@@ -1,0 +1,33 @@
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.bubble {
+  background: transparent;
+
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  line-height: 1.65;
+  max-width: 70ch;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--font-sm);
+}
+.user {
+  flex-direction: row-reverse;
+  margin-left: 12%;
+}
+.user .bubble {
+  background: var(--surface-user);
+  border-color: var(--border-user);
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-round);
+  background: var(--surface-inset);
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+}

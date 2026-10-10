@@ -8,8 +8,14 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from rag import conversation
+from rag import discovery as ds
 from rag import session as ss
+from rag.catalog import router as catalog_router
 from rag.clarify import FIXED, Question
+from rag.comparison import display_differences
+from rag.discovery import DiscoveryOut
+from rag.index import CODES, POSITIONS, RAW, VECTORS
 from rag.ktru import value_text
 from rag.search import Index
 from rag.session import InputError, Session, Stage, StageError
@@ -23,11 +29,15 @@ locks: dict[str, asyncio.Lock] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    app.state.index = await asyncio.to_thread(Index)
+    app.state.index = None
+    app.state.ready = all(path.exists() for path in (CODES, POSITIONS, RAW, VECTORS))
+    if app.state.ready:
+        app.state.index = await asyncio.to_thread(Index)
     yield
 
 
 app = FastAPI(title="RAG КТРУ", lifespan=lifespan)
+app.include_router(catalog_router)
 
 
 @app.exception_handler(StageError)
@@ -70,6 +80,7 @@ class QuestionOut(BaseModel):
 class CandidateOut(BaseModel):
     code: str
     name: str
+    differences: dict[str, str]
 
 
 class PositionOut(BaseModel):
@@ -94,7 +105,14 @@ class ExtraIn(BaseModel):
     reason: str = ""
 
 
+class ChatMessageOut(BaseModel):
+    id: str
+    role: str
+    text: str
+
+
 class SessionOut(BaseModel):
+    messages: list[ChatMessageOut]
     id: str
     stage: Stage
     description: str
@@ -112,6 +130,7 @@ class SessionOut(BaseModel):
     extras_allowed: bool
     missing: list[str]
     message: str | None
+    selection_reason: str | None
 
 
 class VerdictOut(BaseModel):
@@ -127,7 +146,9 @@ class StartIn(BaseModel):
 
 class AnswerIn(BaseModel):
     option: int | None = Field(None, description="номер варианта с 1; 0 — не знаю")
-    text: str | None = Field(None, description="ответ свободным текстом, разбирает Haiku")
+    text: str | None = Field(
+        None, description="ответ свободным текстом, разбирает Haiku"
+    )
 
 
 class PickIn(BaseModel):
@@ -135,27 +156,38 @@ class PickIn(BaseModel):
 
 
 class GroupIn(BaseModel):
+    automatic: bool = False
     code: str = Field(description="код из groups")
 
 
 class ValuesIn(BaseModel):
-    values: dict[str, list[str]] = Field(description="характеристика → варианты; [] — сбросить")
+    values: dict[str, list[str]] = Field(
+        description="характеристика → варианты; [] — сбросить"
+    )
 
 
 class TextIn(BaseModel):
     text: str
-    name: str | None = Field(None, description="только эта характеристика; без него — все")
+    name: str | None = Field(
+        None, description="только эта характеристика; без него — все"
+    )
 
 
 def _question(q: Question) -> QuestionOut:
     return QuestionOut(
-        name=q.name, required=q.required, multiple=q.multiple, options=list(q.options), counts=list(q.counts)
+        name=q.name,
+        required=q.required,
+        multiple=q.multiple,
+        options=list(q.options),
+        counts=list(q.counts),
     )
 
 
 def view(s: Session) -> SessionOut:
     p = s.position
+    comparison = display_differences(s.leaves)
     return SessionOut(
+        messages=[ChatMessageOut(**m) for m in s.messages],
         id=s.id,
         stage=s.stage,
         description=s.description,
@@ -174,7 +206,10 @@ def view(s: Session) -> SessionOut:
         ],
         group=s.group.code,
         answers=s.answers,
-        candidates=[CandidateOut(code=c.code, name=c.name) for c in s.leaves],
+        candidates=[
+            CandidateOut(code=c.code, name=c.name, differences=comparison[c.code])
+            for c in s.leaves
+        ],
         question=_question(q) if (q := s.question) else None,
         position=PositionOut(
             code=p.code,
@@ -203,6 +238,7 @@ def view(s: Session) -> SessionOut:
         extras_allowed=s.extras_allowed,
         missing=s.missing,
         message=s.message,
+        selection_reason=s.selection_reason,
     )
 
 
@@ -214,13 +250,22 @@ def _get(session_id: str) -> tuple[Session, asyncio.Lock]:
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
+async def health(request: Request) -> dict[str, str]:
+    require_index(request)
     return {"status": "ok"}
+
+
+def require_index(request: Request) -> Index:
+    if request.app.state.index is None:
+        raise HTTPException(
+            503, "индекс КТРУ не настроен: задайте RAG_DATA и перезапустите сервис"
+        )
+    return request.app.state.index
 
 
 @app.post("/sessions", status_code=201)
 async def create(body: StartIn, request: Request) -> SessionOut:
-    s = await ss.start(request.app.state.index, body.description)
+    s = await ss.start(require_index(request), body.description)
     sessions[s.id] = s
     locks[s.id] = asyncio.Lock()
     return view(s)
@@ -245,9 +290,9 @@ async def answer(session_id: str, body: AnswerIn, request: Request) -> SessionOu
         raise InputError("нужно ровно одно из option и text")
     async with lock:
         if body.text is not None:
-            await ss.reply(s, request.app.state.index, body.text)
+            await ss.reply(s, require_index(request), body.text)
         else:
-            await ss.choose(s, request.app.state.index, body.option or None)
+            await ss.choose(s, require_index(request), body.option or None)
     return view(s)
 
 
@@ -255,7 +300,7 @@ async def answer(session_id: str, body: AnswerIn, request: Request) -> SessionOu
 async def pick(session_id: str, body: PickIn, request: Request) -> SessionOut:
     s, lock = _get(session_id)
     async with lock:
-        await ss.pick(s, request.app.state.index, body.code)
+        await ss.pick(s, require_index(request), body.code)
     return view(s)
 
 
@@ -263,7 +308,7 @@ async def pick(session_id: str, body: PickIn, request: Request) -> SessionOut:
 async def switch_group(session_id: str, body: GroupIn, request: Request) -> SessionOut:
     s, lock = _get(session_id)
     async with lock:
-        await ss.switch_group(s, request.app.state.index, body.code)
+        await ss.switch_group(s, require_index(request), body.code)
     return view(s)
 
 
@@ -283,6 +328,14 @@ async def describe(session_id: str, body: TextIn) -> SessionOut:
     return view(s)
 
 
+@app.post("/sessions/{session_id}/messages")
+async def message(session_id: str, body: TextIn, request: Request) -> SessionOut:
+    s, lock = _get(session_id)
+    async with lock:
+        await conversation.respond(s, require_index(request), body.text)
+    return view(s)
+
+
 @app.post("/sessions/{session_id}/extras")
 async def add_extra(session_id: str, body: ExtraIn) -> VerdictOut:
     s, lock = _get(session_id)
@@ -292,7 +345,9 @@ async def add_extra(session_id: str, body: ExtraIn) -> VerdictOut:
     return VerdictOut(
         accepted=verdict.ok,
         problems=verdict.problems,
-        fixed=ExtraIn(name=fixed.name, value=fixed.value, reason=fixed.reason) if fixed else None,
+        fixed=ExtraIn(name=fixed.name, value=fixed.value, reason=fixed.reason)
+        if fixed
+        else None,
         session=view(s),
     )
 
@@ -310,6 +365,40 @@ async def finish(session_id: str) -> dict:
     s, lock = _get(session_id)
     async with lock:
         return ss.finish(s)
+
+
+@app.post("/searches", status_code=201)
+async def create_search(body: StartIn, request: Request) -> DiscoveryOut:
+    require_index(request)
+    return ds.view(await ds.create(body.description))
+
+
+@app.post("/searches/{search_id}/candidates")
+async def search_candidates(search_id: str, request: Request) -> DiscoveryOut:
+    search = ds.get(search_id)
+    async with search.lock:
+        await ds.retrieve(search, require_index(request))
+    return ds.view(search)
+
+
+@app.post("/searches/{search_id}/rerank")
+async def rank_candidates(search_id: str) -> DiscoveryOut:
+    search = ds.get(search_id)
+    async with search.lock:
+        await ds.rank(search)
+    return ds.view(search)
+
+
+@app.post("/searches/{search_id}/select")
+async def select_candidate(
+    search_id: str, body: GroupIn, request: Request
+) -> SessionOut:
+    search = ds.get(search_id)
+    async with search.lock:
+        s = await ds.select(search, require_index(request), body.code, body.automatic)
+        sessions[s.id] = s
+        locks[s.id] = asyncio.Lock()
+    return view(s)
 
 
 def run() -> None:

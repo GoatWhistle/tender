@@ -1,0 +1,63 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.field label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+.required {
+  color: var(--status-danger);
+}
+.inputWrap {
+  display: flex;
+  align-items: center;
+  border: var(--line) solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-panel);
+  min-height: var(--control-size);
+}
+.inputWrap input {
+  border: 0;
+  outline: none;
+  min-width: 0;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: inherit;
+  font-size: var(--font-md);
+}
+.suffix {
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding-right: var(--space-4);
+  color: var(--text-muted);
+  font-size: var(--font-xs);
+}
+.alert {
+  color: var(--status-danger);
+  padding-right: var(--space-3);
+  display: flex;
+}
+.field[data-invalid="true"] .inputWrap {
+  border-color: var(--status-danger);
+}
+.help {
+  font-size: var(--font-xs);
+  line-height: 1.6;
+}
+
+.inputWrap:has(input:focus-visible) {
+  border-color: var(--focus-ring);
+}
+.inputWrap input::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}

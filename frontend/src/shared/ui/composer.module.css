@@ -1,0 +1,90 @@
+.form {
+  padding: var(--space-4) clamp(var(--space-page), 8vw, 160px)
+    max(var(--space-3), env(safe-area-inset-bottom));
+}
+.composer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
+  border: var(--line-strong) solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-panel);
+}
+.composer textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control-size-large);
+  resize: none;
+  field-sizing: content;
+  max-height: 160px;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  outline: none;
+  line-height: 1.5;
+  font-size: var(--font-md);
+  font-weight: var(--weight-semibold);
+  padding: var(--space-3) 0;
+}
+.composer textarea::placeholder {
+  color: var(--text-muted);
+}
+.composer:has(textarea:focus-visible) {
+  border-color: var(--focus-ring);
+}
+.send {
+  width: var(--control-size-large);
+  height: var(--control-size-large);
+  min-height: var(--control-size-large);
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+}
+.send:disabled {
+  background: var(--surface-inset);
+  border-color: var(--surface-inset);
+  color: var(--text-muted);
+  opacity: 1;
+}
+.count {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: var(--control-size-large);
+  color: var(--text-muted);
+  font-size: var(--font-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 47.99rem) {
+  .form {
+    padding: var(--space-3) var(--space-page) max(var(--space-2), env(safe-area-inset-bottom));
+  }
+  .composer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+  .composer textarea {
+    grid-column: 1 / -1;
+    padding: var(--space-2) 0;
+    min-height: var(--control-size);
+    max-height: 96px;
+  }
+  .composer textarea:placeholder-shown {
+    field-sizing: fixed;
+    height: var(--space-16);
+  }
+  .count {
+    justify-self: end;
+    height: var(--control-size);
+    padding-inline: var(--space-2);
+  }
+  .send {
+    width: var(--control-size);
+    height: var(--control-size);
+    min-height: var(--control-size);
+  }
+}

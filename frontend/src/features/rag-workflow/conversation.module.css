@@ -1,0 +1,29 @@
+.conversation {
+  flex-shrink: 0;
+  border-top: var(--line) solid var(--border-default);
+}
+.feedback {
+  padding: var(--space-3) var(--space-page) 0;
+}
+.reply {
+  max-height: 12vh;
+  overflow: auto;
+  white-space: pre-line;
+  color: var(--text-secondary);
+  font-size: var(--font-md);
+  overflow-wrap: anywhere;
+  overscroll-behavior: contain;
+}
+.history {
+  max-height: 20vh;
+  overflow: auto;
+  display: grid;
+  gap: var(--space-3);
+}
+.history p {
+  display: grid;
+  gap: var(--space-1);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}

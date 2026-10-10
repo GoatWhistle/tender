@@ -1,0 +1,19 @@
+:root {
+  --white: #fff;
+  --slate-25: #f8fafc;
+  --slate-50: #f2f6fa;
+  --slate-100: #eaf0f7;
+  --slate-200: #dce5f0;
+  --slate-400: #77869c;
+  --slate-500: #63718a;
+  --slate-700: #34415a;
+  --slate-900: #182236;
+  --blue-50: #e8f1ff;
+  --blue-100: #d5e5ff;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --red-600: #d92323;
+  --red-50: #fff2f1;
+  --green-600: #18794e;
+  --gray-logo: #929999;
+}

@@ -16,7 +16,9 @@ SYSTEM_PROMPT = (
     "диапазонов выбери диапазон, в который попадает указанное значение, с учётом единиц "
     "измерения. У характеристик с пометкой «можно несколько» перечисли все упомянутые "
     "варианты, у остальных — ровно один. Если текст не позволяет выбрать вариант однозначно, "
-    "характеристику не включай. Не додумывай значения, которых нет в тексте."
+    "характеристику не включай. Не додумывай значения, которых нет в тексте. "
+    "Текст содержит хронологию уточнений: последнее явное исправление заменяет старое. "
+    "Учитывай отрицания; просьба удалить значение отменяет его извлечение."
 )
 
 EXTRACT_SCHEMA = {
@@ -61,7 +63,9 @@ class Question:
     multiple: bool = False
 
 
-async def structured(prompt: str, system_prompt: str, schema: dict, model: str = "haiku") -> dict:
+async def structured(
+    prompt: str, system_prompt: str, schema: dict, model: str = "haiku"
+) -> dict:
     result: ResultMessage | None = None
     with tempfile.TemporaryDirectory(prefix="rag-agent-") as cwd:
         options = ClaudeAgentOptions(
@@ -86,29 +90,52 @@ def _fixed(p: Position) -> dict[str, Characteristic]:
     return {c.name: c for c in p.characteristics if c.kind == FIXED}
 
 
+def _options(p: Position) -> dict[str, frozenset[str]]:
+    values = {name: _labels(c) for name, c in _fixed(p).items()}
+    if p.units:
+        values["Единица поставки"] = frozenset(p.units)
+    return values
+
+
 def _labels(c: Characteristic) -> frozenset[str]:
     return frozenset(t for t in (value_text(v) for v in c.values) if t)
 
 
 def questions(leaves: list[Position], answers: dict[str, str | None]) -> list[Question]:
-    per_leaf = [{n: _labels(c) for n, c in _fixed(p).items()} for p in leaves]
-    required = {n for p in leaves for n, c in _fixed(p).items() if c.required}
+    per_leaf = [_options(p) for p in leaves]
+    required = {n for p in leaves for n, c in _fixed(p).items() if c.required} | {
+        "Единица поставки"
+    }
     out = []
     for name in sorted({n for chars in per_leaf for n in chars} - answers.keys()):
         if len({chars.get(name) for chars in per_leaf}) < 2:
             continue
         counts = Counter(label for chars in per_leaf for label in chars.get(name, ()))
         options = sorted(counts)
-        out.append(Question(name, name in required, tuple(options), tuple(counts[o] for o in options)))
-    out.sort(key=lambda q: (not q.required, -len(q.options), q.name))
+        out.append(
+            Question(
+                name,
+                name in required,
+                tuple(options),
+                tuple(counts[o] for o in options),
+            )
+        )
+    out.sort(
+        key=lambda q: (
+            q.name != "Единица поставки",
+            not q.required,
+            max(q.counts, default=0),
+            q.name,
+        )
+    )
     return out
 
 
 def narrow(leaves: list[Position], answers: dict[str, str | None]) -> list[Position]:
     def fits(p: Position) -> bool:
-        chars = _fixed(p)
+        chars = _options(p)
         return all(
-            label is None or name not in chars or label in _labels(chars[name])
+            label is None or name not in chars or label in chars[name]
             for name, label in answers.items()
         )
 
@@ -130,13 +157,19 @@ async def extract(
     if not qs:
         return {}
     out = {}
-    found = await structured(build_prompt(text, qs), SYSTEM_PROMPT, EXTRACT_SCHEMA, model)
+    found = await structured(
+        build_prompt(text, qs), SYSTEM_PROMPT, EXTRACT_SCHEMA, model
+    )
     for item in found["answers"]:
         i = item["id"]
         if not 0 <= i < len(qs):
             continue
         q = qs[i]
-        picked = tuple(dict.fromkeys(q.options[j] for j in item["options"] if 0 <= j < len(q.options)))
+        picked = tuple(
+            dict.fromkeys(
+                q.options[j] for j in item["options"] if 0 <= j < len(q.options)
+            )
+        )
         if picked and (q.multiple or len(picked) == 1):
             out[q.name] = picked
     return out

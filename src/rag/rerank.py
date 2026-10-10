@@ -24,6 +24,8 @@ SYSTEM_PROMPT = (
 RERANK_SCHEMA = {
     "type": "object",
     "properties": {
+        "exact_match_id": {"type": ["integer", "null"]},
+        "exact_match_reason": {"type": "string"},
         "ranking": {
             "type": "array",
             "items": {
@@ -38,7 +40,7 @@ RERANK_SCHEMA = {
             },
         },
     },
-    "required": ["ranking"],
+    "required": ["ranking", "exact_match_id", "exact_match_reason"],
     "additionalProperties": False,
 }
 
@@ -54,6 +56,8 @@ class Ranked:
 class RerankResult:
     ranked: list[Ranked]
     result: ResultMessage
+    exact_match_code: str | None = None
+    exact_match_reason: str | None = None
 
 
 def candidate_card(n: int, hit: Hit) -> str:
@@ -78,11 +82,18 @@ def build_prompt(description: str, hits: list[Hit]) -> str:
         f"Описание товара от поставщика:\n{description}\n\n"
         f"Кандидаты КТРУ:\n\n{cards}\n\n"
         "Верни всех кандидатов, отсортированных от самого подходящего к наименее подходящему. "
-        "relevance — 0..100, reason — одно короткое предложение."
+        "relevance — 0..100, reason — одно короткое предложение. "
+        "exact_match_id укажи только при полном однозначном совпадении группы с описанием: "
+        "назначение и все заявленные свойства подходят, relevance=100, нет другой столь же "
+        "подходящей группы и не нужно додумывать различающий признак. Иначе null. "
+        "Не выбирай просто лучшего среди неточных совпадений. В exact_match_reason кратко "
+        "объясни совпадение для пользователя, либо причину необходимости выбора."
     )
 
 
-async def rerank(description: str, hits: list[Hit], model: str = "sonnet") -> RerankResult:
+async def rerank(
+    description: str, hits: list[Hit], model: str = "sonnet"
+) -> RerankResult:
     result: ResultMessage | None = None
     with tempfile.TemporaryDirectory(prefix="rag-agent-") as cwd:
         options = ClaudeAgentOptions(
@@ -94,7 +105,9 @@ async def rerank(description: str, hits: list[Hit], model: str = "sonnet") -> Re
             cwd=cwd,
             output_format={"type": "json_schema", "schema": RERANK_SCHEMA},
         )
-        async for message in query(prompt=build_prompt(description, hits), options=options):
+        async for message in query(
+            prompt=build_prompt(description, hits), options=options
+        ):
             if isinstance(message, ResultMessage):
                 result = message
     if result is None:
@@ -108,7 +121,21 @@ async def rerank(description: str, hits: list[Hit], model: str = "sonnet") -> Re
         if 0 <= i < len(hits) and i not in seen:
             seen.add(i)
             ranked.append(Ranked(hits[i], item["relevance"], item["reason"]))
-    return RerankResult(ranked, result)
+    ranked.sort(key=lambda item: item.relevance, reverse=True)
+    exact_id = result.structured_output.get("exact_match_id")
+    exact_code = None
+    if (
+        isinstance(exact_id, int)
+        and 0 <= exact_id < len(hits)
+        and ranked
+        and ranked[0].hit.position.code == hits[exact_id].position.code
+        and ranked[0].relevance == 100
+        and all(item.relevance < 100 for item in ranked[1:])
+    ):
+        exact_code = hits[exact_id].position.code
+    return RerankResult(
+        ranked, result, exact_code, result.structured_output.get("exact_match_reason")
+    )
 
 
 def run() -> None:

@@ -1,11 +1,13 @@
 import asyncio
 import math
 import os
+import ssl
 import sys
 import tempfile
 import time
 
 import aiohttp
+import truststore
 from claude_agent_sdk import (
     ClaudeAgentOptions,
     ResultMessage,
@@ -31,12 +33,16 @@ load_dotenv()
 URL = os.environ.get("EMBEDDINGS_URL", "https://api.polza.ai/api/v1")
 MODEL = os.environ.get("EMBEDDINGS_MODEL", "qwen/qwen3-embedding-8b")
 API_KEY = os.environ.get("EMBEDDINGS_API_KEY", "")
+SSL_CONTEXT = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
 
 async def embed(session: aiohttp.ClientSession, texts: list[str]) -> EmbeddingResponse:
     headers = {"Authorization": f"Bearer {API_KEY}"} if API_KEY else {}
     async with session.post(
-        f"{URL}/embeddings", json={"model": MODEL, "input": texts}, headers=headers
+        f"{URL}/embeddings",
+        json={"model": MODEL, "input": texts},
+        headers=headers,
+        ssl=SSL_CONTEXT,
     ) as resp:
         resp.raise_for_status()
         body = await resp.json()

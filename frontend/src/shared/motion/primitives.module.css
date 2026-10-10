@@ -1,0 +1,15 @@
+.enter {
+  animation: var(--motion-enter);
+}
+.result {
+  min-width: 0;
+}
+.spinner {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: var(--line-strong) solid var(--border-user);
+  border-top-color: var(--action-primary);
+  border-radius: var(--radius-round);
+  animation: var(--motion-spin);
+}

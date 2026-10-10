@@ -5,6 +5,45 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/catalog/{code}": {
+      "get": {
+        "summary": "Position Details",
+        "operationId": "position_details_catalog__code__get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogPosition"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -379,6 +418,55 @@
         }
       }
     },
+    "/sessions/{session_id}/messages": {
+      "post": {
+        "summary": "Message",
+        "operationId": "message_sessions__session_id__messages_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/{session_id}/extras": {
       "post": {
         "summary": "Add Extra",
@@ -516,6 +604,171 @@
           }
         }
       }
+    },
+    "/searches": {
+      "post": {
+        "summary": "Create Search",
+        "operationId": "create_search_searches_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searches/{search_id}/candidates": {
+      "post": {
+        "summary": "Search Candidates",
+        "operationId": "search_candidates_searches__search_id__candidates_post",
+        "parameters": [
+          {
+            "name": "search_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Search Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searches/{search_id}/rerank": {
+      "post": {
+        "summary": "Rank Candidates",
+        "operationId": "rank_candidates_searches__search_id__rerank_post",
+        "parameters": [
+          {
+            "name": "search_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Search Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searches/{search_id}/select": {
+      "post": {
+        "summary": "Select Candidate",
+        "operationId": "select_candidate_searches__search_id__select_post",
+        "parameters": [
+          {
+            "name": "search_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Search Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -559,14 +812,110 @@
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "differences": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Differences"
           }
         },
         "type": "object",
         "required": [
           "code",
-          "name"
+          "name",
+          "differences"
         ],
         "title": "CandidateOut"
+      },
+      "CatalogCharacteristic": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Values"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "kind",
+          "required",
+          "values"
+        ],
+        "title": "CatalogCharacteristic"
+      },
+      "CatalogPosition": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "okpd2": {
+            "type": "string",
+            "title": "Okpd2"
+          },
+          "okpd2_name": {
+            "type": "string",
+            "title": "Okpd2 Name"
+          },
+          "units": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Units"
+          },
+          "rubrics": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Rubrics"
+          },
+          "characteristics": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogCharacteristic"
+            },
+            "type": "array",
+            "title": "Characteristics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "okpd2",
+          "okpd2_name",
+          "units",
+          "rubrics",
+          "characteristics"
+        ],
+        "title": "CatalogPosition"
       },
       "CharacteristicOut": {
         "properties": {
@@ -606,6 +955,110 @@
           "values"
         ],
         "title": "CharacteristicOut"
+      },
+      "ChatMessageOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "text"
+        ],
+        "title": "ChatMessageOut"
+      },
+      "DiscoveryOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "review",
+              "candidates",
+              "ranked"
+            ],
+            "title": "Stage"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "corrected": {
+            "type": "string",
+            "title": "Corrected"
+          },
+          "fixes": {
+            "items": {
+              "$ref": "#/components/schemas/SearchFix"
+            },
+            "type": "array",
+            "title": "Fixes"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Issues"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/SearchCandidate"
+            },
+            "type": "array",
+            "title": "Candidates"
+          },
+          "auto_select_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Select Code"
+          },
+          "auto_select_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Select Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "stage",
+          "description",
+          "corrected",
+          "fixes",
+          "issues",
+          "candidates",
+          "auto_select_code",
+          "auto_select_reason"
+        ],
+        "title": "DiscoveryOut"
       },
       "ExtraIn": {
         "properties": {
@@ -655,6 +1108,11 @@
       },
       "GroupIn": {
         "properties": {
+          "automatic": {
+            "type": "boolean",
+            "title": "Automatic",
+            "default": false
+          },
           "code": {
             "type": "string",
             "title": "Code",
@@ -801,8 +1259,96 @@
         ],
         "title": "QuestionOut"
       },
+      "SearchCandidate": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "okpd2": {
+            "type": "string",
+            "title": "Okpd2"
+          },
+          "relevance": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevance"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "differences": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Differences"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "code",
+          "okpd2",
+          "differences"
+        ],
+        "title": "SearchCandidate"
+      },
+      "SearchFix": {
+        "properties": {
+          "before": {
+            "type": "string",
+            "title": "Before"
+          },
+          "after": {
+            "type": "string",
+            "title": "After"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          }
+        },
+        "type": "object",
+        "required": [
+          "before",
+          "after",
+          "kind"
+        ],
+        "title": "SearchFix"
+      },
       "SessionOut": {
         "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessageOut"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
           "id": {
             "type": "string",
             "title": "Id"
@@ -921,10 +1467,22 @@
               }
             ],
             "title": "Message"
+          },
+          "selection_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection Reason"
           }
         },
         "type": "object",
         "required": [
+          "messages",
           "id",
           "stage",
           "description",
@@ -941,7 +1499,8 @@
           "extras",
           "extras_allowed",
           "missing",
-          "message"
+          "message",
+          "selection_reason"
         ],
         "title": "SessionOut"
       },
