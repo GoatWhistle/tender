@@ -1,0 +1,1095 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RAG КТРУ",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "summary": "Create",
+        "operationId": "create_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}": {
+      "get": {
+        "summary": "Read",
+        "operationId": "read_sessions__session_id__get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete",
+        "operationId": "delete_sessions__session_id__delete",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/answer": {
+      "post": {
+        "summary": "Answer",
+        "operationId": "answer_sessions__session_id__answer_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/pick": {
+      "post": {
+        "summary": "Pick",
+        "operationId": "pick_sessions__session_id__pick_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PickIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/group": {
+      "post": {
+        "summary": "Switch Group",
+        "operationId": "switch_group_sessions__session_id__group_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/characteristics": {
+      "patch": {
+        "summary": "Set Values",
+        "operationId": "set_values_sessions__session_id__characteristics_patch",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValuesIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/characteristics/text": {
+      "post": {
+        "summary": "Describe",
+        "operationId": "describe_sessions__session_id__characteristics_text_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/extras": {
+      "post": {
+        "summary": "Add Extra",
+        "operationId": "add_extra_sessions__session_id__extras_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtraIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/extras/{n}": {
+      "delete": {
+        "summary": "Remove Extra",
+        "operationId": "remove_extra_sessions__session_id__extras__n__delete",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "n",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "N"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/finish": {
+      "post": {
+        "summary": "Finish",
+        "operationId": "finish_sessions__session_id__finish_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Finish Sessions  Session Id  Finish Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnswerIn": {
+        "properties": {
+          "option": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Option",
+            "description": "номер варианта с 1; 0 — не знаю"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text",
+            "description": "ответ свободным текстом, разбирает Haiku"
+          }
+        },
+        "type": "object",
+        "title": "AnswerIn"
+      },
+      "CandidateOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name"
+        ],
+        "title": "CandidateOut"
+      },
+      "CharacteristicOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          },
+          "multiple": {
+            "type": "boolean",
+            "title": "Multiple"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Values"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "required",
+          "multiple",
+          "options",
+          "values"
+        ],
+        "title": "CharacteristicOut"
+      },
+      "ExtraIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "ExtraIn"
+      },
+      "FixOut": {
+        "properties": {
+          "before": {
+            "type": "string",
+            "title": "Before"
+          },
+          "after": {
+            "type": "string",
+            "title": "After"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          }
+        },
+        "type": "object",
+        "required": [
+          "before",
+          "after",
+          "kind"
+        ],
+        "title": "FixOut"
+      },
+      "GroupIn": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "код из groups"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "GroupIn"
+      },
+      "GroupOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "okpd2": {
+            "type": "string",
+            "title": "Okpd2"
+          },
+          "relevance": {
+            "type": "integer",
+            "title": "Relevance"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "okpd2",
+          "relevance",
+          "reason"
+        ],
+        "title": "GroupOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PickIn": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "PickIn"
+      },
+      "PositionOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "okpd2": {
+            "type": "string",
+            "title": "Okpd2"
+          },
+          "okpd2_name": {
+            "type": "string",
+            "title": "Okpd2 Name"
+          },
+          "fixed": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Fixed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "okpd2",
+          "okpd2_name",
+          "fixed"
+        ],
+        "title": "PositionOut"
+      },
+      "QuestionOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          },
+          "multiple": {
+            "type": "boolean",
+            "title": "Multiple"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "counts": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Counts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "required",
+          "multiple",
+          "options",
+          "counts"
+        ],
+        "title": "QuestionOut"
+      },
+      "SessionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/Stage"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "corrected": {
+            "type": "string",
+            "title": "Corrected"
+          },
+          "fixes": {
+            "items": {
+              "$ref": "#/components/schemas/FixOut"
+            },
+            "type": "array",
+            "title": "Fixes"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Issues"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/GroupOut"
+            },
+            "type": "array",
+            "title": "Groups",
+            "description": "группы после ранжирования"
+          },
+          "group": {
+            "type": "string",
+            "title": "Group",
+            "description": "код группы, по которой идёт уточнение"
+          },
+          "answers": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Answers"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateOut"
+            },
+            "type": "array",
+            "title": "Candidates"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "position": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PositionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "characteristics": {
+            "items": {
+              "$ref": "#/components/schemas/CharacteristicOut"
+            },
+            "type": "array",
+            "title": "Characteristics"
+          },
+          "extras": {
+            "items": {
+              "$ref": "#/components/schemas/ExtraIn"
+            },
+            "type": "array",
+            "title": "Extras"
+          },
+          "extras_allowed": {
+            "type": "boolean",
+            "title": "Extras Allowed"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "stage",
+          "description",
+          "corrected",
+          "fixes",
+          "issues",
+          "groups",
+          "group",
+          "answers",
+          "candidates",
+          "question",
+          "position",
+          "characteristics",
+          "extras",
+          "extras_allowed",
+          "missing",
+          "message"
+        ],
+        "title": "SessionOut"
+      },
+      "Stage": {
+        "type": "string",
+        "enum": [
+          "clarify",
+          "pick",
+          "spec",
+          "done",
+          "failed"
+        ],
+        "title": "Stage"
+      },
+      "StartIn": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "title": "StartIn"
+      },
+      "TextIn": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "только эта характеристика; без него — все"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "TextIn"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ValuesIn": {
+        "properties": {
+          "values": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Values",
+            "description": "характеристика → варианты; [] — сбросить"
+          }
+        },
+        "type": "object",
+        "required": [
+          "values"
+        ],
+        "title": "ValuesIn"
+      },
+      "VerdictOut": {
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "title": "Accepted"
+          },
+          "problems": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Problems"
+          },
+          "fixed": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExtraIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session": {
+            "$ref": "#/components/schemas/SessionOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "accepted",
+          "problems",
+          "fixed",
+          "session"
+        ],
+        "title": "VerdictOut"
+      }
+    }
+  }
+}

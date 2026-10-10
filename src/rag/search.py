@@ -50,6 +50,15 @@ class Index:
             self.positions: dict[str, Position] = pickle.load(f)
         with RAW.open("rb") as f:
             self.raw: dict[str, dict[str, Any]] = pickle.load(f)
+        self.children: dict[str, list[str]] = {}
+        for p in self.positions.values():
+            if p.parent:
+                self.children.setdefault(p.parent, []).append(p.code)
+
+    def leaves(self, p: Position) -> list[Position]:
+        group = p.parent if p.parent in self.positions else p.code
+        kids = sorted(self.children.get(group, []))
+        return [self.positions[c] for c in kids] or [self.positions[group]]
 
     def row(self, i: int) -> tuple[Position, dict[str, Any]]:
         code = self.codes[i]
