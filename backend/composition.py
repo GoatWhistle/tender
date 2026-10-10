@@ -78,6 +78,7 @@ def build_usecases[U: UnitOfWork](
     enum_matcher: EnumMatcher | None = None,
     value_aliases: ValueAliases | None = None,
     spelling: SpellingService | None = None,
+    min_similarity: float = 0.0,
 ) -> Usecases[U]:
     r = repositories
     vectors_factory = r.saved_vectors
@@ -113,6 +114,8 @@ def build_usecases[U: UnitOfWork](
                 if enum_matcher is not None
                 else None,
                 spelling=spelling,
+                decision=checked_decision(decision) if decision else None,
+                min_similarity=min_similarity,
             )
         )
         if sessions_factory and fact_extractor is not None

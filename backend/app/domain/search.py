@@ -40,6 +40,10 @@ class SearchHit:
 
 @dataclass(frozen=True)
 class SearchResult:
+    """`similarity` — косинус запроса с ближайшей группой векторного поиска: RRF его теряет, а
+    без него мусорный текст не отличить от точного совпадения. `None` — векторов нет."""
+
     description: str
     groups: tuple[SearchHit, ...]
     messages: tuple[str, ...] = ()
+    similarity: float | None = None

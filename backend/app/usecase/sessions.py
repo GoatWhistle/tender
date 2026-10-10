@@ -33,7 +33,9 @@ from app.domain.errors import (
 )
 from app.domain.fact_edits import INACTIVE, FactInput, apply_history, reconcile
 from app.domain.facts import CheckResult, Fact, FactSource, RuleCheck, component_key, normalized
+from app.domain.inference import ChoiceOption, ChoiceQuestion
 from app.domain.rules import check_rule, explain, selection_conflict, supported
+from app.domain.search import SearchResult
 from app.domain.sessions import (
     Alternative,
     AnalysisError,
@@ -52,6 +54,7 @@ from app.usecase.diagnostics import Diagnostics
 from app.usecase.enum_mapping import EnumMapper
 from app.usecase.interface import (
     CatalogRepository,
+    DecisionBackend,
     FactExtractor,
     GroupSearcher,
     SessionsRepository,
@@ -60,8 +63,24 @@ from app.usecase.interface import (
 )
 from app.usecase.spelling import spelling_diagnostics
 
+# Вопрос decision-модели, описан ли товар: ближайшая группа есть у любой строки, и косинус
+# мусора доходит до косинуса настоящих товаров (evals/reports/2026-10-10-out-of-scope.md).
+RELEVANCE = ChoiceQuestion(
+    "relevance",
+    "Что это за текст?",
+    (
+        ChoiceOption("product", "Описание товара или изделия"),
+        ChoiceOption("junk", "Бессмысленный набор символов или текст не о товаре"),
+    ),
+)
+JUNK_PROBABILITY = 0.5
+OUT_OF_SCOPE = "Описание не похоже на товар: опишите, что это, из чего и какого размера"
+
 
 class Sessions:
+    """`min_similarity` — косинус ближайшей группы, ниже которого текст сразу вне справочника;
+    выше него `decision` проверяет, описан ли товар. Без `decision` проверяется только порог."""
+
     def __init__(
         self,
         uow: UnitOfWork,
@@ -72,10 +91,14 @@ class Sessions:
         enum_mapper: EnumMapper | None = None,
         diagnostics: Diagnostics | None = None,
         spelling: SpellingService | None = None,
+        decision: DecisionBackend | None = None,
+        min_similarity: float = 0.0,
     ) -> None:
         self._enum_mapper = enum_mapper
         self._spelling = spelling
         self._diagnostics = diagnostics
+        self._decision = decision
+        self._min_similarity = min_similarity
         self._fact_extractor = fact_extractor
         self._search = search
         self._catalog = catalog
@@ -132,33 +155,40 @@ class Sessions:
                     errors=(*state.errors, *spelling_diagnostics(self._spelling, messages[-1])),
                 )
             try:
-                result = self._search.run(
-                    "\n".join(m.text for m in messages), category=None, limit=5
-                )
+                description = "\n".join(m.text for m in messages)
+                result = self._search.run(description, category=None, limit=5)
                 if not result.groups:
                     raise CatalogEmpty()
-                state = replace(
-                    state,
-                    alternatives=tuple(
-                        Alternative(
-                            hit.group.code,
-                            hit.group.name,
-                            hit.group.category,
-                            hit.score,
-                            {"lexical": hit.lexical, "vector": hit.vector, "synonym": hit.synonym},
-                        )
-                        for hit in result.groups[1:5]
-                    ),
-                    warnings=result.messages,
-                )
-                selected = result.groups[0].group
-                group = self._catalog_group(selected)
-                state = self._correct_text(state, previous, group)
-                state = self._analyze(state, group)
+                if self._out_of_scope(description, result):
+                    state = replace(
+                        state,
+                        status=SessionStatus.OUT_OF_SCOPE,
+                        path=None,
+                        candidates=(),
+                        next_question=None,
+                        card_complete=False,
+                        warnings=(*result.messages, OUT_OF_SCOPE),
+                    )
+                else:
+                    group = self._catalog_group(result.groups[0].group)
+                    state = self._correct_text(_with_alternatives(state, result), previous, group)
+                    state = self._analyze(state, group)
             except (ModelFailure, CatalogEmpty) as error:
                 state = _failed(state, error)
             self._sessions.save(Revision(state, key, text))
             return state
+
+    def _out_of_scope(self, description: str, result: SearchResult) -> bool:
+        """Найденное по коду КТРУ или проверенному синониму в справочнике заведомо есть."""
+        top = result.groups[0]
+        if top.found_by == "code" or top.synonym.rank is not None:
+            return False
+        if result.similarity is not None and result.similarity < self._min_similarity:
+            return True
+        if self._decision is None:
+            return False
+        (answer,) = self._decision.choose(description, [RELEVANCE]).answers
+        return answer.probabilities["junk"] >= JUNK_PROBABILITY
 
     def answer(self, session_id: str, question_id: str, option_id: str | None) -> SessionState:
         """Ответ на вопрос последней ревизии: новая ревизия с полным пересчётом без поиска —
@@ -810,6 +840,23 @@ class Sessions:
                 if not supported(c)
             ),
         )
+
+
+def _with_alternatives(state: SessionState, result: SearchResult) -> SessionState:
+    return replace(
+        state,
+        alternatives=tuple(
+            Alternative(
+                hit.group.code,
+                hit.group.name,
+                hit.group.category,
+                hit.score,
+                {"lexical": hit.lexical, "vector": hit.vector, "synonym": hit.synonym},
+            )
+            for hit in result.groups[1:5]
+        ),
+        warnings=result.messages,
+    )
 
 
 def _record_change(
