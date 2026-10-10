@@ -5,6 +5,7 @@ from enum import StrEnum
 
 from app.domain.diagnostics import Diagnostic
 from app.domain.dialog import CommonField, DialogTurn, Question, RequiredField
+from app.domain.enum_mapping import EnumProposal, EnumResolution
 from app.domain.facts import ExclusionReason, Fact, RuleCheck
 from app.domain.search import MethodContribution
 
@@ -89,6 +90,7 @@ class FactEvent:
     after: tuple[Fact, ...]
     group: str
     restored_from: str | None = None
+    message_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -117,6 +119,10 @@ class SessionState:
     fact_history: tuple[FactEvent, ...] = ()
     results_stale: bool = False
     analysis_revision: int | None = None
+    editable_fields: tuple[str, ...] = ()
+
+    enum_proposals: tuple[EnumProposal, ...] = ()
+    enum_resolutions: tuple[EnumResolution, ...] = ()
 
 
 @dataclass(frozen=True)

@@ -156,6 +156,8 @@ export type Candidate = {
 
 export type FactStatus =
   | "accepted_from_text"
+  | "accepted_from_model"
+  | "proposed"
   | "ambiguous"
   | "confirmed_by_user"
   | "derived_from_catalog"
@@ -173,9 +175,19 @@ export type Fact = {
   value: string | [string, string];
   unit_code: string | null;
   kind: "number" | "range" | "text" | "interval";
-  origin: "parser" | "user" | "catalog";
+  origin: "parser" | "user" | "catalog" | "decision";
   status: FactStatus;
   source: { message_id: string; quote: string; start: number; end: number } | null;
+};
+
+export type EnumAction = "accept" | "choose" | "unknown";
+export type EnumProposal = {
+  id: string;
+  characteristic: string;
+  suggested: string[];
+  options: string[];
+  selections: { values: string[]; multiple: boolean }[];
+  reason: string;
 };
 
 export type QuestionOption = { id: string; label: string };
@@ -248,6 +260,7 @@ export type SessionState = {
   }[];
   results_stale?: boolean;
   analysis_revision?: number | null;
+  editable_fields?: string[];
   errors: (AnalysisError | Diagnostic)[];
   normalizations?: Diagnostic[];
   warnings: string[];
@@ -261,13 +274,14 @@ export type SessionState = {
   /** различающие характеристики, на которые ответили «не знаю» */
   unanswered: string[];
   unsupported_rules: { position: string; characteristic: string }[];
+  enum_proposals: EnumProposal[];
 };
 
 export type FactValue = {
   characteristic_name: string;
   raw_value: string;
   raw_unit?: string | null;
-  kind: "text" | "number" | "range";
+  kind: "text" | "number" | "range" | "interval";
   component?: string | null;
 };
 export type FactMutation = Partial<FactValue> & {
@@ -281,6 +295,14 @@ export type FactMutation = Partial<FactValue> & {
 export interface SellerApi {
   mutate(id: string, factId: string | null, body: FactMutation): Promise<SessionState>;
   recalculate(id: string, revision: number): Promise<SessionState>;
+  /** Подтвердить предложение в ожидаемой ревизии сессии. */
+  resolveEnum(
+    id: string,
+    revision: number,
+    proposalId: string,
+    action: EnumAction,
+    values: string[],
+  ): Promise<SessionState>;
   /** POST /api/v1/sessions без тела */
   create(): Promise<SessionState>;
   get(id: string): Promise<SessionState>;

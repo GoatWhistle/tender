@@ -354,3 +354,123 @@ def test_ambiguous_text_correction_requires_component(group_api: Any, table_grou
     assert state["status"] == "conflict"
     assert state["next_question"] is not None
     assert any(f["status"] == "ambiguous" for f in state["facts"])
+
+
+def test_all_stale_mutations_leave_snapshot_unchanged(facts_api: TestClient) -> None:
+    sid, state = start(facts_api, "ширина 1300 мм")
+    url = f"/api/v1/sessions/{sid}"
+    fact = next(f for f in state["facts"] if f["origin"] == "parser")
+    for action in ("edit", "confirm", "delete", "restore", "split", "accept_suggestion"):
+        response = facts_api.patch(
+            f"{url}/facts/{fact['id']}", json={"expected_revision": 0, "action": action}
+        )
+        assert response.status_code == 409 and response.json()["code"] == "stale_revision"
+        assert facts_api.get(url).json() == state
+
+
+def test_explicit_negation_replaces_single_fact(group_api: Any, table_group: Any) -> None:
+    from dataclasses import replace
+
+    from app.domain.catalog import Value
+
+    leaf = table_group.leaves[0]
+    material = replace(
+        leaf.characteristics[1],
+        name="Материал",
+        values=(Value("wood", text="деревянный"), Value("metal", text="металлический")),
+    )
+    client = group_api(replace(table_group, leaves=(replace(leaf, characteristics=(material,)),)))
+    sid, state = start(client, "деревянный")
+    state = client.post(
+        f"/api/v1/sessions/{sid}/messages", json={"text": "нет, не деревянный, металлический"}
+    ).json()
+    assert state["status"] == "resolved"
+    assert state["fact_history"][-1]["action"] == "text_correction"
+    assert [f["value"] for f in state["facts"] if f["status"] == "confirmed_by_user"] == [
+        "металлический"
+    ]
+
+
+def test_catalog_interval_can_change_binding_without_losing_bounds(facts_api: TestClient) -> None:
+    from tests.test_answers import choose
+
+    sid, state = start(facts_api, "стол")
+    state = choose(facts_api, sid, state, "ЛДСП")
+    fact = next(f for f in state["facts"] if f["kind"] == "interval")
+    body = {
+        "action": "edit",
+        "expected_revision": state["revision"],
+        "characteristic_name": fact["characteristic_name"],
+        "raw_value": fact["raw_value"],
+        "raw_unit": fact["raw_unit"],
+        "kind": "interval",
+        "component": "столешница",
+    }
+    response = facts_api.patch(f"/api/v1/sessions/{sid}/facts/{fact['id']}", json=body)
+    assert response.status_code == 200, response.text
+    edited = response.json()["fact_history"][-1]["after"][0]
+    assert edited["bounds"] == fact["bounds"] and edited["component"] == "столешница"
+
+
+def test_product_type_change_searches_new_group_without_reviving_deleted_fact(
+    settings: Any, table_group: Any
+) -> None:
+    from dataclasses import replace
+
+    from app.adapter.facts import DeterministicFactExtractor
+    from app.domain.catalog import Group, Position
+    from app.domain.search import MethodContribution, SearchHit, SearchResult
+    from composition import build_usecases
+    from main import create_app, sql_repositories, sync_catalog
+
+    chairs = Group(
+        replace(table_group.position, code="chairs", name="Стул"),
+        tuple(
+            replace(p, code=p.code.replace("table", "chair"), parent="chairs", name="Стул")
+            for p in table_group.leaves
+        ),
+    )
+
+    class Source:
+        def load(self) -> list[Position]:
+            return [table_group.position, *table_group.leaves, chairs.position, *chairs.leaves]
+
+    class Search:
+        def run(
+            self, description: str, category: str | None = None, limit: int = 10
+        ) -> SearchResult:
+            selected = chairs if "стул" in description else table_group
+            return SearchResult(
+                description,
+                (
+                    SearchHit(
+                        selected.position,
+                        MethodContribution.of(1),
+                        MethodContribution.of(None),
+                        MethodContribution.of(None),
+                    ),
+                ),
+            )
+
+    source = Source()
+    sync_catalog(settings, source)
+    app = create_app(settings, source)
+    app.state.usecases = build_usecases(
+        sql_repositories(),
+        catalog_source=source,
+        searcher=Search(),
+        fact_extractor=DeterministicFactExtractor(),
+    )
+    with TestClient(app) as client:
+        sid, state = start(client, "стол ширина 1300 мм")
+        old = next(f for f in state["facts"] if f["origin"] == "parser")
+        url = f"/api/v1/sessions/{sid}"
+        client.patch(
+            f"{url}/facts/{old['id']}",
+            json={"expected_revision": state["revision"], "action": "delete"},
+        ).raise_for_status()
+        changed = client.post(f"{url}/messages", json={"text": "теперь стул"}).json()
+        assert changed["path"]["group"]["code"] == "chairs"
+        assert changed["candidate_counts"]["compatible"] == 2
+        assert all(c["returned_reason"] is None for c in changed["candidates"])
+        assert next(f for f in changed["facts"] if f["id"] == old["id"])["status"] == "deleted"

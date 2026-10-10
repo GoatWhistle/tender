@@ -2313,6 +2313,26 @@ main > .notice {
   }
 }
 
+.enum-proposal {
+  margin-bottom: 16px;
+}
+.enum-proposal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.enum-proposal__option {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+.enum-proposal fieldset {
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  padding: 12px;
+}
+
 /* Цитаты диагностик и предложения в следующем действии. */
 .said mark {
   background: #ffe4a8;

@@ -19,6 +19,7 @@ from app.domain.dialog import (
     merge,
     next_step,
 )
+from app.domain.enum_mapping import EnumProposal, EnumResolution, enum_fields
 from app.domain.errors import (
     CatalogEmpty,
     FactNotFound,
@@ -30,9 +31,9 @@ from app.domain.errors import (
     StaleQuestion,
     StaleRevision,
 )
-from app.domain.fact_edits import INACTIVE, FactInput, apply_history, component_key, reconcile
-from app.domain.facts import CheckResult, Fact, FactSource, RuleCheck
-from app.domain.rules import check_rule, explain, supported
+from app.domain.fact_edits import INACTIVE, FactInput, apply_history, reconcile
+from app.domain.facts import CheckResult, Fact, FactSource, RuleCheck, component_key, normalized
+from app.domain.rules import check_rule, explain, selection_conflict, supported
 from app.domain.sessions import (
     Alternative,
     AnalysisError,
@@ -48,6 +49,7 @@ from app.domain.sessions import (
     UnsupportedRule,
 )
 from app.usecase.diagnostics import Diagnostics
+from app.usecase.enum_mapping import EnumMapper
 from app.usecase.interface import (
     CatalogRepository,
     FactExtractor,
@@ -67,9 +69,11 @@ class Sessions:
         search: GroupSearcher,
         catalog: CatalogRepository,
         fact_extractor: FactExtractor,
+        enum_mapper: EnumMapper | None = None,
         diagnostics: Diagnostics | None = None,
         spelling: SpellingService | None = None,
     ) -> None:
+        self._enum_mapper = enum_mapper
         self._spelling = spelling
         self._diagnostics = diagnostics
         self._fact_extractor = fact_extractor
@@ -110,6 +114,7 @@ class Sessions:
                 previous.revision + 1,
                 messages=messages,
                 dialog=previous.dialog,
+                enum_resolutions=previous.enum_resolutions,
                 fact_history=previous.fact_history,
                 facts=previous.facts,
                 candidates=previous.candidates,
@@ -147,7 +152,7 @@ class Sessions:
                     warnings=result.messages,
                 )
                 selected = result.groups[0].group
-                group = Group.of(selected, self._catalog.children(selected.code))
+                group = self._catalog_group(selected)
                 state = self._correct_text(state, previous, group)
                 state = self._analyze(state, group)
             except (ModelFailure, CatalogEmpty) as error:
@@ -169,7 +174,7 @@ class Sessions:
             selected = self._catalog.position(code)
             if selected is None:
                 raise CatalogEmpty()
-            group = Group.of(selected, self._catalog.children(code))
+            group = self._catalog_group(selected)
             fact = None
             if option_id is not None:
                 if option_id not in {o.id for o in question.options}:
@@ -194,24 +199,16 @@ class Sessions:
                 fact,
                 code,
             )
-            history = previous.fact_history
+            state = replace(previous, revision=revision, dialog=(*previous.dialog, turn))
             if fact is not None:
-                before = tuple(
-                    replace(f, status="superseded", superseded_by=fact.id)
+                targets = tuple(
+                    f
                     for f in previous.facts
                     if f.status not in INACTIVE
                     and f.characteristic_name == fact.characteristic_name
                     and component_key(f) == component_key(fact)
                 )
-                history = (
-                    *history,
-                    FactEvent(
-                        "confirm", revision, datetime.now(UTC).isoformat(), before, (fact,), code
-                    ),
-                )
-            state = replace(
-                previous, revision=revision, dialog=(*previous.dialog, turn), fact_history=history
-            )
+                state = _record_change(state, "confirm", targets, (fact,), code)
             try:
                 state = self._analyze(state, group, extend=False)
             except ModelFailure as error:
@@ -249,6 +246,7 @@ class Sessions:
             (replace(old, status="superseded", superseded_by=new.id),),
             (new,),
             group.position.code,
+            message_count=len(state.messages),
         )
         return replace(state, fact_history=(*state.fact_history, event))
 
@@ -283,6 +281,7 @@ class Sessions:
             (),
             pending,
             group.position.code,
+            message_count=len(state.messages),
         )
         return replace(state, fact_history=(*state.fact_history, event))
 
@@ -290,7 +289,7 @@ class Sessions:
         selected = self._catalog.position(state.path.group.code) if state.path else None
         if selected is None:
             raise CatalogEmpty()
-        return Group.of(selected, self._catalog.children(selected.code))
+        return self._catalog_group(selected)
 
     def _current(self, session_id: str, expected_revision: int) -> SessionState:
         state = self._sessions.latest(session_id, lock=True)
@@ -356,7 +355,7 @@ class Sessions:
                 ):
                     raise InvalidFactEdit("Укажите часть товара для каждого спорного значения")
                 after = tuple(
-                    replace(b.fact(group), source=f.source)
+                    replace(b.fact(group, f), source=f.source)
                     for b, f in zip(bindings, targets, strict=True)
                 )
             elif action == "delete":
@@ -378,7 +377,7 @@ class Sessions:
                         old,
                         id=str(uuid4()),
                         status="confirmed_by_user",
-                        origin="user",
+                        origin="decision" if old.origin == "decision" else "user",
                         superseded_by=None,
                     ),
                 )
@@ -406,38 +405,16 @@ class Sessions:
                         )
                     ]
             elif action in {"edit", "accept_suggestion"} and value is not None:
-                after = (replace(value.fact(group), source=source),)
+                after = (replace(value.fact(group, old), source=source),)
             else:
                 raise InvalidFactEdit()
-            before = tuple(
-                replace(
-                    f,
-                    status="deleted" if not after else "superseded",
-                    superseded_by=after[i].id
-                    if action == "split"
-                    else after[0].id
-                    if after
-                    else None,
-                )
-                for i, f in enumerate(targets)
-            )
-            revision = previous.revision + 1
-            event = FactEvent(
+            state = _record_change(
+                replace(previous, revision=previous.revision + 1),
                 action,
-                revision,
-                datetime.now(UTC).isoformat(),
-                before,
+                targets,
                 after,
                 group.position.code,
                 restored_from=old.id if action == "restore" and old else None,
-            )
-            state = replace(
-                previous,
-                revision=revision,
-                facts=apply_history(previous.facts, (event,), group.position.code),
-                fact_history=(*previous.fact_history, event),
-                results_stale=True,
-                card_complete=False,
             )
             try:
                 state = self._analyze(state, group, extend=False)
@@ -475,6 +452,116 @@ class Sessions:
             self._sessions.save(Revision(state))
             return state
 
+    def resolve_enum(
+        self,
+        session_id: str,
+        expected_revision: int,
+        proposal_id: str,
+        action: str,
+        values: Sequence[str] = (),
+    ) -> SessionState:
+        with self._uow:
+            previous = self._current(session_id, expected_revision)
+            if previous.path is None:
+                raise StaleRevision()
+            proposal = next((p for p in previous.enum_proposals if p.id == proposal_id), None)
+            if proposal is None:
+                raise StaleRevision()
+            chosen = proposal.suggested if action == "accept" else tuple(values)
+            if action == "unknown":
+                chosen = ()
+            elif not any(s.permits(chosen) for s in proposal.selections):
+                raise OptionNotFound("Выберите допустимое сочетание значений каталога")
+            code = previous.path.group.code
+            selected = self._catalog.position(code)
+            if selected is None:
+                raise CatalogEmpty()
+            group = self._catalog_group(selected)
+            # Каталог мог обновиться после показа предложения.
+            field = next(
+                (f for f in enum_fields(group.leaves) if f.name == proposal.characteristic), None
+            )
+            if chosen and (field is None or not field.permits(chosen)):
+                raise OptionNotFound()
+            revision = previous.revision + 1
+            confirmed: list[Fact] = []
+            for i, value in enumerate(chosen):
+                source = next(
+                    (
+                        f
+                        for f in previous.facts
+                        if f.characteristic_name == proposal.characteristic
+                        and f.value == value.lower().replace("ё", "е")
+                        and f.origin == "decision"
+                    ),
+                    None,
+                )
+                if action == "accept" and source is not None:
+                    fact = replace(
+                        source, id=f"enum-answer:{revision}:{i}", status="confirmed_by_user"
+                    )
+                else:
+                    fact = Fact(
+                        f"enum-answer:{revision}:{i}",
+                        proposal.characteristic,
+                        proposal.characteristic,
+                        value,
+                        None,
+                        value.lower().replace("ё", "е"),
+                        None,
+                        "text",
+                        None,
+                        "catalog_value",
+                        origin="user",
+                        status="confirmed_by_user",
+                    )
+                confirmed.append(fact)
+            resolution = EnumResolution(
+                proposal.id,
+                proposal.characteristic,
+                code,
+                revision,
+                len(previous.messages),
+                tuple(confirmed),
+            )
+            state = replace(
+                previous,
+                revision=revision,
+                enum_resolutions=(*previous.enum_resolutions, resolution),
+            )
+            targets = tuple(
+                f
+                for f in previous.facts
+                if f.status not in INACTIVE and f.characteristic_name == proposal.characteristic
+            )
+            if chosen:
+                state = _record_change(state, "confirm", targets, tuple(confirmed), code)
+            try:
+                state = self._analyze(state, group, extend=False)
+            except ModelFailure as error:
+                state = _failed(state, error)
+            self._sessions.save(Revision(state))
+            return state
+
+    def _catalog_group(self, selected: Position) -> Group:
+        group = Group.of(selected, self._catalog.children(selected.code))
+        if self._enum_mapper is None:
+            return group
+        names = {normalized(f.name).strip(): f.name for f in enum_fields(group.leaves)}
+        return replace(
+            group,
+            leaves=tuple(
+                replace(
+                    p,
+                    characteristics=tuple(
+                        replace(c, name=names.get(normalized(c.name).strip(), c.name))
+                        for c in p.characteristics
+                    ),
+                )
+                for p in group.leaves
+            ),
+        )
+
     def _analyze(self, state: SessionState, group: Group, *, extend: bool = True) -> SessionState:
         """Факты, кандидаты, статус и следующий вопрос; `extend` — дописать предупреждения
         извлечения (при ответе они уже есть: текст тот же). Ответы по другой группе хранятся в
@@ -484,7 +571,54 @@ class Sessions:
         extracted = [self._fact_extractor.extract((message,), group) for message in state.messages]
         parsed = tuple(f for facts, _ in extracted for f in facts)
         warnings = tuple(dict.fromkeys(w for _, items in extracted for w in items))
+        # Качественные поля обрабатываются совместно, чтобы точный парсер не выбрал
+        # одну часть многозначного или неоднозначного описания раньше decision-проверки.
+        enum_names = {f.name for f in enum_fields(group.leaves)} if self._enum_mapper else set()
+        order = {m.id: i for i, m in enumerate(state.messages)}
+        cutoffs = {
+            f.characteristic_name: event.message_count
+            for event in state.fact_history
+            if event.group == selected.code
+            for f in (*event.before, *event.after)
+        }
+        parsed = tuple(
+            f
+            for f in parsed
+            if f.characteristic_name not in enum_names
+            or (
+                f.characteristic_name in cutoffs
+                and f.source is not None
+                and order.get(f.source.message_id, -1) >= cutoffs[f.characteristic_name]
+            )
+            or (
+                self._diagnostics is not None
+                and f.normalization_rule == "explicit_unverified"
+                and not f.accepted
+            )
+        )
         facts = merge(parsed, dialog, [m.id for m in state.messages])
+        resolutions = {
+            r.characteristic: r
+            for r in state.enum_resolutions
+            if r.group == selected.code
+            and not any(
+                t.characteristic == r.characteristic and t.revision > r.revision for t in dialog
+            )
+        }
+        locked = {
+            name for name, r in resolutions.items() if r.facts or r.messages == len(state.messages)
+        }
+        facts = tuple(
+            replace(f, status="superseded")
+            if f.characteristic_name in locked
+            and (
+                f.source is None
+                or order.get(f.source.message_id, -1) < resolutions[f.characteristic_name].messages
+            )
+            else f
+            for f in facts
+        )
+        facts = (*facts, *(f for r in resolutions.values() for f in r.facts))
         facts = reconcile(apply_history(facts, state.fact_history, selected.code), group)
         active = [f for f in facts if f.status not in INACTIVE]
         conflict_names = {
@@ -502,6 +636,46 @@ class Sessions:
         leaves = sorted(group.leaves, key=lambda p: p.code)
         candidates = tuple(_candidate(p, active) for p in leaves)
         remaining = [p for p, c in zip(leaves, candidates, strict=True) if not c.excluded]
+        proposals: tuple[EnumProposal, ...] = ()
+        if self._enum_mapper is not None:
+            skip = locked | {
+                f.characteristic_name for f in facts if f.accepted and f.characteristic_name
+            }
+            if extend:
+                mapped, proposals = self._enum_mapper.map(
+                    state.messages, remaining, state.revision, skip
+                )
+            else:
+                mapped = tuple(
+                    f
+                    for f in state.facts
+                    if f.origin == "decision"
+                    and f.status in {"proposed", "accepted_from_model"}
+                    and f.characteristic_name not in skip
+                )
+                proposals = tuple(p for p in state.enum_proposals if p.characteristic not in skip)
+            facts = reconcile(
+                apply_history((*facts, *mapped), state.fact_history, selected.code), group
+            )
+            active = [f for f in facts if f.status not in INACTIVE]
+            candidates = tuple(_candidate(p, active) for p in leaves)
+            remaining = [p for p, c in zip(leaves, candidates, strict=True) if not c.excluded]
+        dialog = (
+            *dialog,
+            *(
+                DialogTurn(
+                    r.proposal_id,
+                    "required",
+                    r.characteristic,
+                    r.revision,
+                    r.messages,
+                    group=r.group,
+                )
+                for r in resolutions.values()
+                if not r.facts
+            ),
+        )
+        dialog = tuple(sorted(dialog, key=lambda t: t.revision))
         count = len(candidates)
         question_id = f"q{state.revision}"
         messages = len(state.messages)
@@ -514,7 +688,12 @@ class Sessions:
         elif len(remaining) == 1:
             status = SessionStatus.RESOLVED
             suppressed = {f.characteristic_name for f in facts if f.status == "deleted"}
-            derived, missing = derive(remaining[0], active, suppressed=suppressed)
+            unconfirmed = frozenset(p.characteristic for p in proposals) | frozenset(
+                name for name, r in resolutions.items() if not r.facts and name in locked
+            )
+            derived, missing = derive(
+                remaining[0], active, suppressed=suppressed, unconfirmed=unconfirmed
+            )
             facts = (*facts, *derived)
             question = next_step(
                 remaining, (*active, *derived), dialog, messages, question_id
@@ -527,6 +706,12 @@ class Sessions:
                 common = common_fields(remaining)
             else:
                 status = SessionStatus.NEEDS_CLARIFICATION
+        if (
+            question is not None
+            and question.kind != "conflict"
+            and any(p.characteristic == question.characteristic for p in proposals)
+        ):
+            question = None
         pending_correction = next(
             (f for f in active if f.normalization_rule == "correction_needs_binding"), None
         )
@@ -566,7 +751,11 @@ class Sessions:
             status=status,
             results_stale=False,
             analysis_revision=state.revision,
+            editable_fields=tuple(
+                sorted({c.name for p in group.leaves for c in p.characteristics})
+            ),
             facts=facts,
+            enum_proposals=proposals,
             path=NarrowingPath(selected.category, GroupRef(selected.code, selected.name), count),
             candidates=candidates,
             candidate_counts=CandidateCounts(count, len(remaining), count - len(remaining)),
@@ -623,6 +812,43 @@ class Sessions:
         )
 
 
+def _record_change(
+    state: SessionState,
+    action: str,
+    targets: Sequence[Fact],
+    after: tuple[Fact, ...],
+    group: str,
+    *,
+    restored_from: str | None = None,
+) -> SessionState:
+    """Одна история для ответов, модельных предложений и ручного редактора."""
+    before = tuple(
+        replace(
+            f,
+            status="deleted" if action == "delete" else "superseded",
+            superseded_by=after[i].id if action == "split" else after[0].id if after else None,
+        )
+        for i, f in enumerate(targets)
+    )
+    event = FactEvent(
+        action,
+        state.revision,
+        datetime.now(UTC).isoformat(),
+        before,
+        after,
+        group,
+        restored_from=restored_from,
+        message_count=len(state.messages),
+    )
+    return replace(
+        state,
+        facts=apply_history(state.facts, (event,), group),
+        fact_history=(*state.fact_history, event),
+        results_stale=True,
+        card_complete=False,
+    )
+
+
 def _failed(state: SessionState, error: ModelFailure | CatalogEmpty) -> SessionState:
     return replace(
         state,
@@ -644,6 +870,10 @@ def _candidate(position: Position, facts: Sequence[Fact]) -> Candidate:
         ),
         None,
     )
+    combination = selection_conflict(position, facts)
+    if combination is not None:
+        reason = combination
+        checks.append(RuleCheck(combination.fact_id, CheckResult.MISMATCH))
     # Неподдержанное правило блокирует автоподтверждение даже без факта по этому полю.
     if any(not supported(c) for c in position.characteristics):
         checks.append(RuleCheck(None, CheckResult.UNSUPPORTED))

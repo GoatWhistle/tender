@@ -1,9 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useState, useId, type FormEvent } from "react";
 import type { Fact, FactMutation, FactValue, SessionState } from "../api/types";
 import type { SellerSession } from "../lib/sellerSession";
 
 const label = (f: Fact) =>
-  `${f.characteristic_name ?? "Без привязки"}${f.component ? ` (${f.component})` : ""}: ${f.raw_value}${f.raw_unit && f.kind !== "interval" ? ` ${f.raw_unit}` : ""}`;
+  `${f.characteristic_name ?? "Без привязки"}${f.component ? ` (${f.component})` : ""}: ${f.origin === "decision" ? String(f.value) : f.raw_value}${f.raw_unit && f.kind !== "interval" ? ` ${f.raw_unit}` : ""}`;
 const ACTIONS: Record<string, string> = {
   edit: "Правка",
   clarification: "Запрос уточнения",
@@ -16,23 +16,36 @@ const ACTIONS: Record<string, string> = {
 };
 const componentKey = (f: Fact) => {
   const text = (f.component || f.characteristic_name || "").toLowerCase();
-  return ["столешниц", "каркас", "ножк", "основан", "обивк"].find(stem => text.includes(stem)) ?? f.component ?? null;
+  return (
+    ["столешниц", "каркас", "ножк", "основан", "обивк"].find((stem) => text.includes(stem)) ??
+    f.component ??
+    null
+  );
 };
 const active = (f: Fact) => f.status !== "superseded" && f.status !== "deleted";
 
 export function ValueFields({
   value,
   onChange,
+  names = [],
 }: {
+  names?: string[];
   value: FactValue;
   onChange: (v: FactValue) => void;
 }) {
+  const listId = useId();
   return (
     <div className="fact-fields">
+      <datalist id={listId}>
+        {names.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
       <label>
         Характеристика
         <input
           required
+          list={listId}
           value={value.characteristic_name}
           onChange={(e) => onChange({ ...value, characteristic_name: e.target.value })}
         />
@@ -54,6 +67,7 @@ export function ValueFields({
           <option value="text">Текст</option>
           <option value="number">Число</option>
           <option value="range">Диапазон</option>
+          <option value="interval">Интервал каталога (сохранить)</option>
         </select>
       </label>
       <label>
@@ -79,9 +93,14 @@ export function ValueFields({
 
 export const valueOf = (f: Fact): FactValue => ({
   characteristic_name: f.characteristic_name ?? "",
-  raw_value: f.kind === "range" && Array.isArray(f.value) ? f.value.join("..") : f.raw_value,
+  raw_value:
+    f.origin === "decision"
+      ? String(f.value)
+      : f.kind === "range" && Array.isArray(f.value)
+        ? f.value.join("..")
+        : f.raw_value,
   raw_unit: f.raw_unit,
-  kind: f.kind === "interval" ? "range" : f.kind,
+  kind: f.kind,
   component: f.component,
 });
 
@@ -167,13 +186,14 @@ export function FactForm({
           <fieldset key={i}>
             <legend>Утверждение {i + 1}</legend>
             <ValueFields
+              names={state.editable_fields}
               value={v}
               onChange={(next) => setBindings(bindings.map((b, j) => (i === j ? next : b)))}
             />
           </fieldset>
         ))
       ) : (
-        <ValueFields value={value} onChange={setValue} />
+        <ValueFields names={state.editable_fields} value={value} onChange={setValue} />
       )}
       {diagnosticIndex !== undefined && (
         <p>
@@ -233,13 +253,20 @@ export function EditableFacts({ state, store }: { state: SessionState; store: Se
             <li key={f.id} className="cand">
               <span className="cand__name">{label(f)}</span>
               <span className="cand__reason">
-                {f.status === "ambiguous"
-                  ? "Требует уточнения"
-                  : f.origin === "catalog"
-                    ? "Из справочника"
-                    : f.origin === "user"
+                {f.status === "proposed"
+                  ? "Предложение, не принято"
+                  : f.status === "accepted_from_model"
+                    ? "Принято автоматически"
+                    : f.status === "confirmed_by_user"
                       ? "Подтверждено вами"
-                      : "Из описания"}
+                      : f.status === "ambiguous"
+                        ? "Требует уточнения"
+                        : f.origin === "catalog"
+                          ? "Из справочника"
+                          : f.origin === "user"
+                            ? "Подтверждено вами"
+                            : "Из описания"}
+                {f.origin === "decision" && f.source && <span> · «{f.source.quote}»</span>}
               </span>
               <div className="fact-actions">
                 <button
@@ -293,11 +320,13 @@ export function EditableFacts({ state, store }: { state: SessionState; store: Se
                   <div key={f.id}>
                     <p>
                       Было: {label(f)} ·{" "}
-                      {f.origin === "parser"
-                        ? "из описания"
-                        : f.origin === "catalog"
-                          ? "из справочника"
-                          : "ввод пользователя"}
+                      {f.origin === "decision"
+                        ? "сопоставление по описанию"
+                        : f.origin === "parser"
+                          ? "из описания"
+                          : f.origin === "catalog"
+                            ? "из справочника"
+                            : "ввод пользователя"}
                     </p>
                     {f.source && <blockquote>{f.source.quote}</blockquote>}
                     <button

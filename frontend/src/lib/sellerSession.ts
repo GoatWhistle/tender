@@ -6,6 +6,7 @@ import {
   type SellerApi,
   type SessionState,
   type FactMutation,
+  type EnumAction,
 } from "../api/types";
 
 /** Предел бэкенда для текста сообщения, в символах. */
@@ -53,11 +54,15 @@ function failureOf(error: unknown): Failure {
         text: "Отправьте описание ещё раз.",
         details: [],
       };
-    if (error.code === "invalid_fact_edit") return { title: "Правка не применена", text: error.message, details: [] };
+    if (error.code === "invalid_fact_edit")
+      return { title: "Правка не применена", text: error.message, details: [] };
     if (error.status === 422)
       return {
-        title: "Сервер не принял текст",
-        text: `Описание должно быть непустым и не длиннее ${MAX_TEXT} символов.`,
+        title: "Сервер не принял данные",
+        text:
+          error.code === "option_not_found"
+            ? error.message
+            : `Проверьте введённые данные. Описание должно быть непустым и не длиннее ${MAX_TEXT} символов.`,
         details: [],
       };
     if (error.status >= 500)
@@ -256,6 +261,31 @@ export function createSellerSession(
       const state = view.state;
       if (!state || view.busy) return Promise.resolve();
       return run(() => api.recalculate(state.session_id, state.revision), null);
+    },
+    resolveEnum(proposalId: string, action: EnumAction, values: string[] = []): Promise<void> {
+      const state = view.state;
+      if (!state || answering || view.busy) return Promise.resolve();
+      answering = true;
+      const mine = epoch;
+      return run(async () => {
+        try {
+          return await api.resolveEnum(
+            state.session_id,
+            state.revision,
+            proposalId,
+            action,
+            values,
+          );
+        } catch (e) {
+          if (e instanceof ApiError && e.code === "stale_revision")
+            return await api.get(state.session_id);
+          if (e instanceof ApiError && e.status === 422)
+            throw new ApiError(422, e.code, "Выберите допустимое сочетание значений из списка.");
+          throw e;
+        } finally {
+          if (mine === epoch) answering = false;
+        }
+      }, null);
     },
     /** Восстановить сессию по идентификатору из адреса. */
     open(id: string): Promise<void> {

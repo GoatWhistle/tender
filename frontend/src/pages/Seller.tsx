@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { sellerApi, type Question, type SessionState } from "../api";
+import { sellerApi, type EnumProposal, type Question, type SessionState } from "../api";
 import { isDiagnostic, type Diagnostic } from "../api/types";
 import { EditableFacts, FactForm, valueOf } from "../components/FactEditor";
 import { plural } from "../lib/format";
@@ -448,6 +448,89 @@ function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
   );
 }
 
+function Proposal({
+  proposal,
+  busy,
+  store,
+}: {
+  proposal: EnumProposal;
+  busy: boolean;
+  store: SellerSession;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [values, setValues] = useState<string[]>([]);
+  const permits = (selection: string[]) =>
+    selection.length > 0 &&
+    proposal.selections.some(
+      (rule) =>
+        (rule.multiple || selection.length === 1) &&
+        selection.every((v) => rule.values.includes(v)),
+    );
+  const multiple = proposal.selections.some((rule) => rule.multiple);
+  return (
+    <article className="card-x enum-proposal">
+      <h3>
+        {proposal.characteristic}: {proposal.suggested.join(", ")}
+      </h3>
+      <p className="status">Предложение · требуется подтверждение</p>
+      <p>{proposal.reason}</p>
+      {editing && (
+        <fieldset disabled={busy}>
+          <legend>Выберите {multiple ? "одно или несколько значений" : "одно значение"}</legend>
+          {proposal.options.map((value) => (
+            <label key={value} className="enum-proposal__option">
+              <input
+                type={multiple ? "checkbox" : "radio"}
+                name={proposal.id}
+                checked={values.includes(value)}
+                onChange={() =>
+                  setValues(
+                    multiple
+                      ? values.includes(value)
+                        ? values.filter((v) => v !== value)
+                        : [...values, value]
+                      : [value],
+                  )
+                }
+              />
+              {value}
+            </label>
+          ))}
+          {values.length > 0 && !permits(values) && (
+            <p role="alert">Это сочетание не допускается каталогом.</p>
+          )}
+          <button
+            className="pill pill--dark"
+            disabled={!permits(values)}
+            onClick={() => void store.resolveEnum(proposal.id, "choose", values)}
+          >
+            Сохранить выбор
+          </button>
+        </fieldset>
+      )}
+      <div className="enum-proposal__actions">
+        <button
+          className="pill pill--dark"
+          disabled={busy || !permits(proposal.suggested)}
+          onClick={() => void store.resolveEnum(proposal.id, "accept")}
+        >
+          Принять
+        </button>
+        <button className="pill" disabled={busy} onClick={() => setEditing(!editing)}>
+          Выбрать другое
+        </button>
+        <button
+          className="pill"
+          disabled={busy}
+          onClick={() => void store.resolveEnum(proposal.id, "unknown")}
+        >
+          Не знаю
+        </button>
+      </div>
+    </article>
+  );
+}
+
 function Candidates({ state }: { state: SessionState }) {
   const { path, candidates, alternatives, status } = state;
   const { in_group, compatible, excluded_by_rules } = state.candidate_counts;
@@ -578,6 +661,9 @@ export function Seller() {
                 </button>
               </div>
             )}
+            {(state.enum_proposals ?? []).map((proposal) => (
+              <Proposal key={proposal.id} proposal={proposal} busy={busy} store={store} />
+            ))}
             <EditableFacts state={state} store={store} />
             <Candidates state={state} />
           </aside>

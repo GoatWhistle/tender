@@ -18,6 +18,8 @@ class FactSource:
 
 FactStatus = Literal[
     "accepted_from_text",
+    "accepted_from_model",
+    "proposed",
     "ambiguous",
     "confirmed_by_user",
     "derived_from_catalog",
@@ -25,7 +27,9 @@ FactStatus = Literal[
     "superseded",
     "deleted",
 ]
-ACCEPTED = frozenset({"accepted_from_text", "confirmed_by_user", "derived_from_catalog"})
+ACCEPTED = frozenset(
+    {"accepted_from_text", "accepted_from_model", "confirmed_by_user", "derived_from_catalog"}
+)
 
 
 @dataclass(frozen=True)
@@ -42,11 +46,14 @@ class Fact:
     # у ответа пользователя без цитаты и у значения из каталога источника в тексте нет
     source: FactSource | None
     normalization_rule: str
-    origin: Literal["parser", "user", "catalog"] = "parser"
+    origin: Literal["parser", "user", "catalog", "decision"] = "parser"
     status: FactStatus = "accepted_from_text"
     bounds: Value | None = None
     component: str | None = None
     superseded_by: str | None = None
+
+    model_revision: str | None = None
+    model_score: float | None = None
 
     @property
     def accepted(self) -> bool:
@@ -80,3 +87,17 @@ class ExclusionReason:
 
 def normalized(text: str) -> str:
     return text.lower().replace("ё", "е")
+
+
+def component_key(fact: Fact) -> str | None:
+    text = normalized(fact.component or fact.characteristic_name or "")
+    for stem, name in (
+        ("столешниц", "столешница"),
+        ("каркас", "каркас"),
+        ("ножк", "ножки"),
+        ("основан", "основание"),
+        ("обивк", "обивка"),
+    ):
+        if stem in text:
+            return name
+    return fact.component

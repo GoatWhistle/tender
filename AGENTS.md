@@ -67,6 +67,14 @@ Keep secrets and machine-specific settings out of version control. Provide examp
 Для прогона и подсчёта метрик читай раздел «Оценка русских ошибок» в `README.md`;
 контракты и правила разметки — §§8.8, 9.3, 15.6 и 16.1 `docs/Предлагаемое решение.md`.
 
+### Enum-сопоставление
+
+При изменении enum-сопоставления или его порога читай [контракт и ограничения](docs/sessions.md#сопоставление-свободных-enum-значений)
+и [методику замера](evals/reports/2026-10-10-enum-mapping.md). Порог подбирается на dev;
+`enum_holdout_v2.json` используется только для отдельной проверки.
+HTTP-проверки: `cd backend && uv run pytest tests/test_enum_sessions.py tests/test_openjev_http.py`.
+Замер из корня: `backend/.venv/bin/python evals/enum/run.py --url http://127.0.0.1:18080 --out var/enum-mapping.json`.
+
 При изменении диагностики выполни HTTP-прогон размеченных fixtures:
 `cd backend && uv run python ../evals/errors/run.py`. Контракт и ограничения замера —
 `docs/sessions.md`, настройки орфографии — `backend/.env.example`.

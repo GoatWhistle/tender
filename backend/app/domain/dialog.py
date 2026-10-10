@@ -137,7 +137,11 @@ def skipped(dialog: Sequence[DialogTurn], messages: int) -> list[str]:
 
 
 def derive(
-    position: Position, facts: Sequence[Fact], *, suppressed: set[str | None] | None = None
+    position: Position,
+    facts: Sequence[Fact],
+    *,
+    suppressed: set[str | None] | None = None,
+    unconfirmed: frozenset[str] = frozenset(),
 ) -> tuple[tuple[Fact, ...], tuple[RequiredField, ...]]:
     """Для выбранной позиции: обязательные поля с единственным допустимым значением
     заполняются из каталога, остальные без принятого факта — недостающие."""
@@ -153,7 +157,7 @@ def derive(
         if not characteristic.required or characteristic.name in known:
             continue
         options = _options(characteristic.name, [position], f"catalog:{characteristic.code}")
-        if len(options) == 1 and characteristic.name not in disputed:
+        if len(options) == 1 and characteristic.name not in disputed | unconfirmed:
             derived.append(replace(options[0][1], origin="catalog", status="derived_from_catalog"))
         else:
             missing.append(RequiredField(characteristic.code, characteristic.name))

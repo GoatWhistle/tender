@@ -81,7 +81,7 @@ class FactValueRequest(BaseModel):
     characteristic_name: str = Field(min_length=1, max_length=300)
     raw_value: str = Field(min_length=1, max_length=1000)
     raw_unit: str | None = Field(default=None, max_length=30)
-    kind: Literal["text", "number", "range"] = "text"
+    kind: Literal["text", "number", "range", "interval"] = "text"
     component: str | None = Field(default=None, max_length=200)
 
     def domain(self) -> FactInput:
@@ -89,16 +89,16 @@ class FactValueRequest(BaseModel):
 
 
 class RevisionRequest(BaseModel):
-    expected_revision: int = Field(ge=0)
+    expected_revision: int = Field(ge=0, strict=True)
 
 
 class FactPatchRequest(RevisionRequest):
     action: Literal["edit", "delete", "confirm", "restore", "split", "accept_suggestion"]
-    characteristic_name: str | None = None
-    raw_value: str | None = None
-    raw_unit: str | None = None
-    kind: Literal["text", "number", "range"] = "text"
-    component: str | None = None
+    characteristic_name: str | None = Field(default=None, min_length=1, max_length=300)
+    raw_value: str | None = Field(default=None, min_length=1, max_length=1000)
+    raw_unit: str | None = Field(default=None, max_length=30)
+    kind: Literal["text", "number", "range", "interval"] = "text"
+    component: str | None = Field(default=None, max_length=200)
     related_ids: list[str] = Field(default_factory=list, max_length=100)
     bindings: list[FactValueRequest] = Field(default_factory=list, max_length=100)
     diagnostic_index: int | None = Field(default=None, ge=0)
@@ -148,3 +148,31 @@ def create_fact(session_id: str, body: FactPatchRequest, sessions: SessionsDep) 
 @router.post("/{session_id}/recalculate", responses=error_responses(SessionNotFound, StaleRevision))
 def recalculate(session_id: str, body: RevisionRequest, sessions: SessionsDep) -> SessionState:
     return sessions.recalculate(session_id, body.expected_revision)
+
+
+class EnumResolutionRequest(BaseModel):
+    expected_revision: int = Field(ge=0, strict=True)
+    proposal_id: str = Field(min_length=1)
+    action: Literal["accept", "choose", "unknown"]
+    values: list[str] = Field(default_factory=list, max_length=256)
+
+    @model_validator(mode="after")
+    def valid_selection(self) -> "EnumResolutionRequest":
+        if self.action == "choose":
+            if not self.values or len(set(self.values)) != len(self.values):
+                raise ValueError("Нужны различные допустимые значения")
+        elif self.values:
+            raise ValueError("Значения передаются только для choose")
+        return self
+
+
+@router.post(
+    "/{session_id}/enum-resolutions",
+    responses=error_responses(SessionNotFound, StaleRevision, OptionNotFound),
+)
+def resolve_enum(
+    session_id: str, body: EnumResolutionRequest, sessions: SessionsDep
+) -> SessionState:
+    return sessions.resolve_enum(
+        session_id, body.expected_revision, body.proposal_id, body.action, body.values
+    )

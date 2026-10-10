@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from app.domain.catalog import CharacteristicKind, Group
 from app.domain.errors import InvalidFactEdit
-from app.domain.facts import Fact, normalized
+from app.domain.facts import Fact, component_key, normalized
 from app.domain.sessions import FactEvent
 from app.domain.units import UNITS
 
@@ -21,14 +21,34 @@ class FactInput:
     characteristic_name: str
     raw_value: str
     raw_unit: str | None = None
-    kind: Literal["number", "range", "text"] = "text"
+    kind: Literal["number", "range", "text", "interval"] = "text"
     component: str | None = None
 
-    def fact(self, group: Group) -> Fact:
+    def fact(self, group: Group, template: Fact | None = None) -> Fact:
         name = self.characteristic_name.strip()
         chars = [c for p in group.leaves for c in p.characteristics if c.name == name]
         if not chars or not self.raw_value.strip():
             raise InvalidFactEdit()
+        if self.kind == "interval":
+            if (
+                template is None
+                or template.kind != "interval"
+                or template.bounds is None
+                or self.raw_value != template.raw_value
+                or self.raw_unit != template.raw_unit
+                or any(not c.quantitative for c in chars)
+            ):
+                raise InvalidFactEdit("Для нового значения выберите число или диапазон")
+            return replace(
+                template,
+                id=str(uuid4()),
+                field=name,
+                characteristic_name=name,
+                component=self.component or None,
+                origin="user",
+                status="confirmed_by_user",
+                superseded_by=None,
+            )
         code = next((c for c, u in UNITS.items() if self.raw_unit in {c, u.symbol}), None)
         if self.raw_unit and code is None:
             raise InvalidFactEdit("Неизвестная единица: используйте символ или код ОКЕИ")
@@ -71,6 +91,19 @@ def apply_history(
     result = {f.id: f for f in facts}
     for event in history:
         for fact in event.before:
+            # Порядок полей/вариантов модели может измениться вместе с группой.
+            # Удалённое утверждение с тем же источником не должно получить новый активный ID.
+            if fact.origin == "decision":
+                for key, current in tuple(result.items()):
+                    if (
+                        current.origin == "decision"
+                        and current.source == fact.source
+                        and current.characteristic_name == fact.characteristic_name
+                        and current.value == fact.value
+                    ):
+                        result[key] = replace(
+                            current, status=fact.status, superseded_by=fact.superseded_by
+                        )
             if fact.id in result or event.group == group:
                 result[fact.id] = fact
         if event.group == group:
@@ -84,7 +117,7 @@ def reconcile(facts: Sequence[Fact], group: Group) -> tuple[Fact, ...]:
     buckets: dict[tuple[str, str | None], list[Fact]] = {}
     result = list(facts)
     for i, fact in enumerate(result):
-        if fact.status in INACTIVE or fact.characteristic_name is None:
+        if fact.status in INACTIVE or fact.status == "proposed" or fact.characteristic_name is None:
             continue
         if fact.status == "ambiguous" and fact.normalization_rule not in {
             "explicit_unverified",
@@ -98,7 +131,7 @@ def reconcile(facts: Sequence[Fact], group: Group) -> tuple[Fact, ...]:
     conflicts: set[str] = set()
     for (name, _), values in buckets.items():
         chars = [c for p in group.leaves for c in p.characteristics if c.name == name]
-        multiple = chars and all(c.kind == CharacteristicKind.multiple for c in chars)
+        multiple = chars and any(c.kind == CharacteristicKind.multiple for c in chars)
         keys = {canonical_fact(f) for f in values if f.origin != "catalog"}
         if len(keys) > 1 and not multiple:
             conflicts.update(f.id for f in values)
@@ -112,17 +145,3 @@ def canonical_fact(fact: Fact) -> object:
     values = fact.value if isinstance(fact.value, tuple) else (fact.value, fact.value)
     factor = Fraction(unit.factor) if unit else Fraction(1)
     return unit.dimension if unit else None, tuple(Fraction(v) * factor for v in values)
-
-
-def component_key(fact: Fact) -> str | None:
-    text = normalized(fact.component or fact.characteristic_name or "")
-    for stem, name in (
-        ("столешниц", "столешница"),
-        ("каркас", "каркас"),
-        ("ножк", "ножки"),
-        ("основан", "основание"),
-        ("обивк", "обивка"),
-    ):
-        if stem in text:
-            return name
-    return fact.component
