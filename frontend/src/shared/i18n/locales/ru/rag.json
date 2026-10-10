@@ -108,5 +108,11 @@
   "saveNumber": "Сохранить",
   "exactMissing": "Укажите точное значение",
   "numberRequired": "Укажите число в {{unit}}",
-  "numbersPending": "Сохраните введённые числа."
+  "numbersPending": "Сохраните введённые числа.",
+  "narrowingTitle": "Сужение кодов КТРУ",
+  "narrowingKept": "не отсеяло ничего: эта характеристика одинакова у оставшихся",
+  "narrowingStart": "Начали с {{count}}",
+  "optionCount": "позиций: {{count}}",
+  "narrowingLeft": "осталось: {{count}}",
+  "narrowingDropped": "отсеяно: {{count}}"
 }

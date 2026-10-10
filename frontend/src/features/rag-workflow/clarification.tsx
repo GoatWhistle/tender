@@ -32,10 +32,16 @@ export function Clarification({ flow }: { readonly flow: RagWorkflowState }) {
             {question.options.map((option, index) => (
               <Button
                 key={option}
+                className={styles.option}
                 disabled={flow.busy}
                 onClick={() => flow.answer({ option: index + 1 })}
               >
                 <BackendText>{option}</BackendText>
+                {question.counts[index] !== undefined && (
+                  <span className={styles.count}>
+                    {t("rag:optionCount", { count: question.counts[index] })}
+                  </span>
+                )}
               </Button>
             ))}
           </div>

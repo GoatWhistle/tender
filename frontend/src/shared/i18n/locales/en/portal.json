@@ -93,5 +93,12 @@
   "reviewReadyNote": "Review the suggested description next to the input field.",
   "selectedAction": "Start a new search",
   "inputReviewHint": "Enter: confirm and search",
-  "rankingDone": "Ranking complete. The closest match is first."
+  "rankingDone": "Ranking complete. The closest match is first.",
+  "examplesTitle": "Or try an example",
+  "examples": [
+    "Metal wardrobe, height 1000 m, depth 0.55 m",
+    "wooden writting desk, tabletop 2.2 cm",
+    "Bench hammer 500 g, wooden handle",
+    "Women's blouse, height 300 cm"
+  ]
 }

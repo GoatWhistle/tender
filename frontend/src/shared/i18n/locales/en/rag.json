@@ -108,5 +108,11 @@
   "saveNumber": "Save",
   "exactMissing": "Enter an exact value",
   "numberRequired": "Enter a number in {{unit}}",
-  "numbersPending": "Save the numbers you entered."
+  "numbersPending": "Save the numbers you entered.",
+  "narrowingTitle": "Narrowing KTRU codes",
+  "narrowingKept": "nothing dropped: the remaining positions share this value",
+  "narrowingStart": "Started with {{count}}",
+  "optionCount": "positions: {{count}}",
+  "narrowingLeft": "left: {{count}}",
+  "narrowingDropped": "dropped: {{count}}"
 }

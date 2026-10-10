@@ -11,14 +11,17 @@ import { Clarification } from "./clarification"
 import { Conversation } from "./conversation"
 import { DescriptionReview } from "./description-review"
 import { MessageReview } from "./message-review/message-review"
+import { Narrowing } from "./narrowing"
 import { SearchResults } from "./search-results"
 import { Specification } from "./specification"
 import { Summary } from "./summary"
+import { useNarrowing } from "./use-narrowing"
 import styles from "./workflow.module.css"
 
 export function RagWorkflow() {
   const { t } = useTranslation(["portal", "rag"])
   const flow = useRagWorkflow()
+  const narrowing = useNarrowing(flow.session)
   const [preview, setPreview] = useState(false)
   const input = useRef<HTMLTextAreaElement>(null)
   const scroll = useRef<HTMLDivElement>(null)
@@ -66,16 +69,24 @@ export function RagWorkflow() {
             <CatalogArtwork />
             <h2>{t("portal:introTitle")}</h2>
             <p>{t("portal:introText")}</p>
-            <Button
-              variant="ghost"
-              icon="plus"
-              onClick={() => {
-                flow.setDraft(t("portal:example"))
-                input.current?.focus()
-              }}
-            >
-              {t("portal:tryExample")}
-            </Button>
+            <div className={styles.examples}>
+              <p>{t("portal:examplesTitle")}</p>
+              <div>
+                {t("portal:examples", { returnObjects: true }).map((example) => (
+                  <Button
+                    key={example}
+                    variant="ghost"
+                    icon="plus"
+                    onClick={() => {
+                      flow.setDraft(example)
+                      input.current?.focus()
+                    }}
+                  >
+                    {example}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         {!session && search && search.stage !== "review" && (
@@ -90,7 +101,10 @@ export function RagWorkflow() {
           <MessageReview flow={flow} onEdit={() => input.current?.focus()} />
         )}
         {session && ["clarify", "pick", "failed"].includes(session.stage) && (
-          <Clarification key={session.question?.name ?? session.stage} flow={flow} />
+          <div className={styles.clarify}>
+            <Narrowing steps={narrowing.steps} start={narrowing.start} left={narrowing.left} />
+            <Clarification key={session.question?.name ?? session.stage} flow={flow} />
+          </div>
         )}
         {session?.stage === "spec" && !preview && (
           <Specification
