@@ -10,7 +10,9 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from app.domain.enum_mapping import AutoAcceptance
 from app.usecase.catalog import CatalogQueries, CatalogSync
+from app.usecase.enum_mapping import EnumMapper
 from app.usecase.interface import (
     AliasesRepository,
     AliasesSource,
@@ -67,6 +69,8 @@ def build_usecases[U: UnitOfWork](
     aliases_source: AliasesSource | None = None,
     searcher: GroupSearcher | None = None,
     fact_extractor: FactExtractor | None = None,
+    decision: DecisionBackend | None = None,
+    enum_policy: AutoAcceptance | None = None,
 ) -> Usecases[U]:
     r = repositories
     vectors_factory = r.saved_vectors
@@ -95,6 +99,9 @@ def build_usecases[U: UnitOfWork](
                 searcher or group_search(uow),
                 r.catalog(uow),
                 fact_extractor,
+                EnumMapper(checked_decision(decision), enum_policy or AutoAcceptance())
+                if decision
+                else None,
             )
         )
         if sessions_factory and fact_extractor is not None

@@ -58,3 +58,8 @@ class StaleQuestion(DomainError):
 class OptionNotFound(DomainError):
     code = "option_not_found"
     message = "Такого варианта ответа у вопроса нет"
+
+
+class StaleRevision(DomainError):
+    code = "stale_revision"
+    message = "Ревизия устарела: перечитайте сессию"

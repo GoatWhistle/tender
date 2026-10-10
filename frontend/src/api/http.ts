@@ -67,6 +67,17 @@ async function sessionRequest<T>(url: string, init?: RequestInit): Promise<T> {
 const session = (id: string) => `${SESSIONS}/${encodeURIComponent(id)}`;
 
 export const sellerApi: SellerApi = {
+  resolveEnum: (id, revision, proposalId, action, values) =>
+    sessionRequest(`${session(id)}/enum-resolutions`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        expected_revision: revision,
+        proposal_id: proposalId,
+        action,
+        values,
+      }),
+    }),
   create: () => sessionRequest(SESSIONS, { method: "POST" }),
   get: (id) => sessionRequest(session(id)),
   message: (id, text, idempotencyKey) =>

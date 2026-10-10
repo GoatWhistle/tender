@@ -27,6 +27,12 @@ class Settings(BaseSettings):
     ktru_xml_dir: Path = KTRU_XML_DIR
     aliases_path: Path = REPO_DIR / "data" / "aliases.csv"
 
+    decision_url: str | None = None
+    decision_timeout: float = Field(default=120, gt=0)
+    decision_auto_accept_enabled: bool = True
+    decision_auto_accept_threshold: float = Field(default=0.90, ge=0, le=1)
+    decision_revision: str = "a20448012c213128955ca0c693e7c943865cab77"
+
     embeddings_url: str | None = None
     embeddings_api_key: SecretStr | None = None
     embeddings_model: str = "qwen-embedding"

@@ -1,6 +1,6 @@
 """HTTP API сессий анализа."""
 
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Header
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -12,6 +12,7 @@ from app.domain.errors import (
     OptionNotFound,
     SessionNotFound,
     StaleQuestion,
+    StaleRevision,
 )
 from app.domain.sessions import SessionState
 
@@ -71,3 +72,31 @@ class AnswerRequest(BaseModel):
 )
 def answer(session_id: str, body: AnswerRequest, sessions: SessionsDep) -> SessionState:
     return sessions.answer(session_id, body.question_id, body.option_id)
+
+
+class EnumResolutionRequest(BaseModel):
+    expected_revision: int = Field(ge=0, strict=True)
+    proposal_id: str = Field(min_length=1)
+    action: Literal["accept", "choose", "unknown"]
+    values: list[str] = Field(default_factory=list, max_length=256)
+
+    @model_validator(mode="after")
+    def valid_selection(self) -> "EnumResolutionRequest":
+        if self.action == "choose":
+            if not self.values or len(set(self.values)) != len(self.values):
+                raise ValueError("Нужны различные допустимые значения")
+        elif self.values:
+            raise ValueError("Значения передаются только для choose")
+        return self
+
+
+@router.post(
+    "/{session_id}/enum-resolutions",
+    responses=error_responses(SessionNotFound, StaleRevision, OptionNotFound),
+)
+def resolve_enum(
+    session_id: str, body: EnumResolutionRequest, sessions: SessionsDep
+) -> SessionState:
+    return sessions.resolve_enum(
+        session_id, body.expected_revision, body.proposal_id, body.action, body.values
+    )

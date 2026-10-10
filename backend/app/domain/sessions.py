@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from app.domain.dialog import CommonField, DialogTurn, Question, RequiredField
+from app.domain.enum_mapping import EnumProposal, EnumResolution
 from app.domain.facts import ExclusionReason, Fact, RuleCheck
 from app.domain.search import MethodContribution
 
@@ -100,6 +101,8 @@ class SessionState:
     common_fields: tuple[CommonField, ...] = ()
     unanswered: tuple[str, ...] = ()
     unsupported_rules: tuple[UnsupportedRule, ...] = ()
+    enum_proposals: tuple[EnumProposal, ...] = ()
+    enum_resolutions: tuple[EnumResolution, ...] = ()
 
 
 @dataclass(frozen=True)

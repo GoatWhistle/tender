@@ -18,13 +18,17 @@ class FactSource:
 
 FactStatus = Literal[
     "accepted_from_text",
+    "accepted_from_model",
+    "proposed",
     "ambiguous",
     "confirmed_by_user",
     "derived_from_catalog",
     # замещён ответом пользователя по тому же полю: остаётся в истории, в проверках не участвует
     "superseded",
 ]
-ACCEPTED = frozenset({"accepted_from_text", "confirmed_by_user", "derived_from_catalog"})
+ACCEPTED = frozenset(
+    {"accepted_from_text", "accepted_from_model", "confirmed_by_user", "derived_from_catalog"}
+)
 
 
 @dataclass(frozen=True)
@@ -41,9 +45,11 @@ class Fact:
     # у ответа пользователя без цитаты и у значения из каталога источника в тексте нет
     source: FactSource | None
     normalization_rule: str
-    origin: Literal["parser", "user", "catalog"] = "parser"
+    origin: Literal["parser", "user", "catalog", "decision"] = "parser"
     status: FactStatus = "accepted_from_text"
     bounds: Value | None = None
+    model_revision: str | None = None
+    model_score: float | None = None
 
     @property
     def accepted(self) -> bool:

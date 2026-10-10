@@ -154,7 +154,13 @@ export type Candidate = {
 };
 
 export type FactStatus =
-  "accepted_from_text" | "ambiguous" | "confirmed_by_user" | "derived_from_catalog" | "superseded";
+  | "accepted_from_text"
+  | "accepted_from_model"
+  | "proposed"
+  | "ambiguous"
+  | "confirmed_by_user"
+  | "derived_from_catalog"
+  | "superseded";
 
 export type Fact = {
   id: string;
@@ -165,9 +171,19 @@ export type Fact = {
   value: string | [string, string];
   unit_code: string | null;
   kind: "number" | "range" | "text" | "interval";
-  origin: "parser" | "user" | "catalog";
+  origin: "parser" | "user" | "catalog" | "decision";
   status: FactStatus;
   source: { message_id: string; quote: string; start: number; end: number } | null;
+};
+
+export type EnumAction = "accept" | "choose" | "unknown";
+export type EnumProposal = {
+  id: string;
+  characteristic: string;
+  suggested: string[];
+  options: string[];
+  selections: { values: string[]; multiple: boolean }[];
+  reason: string;
 };
 
 export type QuestionOption = { id: string; label: string };
@@ -219,9 +235,18 @@ export type SessionState = {
   /** различающие характеристики, на которые ответили «не знаю» */
   unanswered: string[];
   unsupported_rules: { position: string; characteristic: string }[];
+  enum_proposals: EnumProposal[];
 };
 
 export interface SellerApi {
+  /** Подтвердить предложение в ожидаемой ревизии сессии. */
+  resolveEnum(
+    id: string,
+    revision: number,
+    proposalId: string,
+    action: EnumAction,
+    values: string[],
+  ): Promise<SessionState>;
   /** POST /api/v1/sessions без тела */
   create(): Promise<SessionState>;
   get(id: string): Promise<SessionState>;

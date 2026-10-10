@@ -1,0 +1,5 @@
+2026-10-10T09:35:53Z
+NVIDIA A100-SXM4-40GB, 40960 MiB, 37126 MiB
+9383, /workspace/tander-evals/.venv-fast/bin/python, 10016 MiB
+12880, VLLM::EngineCore, 3454 MiB
+13849, VLLM::EngineCore, 23636 MiB
