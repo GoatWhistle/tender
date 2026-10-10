@@ -189,3 +189,31 @@ cd backend && uv run python ../evals/errors/run.py
 
 Отчёт: [`2026-10-10-diagnostics-fixture.md`](evals/reports/2026-10-10-diagnostics-fixture.md).
 Он проверяет продуктовый сценарий на локальных fixtures и не измеряет качество живой модели.
+
+### Свободное извлечение и verifier
+
+Для генеративного прохода задайте `EXTRACTOR_URL` (корень strict API без `/v1`) и
+`DECISION_URL`; остальные настройки — `backend/.env.example`. Используется
+Qwen3.5-9B с закреплённой ревизией, [профиль сервиса 9B](services/qwen/README.md).
+Порог `VERIFIER_THRESHOLD` независим от enum, по умолчанию `0.90`.
+[Контракт, история и ограничения](docs/sessions.md#проверяемое-извлечение-свободных-значений).
+
+```sh
+cd backend
+uv run pytest tests/test_extraction_sessions.py tests/test_extractor_http.py
+```
+
+Независимый замер из корня (работающие модельные сервисы; поиск заменён заданной группой):
+
+```sh
+backend/.venv/bin/python evals/extraction/run.py \
+  --extractor-url http://127.0.0.1:18084 --decision-url http://127.0.0.1:18080 \
+  --cases evals/extraction/holdout.json --out var/extraction.json
+backend/.venv/bin/python evals/extraction/score.py \
+  evals/reports/2026-10-10-verified-extraction.json
+```
+
+`score.py` использует ручную разметку сохранённых ответов. Новый прогон требует
+проверки и, при изменившихся ответах, новой разметки через `--labels`.
+`run.py --only <id>` повторяет отдельный случай. Полный отчёт, абсолютные ошибки,
+задержка и VRAM: [замер verifier](evals/reports/2026-10-10-verified-extraction.md).

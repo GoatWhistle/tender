@@ -1,0 +1,5373 @@
+{
+  "dataset_sha256": "38460f6760d82319c550797e753fc5cf252c352b4079d3b7e0bdd86b70ecd6fd",
+  "threshold": 0.9,
+  "summary": {
+    "cases": 24,
+    "session_seconds": {
+      "p50": 4.962717291986337,
+      "p95": 11.803786624979693
+    },
+    "verifier_call_seconds": {
+      "p50": 0.9774438749882393,
+      "p95": 1.379291541990824
+    },
+    "added_verifier_seconds_per_case": {
+      "p50": 0.9764793749782257,
+      "p95": 2.232983666996006
+    },
+    "extractor_call_seconds": {
+      "p50": 4.669919291482074,
+      "p95": 6.839472833962645
+    }
+  },
+  "rows": [
+    {
+      "id": "height-paraphrase",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "75",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха 75 см",
+              "source_message_id": "7114fa92-54e9-49d4-b088-2f81aeedcc25",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "f7107c49-e36b-48cb-95e7-5b3f12711d53",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "7114fa92-54e9-49d4-b088-2f81aeedcc25",
+            "text": "Стол от пола до верха 75 см",
+            "created_at": "2026-10-10T10:15:05.590769+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:46be303ba65264f92ab1910c"
+            ],
+            "checks": [
+              {
+                "fact_id": "7114fa92-54e9-49d4-b088-2f81aeedcc25:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:46be303ba65264f92ab1910c",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:46be303ba65264f92ab1910c"
+            ],
+            "checks": [
+              {
+                "fact_id": "7114fa92-54e9-49d4-b088-2f81aeedcc25:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:46be303ba65264f92ab1910c",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "7114fa92-54e9-49d4-b088-2f81aeedcc25:22:27",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "7114fa92-54e9-49d4-b088-2f81aeedcc25",
+              "quote": "75 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:46be303ba65264f92ab1910c",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "7114fa92-54e9-49d4-b088-2f81aeedcc25",
+              "quote": "Стол от пола до верха 75 см",
+              "start": 0,
+              "end": 27
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9990718364715576,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 75 см.",
+              "message_ids": [
+                "7114fa92-54e9-49d4-b088-2f81aeedcc25"
+              ],
+              "context_hash": "f85c0a76b006a3e4298db43d2afeffc845ddafb65d352896fe7fd1ac4097430e",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0007884356309659779,
+                "supported": 0.9990718364715576,
+                "not_stated": 0.00013971184671390802
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.744515291007701,
+      "extractor_seconds": [
+        4.762647208000999
+      ],
+      "verifier_seconds": [
+        0.9798927080119029
+      ]
+    },
+    {
+      "id": "height-90",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "90",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "90",
+              "raw_unit": "см",
+              "source_quote": "верхняя поверхность находится в 90 см от пола",
+              "source_message_id": "e17b5908-6147-4745-a071-a52c332b35ca",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "25b7b4c9-8b64-440e-8c05-34130e7964fa",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "e17b5908-6147-4745-a071-a52c332b35ca",
+            "text": "Стол: верхняя поверхность находится в 90 см от пола",
+            "created_at": "2026-10-10T10:15:11.337554+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:412e4d182a78a67bc34e002e"
+            ],
+            "checks": [
+              {
+                "fact_id": "e17b5908-6147-4745-a071-a52c332b35ca:38:43",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:412e4d182a78a67bc34e002e",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:412e4d182a78a67bc34e002e"
+            ],
+            "checks": [
+              {
+                "fact_id": "e17b5908-6147-4745-a071-a52c332b35ca:38:43",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:412e4d182a78a67bc34e002e",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "e17b5908-6147-4745-a071-a52c332b35ca:38:43",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "90",
+            "raw_unit": "см",
+            "value": "90",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "e17b5908-6147-4745-a071-a52c332b35ca",
+              "quote": "90 см",
+              "start": 38,
+              "end": 43
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:412e4d182a78a67bc34e002e",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "90",
+            "raw_unit": "см",
+            "value": "90",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "e17b5908-6147-4745-a071-a52c332b35ca",
+              "quote": "верхняя поверхность находится в 90 см от пола",
+              "start": 6,
+              "end": 51
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9985315799713135,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 90 см.",
+              "message_ids": [
+                "e17b5908-6147-4745-a071-a52c332b35ca"
+              ],
+              "context_hash": "6f9de07ff73feba3ebdb54ebd526583777fb0f2a8bb3cd75e8187c7e9682b13a",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0013352228561416268,
+                "supported": 0.9985315799713135,
+                "not_stated": 0.00013324187602847815
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.555952499969862,
+      "extractor_seconds": [
+        4.054996207996737
+      ],
+      "verifier_seconds": [
+        1.4997756659868173
+      ]
+    },
+    {
+      "id": "height-meters",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "0.75",
+          "м"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "0,75",
+              "raw_unit": "м",
+              "source_quote": "Стол от пола до верха 0,75 м",
+              "source_message_id": "31f3b964-c6c6-4751-a105-ea94486fcf2a",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "12a65414-85f6-4ed3-8e39-1da82d68a040",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "31f3b964-c6c6-4751-a105-ea94486fcf2a",
+            "text": "Стол от пола до верха 0,75 м",
+            "created_at": "2026-10-10T10:15:16.894898+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:1d713cce6c50825f86d72f52"
+            ],
+            "checks": [
+              {
+                "fact_id": "31f3b964-c6c6-4751-a105-ea94486fcf2a:22:28",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:1d713cce6c50825f86d72f52",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:1d713cce6c50825f86d72f52"
+            ],
+            "checks": [
+              {
+                "fact_id": "31f3b964-c6c6-4751-a105-ea94486fcf2a:22:28",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:1d713cce6c50825f86d72f52",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "31f3b964-c6c6-4751-a105-ea94486fcf2a:22:28",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "0,75",
+            "raw_unit": "м",
+            "value": "0.75",
+            "unit_code": "006",
+            "kind": "number",
+            "source": {
+              "message_id": "31f3b964-c6c6-4751-a105-ea94486fcf2a",
+              "quote": "0,75 м",
+              "start": 22,
+              "end": 28
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:1d713cce6c50825f86d72f52",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "0,75",
+            "raw_unit": "м",
+            "value": "0.75",
+            "unit_code": "006",
+            "kind": "number",
+            "source": {
+              "message_id": "31f3b964-c6c6-4751-a105-ea94486fcf2a",
+              "quote": "Стол от пола до верха 0,75 м",
+              "start": 0,
+              "end": 28
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.999037504196167,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 0,75 м.",
+              "message_ids": [
+                "31f3b964-c6c6-4751-a105-ea94486fcf2a"
+              ],
+              "context_hash": "7677032b47dadb0c5aed5936ee24a109de9a7c4b0749e02edc1463ae548b9dd0",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0008392565068788826,
+                "supported": 0.999037504196167,
+                "not_stated": 0.00012329101446084678
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.889387333008926,
+      "extractor_seconds": [
+        4.943792667007074
+      ],
+      "verifier_seconds": [
+        0.9442247499828227
+      ]
+    },
+    {
+      "id": "height-range",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "70..80",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "70..80",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха от 70 до 80 см",
+              "source_message_id": "635d9198-0ff9-4e62-bc2c-6106970432df",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "cf54e33f-322a-4f52-ac56-3a3fee393328",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "635d9198-0ff9-4e62-bc2c-6106970432df",
+            "text": "Стол от пола до верха от 70 до 80 см",
+            "created_at": "2026-10-10T10:15:22.785802+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:34eb686ab3abace6da8f66ec"
+            ],
+            "checks": [
+              {
+                "fact_id": "635d9198-0ff9-4e62-bc2c-6106970432df:22:36",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:34eb686ab3abace6da8f66ec",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:34eb686ab3abace6da8f66ec"
+            ],
+            "checks": [
+              {
+                "fact_id": "635d9198-0ff9-4e62-bc2c-6106970432df:22:36",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:34eb686ab3abace6da8f66ec",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "635d9198-0ff9-4e62-bc2c-6106970432df:22:36",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "от 70 до 80",
+            "raw_unit": "см",
+            "value": [
+              "70",
+              "80"
+            ],
+            "unit_code": "004",
+            "kind": "range",
+            "source": {
+              "message_id": "635d9198-0ff9-4e62-bc2c-6106970432df",
+              "quote": "от 70 до 80 см",
+              "start": 22,
+              "end": 36
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:34eb686ab3abace6da8f66ec",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "70..80",
+            "raw_unit": "см",
+            "value": [
+              "70",
+              "80"
+            ],
+            "unit_code": "004",
+            "kind": "range",
+            "source": {
+              "message_id": "635d9198-0ff9-4e62-bc2c-6106970432df",
+              "quote": "Стол от пола до верха от 70 до 80 см",
+              "start": 0,
+              "end": 36
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9989821314811707,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 70..80 см.",
+              "message_ids": [
+                "635d9198-0ff9-4e62-bc2c-6106970432df"
+              ],
+              "context_hash": "818da79c759d7bd7a22d245269e1e56af30b286638d6d82479f38e4dd88d3dba",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0006930171512067318,
+                "supported": 0.9989821314811707,
+                "not_stated": 0.000324810593156144
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.632653791981284,
+      "extractor_seconds": [
+        4.68418095796369
+      ],
+      "verifier_seconds": [
+        0.9465785420034081
+      ]
+    },
+    {
+      "id": "missing-height",
+      "controlled": false,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал столешницы",
+              "raw_value": "красивая поверхность",
+              "raw_unit": "004",
+              "source_quote": "Стол с красивой поверхностью",
+              "source_message_id": "35f24ed9-2122-4091-a9bb-19a35392cdf2",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "69bce0c8-b1f7-4804-8048-92cf94786247",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "35f24ed9-2122-4091-a9bb-19a35392cdf2",
+            "text": "Стол с красивой поверхностью",
+            "created_at": "2026-10-10T10:15:28.419966+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [
+          "Непроверенное значение отклонено: проверьте источник и единицу в редакторе."
+        ],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 4.547370124957524,
+      "extractor_seconds": [
+        4.546299000037834
+      ],
+      "verifier_seconds": []
+    },
+    {
+      "id": "unrelated-number",
+      "controlled": false,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "дней",
+              "source_quote": "Стол, доставка через 75 дней",
+              "source_message_id": "ece67fbe-12c5-4491-95de-eb9312d70241",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "345127dc-1e33-458d-8c06-e4413d5dadf4",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "ece67fbe-12c5-4491-95de-eb9312d70241",
+            "text": "Стол, доставка через 75 дней",
+            "created_at": "2026-10-10T10:15:32.968882+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "ece67fbe-12c5-4491-95de-eb9312d70241:21:23",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "ece67fbe-12c5-4491-95de-eb9312d70241:21:23",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "ece67fbe-12c5-4491-95de-eb9312d70241:21:23",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": null,
+            "value": "75",
+            "unit_code": null,
+            "kind": "number",
+            "source": {
+              "message_id": "ece67fbe-12c5-4491-95de-eb9312d70241",
+              "quote": "75",
+              "start": 21,
+              "end": 23
+            },
+            "normalization_rule": "decimal_comma; unit_unspecified",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [
+          "Непроверенное значение отклонено: проверьте источник и единицу в редакторе."
+        ],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 4.530738374975044,
+      "extractor_seconds": [
+        4.5295288329944015
+      ],
+      "verifier_seconds": []
+    },
+    {
+      "id": "negated-height",
+      "controlled": false,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "не 75 см",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха не 75 см",
+              "source_message_id": "f61e8f5d-05dc-44e6-9605-f0c382795c6f",
+              "negated": true,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "ee59bebb-bd24-4922-8fe2-b5c1b12cceae",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "f61e8f5d-05dc-44e6-9605-f0c382795c6f",
+            "text": "Стол от пола до верха не 75 см",
+            "created_at": "2026-10-10T10:15:37.501752+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [
+          "фрагмент с отрицанием не разобран",
+          "Непроверенное значение отклонено: проверьте источник и единицу в редакторе."
+        ],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 4.143652042024769,
+      "extractor_seconds": [
+        4.1428507920354605
+      ],
+      "verifier_seconds": []
+    },
+    {
+      "id": "uncertain-height",
+      "controlled": false,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха примерно 75 см, точно не знаю",
+              "source_message_id": "1e672fc2-be75-46c2-9851-a028d67d9f1a",
+              "negated": false,
+              "uncertain": true,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "2657506a-7081-47bc-87ca-73de62d61553",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "1e672fc2-be75-46c2-9851-a028d67d9f1a",
+            "text": "Стол от пола до верха примерно 75 см, точно не знаю",
+            "created_at": "2026-10-10T10:15:41.646789+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:070ac31163274c107a682c07"
+            ],
+            "checks": [
+              {
+                "fact_id": "1e672fc2-be75-46c2-9851-a028d67d9f1a:31:36",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:070ac31163274c107a682c07",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:070ac31163274c107a682c07"
+            ],
+            "checks": [
+              {
+                "fact_id": "1e672fc2-be75-46c2-9851-a028d67d9f1a:31:36",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:070ac31163274c107a682c07",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "1e672fc2-be75-46c2-9851-a028d67d9f1a:31:36",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "1e672fc2-be75-46c2-9851-a028d67d9f1a",
+              "quote": "75 см",
+              "start": 31,
+              "end": 36
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:070ac31163274c107a682c07",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "1e672fc2-be75-46c2-9851-a028d67d9f1a",
+              "quote": "Стол от пола до верха примерно 75 см, точно не знаю",
+              "start": 0,
+              "end": 51
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9969435334205627,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 75 см.",
+              "message_ids": [
+                "1e672fc2-be75-46c2-9851-a028d67d9f1a"
+              ],
+              "context_hash": "d27c475dbe6c44f20cfa5a46723e50a37a43e4e2173e314bc6e5ab5147555d41",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.001879971707239747,
+                "supported": 0.9969435334205627,
+                "not_stated": 0.0011764562223106623
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": true,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 6.426930334011558,
+      "extractor_seconds": [
+        5.157869000046048
+      ],
+      "verifier_seconds": [
+        1.267527375021018
+      ]
+    },
+    {
+      "id": "wrong-dimension",
+      "controlled": false,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал ножек",
+              "raw_value": "75",
+              "raw_unit": "кг",
+              "source_quote": "Стол весит 75 кг",
+              "source_message_id": "29fe681a-8a5a-4c01-8075-b61b1568cef9",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "f6644022-dc41-4955-8643-3e4aa87d8f1b",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "29fe681a-8a5a-4c01-8075-b61b1568cef9",
+            "text": "Стол весит 75 кг",
+            "created_at": "2026-10-10T10:15:48.075082+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "29fe681a-8a5a-4c01-8075-b61b1568cef9:11:16",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:a5da4c2ada5f04244d876b4d",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "29fe681a-8a5a-4c01-8075-b61b1568cef9:11:16",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:a5da4c2ada5f04244d876b4d",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "29fe681a-8a5a-4c01-8075-b61b1568cef9:11:16",
+            "field": "масса",
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "кг",
+            "value": "75",
+            "unit_code": "166",
+            "kind": "number",
+            "source": {
+              "message_id": "29fe681a-8a5a-4c01-8075-b61b1568cef9",
+              "quote": "75 кг",
+              "start": 11,
+              "end": 16
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:a5da4c2ada5f04244d876b4d",
+            "field": "Материал ножек",
+            "characteristic_name": "Материал ножек",
+            "raw_value": "75",
+            "raw_unit": "кг",
+            "value": "75",
+            "unit_code": "166",
+            "kind": "text",
+            "source": {
+              "message_id": "29fe681a-8a5a-4c01-8075-b61b1568cef9",
+              "quote": "Стол весит 75 кг",
+              "start": 0,
+              "end": 16
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.3525218665599823,
+            "verification": {
+              "claim": "Характеристика «Материал ножек» части «Стол» — 75 кг.",
+              "message_ids": [
+                "29fe681a-8a5a-4c01-8075-b61b1568cef9"
+              ],
+              "context_hash": "7517ad84b10dbd1c406f27673e4db5ccb29c0b3d9f1a81d091212326f1eb4cad",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.31109943985939026,
+                "supported": 0.3525218665599823,
+                "not_stated": 0.33637872338294983
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.020162708999123,
+      "extractor_seconds": [
+        4.060188625007868
+      ],
+      "verifier_seconds": [
+        0.958617124997545
+      ]
+    },
+    {
+      "id": "parts",
+      "controlled": false,
+      "expected": [
+        [
+          "Материал ножек",
+          "металл",
+          null
+        ],
+        [
+          "Материал столешницы",
+          "дерево",
+          null
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал ножек",
+              "raw_value": "металла",
+              "raw_unit": "004",
+              "source_quote": "Стол: ножки из металла, столешница из дерева",
+              "source_message_id": "bc76d210-679f-4556-851c-ae59fbf52302",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            },
+            {
+              "attribute_ref": "Материал столешницы",
+              "raw_value": "дерева",
+              "raw_unit": "004",
+              "source_quote": "Стол: ножки из металла, столешница из дерева",
+              "source_message_id": "bc76d210-679f-4556-851c-ae59fbf52302",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "904edf9a-dd11-4ed4-b2d1-51b38fead8e7",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "bc76d210-679f-4556-851c-ae59fbf52302",
+            "text": "Стол: ножки из металла, столешница из дерева",
+            "created_at": "2026-10-10T10:15:53.097058+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:33b784538473736fc3553d39",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": "extract:de6d0128e9ce52f421089cfc",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:33b784538473736fc3553d39",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": "extract:de6d0128e9ce52f421089cfc",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:33b784538473736fc3553d39",
+            "field": "Материал ножек",
+            "characteristic_name": "Материал ножек",
+            "raw_value": "металла",
+            "raw_unit": "см",
+            "value": "металла",
+            "unit_code": "004",
+            "kind": "text",
+            "source": {
+              "message_id": "bc76d210-679f-4556-851c-ae59fbf52302",
+              "quote": "Стол: ножки из металла, столешница из дерева",
+              "start": 0,
+              "end": 44
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9937910437583923,
+            "verification": {
+              "claim": "Характеристика «Материал ножек» части «Стол» — металла 004.",
+              "message_ids": [
+                "bc76d210-679f-4556-851c-ae59fbf52302"
+              ],
+              "context_hash": "6cb21fcd306b964aa8ce6a606dd049f288e50249f903f10abf84c57b4c5b17f4",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.006192890461534262,
+                "supported": 0.9937910437583923,
+                "not_stated": 1.6087333278846927e-05
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          },
+          {
+            "id": "extract:de6d0128e9ce52f421089cfc",
+            "field": "Материал столешницы",
+            "characteristic_name": "Материал столешницы",
+            "raw_value": "дерева",
+            "raw_unit": "см",
+            "value": "дерева",
+            "unit_code": "004",
+            "kind": "text",
+            "source": {
+              "message_id": "bc76d210-679f-4556-851c-ae59fbf52302",
+              "quote": "Стол: ножки из металла, столешница из дерева",
+              "start": 0,
+              "end": 44
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9932447075843811,
+            "verification": {
+              "claim": "Характеристика «Материал столешницы» части «Стол» — дерева 004.",
+              "message_ids": [
+                "bc76d210-679f-4556-851c-ae59fbf52302"
+              ],
+              "context_hash": "6cb21fcd306b964aa8ce6a606dd049f288e50249f903f10abf84c57b4c5b17f4",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.006744919810444117,
+                "supported": 0.9932447075843811,
+                "not_stated": 1.0381052561569959e-05
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 8.721887499967124,
+      "extractor_seconds": [
+        6.839472833962645
+      ],
+      "verifier_seconds": [
+        0.9958327919594012,
+        0.8843162920093164
+      ]
+    },
+    {
+      "id": "top-metal",
+      "controlled": false,
+      "expected": [
+        [
+          "Материал столешницы",
+          "металл",
+          null
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал столешницы",
+              "raw_value": "металла",
+              "raw_unit": "004",
+              "source_quote": "Стол: столешница изготовлена из металла",
+              "source_message_id": "c127fc69-90a8-4937-80ab-bf8fc78617d9",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "a2b51325-7325-4241-b94d-f7ba1ea6ad71",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "c127fc69-90a8-4937-80ab-bf8fc78617d9",
+            "text": "Стол: столешница изготовлена из металла",
+            "created_at": "2026-10-10T10:16:01.820816+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:0579cc3a8d314f11887fd3e9",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:0579cc3a8d314f11887fd3e9",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:0579cc3a8d314f11887fd3e9",
+            "field": "Материал столешницы",
+            "characteristic_name": "Материал столешницы",
+            "raw_value": "металла",
+            "raw_unit": "см",
+            "value": "металла",
+            "unit_code": "004",
+            "kind": "text",
+            "source": {
+              "message_id": "c127fc69-90a8-4937-80ab-bf8fc78617d9",
+              "quote": "Стол: столешница изготовлена из металла",
+              "start": 0,
+              "end": 39
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9924793243408203,
+            "verification": {
+              "claim": "Характеристика «Материал столешницы» части «Стол» — металла 004.",
+              "message_ids": [
+                "c127fc69-90a8-4937-80ab-bf8fc78617d9"
+              ],
+              "context_hash": "9543231cd18125cca9246984f1d4dd012a0632f3514014551429979bf2c945ea",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.007431107573211193,
+                "supported": 0.9924793243408203,
+                "not_stated": 8.960951527114958e-05
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.595915500016417,
+      "extractor_seconds": [
+        4.656803332967684
+      ],
+      "verifier_seconds": [
+        0.9379676670068875
+      ]
+    },
+    {
+      "id": "color",
+      "controlled": false,
+      "expected": [
+        [
+          "Цвет",
+          "сиреневый",
+          null
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Цвет",
+              "raw_value": "сиреневый",
+              "raw_unit": "",
+              "source_quote": "Стол окрашен в сиреневый цвет",
+              "source_message_id": "c5030320-9c22-4f12-b00b-14d9d2d28226",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "13efad26-ef36-4ede-9dba-f9e9f2316526",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "c5030320-9c22-4f12-b00b-14d9d2d28226",
+            "text": "Стол окрашен в сиреневый цвет",
+            "created_at": "2026-10-10T10:16:07.418230+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:1b29feb36e9de8e5cff52f7c",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:1b29feb36e9de8e5cff52f7c",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:1b29feb36e9de8e5cff52f7c",
+            "field": "Цвет",
+            "characteristic_name": "Цвет",
+            "raw_value": "сиреневый",
+            "raw_unit": null,
+            "value": "сиреневый",
+            "unit_code": null,
+            "kind": "text",
+            "source": {
+              "message_id": "c5030320-9c22-4f12-b00b-14d9d2d28226",
+              "quote": "Стол окрашен в сиреневый цвет",
+              "start": 0,
+              "end": 29
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9995372295379639,
+            "verification": {
+              "claim": "Характеристика «Цвет» части «Стол» — сиреневый.",
+              "message_ids": [
+                "c5030320-9c22-4f12-b00b-14d9d2d28226"
+              ],
+              "context_hash": "1b95a7a580441e433dc9384232bf826f8b7be5035672f75e0f42e447a8840444",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0004373232659418136,
+                "supported": 0.9995372295379639,
+                "not_stated": 2.5455266950302757e-05
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.071411292010453,
+      "extractor_seconds": [
+        4.092983374954201
+      ],
+      "verifier_seconds": [
+        0.9774438749882393
+      ]
+    },
+    {
+      "id": "color-missing",
+      "controlled": false,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Цвет",
+              "raw_value": "не выбрали",
+              "raw_unit": "",
+              "source_quote": "Стол, цвет пока не выбрали",
+              "source_message_id": "5aaaf742-4edb-45c5-a363-bb62701a4211",
+              "negated": false,
+              "uncertain": true,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "3964b208-20da-4155-bb5d-633df2833e4c",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "5aaaf742-4edb-45c5-a363-bb62701a4211",
+            "text": "Стол, цвет пока не выбрали",
+            "created_at": "2026-10-10T10:16:12.490336+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:13240fc697b1d9087d905dd7",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:13240fc697b1d9087d905dd7",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:13240fc697b1d9087d905dd7",
+            "field": "Цвет",
+            "characteristic_name": "Цвет",
+            "raw_value": "не выбрали",
+            "raw_unit": null,
+            "value": "не выбрали",
+            "unit_code": null,
+            "kind": "text",
+            "source": {
+              "message_id": "5aaaf742-4edb-45c5-a363-bb62701a4211",
+              "quote": "Стол, цвет пока не выбрали",
+              "start": 0,
+              "end": 26
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9987691044807434,
+            "verification": {
+              "claim": "Характеристика «Цвет» части «Стол» — не выбрали.",
+              "message_ids": [
+                "5aaaf742-4edb-45c5-a363-bb62701a4211"
+              ],
+              "context_hash": "dfe0c30f461505142f700c0a5af640ac8aaf7a2b1169026783227264a69229f5",
+              "session_revision": 1,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0007318158750422299,
+                "supported": 0.9987691044807434,
+                "not_stated": 0.0004990550805814564
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": true,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 4.90527187497355,
+      "extractor_seconds": [
+        3.959985083027277
+      ],
+      "verifier_seconds": [
+        0.9443589999573305
+      ]
+    },
+    {
+      "id": "two-messages",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "75",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "От пола до верха 75 см",
+              "source_message_id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "1c42496a-f464-4996-9a76-aed92eebf95a",
+        "revision": 2,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "39933d26-175a-4da8-909c-a0f0c6fdf32d",
+            "text": "Стол",
+            "created_at": "2026-10-10T10:16:17.397266+00:00"
+          },
+          {
+            "id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375",
+            "text": "От пола до верха 75 см",
+            "created_at": "2026-10-10T10:16:17.397763+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:185b3053ae531c2e3c96dddf"
+            ],
+            "checks": [
+              {
+                "fact_id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375:17:22",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:185b3053ae531c2e3c96dddf",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:185b3053ae531c2e3c96dddf"
+            ],
+            "checks": [
+              {
+                "fact_id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375:17:22",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:185b3053ae531c2e3c96dddf",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375:17:22",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375",
+              "quote": "75 см",
+              "start": 17,
+              "end": 22
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:185b3053ae531c2e3c96dddf",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "bf70c01f-3ea8-40c3-9b71-71d8e1453375",
+              "quote": "От пола до верха 75 см",
+              "start": 0,
+              "end": 22
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9994578957557678,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 75 см.",
+              "message_ids": [
+                "39933d26-175a-4da8-909c-a0f0c6fdf32d",
+                "bf70c01f-3ea8-40c3-9b71-71d8e1453375"
+              ],
+              "context_hash": "48783b0782df55d6cdec5437b4d8167a8213b97de56c965cf62b7cd2048c3776",
+              "session_revision": 2,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0005072636413387954,
+                "supported": 0.9994578957557678,
+                "not_stated": 3.479046426946297e-05
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 2,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 5.631107332999818,
+      "extractor_seconds": [
+        4.683035249996465
+      ],
+      "verifier_seconds": [
+        0.94644133298425
+      ]
+    },
+    {
+      "id": "corrected-height",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "90",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха 75 см",
+              "source_message_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        },
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал ножек",
+              "raw_value": "",
+              "raw_unit": "",
+              "source_quote": "",
+              "source_message_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": ""
+            },
+            {
+              "attribute_ref": "Материал столешницы",
+              "raw_value": "",
+              "raw_unit": "",
+              "source_quote": "",
+              "source_message_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": ""
+            },
+            {
+              "attribute_ref": "Цвет",
+              "raw_value": "",
+              "raw_unit": "",
+              "source_quote": "",
+              "source_message_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": ""
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "9178e998-cb44-4ee2-9861-778c00f22688",
+        "revision": 2,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "b951929b-7d33-4129-9923-ebd3cfb14d3c",
+            "text": "Стол от пола до верха 75 см",
+            "created_at": "2026-10-10T10:16:23.030677+00:00"
+          },
+          {
+            "id": "9bc43f1f-1fcd-4475-9799-bd5ba146fc21",
+            "text": "Нет, исправь высоту на 90 см",
+            "created_at": "2026-10-10T10:16:28.544384+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "9bc43f1f-1fcd-4475-9799-bd5ba146fc21:23:28"
+            ],
+            "checks": [
+              {
+                "fact_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "9bc43f1f-1fcd-4475-9799-bd5ba146fc21:23:28",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "9bc43f1f-1fcd-4475-9799-bd5ba146fc21:23:28"
+            ],
+            "checks": [
+              {
+                "fact_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "9bc43f1f-1fcd-4475-9799-bd5ba146fc21:23:28",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "b951929b-7d33-4129-9923-ebd3cfb14d3c:22:27",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "b951929b-7d33-4129-9923-ebd3cfb14d3c",
+              "quote": "75 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "9bc43f1f-1fcd-4475-9799-bd5ba146fc21:23:28",
+            "field": "высота",
+            "characteristic_name": "Высота",
+            "raw_value": "90",
+            "raw_unit": "см",
+            "value": "90",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "9bc43f1f-1fcd-4475-9799-bd5ba146fc21",
+              "quote": "90 см",
+              "start": 23,
+              "end": 28
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "accepted_from_text",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [
+          "Непроверенное значение отклонено: проверьте источник и единицу в редакторе."
+        ],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 2,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 11.869903834012803,
+      "extractor_seconds": [
+        4.566467832948547,
+        6.354997750022449
+      ],
+      "verifier_seconds": [
+        0.9458765420131385
+      ]
+    },
+    {
+      "id": "unrelated-followup",
+      "controlled": false,
+      "expected": [
+        [
+          "Высота",
+          "75",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха 75 см",
+              "source_message_id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        },
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "Стол от пола до верха 75 см",
+              "source_message_id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "Стол"
+            }
+          ],
+          "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+        }
+      ],
+      "state": {
+        "session_id": "5849131b-b84e-4851-bef6-c8edb915a118",
+        "revision": 2,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9",
+            "text": "Стол от пола до верха 75 см",
+            "created_at": "2026-10-10T10:16:34.904399+00:00"
+          },
+          {
+            "id": "d33ff73c-0630-41fe-849e-b6a9cc58266b",
+            "text": "Доставка завтра",
+            "created_at": "2026-10-10T10:16:40.790852+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:e5ecda5c42cafff51b2d4d0d"
+            ],
+            "checks": [
+              {
+                "fact_id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:e5ecda5c42cafff51b2d4d0d",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:e5ecda5c42cafff51b2d4d0d"
+            ],
+            "checks": [
+              {
+                "fact_id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:e5ecda5c42cafff51b2d4d0d",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9:22:27",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9",
+              "quote": "75 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:e5ecda5c42cafff51b2d4d0d",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9",
+              "quote": "Стол от пола до верха 75 см",
+              "start": 0,
+              "end": 27
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": "Стол",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9992039799690247,
+            "verification": {
+              "claim": "Характеристика «Высота» части «Стол» — 75 см.",
+              "message_ids": [
+                "4fa20a9b-0ed4-4924-a3b7-50e07a8135b9",
+                "d33ff73c-0630-41fe-849e-b6a9cc58266b"
+              ],
+              "context_hash": "c7010cc4912777fac4d0303e53c285932476b0607dc3d8c45c3259f743b4d7f1",
+              "session_revision": 2,
+              "extractor_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0007236048113554716,
+                "supported": 0.9992039799690247,
+                "not_stated": 7.249113696161658e-05
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 2,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 11.803786624979693,
+      "extractor_seconds": [
+        4.869654041016474,
+        4.697838042047806
+      ],
+      "verifier_seconds": [
+        1.0146188749931753,
+        1.2183647920028307
+      ]
+    },
+    {
+      "id": "controlled-good",
+      "controlled": true,
+      "expected": [
+        [
+          "Высота",
+          "75",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "от пола до верха 75 см",
+              "source_message_id": "601547d6-d91d-4118-bc60-34b2bee0cc8f",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "c2025e3e-9f83-4c2f-8186-ea15a2542d21",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "601547d6-d91d-4118-bc60-34b2bee0cc8f",
+            "text": "Стол от пола до верха 75 см",
+            "created_at": "2026-10-10T10:16:46.709448+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:a6ec21939767632724f1b000"
+            ],
+            "checks": [
+              {
+                "fact_id": "601547d6-d91d-4118-bc60-34b2bee0cc8f:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:a6ec21939767632724f1b000",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:a6ec21939767632724f1b000"
+            ],
+            "checks": [
+              {
+                "fact_id": "601547d6-d91d-4118-bc60-34b2bee0cc8f:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:a6ec21939767632724f1b000",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "601547d6-d91d-4118-bc60-34b2bee0cc8f:22:27",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "601547d6-d91d-4118-bc60-34b2bee0cc8f",
+              "quote": "75 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:a6ec21939767632724f1b000",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "601547d6-d91d-4118-bc60-34b2bee0cc8f",
+              "quote": "от пола до верха 75 см",
+              "start": 5,
+              "end": 27
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "accepted_from_model",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.998637855052948,
+            "verification": {
+              "claim": "Характеристика «Высота» товара — 75 см.",
+              "message_ids": [
+                "601547d6-d91d-4118-bc60-34b2bee0cc8f"
+              ],
+              "context_hash": "db8e3a3f995462099f2182fcb303d3d24faf391b373dfc65a9b0c3698944ac55",
+              "session_revision": 1,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0012111235409975052,
+                "supported": 0.998637855052948,
+                "not_stated": 0.00015099887968972325
+              },
+              "binding_valid": true,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 1.2695071669877507,
+      "extractor_seconds": [
+        9.000010322779417e-06
+      ],
+      "verifier_seconds": [
+        1.2684640840161592
+      ]
+    },
+    {
+      "id": "controlled-hallucination",
+      "controlled": true,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "75 дней",
+              "source_message_id": "7379fee4-df1b-486c-90d9-0bff7c92af34",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "2cd06f42-a759-4d40-be05-04285d071a46",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "7379fee4-df1b-486c-90d9-0bff7c92af34",
+            "text": "Стол нужен через 75 дней",
+            "created_at": "2026-10-10T10:16:47.980906+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "7379fee4-df1b-486c-90d9-0bff7c92af34:17:19",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "7379fee4-df1b-486c-90d9-0bff7c92af34:17:19",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "7379fee4-df1b-486c-90d9-0bff7c92af34:17:19",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": null,
+            "value": "75",
+            "unit_code": null,
+            "kind": "number",
+            "source": {
+              "message_id": "7379fee4-df1b-486c-90d9-0bff7c92af34",
+              "quote": "75",
+              "start": 17,
+              "end": 19
+            },
+            "normalization_rule": "decimal_comma; unit_unspecified",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [
+          "Непроверенное значение отклонено: проверьте источник и единицу в редакторе."
+        ],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 0.0010549579747021198,
+      "extractor_seconds": [
+        1.912500010803342e-05
+      ],
+      "verifier_seconds": []
+    },
+    {
+      "id": "controlled-lost-negation",
+      "controlled": true,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "75 см",
+              "source_message_id": "44442d82-87cd-425e-aff0-cb24644ad472",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        },
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "75 см",
+              "source_message_id": "44442d82-87cd-425e-aff0-cb24644ad472",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "94880949-7abf-449a-8244-236be75c6b03",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "44442d82-87cd-425e-aff0-cb24644ad472",
+            "text": "Стол от пола до верха не 75 см",
+            "created_at": "2026-10-10T10:16:47.983852+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:9a8af49b3212ad82b3e60a78",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "44442d82-87cd-425e-aff0-cb24644ad472",
+              "quote": "75 см",
+              "start": 25,
+              "end": 30
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "superseded",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.05539754405617714,
+            "verification": {
+              "claim": "Характеристика «Высота» товара — 75 см.",
+              "message_ids": [
+                "44442d82-87cd-425e-aff0-cb24644ad472"
+              ],
+              "context_hash": "39d8e2233757f99b067b53c7d70689267ecb88abc7c1154b524b68b60130f25f",
+              "session_revision": 1,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "contradicted",
+              "probabilities": {
+                "contradicted": 0.9443272352218628,
+                "supported": 0.05539754405617714,
+                "not_stated": 0.00027522887103259563
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [
+          "фрагмент с отрицанием не разобран"
+        ],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 2.5093361670151353,
+      "extractor_seconds": [
+        1.4583987649530172e-05,
+        2.1832995116710663e-05
+      ],
+      "verifier_seconds": [
+        1.324048166978173,
+        1.1841044159955345
+      ]
+    },
+    {
+      "id": "controlled-wrong-part",
+      "controlled": true,
+      "expected": [
+        [
+          "Материал столешницы",
+          "дерево",
+          null
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал столешницы",
+              "raw_value": "металла",
+              "raw_unit": null,
+              "source_quote": "ножки из металла",
+              "source_message_id": "aa437dc7-6fe1-4967-8e35-9fb2026b278c",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "столешница"
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        },
+        {
+          "facts": [
+            {
+              "attribute_ref": "Материал столешницы",
+              "raw_value": "металла",
+              "raw_unit": null,
+              "source_quote": "ножки из металла",
+              "source_message_id": "aa437dc7-6fe1-4967-8e35-9fb2026b278c",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": "столешница"
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "02930a39-6594-4164-8c02-2dead5f52895",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "aa437dc7-6fe1-4967-8e35-9fb2026b278c",
+            "text": "Стол: ножки из металла, столешница из дерева",
+            "created_at": "2026-10-10T10:16:50.495466+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unknown"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:7f26bbf5898fa54ca8467859",
+            "field": "Материал столешницы",
+            "characteristic_name": "Материал столешницы",
+            "raw_value": "металла",
+            "raw_unit": null,
+            "value": "металла",
+            "unit_code": null,
+            "kind": "text",
+            "source": {
+              "message_id": "aa437dc7-6fe1-4967-8e35-9fb2026b278c",
+              "quote": "ножки из металла",
+              "start": 6,
+              "end": 22
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "superseded",
+            "bounds": null,
+            "component": "столешница",
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.0008969326736405492,
+            "verification": {
+              "claim": "Характеристика «Материал столешницы» части «столешница» — металла.",
+              "message_ids": [
+                "aa437dc7-6fe1-4967-8e35-9fb2026b278c"
+              ],
+              "context_hash": "ae48720c323f95d72b53b531f7f53b1d09fca06c25bb1f047fcb25b0bc0306a2",
+              "session_revision": 1,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "contradicted",
+              "probabilities": {
+                "contradicted": 0.9990956783294678,
+                "supported": 0.0008969326736405492,
+                "not_stated": 7.404632469842909e-06
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 1.9179535000002943,
+      "extractor_seconds": [
+        1.704104943200946e-05,
+        9.000010322779417e-06
+      ],
+      "verifier_seconds": [
+        0.9767310419701971,
+        0.9400679590180516
+      ]
+    },
+    {
+      "id": "controlled-free-color",
+      "controlled": true,
+      "expected": [
+        [
+          "Цвет",
+          "сиреневый",
+          null
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Цвет",
+              "raw_value": "сиреневый",
+              "raw_unit": null,
+              "source_quote": "окрашен в сиреневый цвет",
+              "source_message_id": "617732d2-b1d0-48c8-a015-a6ada51a7c1b",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "c5980343-ecb6-40b5-a570-b1271fc3db54",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "617732d2-b1d0-48c8-a015-a6ada51a7c1b",
+            "text": "Стол окрашен в сиреневый цвет",
+            "created_at": "2026-10-10T10:16:52.415505+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:c9a5ca5dd93a40c582d125c8",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:c9a5ca5dd93a40c582d125c8",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:c9a5ca5dd93a40c582d125c8",
+            "field": "Цвет",
+            "characteristic_name": "Цвет",
+            "raw_value": "сиреневый",
+            "raw_unit": null,
+            "value": "сиреневый",
+            "unit_code": null,
+            "kind": "text",
+            "source": {
+              "message_id": "617732d2-b1d0-48c8-a015-a6ada51a7c1b",
+              "quote": "окрашен в сиреневый цвет",
+              "start": 5,
+              "end": 29
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "accepted_from_model",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9986585378646851,
+            "verification": {
+              "claim": "Характеристика «Цвет» товара — сиреневый.",
+              "message_ids": [
+                "617732d2-b1d0-48c8-a015-a6ada51a7c1b"
+              ],
+              "context_hash": "95814134157f131761c589103a169b9b4ccb644d1838418b56e4eaa1afbd01ad",
+              "session_revision": 1,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0012981838081032038,
+                "supported": 0.9986585378646851,
+                "not_stated": 4.3262800318188965e-05
+              },
+              "binding_valid": true,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 1.380360874987673,
+      "extractor_seconds": [
+        1.4209013897925615e-05
+      ],
+      "verifier_seconds": [
+        1.379291541990824
+      ]
+    },
+    {
+      "id": "controlled-unstated-color",
+      "controlled": true,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Цвет",
+              "raw_value": "сиреневый",
+              "raw_unit": null,
+              "source_quote": "рядом стоит сиреневый шкаф",
+              "source_message_id": "fc3f2754-d745-40d2-9c61-41e4180e5402",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "07d29587-55ec-4223-ae3d-04b2a7180da8",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "fc3f2754-d745-40d2-9c61-41e4180e5402",
+            "text": "Стол, рядом стоит сиреневый шкаф",
+            "created_at": "2026-10-10T10:16:53.797580+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:f72e07468f3bc8ff007c3603",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [],
+            "checks": [
+              {
+                "fact_id": "extract:f72e07468f3bc8ff007c3603",
+                "result": "unsupported"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "extract:f72e07468f3bc8ff007c3603",
+            "field": "Цвет",
+            "characteristic_name": "Цвет",
+            "raw_value": "сиреневый",
+            "raw_unit": null,
+            "value": "сиреневый",
+            "unit_code": null,
+            "kind": "text",
+            "source": {
+              "message_id": "fc3f2754-d745-40d2-9c61-41e4180e5402",
+              "quote": "рядом стоит сиреневый шкаф",
+              "start": 6,
+              "end": 32
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "accepted_from_model",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9916143417358398,
+            "verification": {
+              "claim": "Характеристика «Цвет» товара — сиреневый.",
+              "message_ids": [
+                "fc3f2754-d745-40d2-9c61-41e4180e5402"
+              ],
+              "context_hash": "bfd2dde8395442956adc0b79e4dc6db60eca350cc37b2b3bbcb24a343c262dd7",
+              "session_revision": 1,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.008122570812702179,
+                "supported": 0.9916143417358398,
+                "not_stated": 0.0002631474344525486
+              },
+              "binding_valid": true,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 0.976310416997876,
+      "extractor_seconds": [
+        8.834002073854208e-06
+      ],
+      "verifier_seconds": [
+        0.9755148749682121
+      ]
+    },
+    {
+      "id": "controlled-stale",
+      "controlled": true,
+      "expected": [
+        [
+          "Высота",
+          "90",
+          "см"
+        ]
+      ],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "75 см",
+              "source_message_id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        },
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "75 см",
+              "source_message_id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2",
+              "negated": false,
+              "uncertain": false,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "ce08bcd8-04cc-40e2-9c44-883fba6dd2ba",
+        "revision": 2,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2",
+            "text": "Стол от пола до верха 75 см",
+            "created_at": "2026-10-10T10:16:54.775983+00:00"
+          },
+          {
+            "id": "fd1fe8b2-3a4b-4fab-a10f-16bfc2f6443a",
+            "text": "Нет, от пола до верха 90 см",
+            "created_at": "2026-10-10T10:16:55.728844+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:f91d3bb4d772f4e5217da85e"
+            ],
+            "checks": [
+              {
+                "fact_id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "fd1fe8b2-3a4b-4fab-a10f-16bfc2f6443a:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:f91d3bb4d772f4e5217da85e",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:f91d3bb4d772f4e5217da85e"
+            ],
+            "checks": [
+              {
+                "fact_id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "fd1fe8b2-3a4b-4fab-a10f-16bfc2f6443a:22:27",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:f91d3bb4d772f4e5217da85e",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2:22:27",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2",
+              "quote": "75 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "fd1fe8b2-3a4b-4fab-a10f-16bfc2f6443a:22:27",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "90",
+            "raw_unit": "см",
+            "value": "90",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "fd1fe8b2-3a4b-4fab-a10f-16bfc2f6443a",
+              "quote": "90 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:f91d3bb4d772f4e5217da85e",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2",
+              "quote": "75 см",
+              "start": 22,
+              "end": 27
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9376450777053833,
+            "verification": {
+              "claim": "Характеристика «Высота» товара — 75 см.",
+              "message_ids": [
+                "ef449b8e-5b4d-4640-9540-42cfbcfc9cb2",
+                "fd1fe8b2-3a4b-4fab-a10f-16bfc2f6443a"
+              ],
+              "context_hash": "4295f0eff8b2ae08b59c92d857427e4c0b062d8b8c9b5636772e96c833d7f537",
+              "session_revision": 2,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.06184439733624458,
+                "supported": 0.9376450777053833,
+                "not_stated": 0.0005105567397549748
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 2,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 1.9352504579583183,
+      "extractor_seconds": [
+        1.391698606312275e-05,
+        2.0834035240113735e-05
+      ],
+      "verifier_seconds": [
+        0.9511327090440318,
+        0.98071729199728
+      ]
+    },
+    {
+      "id": "controlled-uncertain",
+      "controlled": true,
+      "expected": [],
+      "raw_extractions": [
+        {
+          "facts": [
+            {
+              "attribute_ref": "Высота",
+              "raw_value": "75",
+              "raw_unit": "см",
+              "source_quote": "примерно 75 см",
+              "source_message_id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956",
+              "negated": false,
+              "uncertain": true,
+              "subject_ref": null
+            }
+          ],
+          "revision": "controlled-corruption-v1"
+        }
+      ],
+      "state": {
+        "session_id": "bf4b3e37-6135-44e1-959e-c3ec83667d22",
+        "revision": 1,
+        "status": "ambiguous_in_catalog",
+        "messages": [
+          {
+            "id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956",
+            "text": "Стол от пола до верха примерно 75 см",
+            "created_at": "2026-10-10T10:16:56.718168+00:00"
+          }
+        ],
+        "path": {
+          "category": "Мебель",
+          "group": {
+            "code": "table",
+            "name": "Стол"
+          },
+          "positions": 2
+        },
+        "alternatives": [],
+        "candidates": [
+          {
+            "code": "table-a",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:8b05915b1b1a04772309f02e"
+            ],
+            "checks": [
+              {
+                "fact_id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956:31:36",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:8b05915b1b1a04772309f02e",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          },
+          {
+            "code": "table-b",
+            "name": "Стол",
+            "excluded": false,
+            "reason": null,
+            "matched_facts": [
+              "extract:8b05915b1b1a04772309f02e"
+            ],
+            "checks": [
+              {
+                "fact_id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956:31:36",
+                "result": "ambiguous"
+              },
+              {
+                "fact_id": "extract:8b05915b1b1a04772309f02e",
+                "result": "match"
+              },
+              {
+                "fact_id": null,
+                "result": "unsupported"
+              }
+            ],
+            "returned_reason": null
+          }
+        ],
+        "candidate_counts": {
+          "in_group": 2,
+          "compatible": 2,
+          "excluded_by_rules": 0
+        },
+        "facts": [
+          {
+            "id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956:31:36",
+            "field": null,
+            "characteristic_name": null,
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956",
+              "quote": "75 см",
+              "start": 31,
+              "end": 36
+            },
+            "normalization_rule": "decimal_comma; okei",
+            "origin": "parser",
+            "status": "ambiguous",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": null,
+            "model_score": null,
+            "verification": null,
+            "negated": false,
+            "uncertain": false,
+            "requires_binding": false
+          },
+          {
+            "id": "extract:8b05915b1b1a04772309f02e",
+            "field": "Высота",
+            "characteristic_name": "Высота",
+            "raw_value": "75",
+            "raw_unit": "см",
+            "value": "75",
+            "unit_code": "004",
+            "kind": "number",
+            "source": {
+              "message_id": "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956",
+              "quote": "примерно 75 см",
+              "start": 22,
+              "end": 36
+            },
+            "normalization_rule": "verified_extraction_v1",
+            "origin": "decision",
+            "status": "proposed",
+            "bounds": null,
+            "component": null,
+            "superseded_by": null,
+            "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+            "model_score": 0.9975965619087219,
+            "verification": {
+              "claim": "Характеристика «Высота» товара — 75 см.",
+              "message_ids": [
+                "8f1ebd4d-e75d-4b80-bc49-dc95a3cab956"
+              ],
+              "context_hash": "850e879e8c8a2172820f810eb7f61d6a4186f490f59adfb4e1ec7ca9ea048926",
+              "session_revision": 1,
+              "extractor_revision": "controlled-corruption-v1",
+              "model_revision": "a20448012c213128955ca0c693e7c943865cab77",
+              "verdict": "supported",
+              "probabilities": {
+                "contradicted": 0.0020300967153161764,
+                "supported": 0.9975965619087219,
+                "not_stated": 0.000373336166376248
+              },
+              "binding_valid": false,
+              "template_version": "atomic_fact_v1",
+              "policy_version": "verified_extraction_v1",
+              "threshold": 0.9
+            },
+            "negated": false,
+            "uncertain": true,
+            "requires_binding": true
+          }
+        ],
+        "errors": [],
+        "normalizations": [],
+        "warnings": [],
+        "next_question": null,
+        "dialog": [],
+        "card_complete": false,
+        "missing_required": [],
+        "common_fields": [
+          {
+            "characteristic": "Высота",
+            "values": [
+              "≥ 10 и ≤ 300"
+            ]
+          }
+        ],
+        "unanswered": [],
+        "unsupported_rules": [
+          {
+            "position": "table-a",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-a",
+            "characteristic": "Цвет"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал столешницы"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Материал ножек"
+          },
+          {
+            "position": "table-b",
+            "characteristic": "Цвет"
+          }
+        ],
+        "fact_history": [],
+        "results_stale": false,
+        "analysis_revision": 1,
+        "editable_fields": [
+          "Высота",
+          "Материал ножек",
+          "Материал столешницы",
+          "Цвет"
+        ],
+        "enum_proposals": [],
+        "enum_resolutions": []
+      },
+      "seconds": 1.1570871669682674,
+      "extractor_seconds": [
+        1.0374991688877344e-05
+      ],
+      "verifier_seconds": [
+        1.155908124987036
+      ]
+    }
+  ]
+}

@@ -18,6 +18,7 @@ from app.adapter.aliases import CsvAliasesSource
 from app.adapter.decision import OpenJevDecision
 from app.adapter.embeddings import OpenAIEmbeddings
 from app.adapter.enum_similarity import DamerauMatcher
+from app.adapter.extractor import QwenExtractor
 from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
 from app.adapter.search import MatrixIndex, TfidfIndex
@@ -37,6 +38,7 @@ from app.repository.search_vectors import SqlSearchVectors
 from app.repository.sessions import SqlSessions
 from app.repository.unit_of_work import SqlUnitOfWork
 from app.usecase.catalog import SyncReport
+from app.usecase.extraction import VerificationPolicy
 from app.usecase.interface import CatalogSource, Embeddings
 from composition import Repositories, Usecases, build_usecases, checked_embeddings
 from settings import Settings
@@ -62,6 +64,21 @@ def production_usecases(
         decision=OpenJevDecision(settings.decision_url, timeout=settings.decision_timeout)
         if settings.decision_url
         else None,
+        model_extractor=QwenExtractor(
+            settings.extractor_url,
+            revision=settings.extractor_revision,
+            timeout=settings.extractor_timeout,
+            api_key=settings.extractor_api_key.get_secret_value()
+            if settings.extractor_api_key
+            else None,
+        )
+        if settings.extractor_url
+        else None,
+        verification_policy=VerificationPolicy(
+            settings.verifier_threshold,
+            settings.verifier_revision,
+            settings.verifier_auto_accept_enabled,
+        ),
         enum_policy=AutoAcceptance(
             settings.decision_auto_accept_threshold, settings.decision_revision
         )

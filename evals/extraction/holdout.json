@@ -1,0 +1,314 @@
+[
+  {
+    "id": "raised-surface",
+    "messages": [
+      "Стол: от пола до верхнего края 82 см"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "82",
+        "см"
+      ]
+    ]
+  },
+  {
+    "id": "raised-surface-low",
+    "messages": [
+      "Стол с поверхностью на расстоянии 68 см от пола"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "68",
+        "см"
+      ]
+    ]
+  },
+  {
+    "id": "meter",
+    "messages": [
+      "Стол: от пола до верхнего края 0,82 м"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "0.82",
+        "м"
+      ]
+    ]
+  },
+  {
+    "id": "range",
+    "messages": [
+      "Стол: от пола до верха от 65 до 85 см"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "65..85",
+        "см"
+      ]
+    ]
+  },
+  {
+    "id": "missing",
+    "messages": [
+      "Стол с закруглёнными углами"
+    ],
+    "expected": []
+  },
+  {
+    "id": "deadline",
+    "messages": [
+      "Стол привезут через 82 дня"
+    ],
+    "expected": []
+  },
+  {
+    "id": "negative",
+    "messages": [
+      "Стол от пола до верха не 82 см"
+    ],
+    "expected": []
+  },
+  {
+    "id": "uncertain",
+    "messages": [
+      "Стол: от пола до верха возможно 82 см"
+    ],
+    "expected": []
+  },
+  {
+    "id": "mass",
+    "messages": [
+      "Стол весом 82 кг"
+    ],
+    "expected": []
+  },
+  {
+    "id": "separate-parts",
+    "messages": [
+      "Стол: деревянные ножки и столешница из стекла"
+    ],
+    "expected": [
+      [
+        "Материал ножек",
+        "деревянные",
+        null
+      ],
+      [
+        "Материал столешницы",
+        "стекла",
+        null
+      ]
+    ]
+  },
+  {
+    "id": "top-glass",
+    "messages": [
+      "Стол, столешница выполнена из стекла"
+    ],
+    "expected": [
+      [
+        "Материал столешницы",
+        "стекла",
+        null
+      ]
+    ]
+  },
+  {
+    "id": "paint",
+    "messages": [
+      "Стол окрашен в оранжевый цвет"
+    ],
+    "expected": [
+      [
+        "Цвет",
+        "оранжевый",
+        null
+      ]
+    ]
+  },
+  {
+    "id": "paint-missing",
+    "messages": [
+      "Стол, окраску ещё не определили"
+    ],
+    "expected": []
+  },
+  {
+    "id": "dialog",
+    "messages": [
+      "Стол",
+      "От пола до верхнего края 82 см"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "82",
+        "см"
+      ]
+    ]
+  },
+  {
+    "id": "correction",
+    "messages": [
+      "Стол от пола до верха 82 см",
+      "Нет, исправь высоту на 68 см"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "68",
+        "см"
+      ]
+    ]
+  },
+  {
+    "id": "followup",
+    "messages": [
+      "Стол от пола до верхнего края 82 см",
+      "Нужна доставка вечером"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "82",
+        "см"
+      ]
+    ]
+  },
+  {
+    "id": "controlled-valid",
+    "messages": [
+      "Стол от пола до верхнего края 82 см"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "82",
+        "см"
+      ]
+    ],
+    "extract": {
+      "attribute_ref": "Высота",
+      "raw_value": "82",
+      "raw_unit": "см",
+      "source_quote": "от пола до верхнего края 82 см"
+    }
+  },
+  {
+    "id": "controlled-fiction",
+    "messages": [
+      "Стол изготовят за 82 дня"
+    ],
+    "expected": [],
+    "extract": {
+      "attribute_ref": "Высота",
+      "raw_value": "82",
+      "raw_unit": "см",
+      "source_quote": "82 дня"
+    }
+  },
+  {
+    "id": "controlled-negative",
+    "messages": [
+      "Стол от пола до верха не 82 см"
+    ],
+    "expected": [],
+    "extract": {
+      "attribute_ref": "Высота",
+      "raw_value": "82",
+      "raw_unit": "см",
+      "source_quote": "82 см"
+    }
+  },
+  {
+    "id": "controlled-part",
+    "messages": [
+      "Стол: ножки из дерева, столешница из стекла"
+    ],
+    "expected": [
+      [
+        "Материал столешницы",
+        "стекла",
+        null
+      ]
+    ],
+    "extract": {
+      "attribute_ref": "Материал столешницы",
+      "raw_value": "дерева",
+      "raw_unit": null,
+      "source_quote": "ножки из дерева",
+      "subject_ref": "столешница"
+    }
+  },
+  {
+    "id": "controlled-color",
+    "messages": [
+      "Стол окрашен в оранжевый цвет"
+    ],
+    "expected": [
+      [
+        "Цвет",
+        "оранжевый",
+        null
+      ]
+    ],
+    "extract": {
+      "attribute_ref": "Цвет",
+      "raw_value": "оранжевый",
+      "raw_unit": null,
+      "source_quote": "окрашен в оранжевый цвет"
+    }
+  },
+  {
+    "id": "controlled-other-product",
+    "messages": [
+      "Стол стоит рядом с оранжевым шкафом"
+    ],
+    "expected": [],
+    "extract": {
+      "attribute_ref": "Цвет",
+      "raw_value": "оранжевым",
+      "raw_unit": null,
+      "source_quote": "рядом с оранжевым шкафом"
+    }
+  },
+  {
+    "id": "controlled-stale",
+    "messages": [
+      "Стол от пола до верха 82 см",
+      "Нет, от пола до верха 68 см"
+    ],
+    "expected": [
+      [
+        "Высота",
+        "68",
+        "см"
+      ]
+    ],
+    "extract": {
+      "attribute_ref": "Высота",
+      "raw_value": "82",
+      "raw_unit": "см",
+      "source_quote": "82 см",
+      "source_index": 0
+    }
+  },
+  {
+    "id": "controlled-uncertain",
+    "messages": [
+      "Стол от пола до верха примерно 82 см"
+    ],
+    "expected": [],
+    "extract": {
+      "attribute_ref": "Высота",
+      "raw_value": "82",
+      "raw_unit": "см",
+      "source_quote": "примерно 82 см",
+      "uncertain": true
+    }
+  }
+]

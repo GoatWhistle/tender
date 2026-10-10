@@ -14,6 +14,7 @@ from app.domain.enum_mapping import AutoAcceptance
 from app.usecase.catalog import CatalogQueries, CatalogSync
 from app.usecase.diagnostics import Diagnostics
 from app.usecase.enum_mapping import EnumMapper
+from app.usecase.extraction import VerificationPolicy, VerifiedExtractor
 from app.usecase.interface import (
     AliasesRepository,
     AliasesSource,
@@ -75,10 +76,14 @@ def build_usecases[U: UnitOfWork](
     fact_extractor: FactExtractor | None = None,
     decision: DecisionBackend | None = None,
     enum_policy: AutoAcceptance | None = None,
+    model_extractor: ModelFactExtractor | None = None,
+    verification_policy: VerificationPolicy | None = None,
     enum_matcher: EnumMatcher | None = None,
     value_aliases: ValueAliases | None = None,
     spelling: SpellingService | None = None,
 ) -> Usecases[U]:
+    if model_extractor is not None and decision is None:
+        raise ValueError("Извлечение требует DecisionBackend для проверки фактов")
     r = repositories
     vectors_factory = r.saved_vectors
     snapshot = SearchSnapshot()
@@ -113,6 +118,13 @@ def build_usecases[U: UnitOfWork](
                 if enum_matcher is not None
                 else None,
                 spelling=spelling,
+                verified_extractor=VerifiedExtractor(
+                    checked_extractor(model_extractor),
+                    checked_decision(decision),
+                    verification_policy or VerificationPolicy(),
+                )
+                if model_extractor and decision
+                else None,
             )
         )
         if sessions_factory and fact_extractor is not None
