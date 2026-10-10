@@ -75,6 +75,7 @@ def build_usecases[U: UnitOfWork](
     searcher: GroupSearcher | None = None,
     fact_extractor: FactExtractor | None = None,
     decision: DecisionBackend | None = None,
+    group_decision: DecisionBackend | None = None,
     enum_policy: AutoAcceptance | None = None,
     model_extractor: ModelFactExtractor | None = None,
     verification_policy: VerificationPolicy | None = None,
@@ -82,10 +83,12 @@ def build_usecases[U: UnitOfWork](
     value_aliases: ValueAliases | None = None,
     spelling: SpellingService | None = None,
     min_similarity: float = 0.0,
+    group_top_k: int = 10,
 ) -> Usecases[U]:
     if model_extractor is not None and decision is None:
         raise ValueError("Извлечение требует DecisionBackend для проверки фактов")
     r = repositories
+    purpose_decision = group_decision or decision
     vectors_factory = r.saved_vectors
     snapshot = SearchSnapshot()
     sessions_factory = r.sessions
@@ -119,6 +122,9 @@ def build_usecases[U: UnitOfWork](
                 if enum_matcher is not None
                 else None,
                 spelling=spelling,
+                decision=checked_decision(purpose_decision)
+                if purpose_decision is not None
+                else None,
                 verified_extractor=VerifiedExtractor(
                     checked_extractor(model_extractor),
                     checked_decision(decision),
@@ -126,8 +132,8 @@ def build_usecases[U: UnitOfWork](
                 )
                 if model_extractor and decision
                 else None,
-                decision=checked_decision(decision) if decision else None,
                 min_similarity=min_similarity,
+                group_top_k=group_top_k,
             )
         )
         if sessions_factory and fact_extractor is not None

@@ -15,6 +15,8 @@ from app.domain.catalog import Characteristic, CharacteristicKind, Group, Positi
 from app.domain.errors import InvalidExtraction
 from app.domain.inference import (
     ChoiceAnswer,
+    ChoiceBatch,
+    ChoiceQuestion,
     Claim,
     ClaimAnswer,
     ClaimBatch,
@@ -28,6 +30,7 @@ from app.usecase.extraction import VerificationPolicy
 from composition import build_usecases
 from main import create_app, sql_repositories, sync_catalog
 from settings import Settings
+from tests.group_decision import ConfirmedGroup
 
 REVISION = "a20448012c213128955ca0c693e7c943865cab77"
 
@@ -61,9 +64,18 @@ class Extractor(StubFactExtractor):
 class Verifier(StubDecisionBackend):
     def __init__(self) -> None:
         super().__init__(REVISION)
+        self.group_confirmed = True
         self.score = 0.90
         self.contradicted = False
         self.contexts: list[str] = []
+
+    def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
+        # Эти тесты проверяют экстракт внутри заранее подтверждённой группы.
+        if all(q.question_id.startswith("group:") for q in questions):
+            if self.group_confirmed:
+                return ConfirmedGroup("tables").choose(context, questions)
+            return StubDecisionBackend().choose(context, questions)
+        return super().choose(context, questions)
 
     def verify(self, context: str, claims: Sequence[Claim]) -> ClaimBatch:
         self._raise_fault()
@@ -488,3 +500,14 @@ def test_relevance_gate_precedes_free_extraction(
     else:
         assert state["status"] == "out_of_scope"
         assert not extractor.requests
+
+
+def test_unconfirmed_group_does_not_start_free_extraction(
+    extraction_api: TestClient, extractor: Extractor, verifier: Verifier
+) -> None:
+    verifier.group_confirmed = False
+    state = message(extraction_api, "Стол от пола до верха 75 см")
+    assert state["status"] == "needs_clarification"
+    assert state["next_question"]["kind"] == "purpose"
+    assert state["path"] is None and state["facts"] == []
+    assert not extractor.requests

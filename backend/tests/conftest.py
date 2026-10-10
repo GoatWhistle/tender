@@ -18,6 +18,7 @@ from fastapi.testclient import TestClient
 from app.domain.catalog import CATEGORIES, Group
 from main import create_app, sync_catalog
 from settings import BACKEND_DIR, Settings
+from tests.group_decision import ConfirmedGroup
 
 HEAD = (
     "<?xml version='1.0' encoding='UTF-8'?>\n"
@@ -252,6 +253,7 @@ def group_api(settings: Settings) -> Iterator[Callable[..., TestClient]]:
             sql_repositories(),
             catalog_source=source,
             searcher=Search(),
+            group_decision=ConfirmedGroup(group.position.code),
             fact_extractor=fact_extractor
             or DeterministicFactExtractor(ReviewedValueAliases().all()),
             enum_matcher=DamerauMatcher(),

@@ -1,6 +1,6 @@
 """Независимый замер extractor/verifier через общую сборку сценариев продукта.
 
-Набор заморожен до прогона; порог не подбирается. Поиск заменён заданной группой.
+Набор заморожен до прогона; порог не подбирается. Поиск и проверка назначения заменены заранее подтверждённой группой.
 """
 
 import argparse
@@ -22,8 +22,10 @@ sys.path.insert(0, str(ROOT / "backend"))
 from app.adapter.decision import OpenJevDecision
 from app.adapter.extractor import QwenExtractor
 from app.adapter.facts import DeterministicFactExtractor
+from app.adapter.stub import StubDecisionBackend
 from app.domain.catalog import Characteristic, CharacteristicKind, Position, Value
 from app.domain.inference import (
+    ChoiceAnswer,
     Claim,
     ClaimBatch,
     ExtractedFact,
@@ -144,6 +146,14 @@ def measure(
         MeasuredExtractor(extractor_url, case),
         MeasuredDecision(decision_url),
     )
+    # Здесь назначение задано разметкой; качество выбора групп измеряет evals/groups/.
+    group_decision = StubDecisionBackend()
+    group_decision.choices["group:table"] = ChoiceAnswer(
+        "group:table",
+        {"supported": 1.0, "contradicted": 0.0, "not_stated": 0.0},
+        "supported",
+        support_scores={"supported": 1.0, "contradicted": 0.0, "not_stated": 0.0},
+    )
     usecases = build_usecases(
         Repositories(
             catalog=lambda u: MemoryCatalog(store),
@@ -154,6 +164,7 @@ def measure(
         fact_extractor=DeterministicFactExtractor(),
         model_extractor=model,
         decision=decision,
+        group_decision=group_decision,
     )
     assert usecases.sessions
     sessions = usecases.sessions(MemoryUnitOfWork(store))

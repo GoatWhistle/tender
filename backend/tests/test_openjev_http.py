@@ -67,3 +67,30 @@ def test_openjev_maps_choice_and_batched_nli() -> None:
     assert [a.claim_id for a in claims.answers] == ["c1", "c2"]
     assert claims.answers[0].probabilities[Verdict.supported] == 0.99
     assert requests == ["/v1/choice", "/v1/nli"]
+
+
+def test_choice_preserves_absolute_support_separately_from_relative_scores() -> None:
+    def handle(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "choice": "yes",
+                "probabilities": {"yes": 0.99, "no": 0.01},
+                "support_probabilities": {"yes": 0.0099, "no": 0.0001},
+                "model_revision": "rev",
+            },
+        )
+
+    model = checked_decision(
+        OpenJevDecision("http://openjev", transport=httpx.MockTransport(handle))
+    )
+    batch = model.choose(
+        "стол",
+        [
+            ChoiceQuestion(
+                "group", "Подходит?", (ChoiceOption("yes", "Да"), ChoiceOption("no", "Нет"))
+            )
+        ],
+    )
+    assert batch.answers[0].probabilities["yes"] == 0.99
+    assert batch.answers[0].support_scores == {"yes": 0.0099, "no": 0.0001}

@@ -4,6 +4,7 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 
+from tests.group_decision import ConfirmedGroup
 from tests.test_answers import start
 
 
@@ -459,6 +460,7 @@ def test_product_type_change_searches_new_group_without_reviving_deleted_fact(
         sql_repositories(),
         catalog_source=source,
         searcher=Search(),
+        group_decision=ConfirmedGroup(lambda text: "chairs" if "стул" in text else "tables"),
         fact_extractor=DeterministicFactExtractor(),
     )
     with TestClient(app) as client:

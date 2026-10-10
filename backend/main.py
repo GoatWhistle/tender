@@ -104,6 +104,7 @@ def production_usecases(
         aliases_source=CsvAliasesSource(settings.aliases_path),
         catalog_source=catalog_source or XmlKtruSource(settings.ktru_xml_dir),
         min_similarity=settings.search_min_similarity,
+        group_top_k=settings.group_top_k,
     )
 
 

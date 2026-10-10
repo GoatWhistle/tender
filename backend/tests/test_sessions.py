@@ -11,6 +11,7 @@ from composition import build_usecases
 from main import create_app, sql_repositories
 from settings import Settings
 from tests.conftest import CABINET_CHILDREN, CABINET_CODE, ROBE_CODE, TABLE_CODE
+from tests.group_decision import ConfirmedGroup
 
 
 def test_create_and_read_session(client: TestClient) -> None:
@@ -83,6 +84,7 @@ def search_api(synced: Settings) -> Iterator[tuple[TestClient, SearchStub]]:
         catalog_source=XmlKtruSource(synced.ktru_xml_dir),
         searcher=search,
         fact_extractor=DeterministicFactExtractor(),
+        group_decision=ConfirmedGroup(lambda text: TABLE_CODE if "\n" in text else CABINET_CODE),
     )
     with TestClient(app) as client:
         yield client, search
@@ -98,7 +100,7 @@ def test_messages_narrow_group_and_keep_history(search_api: tuple[TestClient, Se
     assert first["common_fields"] == []
     assert first["path"] == {
         "category": "Мебель",
-        "group": {"code": CABINET_CODE, "name": "Шкаф для одежды"},
+        "group": {"code": CABINET_CODE, "name": "Шкаф для одежды", "role": "group_template"},
         "positions": 2,
     }
     assert [c["code"] for c in first["candidates"]] == CABINET_CHILDREN
@@ -180,6 +182,7 @@ def test_memory_scenario(settings: Settings) -> None:
         catalog_source=source,
         searcher=SearchStub(settings),
         fact_extractor=DeterministicFactExtractor(),
+        group_decision=ConfirmedGroup(lambda text: TABLE_CODE if "\n" in text else CABINET_CODE),
     )
     usecases.catalog_sync(uow).run()
     assert usecases.sessions is not None
@@ -250,6 +253,7 @@ def test_snapshot_survives_application_restart(synced: Settings) -> None:
         catalog_source=XmlKtruSource(synced.ktru_xml_dir),
         searcher=search,
         fact_extractor=DeterministicFactExtractor(),
+        group_decision=ConfirmedGroup(lambda text: TABLE_CODE if "\n" in text else CABINET_CODE),
     )
     with TestClient(app) as client:
         sid = client.post("/api/v1/sessions").json()["session_id"]

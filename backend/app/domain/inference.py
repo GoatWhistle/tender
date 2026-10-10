@@ -55,6 +55,8 @@ class ChoiceAnswer:
     probabilities: dict[str, float]
     selected: str | None
     truncated: bool = False
+    # Независимые NLI-оценки поддержки критериев, до нормализации choice.
+    support_scores: dict[str, float] | None = None
 
 
 @dataclass(frozen=True)

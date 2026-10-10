@@ -197,6 +197,11 @@ cd backend && uv run python ../evals/errors/run.py
 Отчёт: [`2026-10-10-diagnostics-fixture.md`](evals/reports/2026-10-10-diagnostics-fixture.md).
 Он проверяет продуктовый сценарий на локальных fixtures и не измеряет качество живой модели.
 
+Проверка назначения top-5/10 групп: `GROUP_TOP_K=10` и обязательный `DECISION_URL`.
+HTTP-регрессии: `cd backend && uv run pytest tests/test_group_validation.py tests/test_openjev_http.py`.
+Реальное сравнение K=5/10: `backend/.venv/bin/python evals/groups/run.py --output var/group-validation.json`.
+Контракт и методика — [сессии](docs/sessions.md), [поиск](docs/search.md).
+
 ### Свободное извлечение и verifier
 
 Для генеративного прохода задайте `EXTRACTOR_URL` (корень strict API без `/v1`) и
