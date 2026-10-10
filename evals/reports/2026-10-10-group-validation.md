@@ -75,3 +75,16 @@ uv run pytest tests/test_group_validation.py tests/test_openjev_http.py
 Ошибок JavaScript в этом сценарии нет. Скриншоты актуальных снимков после завершения анимации: [desktop](../../docs/screenshots/group-purpose-desktop.png),
 [390 px](../../docs/screenshots/group-purpose-mobile.png),
 [после ответа](../../docs/screenshots/group-purpose-answer.png).
+
+## Регрессия после интеграции main
+
+После добавления нового словаря и extractor из main (`7110d05`) тот же набор прогнан
+повторно без изменений порогов. Это регрессия, не новый независимый holdout. Исходный
+отчёт выше сохранён. [Повторные сырые ответы и SHA256 обновлённой базы](2026-10-10-group-validation-after-main.json).
+
+| K | Retrieval hit@K | Ошибочные автовыборы | Уточнения | Сбои выбора | Средняя задержка |
+|---|---|---|---|---|---|
+| 5 | 8/8 | 0/10 | 10/10 | 0 | 6.84 с |
+| 10 | 8/8 | 0/10 | 10/10 | 0 | 8.98 с |
+
+После слияния: 405 backend-тестов, 43 frontend-теста; lint, форматирование, mypy, TypeScript и production build проходят. Отдельный HTTP-тест подтверждает отсутствие вызова extractor до проверки назначения.
