@@ -26,7 +26,7 @@ backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
 frontend/                React + Vite: экран поставщика `/sell` на API сессий, витрина на мок-сервисе
                          — frontend/README.md
 data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
-evals/                   замеры: наборы `datasets/`, скрипты `smoke/` и `catalog/`, отчёты `reports/`
+evals/                   замеры: наборы `datasets/`, скрипты `smoke/`, `catalog/`, `ste/`, отчёты `reports/`
 var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
 artifacts/               подготовленная SQLite КТРУ с реальными векторами Qwen (в git)
 services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
