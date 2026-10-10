@@ -1802,6 +1802,7 @@ fieldset {
 
 .status--draft .status__dot,
 .status--conflict .status__dot,
+.status--out_of_scope .status__dot,
 .status--technical_error .status__dot {
   background: var(--coral);
 }

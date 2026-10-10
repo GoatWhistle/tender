@@ -67,6 +67,8 @@ def build_usecases[U: UnitOfWork](
     aliases_source: AliasesSource | None = None,
     searcher: GroupSearcher | None = None,
     fact_extractor: FactExtractor | None = None,
+    decision: DecisionBackend | None = None,
+    min_similarity: float = 0.0,
 ) -> Usecases[U]:
     r = repositories
     vectors_factory = r.saved_vectors
@@ -95,6 +97,8 @@ def build_usecases[U: UnitOfWork](
                 searcher or group_search(uow),
                 r.catalog(uow),
                 fact_extractor,
+                decision,
+                min_similarity,
             )
         )
         if sessions_factory and fact_extractor is not None

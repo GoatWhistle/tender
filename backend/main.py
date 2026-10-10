@@ -15,6 +15,7 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.adapter.aliases import CsvAliasesSource
+from app.adapter.decision import OpenJevDecision
 from app.adapter.embeddings import OpenAIEmbeddings
 from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
@@ -33,7 +34,13 @@ from app.repository.sessions import SqlSessions
 from app.repository.unit_of_work import SqlUnitOfWork
 from app.usecase.catalog import SyncReport
 from app.usecase.interface import CatalogSource, Embeddings
-from composition import Repositories, Usecases, build_usecases, checked_embeddings
+from composition import (
+    Repositories,
+    Usecases,
+    build_usecases,
+    checked_decision,
+    checked_embeddings,
+)
 from settings import Settings
 
 
@@ -64,6 +71,10 @@ def production_usecases(
         embeddings=embeddings,
         aliases_source=CsvAliasesSource(settings.aliases_path),
         catalog_source=catalog_source or XmlKtruSource(settings.ktru_xml_dir),
+        decision=checked_decision(OpenJevDecision(settings.decision_url))
+        if settings.decision_url
+        else None,
+        min_similarity=settings.search_min_similarity,
     )
 
 
