@@ -1,0 +1,69 @@
+{
+  "cases": 24,
+  "per_kind": {
+    "out_of_range": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "tn": 21,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "diagnostics": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "diagnostic_recall": 1.0
+    },
+    "typo": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "tn": 21,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "diagnostics": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "diagnostic_recall": 1.0
+    },
+    "value_not_in_catalog": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "tn": 21,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "diagnostics": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "diagnostic_recall": 1.0
+    },
+    "synonym": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "tn": 21,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "diagnostics": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0
+      },
+      "diagnostic_recall": 1.0
+    }
+  },
+  "clean_cases": 15,
+  "false_alarm_cases": 0,
+  "false_alarm_rate": 0.0,
+  "synonym_cases": 3,
+  "synonyms_reported_as_errors": 0,
+  "correct_suggestions": 6,
+  "expected_suggestions": 6,
+  "suggestion_accuracy": 1.0
+}

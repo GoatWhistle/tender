@@ -154,7 +154,13 @@ export type Candidate = {
 };
 
 export type FactStatus =
-  "accepted_from_text" | "ambiguous" | "confirmed_by_user" | "derived_from_catalog" | "superseded";
+  | "accepted_from_text"
+  | "accepted_from_model"
+  | "proposed"
+  | "ambiguous"
+  | "confirmed_by_user"
+  | "derived_from_catalog"
+  | "superseded";
 
 export type Fact = {
   id: string;
@@ -165,9 +171,19 @@ export type Fact = {
   value: string | [string, string];
   unit_code: string | null;
   kind: "number" | "range" | "text" | "interval";
-  origin: "parser" | "user" | "catalog";
+  origin: "parser" | "user" | "catalog" | "decision";
   status: FactStatus;
   source: { message_id: string; quote: string; start: number; end: number } | null;
+};
+
+export type EnumAction = "accept" | "choose" | "unknown";
+export type EnumProposal = {
+  id: string;
+  characteristic: string;
+  suggested: string[];
+  options: string[];
+  selections: { values: string[]; multiple: boolean }[];
+  reason: string;
 };
 
 export type QuestionOption = { id: string; label: string };
@@ -196,6 +212,29 @@ export type DialogTurn = {
 
 export type AnalysisError = { code: string; message: string };
 
+export type Diagnostic = {
+  kind: "typo" | "value_not_in_catalog" | "out_of_range" | "synonym";
+  fact_id: string | null;
+  source_quote: string;
+  source: { message_id: string; quote: string; start: number; end: number };
+  expected: string[];
+  suggestion: string | null;
+  candidates: string[];
+  rule_ref: {
+    position_code: string;
+    characteristic_code: string;
+    characteristic_name: string;
+    value_codes: string[];
+  }[];
+  scope: { group_code: string | null; position_codes: string[]; complete: boolean };
+  requires_confirmation: boolean;
+  explanation: string;
+  alias_source: string | null;
+};
+
+export const isDiagnostic = (error: AnalysisError | Diagnostic): error is Diagnostic =>
+  "kind" in error;
+
 export type SessionState = {
   session_id: string;
   revision: number;
@@ -207,7 +246,8 @@ export type SessionState = {
   candidates: Candidate[];
   candidate_counts: { in_group: number; compatible: number; excluded_by_rules: number };
   facts: Fact[];
-  errors: AnalysisError[];
+  errors: (AnalysisError | Diagnostic)[];
+  normalizations?: Diagnostic[];
   warnings: string[];
   next_question: Question | null;
   dialog: DialogTurn[];
@@ -219,9 +259,18 @@ export type SessionState = {
   /** различающие характеристики, на которые ответили «не знаю» */
   unanswered: string[];
   unsupported_rules: { position: string; characteristic: string }[];
+  enum_proposals: EnumProposal[];
 };
 
 export interface SellerApi {
+  /** Подтвердить предложение в ожидаемой ревизии сессии. */
+  resolveEnum(
+    id: string,
+    revision: number,
+    proposalId: string,
+    action: EnumAction,
+    values: string[],
+  ): Promise<SessionState>;
   /** POST /api/v1/sessions без тела */
   create(): Promise<SessionState>;
   get(id: string): Promise<SessionState>;

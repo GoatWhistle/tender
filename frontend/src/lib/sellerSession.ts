@@ -1,6 +1,12 @@
 // Сессия экрана поставщика без React: черновик ввода, отправка, восстановление по адресу и
 // защита от устаревших ответов. Экран подписывается через `useSyncExternalStore`.
-import { ApiError, NetworkError, type SellerApi, type SessionState } from "../api/types";
+import {
+  ApiError,
+  NetworkError,
+  type EnumAction,
+  type SellerApi,
+  type SessionState,
+} from "../api/types";
 
 /** Предел бэкенда для текста сообщения, в символах. */
 export const MAX_TEXT = 4000;
@@ -49,8 +55,11 @@ function failureOf(error: unknown): Failure {
       };
     if (error.status === 422)
       return {
-        title: "Сервер не принял текст",
-        text: `Описание должно быть непустым и не длиннее ${MAX_TEXT} символов.`,
+        title: "Сервер не принял данные",
+        text:
+          error.code === "option_not_found"
+            ? error.message
+            : `Проверьте введённые данные. Описание должно быть непустым и не длиннее ${MAX_TEXT} символов.`,
         details: [],
       };
     if (error.status >= 500)
@@ -72,7 +81,7 @@ function technicalFailure(state: SessionState): Failure {
   return {
     title: "Анализ не выполнен: технический сбой",
     text: "Это не значит, что товар не найден. Отправьте описание ещё раз.",
-    details: state.errors.map((e) => e.message),
+    details: state.errors.flatMap((e) => ("code" in e ? [e.message] : [])),
   };
 }
 
@@ -219,6 +228,31 @@ export function createSellerSession(
         } catch (e) {
           if (e instanceof ApiError && e.code === "stale_question")
             return await api.get(state.session_id);
+          throw e;
+        } finally {
+          if (mine === epoch) answering = false;
+        }
+      }, null);
+    },
+    resolveEnum(proposalId: string, action: EnumAction, values: string[] = []): Promise<void> {
+      const state = view.state;
+      if (!state || answering || view.busy) return Promise.resolve();
+      answering = true;
+      const mine = epoch;
+      return run(async () => {
+        try {
+          return await api.resolveEnum(
+            state.session_id,
+            state.revision,
+            proposalId,
+            action,
+            values,
+          );
+        } catch (e) {
+          if (e instanceof ApiError && e.code === "stale_revision")
+            return await api.get(state.session_id);
+          if (e instanceof ApiError && e.status === 422)
+            throw new ApiError(422, e.code, "Выберите допустимое сочетание значений из списка.");
           throw e;
         } finally {
           if (mine === epoch) answering = false;

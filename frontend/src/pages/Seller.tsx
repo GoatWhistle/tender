@@ -1,9 +1,17 @@
 // Экран поставщика: описание своими словами → группа КТРУ → оставшиеся позиции.
 // Четыре области: описание и история, характеристики, кандидаты и путь сужения, следующее
 // действие. Данные — `SessionState` бэкенда как есть; статусы и счётчики UI не вычисляет.
-import { useEffect, useMemo, useSyncExternalStore, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { sellerApi, type Question, type SessionState } from "../api";
+import { sellerApi, type EnumProposal, type Question, type SessionState } from "../api";
+import { isDiagnostic, type Diagnostic } from "../api/types";
 import { plural } from "../lib/format";
 import {
   MAX_TEXT,
@@ -75,7 +83,15 @@ function Composer({ view, store }: { view: SellerView; store: SellerSession }) {
       {state && state.messages.length > 0 && (
         <ol className="said" aria-label="Уже написано">
           {state.messages.map((m) => (
-            <li key={m.id}>{m.text}</li>
+            <li key={m.id}>
+              <HighlightedMessage
+                text={m.text}
+                diagnostics={[
+                  ...state.errors.filter(isDiagnostic),
+                  ...(state.normalizations ?? []),
+                ].filter((d) => d.source.message_id === m.id)}
+              />
+            </li>
           ))}
         </ol>
       )}
@@ -123,6 +139,82 @@ function Composer({ view, store }: { view: SellerView; store: SellerSession }) {
         </div>
       )}
     </form>
+  );
+}
+
+function HighlightedMessage({ text, diagnostics }: { text: string; diagnostics: Diagnostic[] }) {
+  const chars = Array.from(text);
+  const spans = diagnostics
+    .filter(
+      (d) =>
+        d.source.start >= 0 &&
+        d.source.end <= chars.length &&
+        chars.slice(d.source.start, d.source.end).join("") === d.source_quote,
+    )
+    .sort((a, b) => a.source.start - b.source.start);
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+  for (const d of spans) {
+    if (d.source.start < cursor) continue;
+    nodes.push(chars.slice(cursor, d.source.start).join(""));
+    nodes.push(
+      <mark key={`${d.source.start}:${d.source.end}`} title={d.explanation}>
+        {chars.slice(d.source.start, d.source.end).join("")}
+      </mark>,
+    );
+    cursor = d.source.end;
+  }
+  nodes.push(chars.slice(cursor).join(""));
+  return <>{nodes}</>;
+}
+
+const DIAGNOSTIC_LABEL = {
+  typo: "Возможная опечатка",
+  value_not_in_catalog: "Значения нет в проверенной группе",
+  out_of_range: "Значение вне допустимых правил",
+  synonym: "Нормализация",
+};
+
+function Diagnostics({ state }: { state: SessionState }) {
+  return (
+    <>
+      {[...state.errors.filter(isDiagnostic), ...(state.normalizations ?? [])].map((d) => (
+        <section className="diagnostic" key={`${d.source.message_id}:${d.source.start}:${d.kind}`}>
+          <h3>{DIAGNOSTIC_LABEL[d.kind]}</h3>
+          <p className="card-x__quote">
+            «{d.source_quote}»{d.suggestion && <> → {d.suggestion}</>}
+          </p>
+          <p className="card-x__text">{d.explanation}</p>
+          {d.candidates.length > 1 && <p>Варианты: {d.candidates.join("; ")}</p>}
+          {!d.rule_ref.length && <p className="muted">Гипотеза без привязки к правилу КТРУ.</p>}
+          {d.rule_ref.length > 0 && (
+            <details>
+              <summary>Правила справочника</summary>
+              <ul>
+                {d.rule_ref.map((r) => (
+                  <li key={`${r.position_code}:${r.characteristic_code}`}>
+                    {r.position_code}: {r.characteristic_name} ({r.characteristic_code})
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+          {d.requires_confirmation && (
+            <p className="muted">Предложение не применено. Проверьте исходное описание.</p>
+          )}
+        </section>
+      ))}
+      {state.errors
+        .filter((e) => !isDiagnostic(e))
+        .map(
+          (e) =>
+            "code" in e && (
+              <p className="card-x__quote" key={e.code} role="status">
+                {e.message}
+              </p>
+            ),
+        )}
+    </>
   );
 }
 
@@ -229,9 +321,12 @@ function NextStep({
     list = state.candidates.map((c) => ({ key: c.code, label: c.name, note: c.reason?.text }));
   } else if (status === "needs_clarification" && !question) {
     title = `В группе осталось ${positions(compatible.length)}`;
-    text = state.unanswered.length
-      ? `Их различают: ${state.unanswered.join(", ")}. Допишите эти сведения в описание.`
-      : "Допишите в описании характеристики, которые отличают ваш товар.";
+    text =
+      (state.enum_proposals?.length ?? 0) > 0
+        ? "Проверьте предложения в блоке «Характеристики»."
+        : state.unanswered.length
+          ? `Их различают: ${state.unanswered.join(", ")}. Допишите эти сведения в описание.`
+          : "Допишите в описании характеристики, которые отличают ваш товар.";
     list = compatible.map((c) => ({ key: c.code, label: c.name, note: c.code }));
   } else if (status !== "needs_clarification") {
     title = statusLabel(status);
@@ -255,6 +350,7 @@ function NextStep({
           ))}
         </ul>
       )}
+      <Diagnostics state={state} />
       <Missing state={state} />
       {question && <QuestionCard question={question} busy={busy} onAnswer={onAnswer} />}
       {state.unsupported_rules.length > 0 && (
@@ -321,27 +417,140 @@ function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
 
 const ORIGIN: Record<string, string> = {
   parser: "из описания",
+  decision: "сопоставлено по описанию",
   user: "ваш ответ",
   catalog: "из справочника",
 };
 
-function Characteristics({ state }: { state: SessionState }) {
+function Proposal({
+  proposal,
+  busy,
+  store,
+}: {
+  proposal: EnumProposal;
+  busy: boolean;
+  store: SellerSession;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [values, setValues] = useState<string[]>([]);
+  const permits = (selection: string[]) =>
+    selection.length > 0 &&
+    proposal.selections.some(
+      (rule) =>
+        (rule.multiple || selection.length === 1) &&
+        selection.every((v) => rule.values.includes(v)),
+    );
+  const multiple = proposal.selections.some((rule) => rule.multiple);
+  return (
+    <article className="card-x enum-proposal">
+      <h3>
+        {proposal.characteristic}: {proposal.suggested.join(", ")}
+      </h3>
+      <p className="status">Предложение · требуется подтверждение</p>
+      <p>{proposal.reason}</p>
+      {editing && (
+        <fieldset disabled={busy}>
+          <legend>Выберите {multiple ? "одно или несколько значений" : "одно значение"}</legend>
+          {proposal.options.map((value) => (
+            <label key={value} className="enum-proposal__option">
+              <input
+                type={multiple ? "checkbox" : "radio"}
+                name={proposal.id}
+                checked={values.includes(value)}
+                onChange={() =>
+                  setValues(
+                    multiple
+                      ? values.includes(value)
+                        ? values.filter((v) => v !== value)
+                        : [...values, value]
+                      : [value],
+                  )
+                }
+              />
+              {value}
+            </label>
+          ))}
+          {values.length > 0 && !permits(values) && (
+            <p role="alert">Это сочетание не допускается каталогом.</p>
+          )}
+          <button
+            className="pill pill--dark"
+            disabled={!permits(values)}
+            onClick={() => void store.resolveEnum(proposal.id, "choose", values)}
+          >
+            Сохранить выбор
+          </button>
+        </fieldset>
+      )}
+      <div className="enum-proposal__actions">
+        <button
+          className="pill pill--dark"
+          disabled={busy || !permits(proposal.suggested)}
+          onClick={() => void store.resolveEnum(proposal.id, "accept")}
+        >
+          Принять
+        </button>
+        <button className="pill" disabled={busy} onClick={() => setEditing(!editing)}>
+          Выбрать другое
+        </button>
+        <button
+          className="pill"
+          disabled={busy}
+          onClick={() => void store.resolveEnum(proposal.id, "unknown")}
+        >
+          Не знаю
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function Characteristics({
+  state,
+  busy,
+  store,
+}: {
+  state: SessionState;
+  busy: boolean;
+  store: SellerSession;
+}) {
   const facts = state.facts.filter((f) => f.characteristic_name && f.status !== "superseded");
   return (
     <section aria-labelledby="facts-title">
       <h2 id="facts-title" className="block-title">
         Характеристики
       </h2>
+      {(state.enum_proposals ?? []).map((proposal) => (
+        <Proposal
+          key={`${state.revision}:${proposal.id}`}
+          proposal={proposal}
+          busy={busy}
+          store={store}
+        />
+      ))}
       {facts.length ? (
         <ul className="cands">
           {facts.map((f) => (
             <li key={f.id} className="cand">
               <span className="cand__name">{f.characteristic_name}</span>
               <span className="cand__code">
-                {f.raw_unit && f.kind !== "interval" ? `${f.raw_value} ${f.raw_unit}` : f.raw_value}
+                {f.origin === "decision"
+                  ? String(f.value)
+                  : f.raw_unit && f.kind !== "interval"
+                    ? `${f.raw_value} ${f.raw_unit}`
+                    : f.raw_value}
               </span>
               <span className="cand__reason">
-                {f.status === "ambiguous" ? "противоречит другому значению" : ORIGIN[f.origin]}
+                {f.status === "proposed"
+                  ? "предложение, не принято"
+                  : f.status === "confirmed_by_user"
+                    ? "подтверждено вами"
+                    : f.status === "accepted_from_model"
+                      ? "принято автоматически"
+                      : f.status === "ambiguous"
+                        ? "требует проверки"
+                        : ORIGIN[f.origin]}
+                {f.origin === "decision" && f.source && <span> · «{f.source.quote}»</span>}
               </span>
             </li>
           ))}
@@ -384,7 +593,7 @@ function Candidates({ state }: { state: SessionState }) {
             </li>
             <li>
               <span className="path__label">Осталось</span>
-              {positions(path.positions)}
+              {positions(compatible)}
             </li>
           </ol>
           <p className="funnel">
@@ -470,7 +679,7 @@ export function Seller() {
             aria-busy={busy}
           >
             <Summary state={state} busy={busy} />
-            <Characteristics state={state} />
+            <Characteristics state={state} busy={busy} store={store} />
             <Candidates state={state} />
           </aside>
         )}

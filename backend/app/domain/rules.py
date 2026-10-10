@@ -1,5 +1,6 @@
 """Проверка объединения допустимых значений, без моделей и побочных эффектов."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import Decimal
 from fractions import Fraction
@@ -264,3 +265,26 @@ def explain(position: Position, fact: Fact) -> ExclusionReason:
         given,
         f"для этой позиции {normalized(characteristic.name)}: {allowed}; указано {given}",
     )
+
+
+def selection_conflict(position: Position, facts: Sequence[Fact]) -> ExclusionReason | None:
+    """Принятые значения совместно должны соблюдать множественность характеристики."""
+    for characteristic in position.characteristics:
+        if characteristic.quantitative or characteristic.multi:
+            continue
+        selected = [
+            f
+            for f in facts
+            if f.accepted and f.characteristic_name == characteristic.name and f.kind == "text"
+        ]
+        values = list(dict.fromkeys(str(f.value) for f in selected))
+        if len(values) > 1:
+            given = ", ".join(values)
+            return ExclusionReason(
+                selected[0].id,
+                characteristic.name,
+                "одно значение",
+                given,
+                f"«{characteristic.name}» допускает одно значение, указано: {given}",
+            )
+    return None

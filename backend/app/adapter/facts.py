@@ -7,6 +7,7 @@ from decimal import Decimal
 from fractions import Fraction
 
 from app.domain.catalog import Group
+from app.domain.diagnostics import ValueAlias
 from app.domain.facts import Fact, FactSource, normalized
 from app.domain.sessions import Message
 from app.domain.units import CONCEPTS, UNITS
@@ -47,6 +48,9 @@ def _binding(text: str, start: int, names: set[str]) -> tuple[str | None, str | 
 
 
 class DeterministicFactExtractor:
+    def __init__(self, aliases: Sequence[ValueAlias] = ()) -> None:
+        self._aliases = aliases
+
     def extract(
         self, messages: Sequence[Message], group: Group
     ) -> tuple[tuple[Fact, ...], tuple[str, ...]]:
@@ -84,8 +88,17 @@ class DeterministicFactExtractor:
                     warnings.append("обратный диапазон не разобран")
                     continue
                 concept, name = _binding(message.text, match.start(), names)
+                prefix = message.text[: match.start()]
+                clause = re.split(r"[.;\n]", prefix)[-1]
+                explicit = next(
+                    (n for n in names if normalized(clause.strip()) == normalized(n) + ":"), None
+                )
+                if ":" in clause:
+                    concept, name = explicit, explicit
                 code = next((c for c in UNITS if match.group("u" + c)), None)
                 start, end = match.span()
+                if explicit is not None:
+                    start = len(prefix) - len(clause.lstrip())
                 facts.append(
                     Fact(
                         f"{message.id}:{start}:{end}",
@@ -102,6 +115,82 @@ class DeterministicFactExtractor:
                     )
                 )
             occupied: list[tuple[int, int]] = []
+            # Явное поле связывается только по полному имени. Неизвестное значение —
+            # гипотеза для диагностики, не основание исключать позиции.
+            enum_names = {
+                c.name for p in group.leaves for c in p.characteristics if not c.quantitative
+            }
+            for name in sorted(enum_names, key=lambda n: (-len(n), n)):
+                pattern = r"(?<!\w)" + re.escape(name) + r"\s*:\s*(?P<value>[^.;\n]+)"
+                for match in re.finditer(pattern, message.text, re.IGNORECASE):
+                    prefix = re.split(r"[.;\n]", message.text[: match.start()])[-1]
+                    if prefix.strip():
+                        continue
+                    raw = match.group("value").strip()
+                    start, end = (
+                        match.start(),
+                        match.start("value") + len(match.group("value").rstrip()),
+                    )
+                    occupied.append((start, end))
+                    if not raw or re.search(r"\b(?:не|без)\b", normalized(raw)):
+                        warnings.append("фрагмент с отрицанием не разобран")
+                        continue
+                    exact = normalized(raw) in texts and name in texts[normalized(raw)]
+                    facts.append(
+                        Fact(
+                            f"{message.id}:{start}:{end}",
+                            name,
+                            name,
+                            raw,
+                            None,
+                            normalized(raw),
+                            None,
+                            "text",
+                            FactSource(message.id, message.text[start:end], start, end),
+                            "explicit_field" if exact else "explicit_unverified",
+                            status="accepted_from_text" if exact else "ambiguous",
+                        )
+                    )
+            for alias in self._aliases:
+                if alias.category != group.position.category or not all(
+                    word in text for word in alias.context
+                ):
+                    continue
+                if alias.characteristic not in texts.get(normalized(alias.canonical), set()):
+                    continue
+                for match in re.finditer(
+                    r"(?<!\w)" + re.escape(alias.alias) + r"(?!\w)", message.text, re.IGNORECASE
+                ):
+                    start, end = match.span()
+                    clause = re.split(r"[.;\n]", message.text[:start])[-1]
+                    wrong_component = any(
+                        stem in normalized(clause) and stem not in normalized(alias.characteristic)
+                        for stem in ("каркас", "столешниц", "основан", "основ", "обив", "напыл")
+                    )
+                    if (
+                        wrong_component
+                        or ":" in clause
+                        or _unsafe(message.text, start, match.group())
+                    ):
+                        continue
+                    if any(a < end and start < b for a, b in occupied):
+                        continue
+                    occupied.append((start, end))
+                    facts.append(
+                        Fact(
+                            f"{message.id}:{start}:{end}",
+                            alias.characteristic,
+                            alias.characteristic,
+                            match.group(),
+                            None,
+                            normalized(match.group()),
+                            None,
+                            "text",
+                            FactSource(message.id, match.group(), start, end),
+                            "explicit_unverified",
+                            status="ambiguous",
+                        )
+                    )
             # Нормализация Unicode может менять длину (например, İ.lower()).
             offsets = [i for i, char in enumerate(message.text) for _ in normalized(char)]
             for value in sorted(texts, key=lambda v: (-len(v), v)):
@@ -111,6 +200,9 @@ class DeterministicFactExtractor:
                     if any(a < end and start < b for a, b in occupied):
                         continue
                     occupied.append((start, end))
+                    clause = re.split(r"[.;\n]", message.text[:start])[-1]
+                    if ":" in clause:
+                        continue
                     warning = _unsafe(message.text, start, match.group())
                     if warning:
                         warnings.append(warning)

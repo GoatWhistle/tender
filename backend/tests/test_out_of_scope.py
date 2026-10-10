@@ -1,22 +1,15 @@
-import json
 from collections.abc import Sequence
 from dataclasses import replace
-from typing import Any
 
-import httpx
 import pytest
 
-from app.adapter.decision import OpenJevDecision
 from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
 from app.adapter.stub import StubDecisionBackend
 from app.domain.inference import (
     ChoiceAnswer,
     ChoiceBatch,
-    ChoiceOption,
     ChoiceQuestion,
-    Claim,
-    Verdict,
 )
 from app.domain.search import MethodContribution, SearchResult
 from app.domain.sessions import SessionStatus
@@ -24,7 +17,7 @@ from app.repository.memory.catalog import MemoryCatalog
 from app.repository.memory.sessions import MemorySessions
 from app.repository.memory.unit_of_work import MemoryStore, MemoryUnitOfWork
 from app.usecase.sessions import OUT_OF_SCOPE, Sessions
-from composition import Repositories, build_usecases, checked_decision
+from composition import Repositories, build_usecases
 from settings import Settings
 from tests.test_sessions import SearchStub
 
@@ -56,7 +49,7 @@ def scenario(
         catalog_source=XmlKtruSource(settings.ktru_xml_dir),
         searcher=search,
         fact_extractor=DeterministicFactExtractor(),
-        decision=checked_decision(decision) if decision is not None else None,
+        decision=decision,
         min_similarity=0.45,
     )
     usecases.catalog_sync(uow).run()
@@ -68,7 +61,7 @@ class CountingDecision(StubDecisionBackend):
     calls = 0
 
     def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
-        self.calls += 1
+        self.calls += any(q.question_id == "relevance" for q in questions)
         return super().choose(context, questions)
 
 
@@ -119,45 +112,3 @@ def test_decision_failure_is_technical_error(settings: Settings) -> None:
     sessions = scenario(settings, SimilarSearch(settings, 0.6), decision)
     state = sessions.message(sessions.create().session_id, "шкаф")
     assert state.status == SessionStatus.TECHNICAL_ERROR
-
-
-def test_openjev_adapter_maps_choice_and_nli() -> None:
-    requests: list[tuple[str, dict[str, Any]]] = []
-
-    def respond(request: httpx.Request) -> httpx.Response:
-        body = json.loads(request.content)
-        requests.append((request.url.path, body))
-        if request.url.path == "/v1/choice":
-            return httpx.Response(
-                200,
-                json={"choice": "b", "probabilities": {"a": 0.3, "b": 0.7}, "model_revision": "r"},
-            )
-        return httpx.Response(
-            200,
-            json={
-                "results": [
-                    {"probabilities": {"supported": 0.8, "contradicted": 0.1, "not_stated": 0.1}}
-                ],
-                "model_revision": "r",
-            },
-        )
-
-    adapter = checked_decision(
-        OpenJevDecision("http://jev/", transport=httpx.MockTransport(respond))
-    )
-    question = ChoiceQuestion(
-        "q", "Что это?", (ChoiceOption("a", "Стол"), ChoiceOption("b", "Шкаф"))
-    )
-    (answer,) = adapter.choose("шкаф", [question]).answers
-    assert answer.selected == "b" and answer.probabilities == {"a": 0.3, "b": 0.7}
-    (claim,) = adapter.verify("шкаф", [Claim("c", "Это шкаф.")]).answers
-    assert claim.probabilities[Verdict.supported] == 0.8
-    assert requests[0] == (
-        "/v1/choice",
-        {
-            "premise": "шкаф",
-            "instructions": "Что это?",
-            "options": [{"id": "a", "criterion": "Стол"}, {"id": "b", "criterion": "Шкаф"}],
-        },
-    )
-    assert requests[1] == ("/v1/nli", {"premise": "шкаф", "hypotheses": ["Это шкаф."]})

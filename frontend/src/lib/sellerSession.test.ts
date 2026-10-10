@@ -22,6 +22,7 @@ function state(patch: Partial<SessionState> = {}): SessionState {
     common_fields: [],
     unanswered: [],
     unsupported_rules: [],
+    enum_proposals: [],
     ...patch,
   };
 }
@@ -46,6 +47,7 @@ function deferred<T>() {
 
 function fakeApi(overrides: Partial<SellerApi> = {}) {
   return {
+    resolveEnum: vi.fn<SellerApi["resolveEnum"]>(async () => resolved(3, "A")),
     create: vi.fn<SellerApi["create"]>(async () => state()),
     get: vi.fn<SellerApi["get"]>(async (id) => state({ session_id: id })),
     message: vi.fn<SellerApi["message"]>(async () => resolved(1, "A")),
@@ -422,4 +424,49 @@ describe("createSellerSession", () => {
       expect(api.answer).toHaveBeenCalledOnce();
     });
   });
+});
+
+it("подтверждает предложение показанной ревизии и обновляет устаревшую сессию", async () => {
+  const resolveEnum = vi.fn().mockRejectedValue(new ApiError(409, "stale_revision", "Устарело"));
+  const api = fakeApi({ get: vi.fn().mockResolvedValue(resolved(4, "A")), resolveEnum });
+  const store = createSellerSession(api);
+  await store.open("s1");
+  store.setDraft("Черновик дополнения");
+  await store.resolveEnum("enum:4:0", "accept");
+  expect(resolveEnum).toHaveBeenCalledWith("s1", 4, "enum:4:0", "accept", []);
+  expect(api.get).toHaveBeenCalledTimes(2);
+  expect(store.view().draft).toBe("Черновик дополнения");
+  expect(store.view().failure).toBeNull();
+});
+
+it("диагностика характеристики не превращает успешный анализ в технический сбой", async () => {
+  const diagnostic: import("../api/types").Diagnostic = {
+    kind: "typo",
+    fact_id: null,
+    source_quote: "дреево",
+    source: { message_id: "m1", quote: "дреево", start: 8, end: 14 },
+    expected: [],
+    suggestion: "дерево",
+    candidates: ["дерево"],
+    rule_ref: [],
+    scope: { group_code: null, position_codes: [], complete: false },
+    requires_confirmation: true,
+    explanation: "Орфографическая гипотеза",
+    alias_source: null,
+  };
+  const response = state({ revision: 1, status: "needs_clarification", errors: [diagnostic] });
+  const api = fakeApi({ message: vi.fn().mockResolvedValue(response) });
+  const store = createSellerSession(api, newKey);
+  store.setDraft("Стол из дреево");
+  await store.submit();
+  expect(store.view().failure).toBeNull();
+  expect(store.view().state?.errors).toEqual([diagnostic]);
+  expect(api.answer).not.toHaveBeenCalled();
+  const failed = state({
+    status: "technical_error",
+    errors: [diagnostic, { code: "model_failure", message: "Поиск недоступен" }],
+  });
+  const failedStore = createSellerSession(fakeApi({ get: async () => failed }), newKey);
+  await failedStore.open("s1");
+  expect(failedStore.view().failure?.details).toEqual(["Поиск недоступен"]);
 });

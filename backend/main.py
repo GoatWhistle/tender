@@ -17,15 +17,19 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.adapter.aliases import CsvAliasesSource
 from app.adapter.decision import OpenJevDecision
 from app.adapter.embeddings import OpenAIEmbeddings
+from app.adapter.enum_similarity import DamerauMatcher
 from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
 from app.adapter.search import MatrixIndex, TfidfIndex
+from app.adapter.spelling import QwenSpelling, UnconfiguredSpelling
+from app.adapter.value_aliases import ReviewedValueAliases
 from app.controller.catalog import groups_router
 from app.controller.catalog import router as catalog_router
 from app.controller.errors import install_error_handlers
 from app.controller.health import router as health_router
 from app.controller.search import router as search_router
 from app.controller.sessions import router as sessions_router
+from app.domain.enum_mapping import AutoAcceptance
 from app.repository.aliases import SqlAliases
 from app.repository.catalog import SqlCatalog
 from app.repository.database import create_db_engine
@@ -34,13 +38,7 @@ from app.repository.sessions import SqlSessions
 from app.repository.unit_of_work import SqlUnitOfWork
 from app.usecase.catalog import SyncReport
 from app.usecase.interface import CatalogSource, Embeddings
-from composition import (
-    Repositories,
-    Usecases,
-    build_usecases,
-    checked_decision,
-    checked_embeddings,
-)
+from composition import Repositories, Usecases, build_usecases, checked_embeddings
 from settings import Settings
 
 
@@ -61,7 +59,24 @@ def production_usecases(
     embeddings = checked_embeddings(embeddings) if embeddings is not None else None
     return build_usecases(
         sql_repositories(),
-        fact_extractor=DeterministicFactExtractor(),
+        decision=OpenJevDecision(settings.decision_url, timeout=settings.decision_timeout)
+        if settings.decision_url
+        else None,
+        enum_policy=AutoAcceptance(
+            settings.decision_auto_accept_threshold, settings.decision_revision
+        )
+        if settings.decision_auto_accept_enabled
+        else AutoAcceptance(),
+        fact_extractor=DeterministicFactExtractor(ReviewedValueAliases().all()),
+        enum_matcher=DamerauMatcher(),
+        value_aliases=ReviewedValueAliases(),
+        spelling=QwenSpelling(
+            settings.spelling_url,
+            settings.spelling_model,
+            settings.spelling_api_key.get_secret_value() if settings.spelling_api_key else None,
+        )
+        if settings.spelling_url
+        else UnconfiguredSpelling(),
         lexical=TfidfIndex() if embeddings is not None else None,
         vector=MatrixIndex(
             embeddings, model=settings.embeddings_model, revision=settings.embeddings_revision
@@ -71,9 +86,6 @@ def production_usecases(
         embeddings=embeddings,
         aliases_source=CsvAliasesSource(settings.aliases_path),
         catalog_source=catalog_source or XmlKtruSource(settings.ktru_xml_dir),
-        decision=checked_decision(OpenJevDecision(settings.decision_url))
-        if settings.decision_url
-        else None,
         min_similarity=settings.search_min_similarity,
     )
 
