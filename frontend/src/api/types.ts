@@ -166,6 +166,9 @@ export type FactStatus =
   | "deleted";
 
 export type Fact = {
+  negated?: boolean;
+  uncertain?: boolean;
+  requires_binding?: boolean;
   component?: string | null;
   superseded_by?: string | null;
   id: string;

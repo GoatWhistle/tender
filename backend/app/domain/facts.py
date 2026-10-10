@@ -33,6 +33,22 @@ ACCEPTED = frozenset(
 
 
 @dataclass(frozen=True)
+class Verification:
+    claim: str
+    message_ids: tuple[str, ...]
+    context_hash: str
+    session_revision: int
+    extractor_revision: str
+    model_revision: str | None
+    verdict: str
+    probabilities: dict[str, float]
+    binding_valid: bool
+    template_version: str = "atomic_fact_v1"
+    policy_version: str = "verified_extraction_v1"
+    threshold: float = 0.90
+
+
+@dataclass(frozen=True)
 class Fact:
     id: str
     field: str | None
@@ -54,6 +70,10 @@ class Fact:
 
     model_revision: str | None = None
     model_score: float | None = None
+    verification: Verification | None = None
+    negated: bool = False
+    uncertain: bool = False
+    requires_binding: bool = False
 
     @property
     def accepted(self) -> bool:

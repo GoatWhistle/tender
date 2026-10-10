@@ -35,6 +35,14 @@ class Settings(BaseSettings):
     decision_auto_accept_threshold: float = Field(default=0.90, ge=0, le=1)
     decision_revision: str = "a20448012c213128955ca0c693e7c943865cab77"
 
+    extractor_url: str | None = None
+    extractor_api_key: SecretStr | None = None
+    extractor_timeout: float = Field(default=120, gt=0)
+    extractor_revision: str = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+    verifier_auto_accept_enabled: bool = True
+    verifier_threshold: float = Field(default=0.90, ge=0, le=1)
+    verifier_revision: str = "a20448012c213128955ca0c693e7c943865cab77"
+
     spelling_url: str | None = None
     spelling_model: str = "qwen"
     spelling_api_key: SecretStr | None = None

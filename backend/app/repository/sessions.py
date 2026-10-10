@@ -12,7 +12,7 @@ from app.domain.catalog import Bound, Value
 from app.domain.diagnostics import Diagnostic, DiagnosticScope, RuleRef
 from app.domain.dialog import CommonField, DialogTurn, Question, QuestionOption, RequiredField
 from app.domain.enum_mapping import EnumProposal, EnumResolution, EnumSelection
-from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck
+from app.domain.facts import CheckResult, ExclusionReason, Fact, FactSource, RuleCheck, Verification
 from app.domain.group_validation import GroupCheck
 from app.domain.inference import Verdict
 from app.domain.search import MethodContribution
@@ -200,6 +200,14 @@ def _fact(data: dict[str, Any]) -> Fact:
             "value": value,
             "source": FactSource(**source) if source else None,
             "bounds": _value(bounds) if bounds else None,
+            "verification": Verification(
+                **{
+                    **data["verification"],
+                    "message_ids": tuple(data["verification"]["message_ids"]),
+                }
+            )
+            if data.get("verification")
+            else None,
         }
     )
 

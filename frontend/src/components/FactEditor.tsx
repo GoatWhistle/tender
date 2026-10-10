@@ -3,7 +3,7 @@ import type { Fact, FactMutation, FactValue, SessionState } from "../api/types";
 import type { SellerSession } from "../lib/sellerSession";
 
 const label = (f: Fact) =>
-  `${f.characteristic_name ?? "Без привязки"}${f.component ? ` (${f.component})` : ""}: ${f.origin === "decision" ? String(f.value) : f.raw_value}${f.raw_unit && f.kind !== "interval" ? ` ${f.raw_unit}` : ""}`;
+  `${f.characteristic_name ?? "Без привязки"}${f.component ? ` (${f.component})` : ""}: ${f.negated ? "не " : ""}${f.origin === "decision" ? String(f.value) : f.raw_value}${f.raw_unit && f.kind !== "interval" ? ` ${f.raw_unit}` : ""}`;
 const ACTIONS: Record<string, string> = {
   edit: "Правка",
   clarification: "Запрос уточнения",
@@ -267,6 +267,10 @@ export function EditableFacts({ state, store }: { state: SessionState; store: Se
                             ? "Подтверждено вами"
                             : "Из описания"}
                 {f.origin === "decision" && f.source && <span> · «{f.source.quote}»</span>}
+                {f.requires_binding && (
+                  <span> · Уточните значение и часть товара через «Изменить».</span>
+                )}
+                {f.uncertain && <span> · В описании значение указано предположительно.</span>}
               </span>
               <div className="fact-actions">
                 <button
@@ -280,7 +284,7 @@ export function EditableFacts({ state, store }: { state: SessionState; store: Se
                 <button
                   type="button"
                   className="textlink"
-                  disabled={busy}
+                  disabled={busy || f.requires_binding || f.negated}
                   onClick={() => mutate(f, "confirm", related)}
                 >
                   {related.length ? "Оставить это значение" : "Подтвердить"}

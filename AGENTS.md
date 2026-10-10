@@ -85,3 +85,12 @@ HTTP-проверки: `cd backend && uv run pytest tests/test_enum_sessions.py 
 `evals/reports/2026-10-10-group-validation.md`. HTTP-регрессии:
 `cd backend && uv run pytest tests/test_group_validation.py tests/test_openjev_http.py`.
 Реальный парный прогон: `backend/.venv/bin/python evals/groups/run.py --output var/group-validation.json`.
+
+### Извлечение и verifier
+
+При изменении extractor, verifier-порога или привязки модельных фактов читай
+[контракт](docs/sessions.md#проверяемое-извлечение-свободных-значений) и
+[независимый замер](evals/reports/2026-10-10-verified-extraction.md).
+HTTP-проверки: `cd backend && uv run pytest tests/test_extraction_sessions.py tests/test_extractor_http.py`.
+Замер и разметка ответов — `evals/extraction/`; команды — README, «Свободное извлечение и verifier».
+Сохраняй исходный holdout-отчёт; повтор после исправления отмечай как регрессионный.

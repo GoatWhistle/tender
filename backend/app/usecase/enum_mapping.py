@@ -30,6 +30,8 @@ class EnumMapper:
         skip: set[str],
     ) -> tuple[tuple[Fact, ...], tuple[EnumProposal, ...]]:
         fields = [f for f in enum_fields(positions) if f.name not in skip]
+        if not fields:
+            return (), ()
         facts: list[Fact] = []
         by_field: dict[str, list[tuple[str, Fact, float, bool]]] = {}
         for message in messages:

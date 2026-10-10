@@ -73,3 +73,7 @@ class InvalidFactEdit(DomainError):
 class FactNotFound(DomainError):
     code = "fact_not_found"
     message = "Факт не найден или уже изменён"
+
+
+class InvalidExtraction(ModelFailure):
+    """JSON экстрактора можно попытаться восстановить один раз за анализ."""

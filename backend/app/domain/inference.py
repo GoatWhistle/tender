@@ -108,6 +108,7 @@ class TargetAttribute:
     attribute_ref: str
     name: str
     units: tuple[str, ...] = ()
+    subject_ref: str = "product"
 
 
 @dataclass(frozen=True)
@@ -124,6 +125,7 @@ class ExtractionRequest:
     messages: tuple[SourceMessage, ...]
     accepted: tuple[KnownFact, ...]
     targets: tuple[TargetAttribute, ...]
+    feedback: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
