@@ -64,6 +64,8 @@
   "sameParameters": "No differences in characteristics or units.",
   "moreDifferences": "More differences: {{count}}",
   "lessDifferences": "Show fewer differences",
+  "valueMore": "Show all",
+  "valueLess": "Show less",
   "missingFields": "Complete: {{fields}}",
   "reviewChanges": "Review the corrections",
   "before": "Original",

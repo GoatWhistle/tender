@@ -25,6 +25,29 @@
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
 }
+.comparison dd[data-clamped="true"] > strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.toggle {
+  display: block;
+  margin-top: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--action-text);
+  font: inherit;
+  font-size: var(--font-sm);
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .toggle:hover {
+    text-decoration: underline;
+  }
+}
 .comparison > button {
   align-self: flex-start;
 }

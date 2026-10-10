@@ -64,6 +64,8 @@
   "sameParameters": "По характеристикам и единицам различий нет.",
   "moreDifferences": "Ещё различий: {{count}}",
   "lessDifferences": "Свернуть различия",
+  "valueMore": "Показать полностью",
+  "valueLess": "Свернуть",
   "missingFields": "Заполните: {{fields}}",
   "reviewChanges": "Проверьте исправления",
   "before": "Было",

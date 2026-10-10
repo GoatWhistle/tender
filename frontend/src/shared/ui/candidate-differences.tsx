@@ -23,11 +23,7 @@ export function CandidateDifferences({
             <dt>
               <BackendText>{name}</BackendText>
             </dt>
-            <dd>
-              <strong>
-                <BackendText>{value}</BackendText>
-              </strong>
-            </dd>
+            <DifferenceValue value={value} />
           </div>
         ))}
       </dl>
@@ -44,5 +40,23 @@ export function CandidateDifferences({
         </Button>
       )}
     </div>
+  )
+}
+
+function DifferenceValue({ value }: { readonly value: string }) {
+  const { t } = useTranslation(["rag"])
+  const [open, setOpen] = useState(false)
+  const long = value.length > 120
+  return (
+    <dd data-clamped={long && !open}>
+      <strong>
+        <BackendText>{value}</BackendText>
+      </strong>
+      {long && (
+        <button type="button" className={styles.toggle} onClick={() => setOpen(!open)}>
+          {t(open ? "rag:valueLess" : "rag:valueMore")}
+        </button>
+      )}
+    </dd>
   )
 }
