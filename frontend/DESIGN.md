@@ -41,15 +41,34 @@ H2 30/32, H3 24/32, p4 16/24, p5 14/18, p6 12/16. Межстрочный для 
 
 ## Иконки
 
-`src/shared/assets/icons/` — 12 иконок UI-кита, подключены через `vite-plugin-svgr` как
-компоненты (`*.svg?react`). Цвета макета заменены на `currentColor`, светлые подложки — на
-`--icon-knockout`, поэтому иконки наследуют цвет текста и работают в обеих темах. Исходные
-имена в ките: `icon_download`, `arrow_gray_right`, `arrow_gray_right_2`, `check`, `done`,
-`icon_arrow`, `arrow_small_blue`, `iconlk_attantion`, `edit`, `icon_add`, `icon_upload`,
-`icon_provider`.
+`src/shared/assets/icons/` — 14 иконок, выгруженных из доски напрямую через Figma API
+(`GET /v1/images/G64ZNZOpvILbIPYx8XVbxO?format=svg`) по узлам раздела `02_Icons` и соседних.
+Подключены через `vite-plugin-svgr` как компоненты (`*.svg?react`).
 
-Глобуса, луны и спиннера в ките нет — переключатели языка и темы и индикатор ожидания
-остались на lucide. Папка иконок исключена из biome: это выгрузка, а не исходник.
+Цвета макета заменены на `currentColor`; заливки светлее 0.82 по яркости — на
+`--icon-knockout`, иначе белая галочка внутри кружка `done` слилась бы с ним в пятно.
+Поэтому иконки наследуют цвет текста и работают в обеих темах.
+
+| Наш ключ | Узел Figma | Имя на доске |
+|---|---|---|
+| `download` | `1:60776` | `icon/download` |
+| `plus` | `1:49525` | `icon/add` |
+| `send` | `1:49506` | `icon/upload` |
+| `edit` | `1:49697` | `edit` |
+| `user` | `1:49790` | `Icon_provider` |
+| `back` | `1:4731` | `arrow_gray_left` |
+| `next` | `1:5598` | `arrow_gray_right` |
+| `chevron` | `1:2295` | `arrow_small_blue` |
+| `expand` | `1:1233` | `angle-arrow-down` |
+| `check` | `1:5988` | `check` |
+| `success` | `1:1877` | `done` |
+| `alert` | `1:2031` | `iconLK/attantion` |
+| `search` | `1:49432` | `icon/search` |
+| `rank` | `1:49542` | `icon/list blue` |
+
+Луны и спиннера в ките нет, а `language` на доске — российский флаг, который неуместен при
+переключении на английский. Эти три остались на lucide. Папка иконок исключена из biome: это
+выгрузка, а не исходник.
 
 ## Видимость подбора
 
