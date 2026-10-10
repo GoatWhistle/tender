@@ -54,3 +54,6 @@ class Settings(BaseSettings):
     embeddings_query_instruction: str = (
         "Given a product description, retrieve the matching product group"
     )
+    # Косинус ближайшей группы, ниже которого текст — не товар справочника; подобран на
+    # evals/reports/2026-10-10-out-of-scope.md, привязан к модели эмбеддингов.
+    search_min_similarity: float = Field(default=0.45, ge=0, le=1)

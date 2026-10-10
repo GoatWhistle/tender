@@ -145,6 +145,12 @@ def test_holdout_rows_are_neither_heads_nor_examples(tmp_path: Path) -> None:
     assert mining.categories["Инструменты"].holdout == 4
 
 
+def test_default_holdout_is_the_e2e_holdout_list() -> None:
+    ids = sh.read_holdout(sh.HOLDOUT)
+
+    assert ids is not None and len(ids) >= 50
+
+
 def test_missing_holdout_file_excludes_nothing(tmp_path: Path) -> None:
     assert sh.read_holdout(tmp_path / "нет.txt") is None
 
@@ -183,10 +189,35 @@ GRINDER = "28.24.11.000-00000042"
 STOOL = "31.09.10.000-00000019"
 
 
-def row(head: str, label: str, category: str = "Инструменты", line: int = 7) -> sh.TableRow:
+def row(
+    head: str, label: str, category: str = "Инструменты", line: int = 7, top5: str = ""
+) -> sh.TableRow:
     return sh.TableRow(
-        head, category, 5, f"{category}.xlsx#{line}; {category}.xlsx#9", head, "", label, ""
+        head, category, 5, f"{category}.xlsx#{line}; {category}.xlsx#9", head, top5, label, ""
     )
+
+
+def test_group_already_first_for_two_of_three_examples_is_not_an_alias() -> None:
+    def top5(first: int) -> str:
+        return (
+            f"{STOOL} Табурет [top1 {3 - first}/3, top5 3/3] | "
+            f"{GRINDER} Шлифмашина [top1 {first}/3, top5 3/3]"
+        )
+
+    plan = sh.plan_aliases(
+        [
+            row("ушм", f"group:{GRINDER}", top5=top5(0)),
+            row("пшм", f"group:{GRINDER}", line=12, top5=top5(1)),
+            row("шлифмашина", f"group:{GRINDER}", line=13, top5=top5(2)),
+        ],
+        existing=[],
+        groups={GRINDER, STOOL},
+    )
+
+    assert [a.alias for a in plan.added] == ["ушм", "пшм"]
+    assert [(s.head, s.reason) for s in plan.skipped] == [
+        ("шлифмашина", "поиск уже ставит группу первой: 2/3 примеров")
+    ]
 
 
 def test_group_labels_become_reviewed_aliases_with_ste_source() -> None:

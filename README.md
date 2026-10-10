@@ -157,6 +157,13 @@ holdout, «вне КТРУ», точность и доля выданных ко
 до кода — «пропущено», пока продукт их не поддерживает. Holdout выбирает `evals/e2e/sample_holdout.py` с
 фиксированным seed; существующую разметку он не перетирает.
 
+Отсев текстов не о товаре (порог косинуса и вопрос OpenJev, см. `docs/sessions.md`):
+
+```bash
+cd backend && uv run python ../evals/out_of_scope/measure.py \
+  --embeddings-url http://127.0.0.1:18083/v1 --decision-url http://127.0.0.1:18080
+```
+
 Первый отчёт с реальными эмбеддингами:
 [`2026-10-10-e2e.md`](evals/reports/2026-10-10-e2e.md), построчные ответы — в соседнем JSON.
 

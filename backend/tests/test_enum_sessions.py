@@ -22,6 +22,7 @@ from app.domain.inference import (
     Verdict,
 )
 from app.domain.search import MethodContribution, SearchHit, SearchResult
+from app.usecase.sessions import RELEVANCE
 from composition import build_usecases
 from main import create_app, sql_repositories, sync_catalog
 from settings import Settings
@@ -39,6 +40,10 @@ class Decision(StubDecisionBackend):
 
     def choose(self, context: str, questions: Sequence[ChoiceQuestion]) -> ChoiceBatch:
         self._raise_fault()
+        if tuple(questions) == (RELEVANCE,):
+            # Отсев текстов не о товаре: описания здесь — товары, вопрос не записывается.
+            relevant = ChoiceAnswer("relevance", {"product": 1.0, "junk": 0.0}, "product")
+            return ChoiceBatch((relevant,), self.revision)
         self.questions.append(tuple(questions))
         answers = []
         for q in questions:

@@ -128,6 +128,7 @@ class Search:
                     MethodContribution.of(1),
                     MethodContribution.of(None),
                     MethodContribution.of(None),
+                    found_by="code",
                 ),
             ),
         )

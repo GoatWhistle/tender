@@ -14,6 +14,7 @@ from app.adapter.stub.extractor import StubFactExtractor
 from app.domain.catalog import Characteristic, CharacteristicKind, Group, Position, Value
 from app.domain.errors import InvalidExtraction
 from app.domain.inference import (
+    ChoiceAnswer,
     Claim,
     ClaimAnswer,
     ClaimBatch,
@@ -94,6 +95,11 @@ def verifier() -> Verifier:
 
 
 @pytest.fixture
+def known_group(request: pytest.FixtureRequest) -> bool:
+    return bool(getattr(request, "param", True))
+
+
+@pytest.fixture
 def qualitative(request: pytest.FixtureRequest) -> str | None:
     value = getattr(request, "param", None)
     return "Цвет" if value is True else str(value) if value else None
@@ -106,6 +112,7 @@ def extraction_api(
     verifier: Verifier,
     request: pytest.FixtureRequest,
     qualitative: str | None,
+    known_group: bool,
 ) -> Iterator[TestClient]:
     root = Position("tables", "Стол", "Мебель", "", "", True, None, (), ())
     height = Characteristic(
@@ -157,6 +164,7 @@ def extraction_api(
                         MethodContribution.of(1),
                         MethodContribution.of(None),
                         MethodContribution.of(None),
+                        found_by="code" if known_group else "description",
                     ),
                 ),
             )
@@ -462,3 +470,21 @@ def test_empty_extraction_is_a_valid_result(
     assert state["candidate_counts"]["compatible"] == 2
     assert not any(f["normalization_rule"] == "verified_extraction_v1" for f in state["facts"])
     assert verifier.contexts == []
+
+
+@pytest.mark.parametrize("known_group", [False], indirect=True)
+@pytest.mark.parametrize("product", [True, False])
+def test_relevance_gate_precedes_free_extraction(
+    extraction_api: TestClient, extractor: Extractor, verifier: Verifier, product: bool
+) -> None:
+    verifier.choices["relevance"] = ChoiceAnswer(
+        "relevance",
+        {"product": 0.99 if product else 0.01, "junk": 0.01 if product else 0.99},
+        "product" if product else "junk",
+    )
+    state = message(extraction_api, "Стол от пола до верха 75 см")
+    if product:
+        assert any(f["status"] == "accepted_from_model" for f in state["facts"])
+    else:
+        assert state["status"] == "out_of_scope"
+        assert not extractor.requests

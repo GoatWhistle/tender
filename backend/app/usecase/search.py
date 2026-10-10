@@ -93,7 +93,8 @@ class GroupSearch:
         text = normalize(description)
         query = self._embeddings.embed_queries([text]).vectors[0]
         lexical = {r.code: i for i, r in enumerate(self._lexical.rank(text, category), 1)}
-        vector = {r.code: i for i, r in enumerate(self._vector.rank(query, category), 1)}
+        nearest = self._vector.rank(query, category)
+        vector = {r.code: i for i, r in enumerate(nearest, 1)}
         matched = sorted(
             (
                 a
@@ -135,4 +136,9 @@ class GroupSearch:
             replace(h, found_by="code") for code in exact for h in hits if h.group.code == code
         ]
         hits = promoted + [h for h in hits if h.group.code not in exact]
-        return SearchResult(description, tuple(hits[:limit]), tuple(messages))
+        return SearchResult(
+            description,
+            tuple(hits[:limit]),
+            tuple(messages),
+            nearest[0].score if nearest else None,
+        )

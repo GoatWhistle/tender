@@ -103,6 +103,7 @@ def production_usecases(
         embeddings=embeddings,
         aliases_source=CsvAliasesSource(settings.aliases_path),
         catalog_source=catalog_source or XmlKtruSource(settings.ktru_xml_dir),
+        min_similarity=settings.search_min_similarity,
     )
 
 

@@ -81,6 +81,7 @@ def build_usecases[U: UnitOfWork](
     enum_matcher: EnumMatcher | None = None,
     value_aliases: ValueAliases | None = None,
     spelling: SpellingService | None = None,
+    min_similarity: float = 0.0,
 ) -> Usecases[U]:
     if model_extractor is not None and decision is None:
         raise ValueError("Извлечение требует DecisionBackend для проверки фактов")
@@ -125,6 +126,8 @@ def build_usecases[U: UnitOfWork](
                 )
                 if model_extractor and decision
                 else None,
+                decision=checked_decision(decision) if decision else None,
+                min_similarity=min_similarity,
             )
         )
         if sessions_factory and fact_extractor is not None
