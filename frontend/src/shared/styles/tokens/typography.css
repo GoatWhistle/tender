@@ -21,7 +21,7 @@
   --font-sm: 14px;
   --font-md: 16px;
   --font-lg: 20px;
-  --font-xl: 28px;
+  --font-xl: 24px;
 }
 
 :root {
@@ -34,6 +34,6 @@
 }
 @media (max-width: 47.99rem) {
   :root {
-    --font-xl: 24px;
+    --font-xl: 20px;
   }
 }

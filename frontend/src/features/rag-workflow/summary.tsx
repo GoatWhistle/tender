@@ -48,7 +48,7 @@ export function Summary({
       <h2>{t(done ? "rag:done" : "rag:previewTitle")}</h2>
       <p>{t(done ? "rag:doneHint" : "rag:previewHint")}</p>
       <div className={styles.position}>
-        <CategoryIcon code={session.position.code} size="lg" />
+        <CategoryIcon code={session.position.code} size="xl" />
         <div>
           <h3>
             <BackendText>{session.position.name}</BackendText>

@@ -15,6 +15,12 @@
   --space-page: var(--space-6);
   --control-size: 48px;
   --control-size-large: 56px;
+  --card-media: 160px;
+}
+@media (max-width: 47.99rem) {
+  :root {
+    --card-media: 96px;
+  }
 }
 @media (min-width: 75rem) {
   :root {

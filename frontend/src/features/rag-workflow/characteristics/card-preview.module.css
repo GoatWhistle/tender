@@ -6,9 +6,9 @@
   gap: var(--space-4);
   max-height: 75dvh;
   padding: var(--space-5);
-  border: var(--line) solid var(--border-default);
   border-radius: var(--radius-lg);
   background: var(--surface-panel);
+  box-shadow: var(--shadow-panel);
   overflow: auto;
   overscroll-behavior: contain;
 }
@@ -31,12 +31,14 @@
   overflow-wrap: anywhere;
 }
 .preview header strong {
-  font-size: var(--font-sm);
-  line-height: var(--line-height-heading);
+  font-size: var(--font-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-body);
 }
 .preview header span {
-  color: var(--text-muted);
-  font-size: var(--font-xs);
+  color: var(--action-text);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
   font-variant-numeric: tabular-nums;
 }
 .preview dl {
@@ -47,7 +49,7 @@
   gap: var(--space-1);
   padding-block: var(--space-2);
   border-top: var(--line) solid var(--border-default);
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   overflow-wrap: anywhere;
 }
 .preview dt {

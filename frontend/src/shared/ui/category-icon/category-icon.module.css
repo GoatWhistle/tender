@@ -13,3 +13,9 @@
   height: var(--control-size-large);
   border-radius: var(--radius-lg);
 }
+.tile[data-size="xl"] {
+  width: var(--card-media);
+  height: var(--card-media);
+  border-radius: var(--radius-lg);
+  background: var(--surface-inset);
+}

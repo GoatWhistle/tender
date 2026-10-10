@@ -1,7 +1,7 @@
 import styles from "./category-icon.module.css"
 import { categoryIcon } from "./icons"
 
-const sizes = { sm: 18, lg: 28 }
+const sizes = { sm: 18, lg: 28, xl: 64 }
 
 export function CategoryIcon({
   code,

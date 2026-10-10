@@ -53,9 +53,28 @@
 }
 .position {
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-panel);
 }
 .position > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   min-width: 0;
+  overflow-wrap: anywhere;
+}
+.position h3 {
+  font-size: var(--font-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-height-body);
+}
+.summary .position p {
+  color: var(--action-text);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
 }

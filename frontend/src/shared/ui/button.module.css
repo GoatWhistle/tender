@@ -12,7 +12,7 @@
   border: var(--line) solid var(--border-default);
   border-radius: var(--radius-md);
   background: var(--surface-panel);
-  color: var(--text-primary);
+  color: var(--action-text);
   cursor: pointer;
   font-weight: var(--weight-semibold);
   font-size: var(--font-md);
@@ -28,8 +28,14 @@
 }
 .primary {
   background: var(--action-primary);
-  border-color: var(--action-text);
+  border-color: var(--action-primary);
   color: var(--text-on-action);
+}
+.primary:disabled {
+  opacity: 1;
+  background: var(--surface-user);
+  border-color: var(--surface-user);
+  color: var(--text-muted);
 }
 .secondary {
   color: var(--action-text);
@@ -41,6 +47,7 @@
 }
 .row {
   width: 100%;
+  color: var(--text-primary);
   text-align: left;
   justify-content: flex-start;
   font-weight: var(--weight-regular);
@@ -51,6 +58,7 @@
   }
   .primary:hover:not(:disabled) {
     background: var(--action-hover);
+    border-color: var(--action-hover);
   }
   .ghost:hover:not(:disabled),
   .row:hover:not(:disabled) {
