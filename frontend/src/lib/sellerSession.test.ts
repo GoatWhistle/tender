@@ -45,8 +45,17 @@ function deferred<T>() {
   return { promise, resolve, reject };
 }
 
-function fakeApi(overrides: Partial<SellerApi> = {}) {
-  return {
+function fakeApi(overrides: Partial<SellerApi> = {}): SellerApi {
+  const api: SellerApi = {
+    exportCard: vi.fn(),
+    drafts: vi.fn(async () => []),
+    saveDraft: vi.fn(),
+    openDraft: async (id) => ({
+      state: await api.get(id),
+      input_text: "",
+      saved_revision: null,
+      saved_at: null,
+    }),
     resolveEnum: vi.fn<SellerApi["resolveEnum"]>(async () => resolved(3, "A")),
     create: vi.fn<SellerApi["create"]>(async () => state()),
     get: vi.fn<SellerApi["get"]>(async (id) => state({ session_id: id })),
@@ -56,6 +65,7 @@ function fakeApi(overrides: Partial<SellerApi> = {}) {
     recalculate: vi.fn<SellerApi["recalculate"]>(async () => resolved(4, "A")),
     ...overrides,
   };
+  return api;
 }
 
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -489,4 +499,190 @@ it("сохраняет черновик и обновляет ревизию п�
   expect(store.view().state?.revision).toBe(2);
   expect(store.view().failure?.text).toContain("Сессия изменилась");
   expect(api.mutate).toHaveBeenCalledTimes(1);
+});
+
+it("сохраняет ввод отдельно, открывает черновик после перезагрузки и продолжает ревизию", async () => {
+  const savedState = state({ revision: 3 });
+  let input = "";
+  const api = fakeApi({
+    get: async () => savedState,
+    saveDraft: vi.fn(async (_id, _revision, text) => {
+      input = text;
+      return { state: savedState, input_text: input, saved_revision: 3, saved_at: "2026-10-10" };
+    }),
+    openDraft: async () => ({
+      state: savedState,
+      input_text: input,
+      saved_revision: 3,
+      saved_at: "2026-10-10",
+    }),
+    drafts: async () =>
+      input
+        ? [
+            {
+              session_id: "s1",
+              title: input,
+              revision: 3,
+              saved_revision: 3,
+              saved_at: "2026-10-10",
+            },
+          ]
+        : [],
+  });
+  const first = createSellerSession(api);
+  await first.open("s1");
+  first.setDraft("  недописанный текст\n");
+  await first.saveDraft();
+  expect(first.view().draft).toBe("  недописанный текст\n");
+  const reloaded = createSellerSession(api);
+  await reloaded.loadDrafts();
+  expect(reloaded.view().drafts).toHaveLength(1);
+  await reloaded.open(reloaded.view().drafts[0].session_id);
+  expect(reloaded.view()).toMatchObject({ draft: "  недописанный текст\n", state: savedState });
+  expect(api.message).not.toHaveBeenCalled();
+  await reloaded.mutate("f1", { expected_revision: 3, action: "delete" });
+  expect(api.mutate).toHaveBeenCalledWith("s1", "f1", { expected_revision: 3, action: "delete" });
+});
+
+function card(revision = 3): import("../api/types").CardExport {
+  return {
+    format: "ste_demo_v1",
+    document_kind: "card",
+    session_id: "s1",
+    revision,
+    ktru_code: "leaf",
+    group: null,
+    card_complete: true,
+    missing_required: [],
+    results_stale: false,
+    catalog_version: null,
+    catalog_snapshot: null,
+    characteristics: [],
+  };
+}
+
+it("скачивает JSON показанной ревизии, а ответ прежней сессии отбрасывает", async () => {
+  const pending = deferred<import("../api/types").CardExport>();
+  const api = fakeApi({
+    get: async (id) =>
+      state({ session_id: id, revision: 3, status: "resolved", card_complete: true }),
+    exportCard: vi.fn().mockResolvedValueOnce(card()).mockReturnValueOnce(pending.promise),
+  });
+  const download = vi.fn();
+  const store = createSellerSession(api, newKey, download);
+  await store.open("s1");
+  await store.downloadCard();
+  expect(download).toHaveBeenCalledWith(card());
+  expect(api.exportCard).toHaveBeenCalledWith("s1", 3);
+  const exporting = store.downloadCard();
+  await store.open("s2");
+  pending.resolve(card());
+  await exporting;
+  expect(download).toHaveBeenCalledTimes(1);
+  expect(store.view().sessionId).toBe("s2");
+});
+
+it("ошибка скачивания видна и сохраняет ввод", async () => {
+  const api = fakeApi({
+    get: async () => state({ revision: 3, card_complete: true, status: "resolved" }),
+    exportCard: async () => card(),
+  });
+  const store = createSellerSession(api, newKey, () => {
+    throw new Error("Не удалось скачать файл");
+  });
+  await store.open("s1");
+  store.setDraft("неотправлено");
+  await store.downloadCard();
+  expect(store.view().failure?.text).toContain("Не удалось скачать");
+  expect(store.view().draft).toBe("неотправлено");
+});
+
+it("сохранение новой сессии не отправляет текст на анализ и не создаёт дубликат", async () => {
+  const api = fakeApi({
+    saveDraft: vi.fn(async (_id, _revision, text) => ({
+      state: state(),
+      input_text: text,
+      saved_revision: 0,
+      saved_at: "now",
+    })),
+  });
+  const store = createSellerSession(api);
+  store.setDraft("только ввод");
+  await store.saveDraft();
+  await store.saveDraft();
+  expect(api.create).toHaveBeenCalledTimes(1);
+  expect(api.message).not.toHaveBeenCalled();
+  expect(api.saveDraft).toHaveBeenLastCalledWith("s1", 0, "только ввод");
+  expect(store.view().state?.revision).toBe(0);
+});
+
+it("конфликт сохранения обновляет состояние и сохраняет неотправленный ввод", async () => {
+  let revision = 3;
+  const api = fakeApi({
+    get: async () => state({ revision }),
+    saveDraft: async () => {
+      throw new ApiError(409, "stale_revision", "Сессия изменилась");
+    },
+  });
+  const store = createSellerSession(api);
+  await store.open("s1");
+  store.setDraft("свой ввод");
+  revision = 4;
+  await store.saveDraft();
+  expect(store.view()).toMatchObject({ draft: "свой ввод", state: { revision: 4 }, notice: null });
+  expect(store.view().failure?.text).toContain("Сессия изменилась");
+});
+
+it("ответ сохранения старой сессии не меняет новую и её ввод", async () => {
+  const pending = deferred<import("../api/types").DraftState>();
+  const api = fakeApi({ saveDraft: () => pending.promise });
+  const store = createSellerSession(api);
+  await store.open("s1");
+  store.setDraft("старый ввод");
+  const saving = store.saveDraft();
+  await flush();
+  await store.open("s2");
+  store.setDraft("новый ввод");
+  pending.resolve({
+    state: state(),
+    input_text: "старый ввод",
+    saved_revision: 0,
+    saved_at: "now",
+  });
+  await saving;
+  expect(store.view()).toMatchObject({ sessionId: "s2", draft: "новый ввод", notice: null });
+});
+
+it("ошибка сохранения не очищает ввод, ошибка списка видна отдельно", async () => {
+  const api = fakeApi({
+    saveDraft: async () => {
+      throw new NetworkError("offline");
+    },
+    drafts: async () => {
+      throw new NetworkError("offline");
+    },
+  });
+  const store = createSellerSession(api);
+  store.setDraft("неотправлено");
+  await store.saveDraft();
+  expect(store.view().failure?.title).toContain("Нет связи");
+  expect(store.view().draft).toBe("неотправлено");
+  await store.loadDrafts();
+  expect(store.view().draftsFailure).not.toBeNull();
+});
+
+it("серверный черновик вместо карточки не скачивается и обновляет экран", async () => {
+  const download = vi.fn();
+  let fresh = state({ revision: 3, card_complete: true, status: "resolved" });
+  const api = fakeApi({
+    get: async () => fresh,
+    exportCard: async () => ({ ...card(), document_kind: "draft", card_complete: false }),
+  });
+  const store = createSellerSession(api, newKey, download);
+  await store.open("s1");
+  fresh = state({ revision: 4, results_stale: true });
+  await store.downloadCard();
+  expect(download).not.toHaveBeenCalled();
+  expect(store.view().state?.revision).toBe(4);
+  expect(store.view().failure).not.toBeNull();
 });

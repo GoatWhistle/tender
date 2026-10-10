@@ -53,6 +53,10 @@ function useSellerSession(): [SellerView, SellerSession] {
   const [params, setParams] = useSearchParams();
   const urlId = params.get("s");
 
+  useEffect(() => {
+    void store.loadDrafts();
+  }, [store]);
+
   // адрес → сессия: открыть по ?s= или сбросить, если параметр убрали (назад в истории)
   useEffect(() => {
     const current = store.view().sessionId;
@@ -647,7 +651,64 @@ export function Seller() {
       <div className={state ? "seller seller--split" : "seller"}>
         <div className="seller__input">
           <Composer view={view} store={store} />
+          <section className="seller-actions" aria-label="Сохранение карточки">
+            <div className="seller-actions__buttons">
+              <button
+                className="pill"
+                type="button"
+                disabled={busy || (!state && !view.draft)}
+                onClick={() => void store.saveDraft()}
+              >
+                Сохранить черновик
+              </button>
+              <button
+                className="pill pill--dark"
+                type="button"
+                disabled={
+                  busy ||
+                  !state?.card_complete ||
+                  state.results_stale ||
+                  state.status !== "resolved"
+                }
+                onClick={() => void store.downloadCard()}
+              >
+                Скачать карточку
+              </button>
+            </div>
+            <p className="muted">
+              Демонстрационный JSON, не официальный формат Портала Поставщиков.
+            </p>
+            {view.notice && <p role="status">{view.notice}</p>}
+          </section>
           <NextAction view={view} store={store} />
+          <section className="saved-drafts" aria-label="Сохранённые черновики">
+            <h2>Сохранённые черновики</h2>
+            {view.draftsFailure && (
+              <p role="alert">Не удалось загрузить черновики. {view.draftsFailure.text}</p>
+            )}
+            <button className="textlink" type="button" onClick={() => void store.loadDrafts()}>
+              Обновить список
+            </button>
+            {!view.drafts.length && !view.draftsFailure && (
+              <p className="muted">Сохраните черновик, чтобы вернуться к нему позже.</p>
+            )}
+            <ul>
+              {view.drafts.map((draft) => (
+                <li key={draft.session_id}>
+                  <button
+                    type="button"
+                    className="saved-draft"
+                    onClick={() => void store.open(draft.session_id)}
+                  >
+                    <span>{draft.title}</span>
+                    <small>
+                      Ревизия {draft.revision} · {new Date(draft.saved_at).toLocaleString("ru-RU")}
+                    </small>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
           {(state || view.sessionId) && (
             <button type="button" className="textlink seller__reset" onClick={store.reset}>
               Начать новую карточку

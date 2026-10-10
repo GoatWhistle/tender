@@ -7,7 +7,11 @@ import {
   type SessionState,
   type FactMutation,
   type EnumAction,
+  type DraftSummary,
+  type CardExport,
 } from "../api/types";
+
+import { downloadCard } from "./downloadCard";
 
 /** Предел бэкенда для текста сообщения, в символах. */
 export const MAX_TEXT = 4000;
@@ -22,6 +26,9 @@ export type SellerView = {
   draft: string;
   busy: boolean;
   failure: Failure | null;
+  drafts: DraftSummary[];
+  draftsFailure: Failure | null;
+  notice: string | null;
 };
 
 const INITIAL: SellerView = {
@@ -30,6 +37,9 @@ const INITIAL: SellerView = {
   draft: "",
   busy: false,
   failure: null,
+  drafts: [],
+  draftsFailure: null,
+  notice: null,
 };
 
 export const textLength = (text: string) => [...text].length;
@@ -91,6 +101,7 @@ function technicalFailure(state: SessionState): Failure {
 export function createSellerSession(
   api: SellerApi,
   newKey: () => string = () => crypto.randomUUID(),
+  download: (document: CardExport) => void = downloadCard,
 ) {
   let view = INITIAL;
   const listeners = new Set<() => void>();
@@ -130,7 +141,7 @@ export function createSellerSession(
     const mine = epoch;
     const n = ++seq;
     pending++;
-    set({ busy: true, failure: null });
+    set({ busy: true, failure: null, notice: null });
     let result: SessionState | null = null;
     let error: unknown = null;
     try {
@@ -160,7 +171,7 @@ export function createSellerSession(
     if (!session) {
       const mine = epoch;
       const created = api.create().then((s) => {
-        if (mine === epoch && !view.sessionId) set({ sessionId: s.session_id });
+        if (mine === epoch && !view.sessionId) set({ sessionId: s.session_id, state: s });
         return s.session_id;
       });
       session = created;
@@ -171,14 +182,102 @@ export function createSellerSession(
     return session;
   }
 
+  let draftListRequest = 0;
+  async function loadDrafts() {
+    const request = ++draftListRequest;
+    try {
+      const drafts = await api.drafts();
+      if (request === draftListRequest) set({ drafts, draftsFailure: null });
+    } catch (error) {
+      if (request === draftListRequest) set({ draftsFailure: failureOf(error) });
+    }
+  }
+
   return {
+    loadDrafts,
+    async downloadCard(): Promise<void> {
+      const state = view.state;
+      if (
+        !state ||
+        view.busy ||
+        !state.card_complete ||
+        state.results_stale ||
+        state.status !== "resolved"
+      )
+        return;
+      const mine = epoch;
+      await run(async () => {
+        try {
+          const document = await api.exportCard(state.session_id, state.revision);
+          if (
+            mine === epoch &&
+            view.sessionId === state.session_id &&
+            view.state?.revision === state.revision &&
+            pending === 1
+          ) {
+            if (
+              document.session_id !== state.session_id ||
+              document.revision !== state.revision ||
+              document.document_kind !== "card" ||
+              !document.card_complete ||
+              document.results_stale
+            ) {
+              throw new ApiError(
+                409,
+                "stale_revision",
+                "Карточка изменилась. Проверьте актуальное состояние.",
+              );
+            }
+            download(document);
+          }
+          return state;
+        } catch (e) {
+          if (e instanceof ApiError && e.code === "stale_revision") {
+            const current = await api.get(state.session_id);
+            if (mine === epoch) set({ state: current });
+          }
+          throw e;
+        }
+      }, null);
+    },
+    async saveDraft(): Promise<void> {
+      if (view.busy) return;
+      const mine = epoch;
+      const text = view.draft;
+      let saved = false;
+      await run(async () => {
+        const id = await ensureSession();
+        if (mine !== epoch) throw new Error("Сессия сменилась");
+        const revision = view.state?.revision ?? 0;
+        try {
+          const result = await api.saveDraft(id, revision, text);
+          if (mine === epoch) {
+            saved = true;
+            set({
+              notice:
+                view.draft === text
+                  ? "Черновик сохранён"
+                  : "Черновик сохранён. Новые изменения ввода ещё не сохранены.",
+            });
+          }
+          return result.state;
+        } catch (e) {
+          if (e instanceof ApiError && e.code === "stale_revision") {
+            const current = await api.get(id);
+            if (mine === epoch) set({ state: current });
+          }
+          throw e;
+        }
+      }, null);
+      if (saved && mine === epoch) await loadDrafts();
+    },
     view: () => view,
     subscribe(listener: () => void) {
       listeners.add(listener);
       return () => void listeners.delete(listener);
     },
     setDraft(draft: string) {
-      set({ draft });
+      set({ draft, notice: null });
     },
     /** Отправить черновик; пустой не отправляется, слишком длинный — замечание без запроса. */
     submit(): Promise<void> {
@@ -292,10 +391,18 @@ export function createSellerSession(
       newEpoch();
       const mine = epoch;
       session = Promise.resolve(id);
-      set({ sessionId: id, state: view.state?.session_id === id ? view.state : null });
+      set({
+        sessionId: id,
+        state: view.state?.session_id === id ? view.state : null,
+        draft: "",
+        notice: null,
+      });
+      const initialDraft = view.draft;
       return run(async () => {
         try {
-          return await api.get(id);
+          const result = await api.openDraft(id);
+          if (mine === epoch && view.draft === initialDraft) set({ draft: result.input_text });
+          return result.state;
         } catch (e) {
           if (mine === epoch && e instanceof ApiError && e.code === "session_not_found") {
             session = null;
@@ -307,7 +414,7 @@ export function createSellerSession(
     },
     reset() {
       newEpoch();
-      set(INITIAL);
+      set({ ...INITIAL, drafts: view.drafts, draftsFailure: view.draftsFailure });
     },
   };
 }

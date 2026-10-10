@@ -97,6 +97,13 @@ class FactEvent:
 
 
 @dataclass(frozen=True)
+class CatalogRef:
+    position_code: str
+    characteristic_code: str
+    name: str
+
+
+@dataclass(frozen=True)
 class SessionState:
     session_id: str
     revision: int = 0
@@ -123,6 +130,7 @@ class SessionState:
     results_stale: bool = False
     analysis_revision: int | None = None
     editable_fields: tuple[str, ...] = ()
+    catalog_refs: tuple[CatalogRef, ...] = ()
 
     group_checks: tuple[GroupCheck, ...] = ()
     enum_proposals: tuple[EnumProposal, ...] = ()

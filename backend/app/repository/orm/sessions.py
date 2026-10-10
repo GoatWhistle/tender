@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from sqlalchemy import JSON, ForeignKey, UniqueConstraint
+from sqlalchemy import JSON, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.repository.database import Base
@@ -31,3 +31,11 @@ class SessionRevision(Base):
     snapshot: Mapped[dict[str, Any]] = mapped_column(JSON)
     idempotency_key: Mapped[str | None]
     request_text: Mapped[str | None]
+
+
+class SessionDraft(Base):
+    __tablename__ = "saved_drafts"
+    session_id: Mapped[str] = mapped_column(ForeignKey("analysis_sessions.id"), primary_key=True)
+    saved_revision: Mapped[int]
+    input_text: Mapped[str] = mapped_column(Text)
+    saved_at: Mapped[str]

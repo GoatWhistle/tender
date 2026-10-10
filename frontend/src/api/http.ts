@@ -67,6 +67,20 @@ async function sessionRequest<T>(url: string, init?: RequestInit): Promise<T> {
 const session = (id: string) => `${SESSIONS}/${encodeURIComponent(id)}`;
 
 export const sellerApi: SellerApi = {
+  exportCard: (id, revision) =>
+    sessionRequest(`${session(id)}/export`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ expected_revision: revision }),
+    }),
+  saveDraft: (id, revision, inputText) =>
+    sessionRequest(`${session(id)}/draft`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ expected_revision: revision, input_text: inputText }),
+    }),
+  openDraft: (id) => sessionRequest(`${session(id)}/draft`),
+  drafts: () => sessionRequest(`${SESSIONS}/drafts`),
   mutate: (id, factId, body) =>
     sessionRequest(`${session(id)}/facts${factId ? `/${encodeURIComponent(factId)}` : ""}`, {
       method: factId ? "PATCH" : "POST",

@@ -20,6 +20,7 @@ from app.domain.dialog import (
     merge,
     next_step,
 )
+from app.domain.drafts import DraftState, DraftSummary, SavedDraft
 from app.domain.enum_mapping import EnumProposal, EnumResolution, enum_fields
 from app.domain.errors import (
     CatalogEmpty,
@@ -32,6 +33,7 @@ from app.domain.errors import (
     StaleQuestion,
     StaleRevision,
 )
+from app.domain.exports import CardExport, export_card
 from app.domain.fact_edits import INACTIVE, FactInput, apply_history, reconcile
 from app.domain.facts import CheckResult, Fact, FactSource, RuleCheck, component_key, normalized
 from app.domain.group_validation import GroupPolicy
@@ -43,6 +45,7 @@ from app.domain.sessions import (
     AnalysisError,
     Candidate,
     CandidateCounts,
+    CatalogRef,
     FactEvent,
     GroupRef,
     Message,
@@ -129,6 +132,51 @@ class Sessions:
             if state is None:
                 raise SessionNotFound()
             return state
+
+    def save_draft(self, session_id: str, expected_revision: int, input_text: str) -> DraftState:
+        with self._uow:
+            state = self._current(session_id, expected_revision)
+            draft = SavedDraft(
+                session_id, state.revision, input_text, datetime.now(UTC).isoformat()
+            )
+            self._sessions.save_draft(draft)
+            return DraftState(state, draft.input_text, draft.saved_revision, draft.saved_at)
+
+    def open_draft(self, session_id: str) -> DraftState:
+        with self._uow:
+            state = self._sessions.latest(session_id)
+            if state is None:
+                raise SessionNotFound()
+            draft = self._sessions.draft(session_id)
+            return (
+                DraftState(state, draft.input_text, draft.saved_revision, draft.saved_at)
+                if draft
+                else DraftState(state)
+            )
+
+    def drafts(self) -> list[DraftSummary]:
+        with self._uow:
+            result = []
+            for draft in self._sessions.drafts():
+                state = self._sessions.latest(draft.session_id)
+                if state is not None:
+                    title = state.messages[0].text if state.messages else draft.input_text
+                    result.append(
+                        DraftSummary(
+                            state.session_id,
+                            title[:120] or "Без описания",
+                            state.revision,
+                            draft.saved_revision,
+                            draft.saved_at,
+                        )
+                    )
+            return result
+
+    def export(self, session_id: str, expected_revision: int | None = None) -> CardExport:
+        state = self.get(session_id)
+        if expected_revision is not None and state.revision != expected_revision:
+            raise StaleRevision()
+        return export_card(state)
 
     def message(self, session_id: str, text: str, key: str | None = None) -> SessionState:
         with self._uow:
@@ -1050,6 +1098,9 @@ class Sessions:
             ),
             normalizations=tuple(d for d in diagnostics if d.kind == "synonym"),
             next_question=question,
+            catalog_refs=tuple(
+                CatalogRef(p.code, c.code, c.name) for p in group.leaves for c in p.characteristics
+            ),
             card_complete=status == SessionStatus.RESOLVED and not missing,
             missing_required=missing,
             common_fields=common,
