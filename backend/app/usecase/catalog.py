@@ -4,6 +4,7 @@
 запуск справочник не дублирует.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from app.domain.aliases import Alias
@@ -17,6 +18,51 @@ from app.usecase.interface import (
     SearchVectorsRepository,
     UnitOfWork,
 )
+from app.usecase.search import SearchSnapshot
+
+
+class SnapshotCatalog:
+    """Справочник для чтения из снимка, который строит поиск при старте (`GroupSearch.build`).
+
+    Между синхронизациями справочник не меняется, а сессия читает группу и её позиции на
+    каждом запросе — из памяти это микросекунды против десятков миллисекунд SQLite. Пока
+    снимка нет (офлайн-команды, тесты без старта приложения), чтения идут в хранилище; запись
+    и подсчёт — всегда в хранилище.
+    """
+
+    def __init__(self, inner: CatalogRepository, snapshot: SearchSnapshot) -> None:
+        self._inner = inner
+        self._snapshot = snapshot
+
+    def position(self, code: str) -> Position | None:
+        if not self._snapshot.positions:
+            return self._inner.position(code)
+        return self._snapshot.positions.get(code)
+
+    def positions(self, category: str | None = None) -> list[Position]:
+        if not self._snapshot.positions:
+            return self._inner.positions(category)
+        return [p for p in self._snapshot.positions.values() if category in (None, p.category)]
+
+    def groups(self, category: str | None = None) -> list[Position]:
+        if not self._snapshot.positions:
+            return self._inner.groups(category)
+        return [
+            p
+            for p in self._snapshot.positions.values()
+            if p.is_group and category in (None, p.category)
+        ]
+
+    def children(self, code: str) -> list[Position]:
+        if not self._snapshot.positions:
+            return self._inner.children(code)
+        return [p for p in self._snapshot.positions.values() if p.parent == code]
+
+    def count(self) -> int:
+        return self._inner.count()
+
+    def replace(self, positions: Iterable[Position]) -> None:
+        self._inner.replace(positions)
 
 
 class CatalogQueries:
