@@ -364,6 +364,8 @@ export interface components {
             options: string[];
             /** Values */
             values: string[];
+            /** @description откуда значение: описание поставщика, помощник или ручной выбор */
+            origin?: components["schemas"]["Origin"] | null;
         };
         /** ChatMessageOut */
         ChatMessageOut: {
@@ -450,6 +452,11 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * Origin
+         * @enum {string}
+         */
+        Origin: "description" | "assistant" | "manual";
         /** PickIn */
         PickIn: {
             /** Code */

@@ -18,7 +18,7 @@ from rag.discovery import DiscoveryOut
 from rag.index import CODES, POSITIONS, RAW, VECTORS
 from rag.ktru import value_text
 from rag.search import Index
-from rag.session import InputError, Session, Stage, StageError
+from rag.session import InputError, Origin, Session, Stage, StageError
 from rag.spec import Extra
 
 GROUPS = 5
@@ -97,6 +97,9 @@ class CharacteristicOut(BaseModel):
     multiple: bool
     options: list[str]
     values: list[str]
+    origin: Origin | None = Field(
+        None, description="откуда значение: описание поставщика, помощник или ручной выбор"
+    )
 
 
 class ExtraIn(BaseModel):
@@ -231,6 +234,7 @@ def view(s: Session) -> SessionOut:
                 multiple=q.multiple,
                 options=list(q.options),
                 values=list(s.chosen.get(q.name, ())),
+                origin=s.origins.get(q.name) if q.name in s.chosen else None,
             )
             for q in s.characteristics
         ],

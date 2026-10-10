@@ -944,6 +944,17 @@
             },
             "type": "array",
             "title": "Values"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Origin"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "откуда значение: описание поставщика, помощник или ручной выбор"
           }
         },
         "type": "object",
@@ -1170,6 +1181,15 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "Origin": {
+        "type": "string",
+        "enum": [
+          "description",
+          "assistant",
+          "manual"
+        ],
+        "title": "Origin"
       },
       "PickIn": {
         "properties": {

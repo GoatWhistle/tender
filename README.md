@@ -195,8 +195,9 @@ uv run python -c "import json; from rag.api import app; print(json.dumps(app.ope
 | `POST` | `/sessions/{id}/finish` | `spec` | итоговый JSON; 422, если не выбраны обязательные |
 
 Ответ на все запросы, кроме `finish` и `extras`, — состояние сессии: `stage`, `groups` и `group`,
-`question` с вариантами, `candidates`, `answers`, `position`, `characteristics` с `options` и
-выбранными `values`, `extras`, `missing` — невыбранные обязательные, `message` — пояснение Haiku к
+`question` с вариантами, `candidates`, `answers`, `position`, `characteristics` с `options`,
+выбранными `values` и `origin` — откуда значение: `description` (разбор описания при входе в
+`spec`), `assistant` (`describe` или сообщение помощнику), `manual` (`PATCH`), `extras`, `missing` — невыбранные обязательные, `message` — пояснение Haiku к
 последнему ответу текстом. `fixed` у отклонённой характеристики не добавляется сам: его
 отправляют в `extras` ещё раз.
 

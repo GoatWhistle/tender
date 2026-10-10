@@ -5,7 +5,7 @@ import { Icon, type IconName } from "./icon"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   readonly variant?: "primary" | "secondary" | "ghost" | "row"
-  readonly icon?: IconName
+  readonly icon?: IconName | undefined
   readonly pending?: boolean
 }
 export function Button({

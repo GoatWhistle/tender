@@ -5,7 +5,7 @@ from dataclasses import asdict
 
 from rag.clarify import questions, structured
 from rag.search import Index
-from rag.session import InputError, Session, Stage, _advance
+from rag.session import InputError, Origin, Session, Stage, _advance
 from rag.spec import Extra, card, validate
 
 PROMPT = """Ты редактируешь карточку товара по последнему сообщению пользователя.
@@ -106,8 +106,10 @@ async def respond(s: Session, index: Index, text: str) -> None:
         if editing:
             if values:
                 draft.chosen[q.name] = values
+                draft.origins[q.name] = Origin.ASSISTANT
             else:
                 draft.chosen.pop(q.name, None)
+                draft.origins.pop(q.name, None)
         elif values:
             draft.answers[q.name] = values[0]
         else:

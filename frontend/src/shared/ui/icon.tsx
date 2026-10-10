@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Sun,
   User,
+  X,
 } from "lucide-react"
 
 const icons = {
@@ -28,6 +29,7 @@ const icons = {
   back: ArrowLeft,
   next: ArrowRight,
   check: Check,
+  close: X,
   success: CheckCircle2,
   expand: ChevronDown,
   chevron: ChevronRight,

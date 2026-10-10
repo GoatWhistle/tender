@@ -6,78 +6,83 @@ import { Field } from "@/shared/ui/field"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./extras.module.css"
 
+function parse(line: string) {
+  const match = /^([^=:]+)[=:](.+)$/.exec(line)
+  return { name: match?.[1]?.trim() ?? "", value: match?.[2]?.trim() ?? "" }
+}
+
 export function Extras({ flow }: { readonly flow: RagWorkflowState }) {
   const { t } = useTranslation(["rag"])
-  const [name, setName] = useState("")
-  const [value, setValue] = useState("")
+  const [line, setLine] = useState("")
   const [reason, setReason] = useState("")
   const session = flow.session
   if (!session) return null
+  const { name, value } = parse(line)
   return (
     <section className={styles.extras}>
       <h3>{t("rag:extraTitle")}</h3>
       <p>{t(session.extras_allowed ? "rag:extraHint" : "rag:extraForbidden")}</p>
-      {session.extras.map((extra, index) => (
-        <div key={`${extra.name}-${extra.value}`} className={styles.item}>
-          <div>
-            <strong>
-              <BackendText>{extra.name}</BackendText>
-            </strong>
-            <p>
-              <BackendText>{extra.value}</BackendText>
-            </p>
-            <p>
-              <BackendText>{extra.reason ?? ""}</BackendText>
-            </p>
-          </div>
-          <Button variant="ghost" disabled={flow.busy} onClick={() => flow.removeExtra(index)}>
-            {t("rag:extraRemove")}
-          </Button>
-        </div>
-      ))}
+      {session.extras.length > 0 && (
+        <ul className={styles.list}>
+          {session.extras.map((extra, index) => (
+            <li key={`${extra.name}-${extra.value}`} className={styles.item}>
+              <div>
+                <strong>
+                  <BackendText>{extra.name}</BackendText>
+                </strong>
+                <span>
+                  <BackendText>{extra.value}</BackendText>
+                </span>
+                {extra.reason && (
+                  <p>
+                    <BackendText>{extra.reason}</BackendText>
+                  </p>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                icon="close"
+                disabled={flow.busy}
+                aria-label={t("rag:extraRemoveNamed", { name: extra.name })}
+                onClick={() => flow.removeExtra(index)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
       {session.extras_allowed && (
         <form
           onSubmit={(event) => {
             event.preventDefault()
-            if (!flow.busy)
-              flow.addExtra({ name, value, reason }, () => {
-                setName("")
-                setValue("")
+            if (!flow.busy && name && value)
+              flow.addExtra({ name, value, reason: reason.trim() }, () => {
+                setLine("")
                 setReason("")
               })
           }}
         >
           <div className={styles.fields}>
             <Field
-              id="extra-name"
-              label={t("rag:extraName")}
-              value={name}
+              id="extra-line"
+              label={t("rag:extraLine")}
+              placeholder={t("rag:extraLinePlaceholder")}
+              value={line}
               required
               disabled={flow.busy}
-              onChange={(event) => setName(event.target.value)}
-            />
-            <Field
-              id="extra-value"
-              label={t("rag:extraValue")}
-              value={value}
-              required
-              disabled={flow.busy}
-              onChange={(event) => setValue(event.target.value)}
-            />
+              onChange={(event) => setLine(event.target.value)}
+              issue={Boolean(line.trim()) && !(name && value)}
+            >
+              {line.trim() && !(name && value) ? t("rag:extraLineHint") : null}
+            </Field>
             <Field
               id="extra-reason"
-              label={t("rag:extraReason")}
+              label={t("rag:extraReasonOptional")}
               value={reason}
-              required
               disabled={flow.busy}
               onChange={(event) => setReason(event.target.value)}
             />
           </div>
-          <Button
-            type="submit"
-            icon="plus"
-            disabled={flow.busy || !name.trim() || !value.trim() || !reason.trim()}
-          >
+          <Button type="submit" icon="plus" disabled={flow.busy || !name || !value}>
             {t("rag:extraAdd")}
           </Button>
         </form>
@@ -98,8 +103,7 @@ export function Extras({ flow }: { readonly flow: RagWorkflowState }) {
               onClick={() => {
                 const fixed = flow.verdict?.fixed
                 if (fixed) {
-                  setName(fixed.name)
-                  setValue(fixed.value)
+                  setLine(`${fixed.name} = ${fixed.value}`)
                   setReason(fixed.reason ?? "")
                 }
               }}

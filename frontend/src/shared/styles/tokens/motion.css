@@ -4,6 +4,7 @@
   --dur-fast-exit: 110ms;
   --dur-base: 200ms;
   --dur-panel: 260ms;
+  --dur-flash: 700ms;
   --dur-exit: 140ms;
   --dur-rank-mark: 650ms;
   --dur-rank-exit: 800ms;
@@ -20,6 +21,7 @@
   --enter-offset: 4px;
   --stagger: 40ms;
   --motion-enter: enter var(--dur-base) var(--ease-out) both;
+  --motion-flash: flash var(--dur-flash) var(--ease-out) both;
   --motion-step: step-pulse var(--dur-step) var(--ease-out) 2;
   --motion-progress: step-progress var(--dur-step) var(--ease-out) both;
   --motion-step-halo: step-halo var(--dur-step-flow) var(--ease-out) infinite;
@@ -32,6 +34,7 @@
   --dur-fast-exit: 0ms;
   --dur-base: 0ms;
   --dur-panel: 0ms;
+  --dur-flash: 0ms;
   --dur-exit: 0ms;
   --dur-step: 0ms;
   --motion-step-halo: none;
@@ -47,6 +50,7 @@
     --dur-fast-exit: 1ms;
     --dur-base: 1ms;
     --dur-panel: 1ms;
+    --dur-flash: 1ms;
     --dur-exit: 1ms;
     --dur-rank-mark: 1ms;
     --dur-rank-exit: 1ms;

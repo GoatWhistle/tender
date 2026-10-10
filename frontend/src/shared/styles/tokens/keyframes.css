@@ -78,3 +78,11 @@
     transform: translateX(100%) scaleX(0.24);
   }
 }
+@keyframes flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

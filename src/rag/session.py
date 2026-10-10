@@ -20,6 +20,12 @@ class Stage(StrEnum):
     FAILED = "failed"
 
 
+class Origin(StrEnum):
+    DESCRIPTION = "description"
+    ASSISTANT = "assistant"
+    MANUAL = "manual"
+
+
 class StageError(Exception):
     pass
 
@@ -44,6 +50,7 @@ class Session:
     group: Position | None = None
     position: Position | None = None
     chosen: dict[str, tuple[str, ...]] = field(default_factory=dict)
+    origins: dict[str, Origin] = field(default_factory=dict)
     extras: list[Extra] = field(default_factory=list)
     extras_allowed: bool = True
     message: str | None = None
@@ -122,6 +129,7 @@ async def _enter_spec(s: Session, index: Index, p: Position) -> None:
     s.stage = Stage.SPEC
     s.extras_allowed = not no_new_features(index, p)
     s.chosen = dict(await extract("\n".join(s.context), s.characteristics))
+    s.origins = dict.fromkeys(s.chosen, Origin.DESCRIPTION)
 
 
 async def start(index: Index, text: str) -> Session:
@@ -144,6 +152,7 @@ async def _enter_group(s: Session, index: Index, p: Position) -> None:
     s.context = [s.corrected]
     s.position = None
     s.chosen = {}
+    s.origins = {}
     s.extras = []
     found = await extract(s.corrected, questions(s.leaves, {}))
     s.from_description = {n: v[0] for n, v in found.items()}
@@ -209,8 +218,10 @@ def set_values(s: Session, values: dict[str, list[str]]) -> None:
     for name, labels in values.items():
         if labels:
             s.chosen[name] = tuple(dict.fromkeys(labels))
+            s.origins[name] = Origin.MANUAL
         else:
             s.chosen.pop(name, None)
+            s.origins.pop(name, None)
     s.message = None
 
 
@@ -223,6 +234,7 @@ async def describe(s: Session, text: str, name: str | None = None) -> None:
             raise InputError(f"у позиции нет изменяемой характеристики «{name}»")
     got, s.message = await answer(text, qs)
     s.chosen.update(got)
+    s.origins.update(dict.fromkeys(got, Origin.ASSISTANT))
 
 
 async def add_extra(s: Session, extra: Extra) -> Verdict:
