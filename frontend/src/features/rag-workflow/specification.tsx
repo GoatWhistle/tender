@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import type { RagWorkflowState } from "@/entities/rag/use-rag-workflow"
 import { Button } from "@/shared/ui/button"
 import { BackendText } from "@/shared/ui/message"
+import { PositionMeta } from "@/shared/ui/position-meta"
 import { CharacteristicField } from "./characteristic-field"
 import { Extras } from "./extras"
 import styles from "./specification.module.css"
@@ -20,11 +21,15 @@ export function Specification({
   return (
     <section className={styles.spec}>
       <header>
-        <p>{session.position.code}</p>
         <h2>{t("rag:specTitle")}</h2>
         <h3>
           <BackendText>{session.position.name}</BackendText>
         </h3>
+        <PositionMeta
+          code={session.position.code}
+          okpd2={session.position.okpd2}
+          okpd2Name={session.position.okpd2_name}
+        />
       </header>
       {session.selection_reason && (
         <p role="status">

@@ -3,6 +3,7 @@ import type { RagWorkflowState } from "@/entities/rag/use-rag-workflow"
 import { Button } from "@/shared/ui/button"
 import { Icon } from "@/shared/ui/icon"
 import { BackendText } from "@/shared/ui/message"
+import { PositionMeta } from "@/shared/ui/position-meta"
 import styles from "./summary.module.css"
 
 export function Summary({
@@ -53,7 +54,11 @@ export function Summary({
       <h3>
         <BackendText>{session.position.name}</BackendText>
       </h3>
-      <p>{session.position.code}</p>
+      <PositionMeta
+        code={session.position.code}
+        okpd2={session.position.okpd2}
+        okpd2Name={session.position.okpd2_name}
+      />
       {groups
         .filter((group) => group.values.length > 0)
         .map((group) => (

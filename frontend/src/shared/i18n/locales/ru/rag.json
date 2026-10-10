@@ -114,5 +114,8 @@
   "narrowingStart": "Начали с {{count}}",
   "optionCount": "позиций: {{count}}",
   "narrowingLeft": "осталось: {{count}}",
-  "narrowingDropped": "отсеяно: {{count}}"
+  "narrowingDropped": "отсеяно: {{count}}",
+  "codeLabel": "Код КТРУ",
+  "okpdLabel": "ОКПД2",
+  "positionMeta": "Позиция каталога"
 }

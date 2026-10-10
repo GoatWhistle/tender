@@ -114,5 +114,8 @@
   "narrowingStart": "Started with {{count}}",
   "optionCount": "positions: {{count}}",
   "narrowingLeft": "left: {{count}}",
-  "narrowingDropped": "dropped: {{count}}"
+  "narrowingDropped": "dropped: {{count}}",
+  "codeLabel": "KTRU code",
+  "okpdLabel": "OKPD2",
+  "positionMeta": "Catalog position"
 }
