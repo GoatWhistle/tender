@@ -10,6 +10,7 @@ export function useRagWorkflow() {
   const [draft, setDraft] = useState("")
   const [result, setResult] = useState<Record<string, unknown> | null>(null)
   const [verdict, setVerdict] = useState<components["schemas"]["VerdictOut"] | null>(null)
+  const [numericDrafts, setNumericDrafts] = useState<Record<string, boolean>>({})
   const [automatic, setAutomatic] = useState(true)
   const [operation, setOperation] = useState("checking")
   const task = useMutation({ mutationFn: (action: () => Promise<void>) => action(), retry: false })
@@ -89,15 +90,31 @@ export function useRagWorkflow() {
       ),
     )
   }
-  function values(name: string, selected: string[]) {
+  function values(name: string, selected: string[], exact?: string) {
     if (!session) return
-    run("updating", async () =>
+    run("updating", async () => {
       setSession(
         unwrap(
           await api.PATCH("/sessions/{session_id}/characteristics", {
             params: { path: { session_id: session.id } },
-            body: { values: { [name]: selected } },
+            body:
+              exact === undefined
+                ? { values: { [name]: selected } }
+                : { values: {}, exact: { [name]: exact } },
           }),
+        ),
+      )
+      setNumericDrafts((current) => ({ ...current, [name]: false }))
+    })
+  }
+  function acceptMessage(updated: RagSession) {
+    setSession(updated)
+    setNumericDrafts((current) =>
+      Object.fromEntries(
+        Object.entries(current).filter(
+          ([name]) =>
+            session?.characteristics.find((field) => field.name === name)?.numeric?.exact ===
+            updated.characteristics.find((field) => field.name === name)?.numeric?.exact,
         ),
       ),
     )
@@ -111,7 +128,7 @@ export function useRagWorkflow() {
           body: { text },
         }),
       )
-      setSession(updated)
+      acceptMessage(updated)
       if (updated.stage !== "done") setResult(null)
       setVerdict(null)
       if (!updated.message_review) setDraft((current) => (current === text ? "" : current))
@@ -126,7 +143,7 @@ export function useRagWorkflow() {
           params: { path: { session_id: session.id, review_id: pending.id } },
         }),
       )
-      setSession(updated)
+      acceptMessage(updated)
       setResult(null)
       setVerdict(null)
       setDraft((current) => (current === pending.original ? "" : current))
@@ -167,6 +184,7 @@ export function useRagWorkflow() {
     })
   }
   function reset() {
+    setNumericDrafts({})
     setSearch(null)
     setSession(null)
     setResult(null)
@@ -175,6 +193,9 @@ export function useRagWorkflow() {
     task.reset()
   }
   return {
+    numericDirty: Object.values(numericDrafts).some(Boolean),
+    setNumericDraft: (name: string, dirty: boolean) =>
+      setNumericDrafts((current) => ({ ...current, [name]: dirty })),
     automatic:
       automatic &&
       (!search ||
@@ -203,6 +224,7 @@ export function useRagWorkflow() {
     finish,
     reset,
     back: () => {
+      setNumericDrafts({})
       setAutomatic(false)
       setSession(null)
       setResult(null)

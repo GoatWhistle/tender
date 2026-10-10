@@ -381,6 +381,7 @@ export interface components {
             options: string[];
             /** Values */
             values: string[];
+            numeric?: components["schemas"]["NumericOut"] | null;
         };
         /** ChatMessageOut */
         ChatMessageOut: {
@@ -479,6 +480,38 @@ export interface components {
             fixes: components["schemas"]["FixOut"][];
             /** Issues */
             issues: string[];
+        };
+        /** NumericOut */
+        NumericOut: {
+            /** Unit */
+            unit: string;
+            /**
+             * Positive
+             * @default false
+             */
+            positive: boolean;
+            /**
+             * Integer
+             * @default false
+             */
+            integer: boolean;
+            /** Ranges */
+            ranges: components["schemas"]["NumericRangeOut"][];
+            /** Exact */
+            exact?: string | null;
+        };
+        /** NumericRangeOut */
+        NumericRangeOut: {
+            /** Min */
+            min?: number | null;
+            /** Min Op */
+            min_op?: string | null;
+            /** Max */
+            max?: number | null;
+            /** Max Op */
+            max_op?: string | null;
+            /** Concrete */
+            concrete?: number[];
         };
         /** PickIn */
         PickIn: {
@@ -623,6 +656,10 @@ export interface components {
         };
         /** ValuesIn */
         ValuesIn: {
+            /** Exact */
+            exact?: {
+                [key: string]: string;
+            };
             /**
              * Values
              * @description характеристика → варианты; [] — сбросить

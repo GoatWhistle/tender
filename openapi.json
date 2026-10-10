@@ -992,6 +992,16 @@
             },
             "type": "array",
             "title": "Values"
+          },
+          "numeric": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NumericOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -1257,6 +1267,105 @@
           "issues"
         ],
         "title": "MessageReviewOut"
+      },
+      "NumericOut": {
+        "properties": {
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "positive": {
+            "type": "boolean",
+            "title": "Positive",
+            "default": false
+          },
+          "integer": {
+            "type": "boolean",
+            "title": "Integer",
+            "default": false
+          },
+          "ranges": {
+            "items": {
+              "$ref": "#/components/schemas/NumericRangeOut"
+            },
+            "type": "array",
+            "title": "Ranges"
+          },
+          "exact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exact"
+          }
+        },
+        "type": "object",
+        "required": [
+          "unit",
+          "ranges"
+        ],
+        "title": "NumericOut"
+      },
+      "NumericRangeOut": {
+        "properties": {
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "min_op": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Op"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "max_op": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Op"
+          },
+          "concrete": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Concrete"
+          }
+        },
+        "type": "object",
+        "title": "NumericRangeOut"
       },
       "PickIn": {
         "properties": {
@@ -1692,6 +1801,13 @@
       },
       "ValuesIn": {
         "properties": {
+          "exact": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Exact"
+          },
           "values": {
             "additionalProperties": {
               "items": {

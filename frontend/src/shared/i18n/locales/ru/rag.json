@@ -100,5 +100,13 @@
   "catalogBack": "К подбору КТРУ",
   "messageReviewTitle": "Проверьте дополнение",
   "applyMessage": "Применить дополнение",
-  "checkMessage": "Проверить дополнение"
+  "checkMessage": "Проверить дополнение",
+  "exactNumber": "Точное число",
+  "catalogRange": "По КТРУ: {{range}}",
+  "numberInvalid": "Введите точное число, например 550 или 550,5.",
+  "numberOutside": "Число не подходит под ограничения КТРУ.",
+  "saveNumber": "Сохранить",
+  "exactMissing": "Укажите точное значение",
+  "numberRequired": "Укажите число в {{unit}}",
+  "numbersPending": "Сохраните введённые числа."
 }

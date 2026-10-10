@@ -2,6 +2,7 @@ import asyncio
 import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from dataclasses import asdict
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
@@ -18,6 +19,7 @@ from rag.discovery import DiscoveryOut
 from rag.index import CODES, POSITIONS, RAW, VECTORS
 from rag.ktru import value_text
 from rag.message_review import fingerprint, review
+from rag.quantities import numeric_fields, unit
 from rag.search import Index
 from rag.session import InputError, Session, Stage, StageError
 from rag.spec import Extra
@@ -92,12 +94,29 @@ class PositionOut(BaseModel):
     fixed: dict[str, str]
 
 
+class NumericRangeOut(BaseModel):
+    min: float | None = None
+    min_op: str | None = None
+    max: float | None = None
+    max_op: str | None = None
+    concrete: list[float] = Field(default_factory=list)
+
+
+class NumericOut(BaseModel):
+    unit: str
+    positive: bool = False
+    integer: bool = False
+    ranges: list[NumericRangeOut]
+    exact: str | None = None
+
+
 class CharacteristicOut(BaseModel):
     name: str
     required: bool
     multiple: bool
     options: list[str]
     values: list[str]
+    numeric: NumericOut | None = None
 
 
 class ExtraIn(BaseModel):
@@ -171,6 +190,7 @@ class GroupIn(BaseModel):
 
 
 class ValuesIn(BaseModel):
+    exact: dict[str, str] = Field(default_factory=dict)
     values: dict[str, list[str]] = Field(
         description="характеристика → варианты; [] — сбросить"
     )
@@ -195,6 +215,7 @@ def _question(q: Question) -> QuestionOut:
 
 def view(s: Session) -> SessionOut:
     p = s.position
+    numeric = numeric_fields(p)
     comparison = display_differences(s.leaves)
     pending = s.message_review
     return SessionOut(
@@ -249,6 +270,19 @@ def view(s: Session) -> SessionOut:
                 multiple=q.multiple,
                 options=list(q.options),
                 values=list(s.chosen.get(q.name, ())),
+                numeric=NumericOut(
+                    unit=unit(numeric[q.name]),
+                    exact=s.exact.get(q.name),
+                    positive=unit(numeric[q.name])
+                    in ("мм", "см", "м", "г", "кг"),
+                    integer=unit(numeric[q.name]) == "шт",
+                    ranges=[
+                        NumericRangeOut(**asdict(v))
+                        for v in numeric[q.name].values
+                    ],
+                )
+                if q.name in numeric
+                else None,
             )
             for q in s.characteristics
         ],
@@ -334,7 +368,7 @@ async def switch_group(session_id: str, body: GroupIn, request: Request) -> Sess
 async def set_values(session_id: str, body: ValuesIn) -> SessionOut:
     s, lock = _get(session_id)
     async with lock:
-        ss.set_values(s, body.values)
+        ss.set_values(s, body.values, body.exact)
     return view(s)
 
 

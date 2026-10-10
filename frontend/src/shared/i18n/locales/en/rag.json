@@ -100,5 +100,13 @@
   "catalogBack": "Back to catalog search",
   "messageReviewTitle": "Review your addition",
   "applyMessage": "Apply addition",
-  "checkMessage": "Check addition"
+  "checkMessage": "Check addition",
+  "exactNumber": "Exact number",
+  "catalogRange": "Catalog: {{range}}",
+  "numberInvalid": "Enter an exact number, such as 550 or 550.5.",
+  "numberOutside": "The number does not meet the catalog constraints.",
+  "saveNumber": "Save",
+  "exactMissing": "Enter an exact value",
+  "numberRequired": "Enter a number in {{unit}}",
+  "numbersPending": "Save the numbers you entered."
 }

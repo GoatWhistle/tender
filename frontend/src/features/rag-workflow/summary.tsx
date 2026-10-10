@@ -36,7 +36,11 @@ export function Summary({
       title: "rag:editable",
       values: session.characteristics.map((field) => ({
         name: field.name,
-        value: field.values.join("; ") || t("rag:emptyValue"),
+        value: field.numeric
+          ? field.numeric.exact
+            ? `${field.numeric.exact} ${field.numeric.unit}`
+            : t("rag:emptyValue")
+          : field.values.join("; ") || t("rag:emptyValue"),
       })),
     },
     { title: "rag:extraTitle", values: session.extras },

@@ -56,6 +56,8 @@ export function Specification({
               key={field.name}
               field={field}
               busy={flow.busy}
+              onPending={(dirty) => flow.setNumericDraft(field.name, dirty)}
+              onExactChange={(value) => flow.values(field.name, [], value)}
               onChange={(values) => flow.values(field.name, values)}
             />
           ))}
@@ -68,17 +70,24 @@ export function Specification({
           {t("rag:backGroups")}
         </Button>
         <div className={styles.actions}>
-          {(flow.draft.trim() || session.missing.length > 0) && (
+          {(flow.numericDirty || flow.draft.trim() || session.missing.length > 0) && (
             <strong>
-              {flow.draft.trim()
-                ? t("rag:detailsPending")
-                : t("rag:missingFields", { fields: session.missing.join(", ") })}
+              {flow.numericDirty
+                ? t("rag:numbersPending")
+                : flow.draft.trim()
+                  ? t("rag:detailsPending")
+                  : t("rag:missingFields", { fields: session.missing.join(", ") })}
             </strong>
           )}
           <Button
             variant="primary"
             icon="next"
-            disabled={flow.busy || session.missing.length > 0 || Boolean(flow.draft.trim())}
+            disabled={
+              flow.busy ||
+              flow.numericDirty ||
+              session.missing.length > 0 ||
+              Boolean(flow.draft.trim())
+            }
             onClick={onPreview}
           >
             {t("rag:preview")}

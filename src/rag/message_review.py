@@ -43,6 +43,7 @@ def fingerprint(s: "Session") -> str:
         "position": s.position.code if s.position else None,
         "group": s.group.code if s.group else None,
         "chosen": s.chosen,
+        "exact": s.exact,
         "answers": s.answers,
         "extras": [asdict(extra) for extra in s.extras],
         "context": s.context,
@@ -54,6 +55,7 @@ async def review(s: "Session", text: str) -> MessageReview:
     context = {
         "message": text,
         "description": s.corrected,
+        "exact": s.exact,
         "history": s.messages[-12:],
         "question": asdict(s.question) if s.question else None,
         "card": card(s.position, s.chosen, s.extras) if s.position else None,

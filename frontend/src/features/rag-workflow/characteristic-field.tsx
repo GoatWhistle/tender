@@ -4,17 +4,31 @@ import { Button } from "@/shared/ui/button"
 import { Disclosure } from "@/shared/ui/disclosure"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./characteristic-field.module.css"
+import { NumericCharacteristic } from "./numeric-characteristic/numeric-characteristic"
 
 export function CharacteristicField({
   field,
   busy,
   onChange,
+  onExactChange,
+  onPending,
 }: {
   readonly field: Characteristic
   readonly busy: boolean
+  readonly onPending: (dirty: boolean) => void
+  readonly onExactChange: (value: string) => void
   readonly onChange: (values: string[]) => void
 }) {
   const { t } = useTranslation(["rag"])
+  if (field.numeric)
+    return (
+      <NumericCharacteristic
+        field={field}
+        busy={busy}
+        onChange={onExactChange}
+        onPending={onPending}
+      />
+    )
   return (
     <div className={styles.field}>
       <div className={styles.label}>

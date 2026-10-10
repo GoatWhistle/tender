@@ -4,6 +4,7 @@ import uuid
 from dataclasses import asdict
 
 from rag.clarify import questions, structured
+from rag.quantities import display_values, numeric_fields, resolve, verify_source
 from rag.search import Index
 from rag.session import InputError, Session, Stage, _advance
 from rag.spec import Extra, card, validate
@@ -14,7 +15,10 @@ PROMPT = """Ты редактируешь карточку товара по п�
 Для каждого изменяемого поля верни итоговый массив значений из options; пустой массив
 означает явную просьбу очистить. Неупомянутые поля не включай. При просьбе добавить
 вариант сохрани остальные выбранные, при замене замени, при удалении убери только
-названный вариант. evidence — дословная непустая цитата из последнего сообщения.
+названный вариант. Для числовых полей quantity — дословное точное число с единицей
+из evidence (например «0,55 м»), не граница диапазона. Не пересчитывай его.
+Если точного числа нет или поле очищается, quantity — пустая строка.
+evidence — дословная непустая цитата из последнего сообщения.
 Дополнительные параметры можно добавлять или заменять по имени через extras;
 удалять через remove_extras. Не придумывай обоснование, бери его из переписки.
 Если данных недостаточно, задай конкретный вопрос в clarification. Если пользователь
@@ -39,7 +43,14 @@ def schema() -> dict:
         {
             "changes": {
                 "type": "array",
-                "items": obj({"name": string, "values": strings, "evidence": string}),
+                "items": obj(
+                    {
+                        "name": string,
+                        "values": strings,
+                        "evidence": string,
+                        "quantity": string,
+                    }
+                ),
             },
             "extras": {
                 "type": "array",
@@ -78,6 +89,8 @@ async def respond(s: Session, index: Index, text: str) -> None:
         "prior_details": s.context[-12:],
         "history": s.messages[-12:],
         "current": current,
+        "exact": s.exact,
+        "numeric_fields": list(numeric_fields(s.position)),
         "fields": [asdict(q) for q in qs],
         "card": card(s.position, s.chosen, s.extras) if editing else "",
         "extras_allowed": s.extras_allowed if editing else False,
@@ -89,6 +102,7 @@ async def respond(s: Session, index: Index, text: str) -> None:
     changes = []
     notices = []
     by_name = {q.name: q for q in qs}
+    numeric = numeric_fields(s.position) if editing else {}
     for item in out["changes"]:
         q = by_name.get(item["name"])
         values = tuple(dict.fromkeys(item["values"]))
@@ -100,6 +114,32 @@ async def respond(s: Session, index: Index, text: str) -> None:
             or (not q.multiple and len(values) > 1)
         ):
             raise InputError("модель предложила недопустимое значение характеристики")
+        if q.name in numeric:
+            previous = display_values(s.position, s.chosen, s.exact).get(q.name, ())
+            raw = item.get("quantity", "")
+            if raw:
+                try:
+                    verify_source(raw, item["evidence"], text)
+                    number, label = resolve(numeric[q.name], raw, require_unit=True)
+                except ValueError as error:
+                    notices.append(f"{q.name}: {error}")
+                    continue
+                draft.exact[q.name] = number
+                draft.chosen[q.name] = (label,)
+            elif not values:
+                draft.exact.pop(q.name, None)
+                draft.chosen.pop(q.name, None)
+            else:
+                notices.append(f"{q.name}: укажите точное число с единицей измерения.")
+                continue
+            updated = display_values(draft.position, draft.chosen, draft.exact).get(
+                q.name, ()
+            )
+            if previous != updated:
+                changes.append(
+                    f"{q.name}: {'; '.join(previous) or 'не заполнено'} → {'; '.join(updated) or 'очищено'}"
+                )
+            continue
         previous = current.get(q.name, ())
         if tuple(previous) == values:
             continue

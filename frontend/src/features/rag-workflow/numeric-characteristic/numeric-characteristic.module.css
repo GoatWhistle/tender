@@ -1,0 +1,16 @@
+.field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-bottom: var(--line) solid var(--border-default);
+}
+.field strong {
+  display: block;
+  color: var(--text-primary);
+}
+.field input {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}

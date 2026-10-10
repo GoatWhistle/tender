@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from dataclasses import asdict, dataclass, field
 from enum import StrEnum
@@ -8,6 +9,7 @@ from rag.ktru import value_text
 from rag.message_review import MessageReview
 from rag.models import Position
 from rag.preprocess import Fix, preprocess
+from rag.quantities import display_values, extract_exact, numeric_fields, resolve
 from rag.rerank import Ranked, rerank
 from rag.search import Index, query_vector
 from rag.spec import Extra, Verdict, changeable, no_new_features, validate
@@ -45,6 +47,7 @@ class Session:
     group: Position | None = None
     position: Position | None = None
     chosen: dict[str, tuple[str, ...]] = field(default_factory=dict)
+    exact: dict[str, str] = field(default_factory=dict)
     extras: list[Extra] = field(default_factory=list)
     extras_allowed: bool = True
     message: str | None = None
@@ -68,7 +71,13 @@ class Session:
         return [
             q.name
             for q in self.characteristics
-            if q.required and q.name not in self.chosen
+            if q.required
+            and (
+                q.name not in self.chosen
+                or (
+                    q.name in numeric_fields(self.position) and q.name not in self.exact
+                )
+            )
         ]
 
     def result(self) -> dict:
@@ -85,7 +94,12 @@ class Session:
                 for c in p.characteristics
                 if c.kind == FIXED
             },
-            "chosen": {n: list(v) for n, v in self.chosen.items()},
+            "chosen": {
+                n: list(v)
+                for n, v in display_values(p, self.chosen, self.exact).items()
+            },
+            "catalog_values": {n: list(v) for n, v in self.chosen.items()},
+            "exact": dict(self.exact),
             "extras": [asdict(e) for e in self.extras],
         }
 
@@ -123,7 +137,15 @@ async def _enter_spec(s: Session, index: Index, p: Position) -> None:
     s.leaves = [p]
     s.stage = Stage.SPEC
     s.extras_allowed = not no_new_features(index, p)
-    s.chosen = dict(await extract("\n".join(s.context), s.characteristics))
+    text = "\n".join(s.context)
+    chosen, s.exact = await asyncio.gather(
+        extract(text, s.characteristics), extract_exact(p, text)
+    )
+    s.chosen = dict(chosen)
+    for name, c in numeric_fields(p).items():
+        s.chosen.pop(name, None)
+        if name in s.exact:
+            s.chosen[name] = (resolve(c, s.exact[name])[1],)
 
 
 async def start(index: Index, text: str) -> Session:
@@ -146,6 +168,7 @@ async def _enter_group(s: Session, index: Index, p: Position) -> None:
     s.context = [s.corrected]
     s.position = None
     s.chosen = {}
+    s.exact = {}
     s.extras = []
     found = await extract(s.corrected, questions(s.leaves, {}))
     s.from_description = {n: v[0] for n, v in found.items()}
@@ -197,22 +220,43 @@ async def pick(s: Session, index: Index, code: str) -> None:
     await _enter_spec(s, index, p)
 
 
-def set_values(s: Session, values: dict[str, list[str]]) -> None:
+def set_values(
+    s: Session, values: dict[str, list[str]], exact: dict[str, str] | None = None
+) -> None:
     _expect(s, Stage.SPEC)
     qs = {q.name: q for q in s.characteristics}
+    fields = numeric_fields(s.position)
+    resolved = {}
+    for name, raw in (exact or {}).items():
+        if name not in fields or name in values:
+            raise InputError("Неизвестное или повторное числовое поле")
+        try:
+            resolved[name] = resolve(fields[name], raw) if raw.strip() else None
+        except ValueError as error:
+            raise InputError(f"{name}: {error}") from error
     for name, labels in values.items():
         q = qs.get(name)
         if q is None:
             raise InputError(f"у позиции нет изменяемой характеристики «{name}»")
+        if name in fields and labels:
+            raise InputError("Укажите точное число вместо диапазона")
         if bad := [label for label in labels if label not in q.options]:
             raise InputError(f"«{name}»: нет вариантов {bad}")
         if not q.multiple and len(labels) > 1:
             raise InputError(f"«{name}»: нужен один вариант")
     for name, labels in values.items():
+        s.exact.pop(name, None)
         if labels:
             s.chosen[name] = tuple(dict.fromkeys(labels))
         else:
             s.chosen.pop(name, None)
+    for name, result in resolved.items():
+        if result is None:
+            s.exact.pop(name, None)
+            s.chosen.pop(name, None)
+        else:
+            s.exact[name], label = result
+            s.chosen[name] = (label,)
     s.message = None
 
 
@@ -224,7 +268,11 @@ async def describe(s: Session, text: str, name: str | None = None) -> None:
         if not qs:
             raise InputError(f"у позиции нет изменяемой характеристики «{name}»")
     got, s.message = await answer(text, qs)
-    s.chosen.update(got)
+    fields = numeric_fields(s.position)
+    s.chosen.update({n: v for n, v in got.items() if n not in fields})
+    if s.position:
+        exact = await extract_exact(s.position, text)
+        set_values(s, {}, {n: v for n, v in exact.items() if name is None or n == name})
 
 
 async def add_extra(s: Session, extra: Extra) -> Verdict:
