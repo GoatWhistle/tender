@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     decision_auto_accept_threshold: float = Field(default=0.90, ge=0, le=1)
     decision_revision: str = "a20448012c213128955ca0c693e7c943865cab77"
 
+    spelling_url: str | None = None
+    spelling_model: str = "qwen"
+    spelling_api_key: SecretStr | None = None
+
     embeddings_url: str | None = None
     embeddings_api_key: SecretStr | None = None
     embeddings_model: str = "qwen-embedding"

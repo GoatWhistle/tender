@@ -178,3 +178,14 @@ backend/.venv/bin/python evals/enum/run.py --url http://127.0.0.1:18080 --out va
 по [инструкции OpenJev](services/openjev/README.md).
 [Сохранённый отчёт](evals/reports/2026-10-10-enum-mapping.md) содержит методику, абсолютные
 числа, статистические ограничения, задержку и VRAM.
+
+Диагностика характеристик и орфографический порт Qwen: контракт и настройки —
+[`docs/sessions.md`](docs/sessions.md#диагностика-характеристик). Прогон размеченных ошибок
+через HTTP API и существующий scorer (поиск и орфография — заглушки):
+
+```bash
+cd backend && uv run python ../evals/errors/run.py
+```
+
+Отчёт: [`2026-10-10-diagnostics-fixture.md`](evals/reports/2026-10-10-diagnostics-fixture.md).
+Он проверяет продуктовый сценарий на локальных fixtures и не измеряет качество живой модели.

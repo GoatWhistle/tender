@@ -74,3 +74,7 @@ Keep secrets and machine-specific settings out of version control. Provide examp
 `enum_holdout_v2.json` используется только для отдельной проверки.
 HTTP-проверки: `cd backend && uv run pytest tests/test_enum_sessions.py tests/test_openjev_http.py`.
 Замер из корня: `backend/.venv/bin/python evals/enum/run.py --url http://127.0.0.1:18080 --out var/enum-mapping.json`.
+
+При изменении диагностики выполни HTTP-прогон размеченных fixtures:
+`cd backend && uv run python ../evals/errors/run.py`. Контракт и ограничения замера —
+`docs/sessions.md`, настройки орфографии — `backend/.env.example`.

@@ -7,6 +7,7 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from app.adapter.enum_similarity import DamerauMatcher
 from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.stub.decision import StubDecisionBackend
 from app.domain.catalog import Characteristic, CharacteristicKind, Group, Position, Value
@@ -111,8 +112,17 @@ def enum_policy(request: pytest.FixtureRequest) -> AutoAcceptance:
 
 
 @pytest.fixture
+def enum_diagnostics(request: pytest.FixtureRequest) -> bool:
+    return bool(getattr(request, "param", False))
+
+
+@pytest.fixture
 def enum_api(
-    settings: Settings, enum_group: Group, decision: Decision, enum_policy: AutoAcceptance
+    settings: Settings,
+    enum_group: Group,
+    decision: Decision,
+    enum_policy: AutoAcceptance,
+    enum_diagnostics: bool,
 ) -> Iterator[TestClient]:
     class Source:
         def load(self) -> list[Position]:
@@ -144,6 +154,7 @@ def enum_api(
         fact_extractor=DeterministicFactExtractor(),
         decision=decision,
         enum_policy=enum_policy,
+        enum_matcher=DamerauMatcher() if enum_diagnostics else None,
     )
     with TestClient(app) as client:
         yield client
@@ -487,3 +498,40 @@ def test_free_synonym_can_be_auto_accepted_when_value_has_one_field(
     _, state = describe(enum_api, "Стул из стали")
     assert state["candidate_counts"]["compatible"] == 1
     assert any(f["status"] == "accepted_from_model" for f in state["facts"])
+
+
+@pytest.mark.parametrize("enum_diagnostics", [True], indirect=True)
+def test_enum_mapping_keeps_unknown_input_for_diagnostics(
+    enum_api: TestClient, decision: Decision
+) -> None:
+    decision.values = set()
+    url, state = describe(enum_api, "Материал: дреево")
+    assert [error["kind"] for error in state["errors"]] == ["typo"]
+    assert state["errors"][0]["suggestion"] == "Дерево"
+    assert state["errors"][0]["fact_id"] in {fact["id"] for fact in state["facts"]}
+    assert state["candidate_counts"]["excluded_by_rules"] == 0
+    assert not state["enum_proposals"]
+    assert enum_api.get(url).json() == state
+
+
+@pytest.mark.parametrize("enum_diagnostics", [True], indirect=True)
+def test_enum_confirmation_replaces_diagnostic_hypothesis(
+    enum_api: TestClient, decision: Decision
+) -> None:
+    decision.values = {"Дерево"}
+    url, state = describe(enum_api, "Материал: дреево")
+    assert [error["kind"] for error in state["errors"]] == ["typo"]
+    proposal = state["enum_proposals"][0]
+    response = enum_api.post(
+        url + "/enum-resolutions",
+        json={
+            "expected_revision": state["revision"],
+            "proposal_id": proposal["id"],
+            "action": "accept",
+        },
+    )
+    assert response.status_code == 200
+    confirmed = response.json()
+    assert confirmed["errors"] == []
+    assert confirmed["candidate_counts"]["compatible"] == 1
+    assert any(f["status"] == "confirmed_by_user" for f in confirmed["facts"])

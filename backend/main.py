@@ -17,9 +17,12 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.adapter.aliases import CsvAliasesSource
 from app.adapter.decision import OpenJevDecision
 from app.adapter.embeddings import OpenAIEmbeddings
+from app.adapter.enum_similarity import DamerauMatcher
 from app.adapter.facts import DeterministicFactExtractor
 from app.adapter.ktru_xml import XmlKtruSource
 from app.adapter.search import MatrixIndex, TfidfIndex
+from app.adapter.spelling import QwenSpelling, UnconfiguredSpelling
+from app.adapter.value_aliases import ReviewedValueAliases
 from app.controller.catalog import groups_router
 from app.controller.catalog import router as catalog_router
 from app.controller.errors import install_error_handlers
@@ -56,7 +59,6 @@ def production_usecases(
     embeddings = checked_embeddings(embeddings) if embeddings is not None else None
     return build_usecases(
         sql_repositories(),
-        fact_extractor=DeterministicFactExtractor(),
         decision=OpenJevDecision(settings.decision_url, timeout=settings.decision_timeout)
         if settings.decision_url
         else None,
@@ -65,6 +67,16 @@ def production_usecases(
         )
         if settings.decision_auto_accept_enabled
         else AutoAcceptance(),
+        fact_extractor=DeterministicFactExtractor(ReviewedValueAliases().all()),
+        enum_matcher=DamerauMatcher(),
+        value_aliases=ReviewedValueAliases(),
+        spelling=QwenSpelling(
+            settings.spelling_url,
+            settings.spelling_model,
+            settings.spelling_api_key.get_secret_value() if settings.spelling_api_key else None,
+        )
+        if settings.spelling_url
+        else UnconfiguredSpelling(),
         lexical=TfidfIndex() if embeddings is not None else None,
         vector=MatrixIndex(
             embeddings, model=settings.embeddings_model, revision=settings.embeddings_revision

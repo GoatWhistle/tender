@@ -1,9 +1,17 @@
 // Экран поставщика: описание своими словами → группа КТРУ → оставшиеся позиции.
 // Четыре области: описание и история, характеристики, кандидаты и путь сужения, следующее
 // действие. Данные — `SessionState` бэкенда как есть; статусы и счётчики UI не вычисляет.
-import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { sellerApi, type EnumProposal, type Question, type SessionState } from "../api";
+import { isDiagnostic, type Diagnostic } from "../api/types";
 import { plural } from "../lib/format";
 import {
   MAX_TEXT,
@@ -74,7 +82,15 @@ function Composer({ view, store }: { view: SellerView; store: SellerSession }) {
       {state && state.messages.length > 0 && (
         <ol className="said" aria-label="Уже написано">
           {state.messages.map((m) => (
-            <li key={m.id}>{m.text}</li>
+            <li key={m.id}>
+              <HighlightedMessage
+                text={m.text}
+                diagnostics={[
+                  ...state.errors.filter(isDiagnostic),
+                  ...(state.normalizations ?? []),
+                ].filter((d) => d.source.message_id === m.id)}
+              />
+            </li>
           ))}
         </ol>
       )}
@@ -122,6 +138,82 @@ function Composer({ view, store }: { view: SellerView; store: SellerSession }) {
         </div>
       )}
     </form>
+  );
+}
+
+function HighlightedMessage({ text, diagnostics }: { text: string; diagnostics: Diagnostic[] }) {
+  const chars = Array.from(text);
+  const spans = diagnostics
+    .filter(
+      (d) =>
+        d.source.start >= 0 &&
+        d.source.end <= chars.length &&
+        chars.slice(d.source.start, d.source.end).join("") === d.source_quote,
+    )
+    .sort((a, b) => a.source.start - b.source.start);
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+  for (const d of spans) {
+    if (d.source.start < cursor) continue;
+    nodes.push(chars.slice(cursor, d.source.start).join(""));
+    nodes.push(
+      <mark key={`${d.source.start}:${d.source.end}`} title={d.explanation}>
+        {chars.slice(d.source.start, d.source.end).join("")}
+      </mark>,
+    );
+    cursor = d.source.end;
+  }
+  nodes.push(chars.slice(cursor).join(""));
+  return <>{nodes}</>;
+}
+
+const DIAGNOSTIC_LABEL = {
+  typo: "Возможная опечатка",
+  value_not_in_catalog: "Значения нет в проверенной группе",
+  out_of_range: "Значение вне допустимых правил",
+  synonym: "Нормализация",
+};
+
+function Diagnostics({ state }: { state: SessionState }) {
+  return (
+    <>
+      {[...state.errors.filter(isDiagnostic), ...(state.normalizations ?? [])].map((d) => (
+        <section className="diagnostic" key={`${d.source.message_id}:${d.source.start}:${d.kind}`}>
+          <h3>{DIAGNOSTIC_LABEL[d.kind]}</h3>
+          <p className="card-x__quote">
+            «{d.source_quote}»{d.suggestion && <> → {d.suggestion}</>}
+          </p>
+          <p className="card-x__text">{d.explanation}</p>
+          {d.candidates.length > 1 && <p>Варианты: {d.candidates.join("; ")}</p>}
+          {!d.rule_ref.length && <p className="muted">Гипотеза без привязки к правилу КТРУ.</p>}
+          {d.rule_ref.length > 0 && (
+            <details>
+              <summary>Правила справочника</summary>
+              <ul>
+                {d.rule_ref.map((r) => (
+                  <li key={`${r.position_code}:${r.characteristic_code}`}>
+                    {r.position_code}: {r.characteristic_name} ({r.characteristic_code})
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+          {d.requires_confirmation && (
+            <p className="muted">Предложение не применено. Проверьте исходное описание.</p>
+          )}
+        </section>
+      ))}
+      {state.errors
+        .filter((e) => !isDiagnostic(e))
+        .map(
+          (e) =>
+            "code" in e && (
+              <p className="card-x__quote" key={e.code} role="status">
+                {e.message}
+              </p>
+            ),
+        )}
+    </>
   );
 }
 
@@ -257,6 +349,7 @@ function NextStep({
           ))}
         </ul>
       )}
+      <Diagnostics state={state} />
       <Missing state={state} />
       {question && <QuestionCard question={question} busy={busy} onAnswer={onAnswer} />}
       {state.unsupported_rules.length > 0 && (
@@ -454,7 +547,7 @@ function Characteristics({
                     : f.status === "accepted_from_model"
                       ? "принято автоматически"
                       : f.status === "ambiguous"
-                        ? "противоречит другому значению"
+                        ? "требует проверки"
                         : ORIGIN[f.origin]}
                 {f.origin === "decision" && f.source && <span> · «{f.source.quote}»</span>}
               </span>

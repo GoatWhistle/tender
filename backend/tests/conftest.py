@@ -210,17 +210,20 @@ def table_group() -> "Group":
 
 
 @pytest.fixture
-def group_api(settings: Settings) -> Iterator[Callable[[Group], TestClient]]:
+def group_api(settings: Settings) -> Iterator[Callable[..., TestClient]]:
     """Клиент на справочнике из одной группы; поиск всегда находит её, факты — парсером."""
     from contextlib import ExitStack
 
+    from app.adapter.enum_similarity import DamerauMatcher
     from app.adapter.facts import DeterministicFactExtractor
+    from app.adapter.value_aliases import ReviewedValueAliases
     from app.domain.catalog import Position
     from app.domain.search import MethodContribution, SearchHit, SearchResult
+    from app.usecase.interface import SpellingService
     from composition import build_usecases
     from main import sql_repositories
 
-    def build(group: Group) -> TestClient:
+    def build(group: Group, *, spelling: SpellingService | None = None) -> TestClient:
         class Source:
             def load(self) -> list[Position]:
                 return [group.position, *group.leaves]
@@ -244,7 +247,10 @@ def group_api(settings: Settings) -> Iterator[Callable[[Group], TestClient]]:
             sql_repositories(),
             catalog_source=source,
             searcher=Search(),
-            fact_extractor=DeterministicFactExtractor(),
+            fact_extractor=DeterministicFactExtractor(ReviewedValueAliases().all()),
+            enum_matcher=DamerauMatcher(),
+            value_aliases=ReviewedValueAliases(),
+            spelling=spelling,
         )
         return stack.enter_context(TestClient(app))
 
@@ -253,5 +259,5 @@ def group_api(settings: Settings) -> Iterator[Callable[[Group], TestClient]]:
 
 
 @pytest.fixture
-def facts_api(group_api: Callable[[Group], TestClient], table_group: Group) -> TestClient:
+def facts_api(group_api: Callable[..., TestClient], table_group: Group) -> TestClient:
     return group_api(table_group)

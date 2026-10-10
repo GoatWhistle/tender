@@ -81,7 +81,7 @@ function technicalFailure(state: SessionState): Failure {
   return {
     title: "Анализ не выполнен: технический сбой",
     text: "Это не значит, что товар не найден. Отправьте описание ещё раз.",
-    details: state.errors.map((e) => e.message),
+    details: state.errors.flatMap((e) => ("code" in e ? [e.message] : [])),
   };
 }
 

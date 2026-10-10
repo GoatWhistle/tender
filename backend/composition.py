@@ -12,6 +12,7 @@ from dataclasses import dataclass
 
 from app.domain.enum_mapping import AutoAcceptance
 from app.usecase.catalog import CatalogQueries, CatalogSync
+from app.usecase.diagnostics import Diagnostics
 from app.usecase.enum_mapping import EnumMapper
 from app.usecase.interface import (
     AliasesRepository,
@@ -20,13 +21,16 @@ from app.usecase.interface import (
     CatalogSource,
     DecisionBackend,
     Embeddings,
+    EnumMatcher,
     FactExtractor,
     GroupSearcher,
     LexicalIndex,
     ModelFactExtractor,
     SearchVectorsRepository,
     SessionsRepository,
+    SpellingService,
     UnitOfWork,
+    ValueAliases,
     VectorIndex,
 )
 from app.usecase.model_checks import (
@@ -71,6 +75,9 @@ def build_usecases[U: UnitOfWork](
     fact_extractor: FactExtractor | None = None,
     decision: DecisionBackend | None = None,
     enum_policy: AutoAcceptance | None = None,
+    enum_matcher: EnumMatcher | None = None,
+    value_aliases: ValueAliases | None = None,
+    spelling: SpellingService | None = None,
 ) -> Usecases[U]:
     r = repositories
     vectors_factory = r.saved_vectors
@@ -99,9 +106,13 @@ def build_usecases[U: UnitOfWork](
                 searcher or group_search(uow),
                 r.catalog(uow),
                 fact_extractor,
-                EnumMapper(checked_decision(decision), enum_policy or AutoAcceptance())
+                enum_mapper=EnumMapper(checked_decision(decision), enum_policy or AutoAcceptance())
                 if decision
                 else None,
+                diagnostics=Diagnostics(enum_matcher, value_aliases)
+                if enum_matcher is not None
+                else None,
+                spelling=spelling,
             )
         )
         if sessions_factory and fact_extractor is not None

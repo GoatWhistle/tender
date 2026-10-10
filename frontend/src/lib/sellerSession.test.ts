@@ -438,3 +438,35 @@ it("подтверждает предложение показанной рев�
   expect(store.view().draft).toBe("Черновик дополнения");
   expect(store.view().failure).toBeNull();
 });
+
+it("диагностика характеристики не превращает успешный анализ в технический сбой", async () => {
+  const diagnostic: import("../api/types").Diagnostic = {
+    kind: "typo",
+    fact_id: null,
+    source_quote: "дреево",
+    source: { message_id: "m1", quote: "дреево", start: 8, end: 14 },
+    expected: [],
+    suggestion: "дерево",
+    candidates: ["дерево"],
+    rule_ref: [],
+    scope: { group_code: null, position_codes: [], complete: false },
+    requires_confirmation: true,
+    explanation: "Орфографическая гипотеза",
+    alias_source: null,
+  };
+  const response = state({ revision: 1, status: "needs_clarification", errors: [diagnostic] });
+  const api = fakeApi({ message: vi.fn().mockResolvedValue(response) });
+  const store = createSellerSession(api, newKey);
+  store.setDraft("Стол из дреево");
+  await store.submit();
+  expect(store.view().failure).toBeNull();
+  expect(store.view().state?.errors).toEqual([diagnostic]);
+  expect(api.answer).not.toHaveBeenCalled();
+  const failed = state({
+    status: "technical_error",
+    errors: [diagnostic, { code: "model_failure", message: "Поиск недоступен" }],
+  });
+  const failedStore = createSellerSession(fakeApi({ get: async () => failed }), newKey);
+  await failedStore.open("s1");
+  expect(failedStore.view().failure?.details).toEqual(["Поиск недоступен"]);
+});
