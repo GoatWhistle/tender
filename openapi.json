@@ -369,6 +369,55 @@
         }
       }
     },
+    "/sessions/{session_id}/characteristics/number": {
+      "put": {
+        "summary": "Set Number",
+        "operationId": "set_number_sessions__session_id__characteristics_number_put",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NumberIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/{session_id}/characteristics/text": {
       "post": {
         "summary": "Describe",
@@ -803,6 +852,53 @@
         "type": "object",
         "title": "AnswerIn"
       },
+      "BandOut": {
+        "properties": {
+          "option": {
+            "type": "string",
+            "title": "Option"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "min_inclusive": {
+            "type": "boolean",
+            "title": "Min Inclusive"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "max_inclusive": {
+            "type": "boolean",
+            "title": "Max Inclusive"
+          }
+        },
+        "type": "object",
+        "required": [
+          "option",
+          "min",
+          "min_inclusive",
+          "max",
+          "max_inclusive"
+        ],
+        "title": "BandOut"
+      },
       "CandidateOut": {
         "properties": {
           "code": {
@@ -955,6 +1051,55 @@
               }
             ],
             "description": "откуда значение: описание поставщика, помощник или ручной выбор"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/BandOut"
+            },
+            "type": "array",
+            "title": "Bands",
+            "description": "числовые диапазоны КТРУ по возрастанию, по одному на вариант",
+            "default": []
+          },
+          "number": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number",
+            "description": "введённое число, если оно ещё соответствует выбранному диапазону"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "large",
+                  "small",
+                  "negative"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning",
+            "description": "число допустимо по КТРУ, но сомнительно: large — больше крайней границы в 10 раз, small — меньше в 10 раз, negative — отрицательное при неотрицательных границах"
           }
         },
         "type": "object",
@@ -1181,6 +1326,32 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "NumberIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value",
+            "description": "число в единице КТРУ; null — сбросить"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "NumberIn"
       },
       "Origin": {
         "type": "string",

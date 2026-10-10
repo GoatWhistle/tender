@@ -1,10 +1,13 @@
+import type { Characteristic } from "@/entities/rag"
+
+export type KtruBand = Characteristic["bands"][number]
 export interface Band {
   readonly option: string
   readonly label: string
-  readonly order: number
 }
 export type FieldKind =
   | { readonly type: "boolean"; readonly yes: string; readonly no: string }
+  | { readonly type: "input"; readonly unit: string; readonly bands: readonly KtruBand[] }
   | { readonly type: "range"; readonly unit: string; readonly bands: readonly Band[] }
   | { readonly type: "number"; readonly unit: string; readonly bands: readonly Band[] }
   | { readonly type: "search" }
@@ -12,45 +15,79 @@ export type FieldKind =
 
 const YES = "\u0434\u0430"
 const NO = "\u043d\u0435\u0442"
-const BOUNDS = /^(?:([≥>])\s*(-?\d+(?:\.\d+)?))?\s*(?:([≤<])\s*(-?\d+(?:\.\d+)?))?\s*(.*)$/
 const NUMBER = /^(-?\d+(?:\.\d+)?)\s*(.*)$/
 const SEARCH_FROM = 13
+const INPUT_FROM = 5
 
-function range(option: string) {
-  const match = BOUNDS.exec(option.trim())
-  if (!match || (match[2] === undefined && match[4] === undefined)) return null
-  const [, lowOp, low, highOp, high, unit = ""] = match
-  const label =
-    low !== undefined && high !== undefined
-      ? `${low}–${high}`
-      : low !== undefined
-        ? `${lowOp} ${low}`
-        : `${highOp} ${high}`
-  const order = low !== undefined ? Number(low) : Number(high) - Number.EPSILON
-  return { unit: unit.trim(), band: { option, label, order } }
+export function bandLabel(band: KtruBand, format: (value: number) => string) {
+  if (band.min !== null && band.max !== null) return `${format(band.min)}–${format(band.max)}`
+  if (band.min !== null) return `${band.min_inclusive ? "≥" : ">"} ${format(band.min)}`
+  if (band.max !== null) return `${band.max_inclusive ? "≤" : "<"} ${format(band.max)}`
+  return band.option
 }
 
-function number(option: string) {
-  const match = NUMBER.exec(option.trim())
-  if (!match?.[1]) return null
-  return {
-    unit: (match[2] ?? "").trim(),
-    band: { option, label: match[1], order: Number(match[1]) },
+function contains(band: KtruBand, value: number) {
+  if (band.min !== null && (value < band.min || (value === band.min && !band.min_inclusive)))
+    return false
+  if (band.max !== null && (value > band.max || (value === band.max && !band.max_inclusive)))
+    return false
+  return true
+}
+
+function width(band: KtruBand) {
+  const low = band.min ?? Number.NEGATIVE_INFINITY
+  const high = band.max ?? Number.POSITIVE_INFINITY
+  return [high - low, -low, high] as const
+}
+
+export function matchBand(bands: readonly KtruBand[], value: number) {
+  let best: KtruBand | null = null
+  for (const band of bands) {
+    if (!contains(band, value)) continue
+    if (!best) {
+      best = band
+      continue
+    }
+    const [a, b] = [width(band), width(best)]
+    const index = a.findIndex((item, i) => item !== b[i])
+    if (index >= 0 && (a[index] ?? 0) < (b[index] ?? 0)) best = band
   }
+  return best
 }
 
-function scale(options: readonly string[], parse: typeof range) {
-  const parsed = options.map(parse)
-  if (parsed.some((item) => item === null)) return null
-  const units = new Set(parsed.map((item) => item?.unit))
+export type Doubt = NonNullable<Characteristic["warning"]>
+const SPREAD = 10
+
+export function doubt(bands: readonly KtruBand[], value: number) {
+  const edges = bands.flatMap((band) => [band.min, band.max]).filter((edge) => edge !== null)
+  if (!edges.length) return null
+  const low = Math.min(...edges)
+  const high = Math.max(...edges)
+  if (value < 0 && low >= 0) return { code: "negative" as Doubt, edge: low }
+  if (high > 0 && value > SPREAD * high) return { code: "large" as Doubt, edge: high }
+  if (low > 0 && value > 0 && value < low / SPREAD) return { code: "small" as Doubt, edge: low }
+  return null
+}
+
+function concrete(options: readonly string[]) {
+  const parsed = options.map((option) => NUMBER.exec(option.trim()))
+  if (parsed.some((match) => !match?.[1])) return null
+  const units = new Set(parsed.map((match) => (match?.[2] ?? "").trim()))
   if (units.size !== 1) return null
   return {
-    unit: parsed[0]?.unit ?? "",
-    bands: parsed.flatMap((item) => (item ? [item.band] : [])).sort((a, b) => a.order - b.order),
+    unit: [...units][0] ?? "",
+    bands: parsed
+      .flatMap((match, index) =>
+        match?.[1]
+          ? [{ option: options[index] ?? "", label: match[1], order: Number(match[1]) }]
+          : [],
+      )
+      .sort((a, b) => a.order - b.order),
   }
 }
 
-export function fieldKind(options: readonly string[], multiple: boolean): FieldKind {
+export function fieldKind(field: Characteristic, format: (value: number) => string): FieldKind {
+  const { options, multiple } = field
   const lower = options.map((option) => option.trim().toLowerCase())
   if (!multiple && options.length === 2 && lower.includes(YES) && lower.includes(NO))
     return {
@@ -58,11 +95,19 @@ export function fieldKind(options: readonly string[], multiple: boolean): FieldK
       yes: options[lower.indexOf(YES)] ?? YES,
       no: options[lower.indexOf(NO)] ?? NO,
     }
+  if (field.bands.length > 0) {
+    const unit = field.unit ?? ""
+    if (!multiple && field.bands.length >= INPUT_FROM)
+      return { type: "input", unit, bands: field.bands }
+    const bands = field.bands.map((band) => ({
+      option: band.option,
+      label: bandLabel(band, format),
+    }))
+    return { type: "range", unit, bands }
+  }
   if (options.length > 1) {
-    const numbers = scale(options, number)
+    const numbers = concrete(options)
     if (numbers) return { type: "number", ...numbers }
-    const ranges = scale(options, range)
-    if (ranges) return { type: "range", ...ranges }
   }
   return options.length >= SEARCH_FROM ? { type: "search" } : { type: "choice" }
 }

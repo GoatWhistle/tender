@@ -141,6 +141,23 @@ export interface paths {
         patch: operations["set_values_sessions__session_id__characteristics_patch"];
         trace?: never;
     };
+    "/sessions/{session_id}/characteristics/number": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Number */
+        put: operations["set_number_sessions__session_id__characteristics_number_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessions/{session_id}/characteristics/text": {
         parameters: {
             query?: never;
@@ -311,6 +328,19 @@ export interface components {
              */
             text?: string | null;
         };
+        /** BandOut */
+        BandOut: {
+            /** Option */
+            option: string;
+            /** Min */
+            min: number | null;
+            /** Min Inclusive */
+            min_inclusive: boolean;
+            /** Max */
+            max: number | null;
+            /** Max Inclusive */
+            max_inclusive: boolean;
+        };
         /** CandidateOut */
         CandidateOut: {
             /** Code */
@@ -366,6 +396,24 @@ export interface components {
             values: string[];
             /** @description откуда значение: описание поставщика, помощник или ручной выбор */
             origin?: components["schemas"]["Origin"] | null;
+            /** Unit */
+            unit?: string | null;
+            /**
+             * Bands
+             * @description числовые диапазоны КТРУ по возрастанию, по одному на вариант
+             * @default []
+             */
+            bands: components["schemas"]["BandOut"][];
+            /**
+             * Number
+             * @description введённое число, если оно ещё соответствует выбранному диапазону
+             */
+            number?: number | null;
+            /**
+             * Warning
+             * @description число допустимо по КТРУ, но сомнительно: large — больше крайней границы в 10 раз, small — меньше в 10 раз, negative — отрицательное при неотрицательных границах
+             */
+            warning?: ("large" | "small" | "negative") | null;
         };
         /** ChatMessageOut */
         ChatMessageOut: {
@@ -451,6 +499,16 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** NumberIn */
+        NumberIn: {
+            /** Name */
+            name: string;
+            /**
+             * Value
+             * @description число в единице КТРУ; null — сбросить
+             */
+            value: number | null;
         };
         /**
          * Origin
@@ -890,6 +948,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ValuesIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_number_sessions__session_id__characteristics_number_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NumberIn"];
             };
         };
         responses: {

@@ -163,6 +163,18 @@ def value_text(v: Value) -> str:
     return " ".join(parts)
 
 
+def is_range(v: Value) -> bool:
+    return not v.text and not v.concrete and (v.min is not None or v.max is not None)
+
+
+def contains(v: Value, x: float) -> bool:
+    if v.min is not None and (x < v.min or (x == v.min and v.min_op == "greater")):
+        return False
+    if v.max is not None and (x > v.max or (x == v.max and v.max_op == "less")):
+        return False
+    return is_range(v)
+
+
 def position_text(p: Position) -> str:
     lines = [p.name, f"ОКПД2: {p.okpd2} {p.okpd2_name}"]
     if p.rubrics:

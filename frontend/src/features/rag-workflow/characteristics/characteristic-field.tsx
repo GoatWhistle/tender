@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import type { Characteristic } from "@/entities/rag"
 import { Button } from "@/shared/ui/button"
 import { BackendText } from "@/shared/ui/message"
+import { BandInput } from "./band-input"
 import styles from "./characteristic-field.module.css"
 import { BooleanSwitch, ChoiceChips, OptionSearch, RangeScale } from "./controls"
 import { fieldKind, toggle } from "./field-kind"
@@ -13,14 +14,17 @@ export function CharacteristicField({
   field,
   busy,
   onChange,
+  onNumber,
 }: {
   readonly id: string
   readonly field: Characteristic
   readonly busy: boolean
   readonly onChange: (values: string[]) => void
+  readonly onNumber: (value: number | null) => void
 }) {
-  const { t } = useTranslation(["rag"])
-  const kind = fieldKind(field.options, field.multiple)
+  const { t, i18n } = useTranslation(["rag"])
+  const format = useMemo(() => new Intl.NumberFormat(i18n.language).format, [i18n.language])
+  const kind = fieldKind(field, format)
   const signature = field.values.join("\n")
   const previous = useRef(signature)
   const [flashes, setFlashes] = useState(0)
@@ -49,11 +53,22 @@ export function CharacteristicField({
       </div>
       <div className={styles.control}>
         {kind.type === "boolean" && <BooleanSwitch {...props} yes={kind.yes} no={kind.no} />}
+        {kind.type === "input" && (
+          <BandInput
+            values={field.values}
+            number={field.number ?? null}
+            bands={kind.bands}
+            unit={kind.unit}
+            busy={busy}
+            format={format}
+            onNumber={onNumber}
+          />
+        )}
         {kind.type === "range" && <RangeScale {...props} bands={kind.bands} unit={kind.unit} />}
         {kind.type === "number" && <RangeScale {...props} bands={kind.bands} unit={kind.unit} />}
         {kind.type === "search" && <OptionSearch {...props} options={field.options} />}
         {kind.type === "choice" && <ChoiceChips {...props} options={field.options} />}
-        {!empty && kind.type !== "search" && (
+        {!empty && kind.type !== "search" && kind.type !== "input" && (
           <Button
             variant="ghost"
             className={styles.clear}

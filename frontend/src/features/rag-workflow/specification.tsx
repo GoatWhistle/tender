@@ -71,6 +71,7 @@ export function Specification({
       field={field}
       busy={flow.busy}
       onChange={(values) => flow.values(field.name, values)}
+      onNumber={(value) => flow.number(field.name, value)}
     />
   )
   return (

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from claude_agent_sdk import ClaudeAgentOptions, ResultMessage, query
 
 from rag.ktru import value_text
-from rag.models import Characteristic, Position
+from rag.models import Characteristic, Position, Value
 
 FIXED = "1"
 
@@ -61,6 +61,7 @@ class Question:
     options: tuple[str, ...]
     counts: tuple[int, ...] = ()
     multiple: bool = False
+    ranges: tuple[Value, ...] = ()
 
 
 async def structured(

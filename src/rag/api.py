@@ -17,9 +17,10 @@ from rag.comparison import display_differences
 from rag.discovery import DiscoveryOut
 from rag.index import CODES, POSITIONS, RAW, VECTORS
 from rag.ktru import value_text
+from rag.models import Value
 from rag.search import Index
 from rag.session import InputError, Origin, Session, Stage, StageError
-from rag.spec import Extra
+from rag.spec import Doubt, Extra
 
 GROUPS = 5
 
@@ -91,6 +92,14 @@ class PositionOut(BaseModel):
     fixed: dict[str, str]
 
 
+class BandOut(BaseModel):
+    option: str
+    min: float | None
+    min_inclusive: bool
+    max: float | None
+    max_inclusive: bool
+
+
 class CharacteristicOut(BaseModel):
     name: str
     required: bool
@@ -99,6 +108,18 @@ class CharacteristicOut(BaseModel):
     values: list[str]
     origin: Origin | None = Field(
         None, description="откуда значение: описание поставщика, помощник или ручной выбор"
+    )
+    unit: str | None = None
+    bands: list[BandOut] = Field(
+        [], description="числовые диапазоны КТРУ по возрастанию, по одному на вариант"
+    )
+    number: float | None = Field(
+        None, description="введённое число, если оно ещё соответствует выбранному диапазону"
+    )
+    warning: Doubt | None = Field(
+        None,
+        description="число допустимо по КТРУ, но сомнительно: large — больше крайней границы "
+        "в 10 раз, small — меньше в 10 раз, negative — отрицательное при неотрицательных границах",
     )
 
 
@@ -170,6 +191,11 @@ class ValuesIn(BaseModel):
     )
 
 
+class NumberIn(BaseModel):
+    name: str
+    value: float | None = Field(description="число в единице КТРУ; null — сбросить")
+
+
 class TextIn(BaseModel):
     text: str
     name: str | None = Field(
@@ -187,8 +213,37 @@ def _question(q: Question) -> QuestionOut:
     )
 
 
+def _band(label: str, v: Value) -> BandOut:
+    return BandOut(
+        option=label,
+        min=v.min,
+        min_inclusive=v.min_op != "greater",
+        max=v.max,
+        max_inclusive=v.max_op != "less",
+    )
+
+
+def _characteristic(
+    s: Session, q: Question, entered: dict[str, float], doubts: dict[str, Doubt]
+) -> CharacteristicOut:
+    return CharacteristicOut(
+        name=q.name,
+        required=q.required,
+        multiple=q.multiple,
+        options=list(q.options),
+        values=list(s.chosen.get(q.name, ())),
+        origin=s.origins.get(q.name) if q.name in s.chosen else None,
+        unit=q.ranges[0].unit if q.ranges else None,
+        bands=[_band(label, v) for label, v in zip(q.options, q.ranges)],
+        number=entered.get(q.name),
+        warning=doubts.get(q.name),
+    )
+
+
 def view(s: Session) -> SessionOut:
     p = s.position
+    entered = s.entered
+    doubts = s.doubts
     comparison = display_differences(s.leaves)
     return SessionOut(
         messages=[ChatMessageOut(**m) for m in s.messages],
@@ -228,17 +283,7 @@ def view(s: Session) -> SessionOut:
         )
         if p
         else None,
-        characteristics=[
-            CharacteristicOut(
-                name=q.name,
-                required=q.required,
-                multiple=q.multiple,
-                options=list(q.options),
-                values=list(s.chosen.get(q.name, ())),
-                origin=s.origins.get(q.name) if q.name in s.chosen else None,
-            )
-            for q in s.characteristics
-        ],
+        characteristics=[_characteristic(s, q, entered, doubts) for q in s.characteristics],
         extras=[ExtraIn(name=e.name, value=e.value, reason=e.reason) for e in s.extras],
         extras_allowed=s.extras_allowed,
         missing=s.missing,
@@ -322,6 +367,14 @@ async def set_values(session_id: str, body: ValuesIn) -> SessionOut:
     s, lock = _get(session_id)
     async with lock:
         ss.set_values(s, body.values)
+    return view(s)
+
+
+@app.put("/sessions/{session_id}/characteristics/number")
+async def set_number(session_id: str, body: NumberIn) -> SessionOut:
+    s, lock = _get(session_id)
+    async with lock:
+        ss.set_number(s, body.name, body.value)
     return view(s)
 
 

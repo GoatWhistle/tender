@@ -1,0 +1,21 @@
+.input {
+  max-width: 480px;
+}
+.help {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.help[data-invalid="true"] {
+  color: var(--status-danger);
+}
+.doubt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  color: var(--status-danger);
+}
+.doubt > svg {
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+}

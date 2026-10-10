@@ -100,6 +100,19 @@ export function useRagWorkflow() {
       ),
     )
   }
+  function number(name: string, value: number | null) {
+    if (!session) return
+    run("updating", async () =>
+      setSession(
+        unwrap(
+          await api.PUT("/sessions/{session_id}/characteristics/number", {
+            params: { path: { session_id: session.id } },
+            body: { name, value },
+          }),
+        ),
+      ),
+    )
+  }
   function describe(text: string, done: () => void) {
     if (!session || !text.trim()) return
     run("answering", async () => {
@@ -174,6 +187,7 @@ export function useRagWorkflow() {
     answer,
     pick,
     values,
+    number,
     describe,
     addExtra,
     removeExtra,

@@ -9,7 +9,16 @@ from rag.models import Position
 from rag.preprocess import Fix, preprocess
 from rag.rerank import Ranked, rerank
 from rag.search import Index, query_vector
-from rag.spec import Extra, Verdict, changeable, no_new_features, validate
+from rag.spec import (
+    Doubt,
+    Extra,
+    Verdict,
+    changeable,
+    doubt,
+    match,
+    no_new_features,
+    validate,
+)
 
 
 class Stage(StrEnum):
@@ -51,6 +60,7 @@ class Session:
     position: Position | None = None
     chosen: dict[str, tuple[str, ...]] = field(default_factory=dict)
     origins: dict[str, Origin] = field(default_factory=dict)
+    numbers: dict[str, float] = field(default_factory=dict)
     extras: list[Extra] = field(default_factory=list)
     extras_allowed: bool = True
     message: str | None = None
@@ -76,6 +86,21 @@ class Session:
             if q.required and q.name not in self.chosen
         ]
 
+    @property
+    def entered(self) -> dict[str, float]:
+        qs = {q.name: q for q in self.characteristics}
+        return {
+            name: x
+            for name, x in self.numbers.items()
+            if name in qs and self.chosen.get(name) == (match(qs[name], x),)
+        }
+
+    @property
+    def doubts(self) -> dict[str, Doubt]:
+        qs = {q.name: q for q in self.characteristics}
+        found = {name: doubt(qs[name], x) for name, x in self.entered.items()}
+        return {name: code for name, code in found.items() if code}
+
     def result(self) -> dict:
         p = self.position
         if p is None:
@@ -91,6 +116,8 @@ class Session:
                 if c.kind == FIXED
             },
             "chosen": {n: list(v) for n, v in self.chosen.items()},
+            "entered": self.entered,
+            "doubts": self.doubts,
             "extras": [asdict(e) for e in self.extras],
         }
 
@@ -130,6 +157,7 @@ async def _enter_spec(s: Session, index: Index, p: Position) -> None:
     s.extras_allowed = not no_new_features(index, p)
     s.chosen = dict(await extract("\n".join(s.context), s.characteristics))
     s.origins = dict.fromkeys(s.chosen, Origin.DESCRIPTION)
+    s.numbers = {}
 
 
 async def start(index: Index, text: str) -> Session:
@@ -153,6 +181,7 @@ async def _enter_group(s: Session, index: Index, p: Position) -> None:
     s.position = None
     s.chosen = {}
     s.origins = {}
+    s.numbers = {}
     s.extras = []
     found = await extract(s.corrected, questions(s.leaves, {}))
     s.from_description = {n: v[0] for n, v in found.items()}
@@ -223,6 +252,25 @@ def set_values(s: Session, values: dict[str, list[str]]) -> None:
             s.chosen.pop(name, None)
             s.origins.pop(name, None)
     s.message = None
+
+
+def set_number(s: Session, name: str, x: float | None) -> None:
+    _expect(s, Stage.SPEC)
+    q = next((q for q in s.characteristics if q.name == name), None)
+    if q is None or not q.ranges or q.multiple:
+        raise InputError(f"«{name}» не принимает числовое значение")
+    s.message = None
+    if x is None:
+        s.chosen.pop(name, None)
+        s.origins.pop(name, None)
+        s.numbers.pop(name, None)
+        return
+    label = match(q, x)
+    if label is None:
+        raise InputError(f"«{name}»: {x:g} не попадает ни в один диапазон КТРУ")
+    s.chosen[name] = (label,)
+    s.origins[name] = Origin.MANUAL
+    s.numbers[name] = x
 
 
 async def describe(s: Session, text: str, name: str | None = None) -> None:
