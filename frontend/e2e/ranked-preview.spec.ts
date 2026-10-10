@@ -132,7 +132,9 @@ for (const mobile of [false, true]) {
     const rest = page.getByRole("list", { name: portal.rejectedLabel })
     await expect(rest.locator("li")).toHaveCount(rejected.length)
     await expect(rest.locator("li").first()).toContainText("6")
-    await expect(rest.getByRole("button")).toHaveCount(0)
+    await expect(rest.getByRole("button", { name: /Выбрать/ })).toHaveCount(rejected.length)
+    await expect(page.getByText(portal.bestMatch)).toHaveCount(1)
+    await expect(page.locator("li[data-id]").first()).toContainText(portal.bestMatch)
     const reason = rest.getByText(rejected[0]?.reason ?? "")
     await expect(reason).toBeVisible()
     expect(await reason.evaluate((node) => getComputedStyle(node).color)).not.toBe(

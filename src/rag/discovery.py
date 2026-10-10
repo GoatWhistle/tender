@@ -160,7 +160,7 @@ async def select(
 ) -> Session:
     if search.stage != "ranked":
         raise StageError("дождитесь ранжирования")
-    if not any(r.hit.position.code == code for r in search.ranked[:5]):
+    if not any(r.hit.position.code == code for r in search.ranked):
         raise InputError("выберите одну из предложенных групп")
     if automatic and code != search.auto_select_code:
         raise InputError("автоматический выбор этой группы не подтверждён")

@@ -7,9 +7,13 @@ import styles from "./search-candidate.module.css"
 export function RejectedCandidates({
   candidates,
   offset,
+  disabled,
+  choose,
 }: {
   readonly candidates: Search["rejected"]
   readonly offset: number
+  readonly disabled: boolean
+  readonly choose: (code: string) => void
 }) {
   const { t } = useTranslation("portal")
   if (!candidates.length) return null
@@ -18,7 +22,14 @@ export function RejectedCandidates({
       <ol className={styles.rejected} start={offset + 1} aria-label={t("rejectedLabel")}>
         {candidates.map((candidate, index) => (
           <li key={candidate.id}>
-            <SearchCandidate candidate={candidate} index={offset + index} ready disabled />
+            <SearchCandidate
+              candidate={candidate}
+              index={offset + index}
+              ready
+              rejected
+              disabled={disabled}
+              choose={choose}
+            />
           </li>
         ))}
       </ol>

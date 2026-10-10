@@ -42,6 +42,7 @@
   "candidatesNote": "These are initial candidates. Checking against your description.",
   "ranking": "Refining the results…",
   "rankedTitle": "Choose a matching catalog item",
+  "bestMatch": "Best match",
   "rejectedTitle": "Not shortlisted: {{count}}",
   "rejectedLabel": "Items left out of the shortlist",
   "rankedNote": "The closest match is highlighted first. You can also choose any other item.",

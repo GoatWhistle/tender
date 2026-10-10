@@ -23,6 +23,10 @@
   border-bottom: var(--line) solid var(--border-default);
   background: var(--surface-panel);
 }
+.list > li[data-best="true"] {
+  --category-icon-surface: var(--surface-panel);
+  background: var(--surface-user);
+}
 .list > li[data-state="exiting"] {
   background: var(--surface-danger);
 }

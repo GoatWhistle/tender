@@ -50,11 +50,13 @@ export function SearchResults({
             key={candidate.id}
             data-id={candidate.id}
             data-state={phase === "exiting" && !kept.has(candidate.id) ? "exiting" : "entered"}
+            data-best={finalized && index === 0}
           >
             <SearchCandidate
               candidate={candidate}
               index={index}
               ready={phase === "ready"}
+              best={phase === "ready" && finalized && index === 0}
               disabled={busy || phase !== "ready"}
               choose={choose}
             />
@@ -62,7 +64,12 @@ export function SearchResults({
         ))}
       </ol>
       {phase === "ready" && (
-        <RejectedCandidates candidates={search.rejected} offset={search.candidates.length} />
+        <RejectedCandidates
+          candidates={search.rejected}
+          offset={search.candidates.length}
+          disabled={busy}
+          choose={choose}
+        />
       )}
       {!visible.length && <p>{t("portal:emptyText")}</p>}
     </section>
