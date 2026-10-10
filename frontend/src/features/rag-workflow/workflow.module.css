@@ -31,22 +31,6 @@
   max-width: 48ch;
   color: var(--text-muted);
 }
-.loading {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-  min-height: 80px;
-  padding: var(--space-5);
-  margin-bottom: var(--space-6);
-  background: var(--surface-panel);
-  text-align: center;
-  font-size: var(--font-lg);
-  font-weight: var(--weight-semibold);
-}
 .error {
   margin-top: var(--space-5);
   padding: var(--space-4);

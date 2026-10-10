@@ -1,4 +1,7 @@
 :root {
+  --visibility-delay: 0ms;
+  --loading-delay: 400ms;
+  --notice-scale: 0.95;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --dur-press: 140ms;
   --dur-fast-exit: 110ms;
@@ -28,6 +31,7 @@
   --motion-spin: spin var(--dur-spin) linear infinite;
 }
 :root[data-input="keyboard"] {
+  --notice-scale: 1;
   --dur-press: 0ms;
   --dur-fast-exit: 0ms;
   --dur-base: 0ms;
@@ -43,6 +47,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   :root {
+    --notice-scale: 1;
     --dur-press: 1ms;
     --dur-fast-exit: 1ms;
     --dur-base: 1ms;

@@ -1,0 +1,49 @@
+.anchor {
+  position: relative;
+  flex-shrink: 0;
+  height: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.notice {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: max-content;
+  max-width: min(480px, calc(100vw - var(--space-page) * 2));
+  padding: var(--space-1) 0;
+  color: var(--text-primary);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-regular);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--enter-offset)) scale(var(--notice-scale));
+  transform-origin: bottom center;
+  transition:
+    opacity var(--dur-fast-exit) var(--ease-out),
+    transform var(--dur-fast-exit) var(--ease-out),
+    visibility var(--visibility-delay) var(--dur-fast-exit);
+}
+.indicator {
+  flex-shrink: 0;
+  width: var(--space-6);
+  height: var(--space-6);
+}
+.indicator > span {
+  width: 100%;
+  height: 100%;
+}
+.notice[data-state="open"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    visibility var(--visibility-delay);
+}

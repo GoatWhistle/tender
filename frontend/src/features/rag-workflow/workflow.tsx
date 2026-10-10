@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useRagWorkflow } from "@/entities/rag"
 import { ApiError } from "@/shared/api/client"
-import { Spinner } from "@/shared/motion/primitives"
 import { Button } from "@/shared/ui/button"
 import { CatalogArtwork } from "@/shared/ui/catalog-artwork/catalog-artwork"
 import { Composer } from "@/shared/ui/composer"
+import { LoadingNotice } from "@/shared/ui/loading-notice/loading-notice"
 import { Stepper } from "@/shared/ui/stepper"
 import { Clarification } from "./clarification"
 import { Conversation } from "./conversation"
@@ -55,14 +55,6 @@ export function RagWorkflow() {
     <section className={styles.workspace} aria-label={t("portal:workspace")}>
       <Stepper current={step} complete={session?.stage === "done"} />
       <div ref={scroll} className={styles.content}>
-        {flow.busy && (
-          <div className={styles.loading} role="status">
-            <Spinner />
-            <div>
-              <span>{t(status[flow.operation as keyof typeof status])}</span>
-            </div>
-          </div>
-        )}
         {flow.busy && !search && (
           <div className={styles.waitingArt}>
             <CatalogArtwork />
@@ -130,6 +122,7 @@ export function RagWorkflow() {
           </div>
         )}
       </div>
+      <LoadingNotice busy={flow.busy} label={t(status[flow.operation as keyof typeof status])} />
       {session ? (
         <Conversation flow={flow} inputRef={input} />
       ) : (
