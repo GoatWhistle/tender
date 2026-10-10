@@ -1,4 +1,4 @@
-import { NotFound } from "./types";
+import { ApiError, NetworkError, NotFound } from "./types";
 import type { ProductQuery, SellerApi, StorefrontApi } from "./types";
 
 // Эндпоинты витрины на бэкенде — `/api/v1/storefront/...`; фильтры — повторяющийся
@@ -18,14 +18,6 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 function get<T>(path: string, params?: URLSearchParams): Promise<T> {
   const qs = params?.toString();
   return request(`${BASE}${path}${qs ? `?${qs}` : ""}`);
-}
-
-function send<T>(method: "POST" | "PATCH", url: string, body?: unknown): Promise<T> {
-  return request(url, {
-    method,
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body ?? {}),
-  });
 }
 
 function productParams(q: ProductQuery): URLSearchParams {
@@ -50,20 +42,37 @@ export const httpApi: StorefrontApi = {
   product: (id) => get(`/products/${encodeURIComponent(id)}`),
 };
 
-// Сессии карточки поставщика — `/api/v1/sessions/...` (раздел 12.1 плана).
+// Сессии поставщика — `/api/v1/sessions/...`, контракт в `docs/sessions.md`. Ошибки бэкенда —
+// `{code, message}`; ответ без такого тела (422 FastAPI, 5xx прокси) — `ApiError` без кода.
 const SESSIONS = "/api/v1/sessions";
 
+async function sessionRequest<T>(url: string, init?: RequestInit): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch(url, init);
+  } catch (e) {
+    throw new NetworkError((e as Error).message);
+  }
+  const body = (await res.json().catch(() => undefined)) as unknown;
+  if (res.ok) {
+    if (body === undefined) throw new NetworkError("Ответ сервера не прочитан");
+    return body as T;
+  }
+  const error = body as { code?: unknown; message?: unknown } | undefined;
+  if (typeof error?.code === "string" && typeof error.message === "string")
+    throw new ApiError(res.status, error.code, error.message);
+  throw new ApiError(res.status, null, `${res.status} ${res.statusText}`.trim());
+}
+
+const session = (id: string) => `${SESSIONS}/${encodeURIComponent(id)}`;
+
 export const sellerApi: SellerApi = {
-  create: (text) => send("POST", SESSIONS, { text }),
-  get: (id) => request(`${SESSIONS}/${encodeURIComponent(id)}`),
-  message: (id, text) => send("POST", `${SESSIONS}/${encodeURIComponent(id)}/messages`, { text }),
-  answer: (id, questionId, option) =>
-    send("POST", `${SESSIONS}/${encodeURIComponent(id)}/answers`, {
-      question_id: questionId,
-      option,
-    }),
-  editFact: (id, key, valueCode) =>
-    send("PATCH", `${SESSIONS}/${encodeURIComponent(id)}/facts/${encodeURIComponent(key)}`, {
-      value_code: valueCode,
+  create: () => sessionRequest(SESSIONS, { method: "POST" }),
+  get: (id) => sessionRequest(session(id)),
+  message: (id, text, idempotencyKey) =>
+    sessionRequest(`${session(id)}/messages`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "Idempotency-Key": idempotencyKey },
+      body: JSON.stringify({ text }),
     }),
 };

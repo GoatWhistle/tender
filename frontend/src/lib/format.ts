@@ -33,13 +33,6 @@ export function shortLabel(label: string, u: string | null): string {
   return `${label.slice(0, -u.length).trimEnd()} ${unit(u)}`.trim();
 }
 
-/** Значение КТРУ с полным наименованием ОКЕИ в конце: «< 350 Миллиметр» → «< 350 мм». */
-export function shortValue(label: string): string {
-  for (const [name, short] of Object.entries(UNITS))
-    if (label.endsWith(` ${name}`)) return `${label.slice(0, -name.length)}${short}`;
-  return label;
-}
-
 export const plural = (n: number, one: string, few: string, many: string) => {
   const m10 = n % 10;
   const m100 = n % 100;

@@ -104,99 +104,77 @@ export interface StorefrontApi {
 
 export class NotFound extends Error {}
 
-// ---------- Карточка поставщика: описание → характеристики → код КТРУ ----------
+// ---------- Сессия поставщика: описание → группа КТРУ → позиции ----------
+// Зеркало `SessionState` бэкенда (`/api/docs`, `docs/sessions.md`). UI ничего не пересчитывает.
 
 export type SessionStatus =
-  /** нечего анализировать: тип товара не распознан */
-  | "no_match"
-  /** нужен ответ: несколько кандидатов или пустые обязательные поля */
-  | "needs_clarification"
-  /** код выбран, но обязательные поля остались неизвестными */
   | "draft"
-  /** код выбран и все обязательные поля заполнены */
-  | "complete";
+  | "needs_clarification"
+  | "resolved"
+  | "technical_error"
+  /** зарезервированы бэкендом, пока не выставляются */
+  | "out_of_scope"
+  | "ambiguous_in_catalog"
+  | "conflict";
 
-export type FactSource = "description" | "answer" | "edit";
+export type SessionMessage = { id: string; text: string; created_at: string };
 
-/** Характеристика, извлечённая из описания или ответа. Ключ — название характеристики. */
-export type Fact = {
-  key: string;
-  name: string;
-  /** цитата из описания, из которой взято значение */
-  quote: string | null;
-  /** исходная запись до нормализации, если отличается: «1,2 м» */
-  raw: string | null;
-  /** нормализованное значение в единице позиции: «120 см» */
-  value: string;
-  value_code: string | null;
-  unit: string | null;
-  source: FactSource;
-  state: "accepted" | "error";
-  note: string | null;
+export type NarrowingPath = {
+  category: string;
+  group: { code: string; name: string };
+  positions: number;
 };
 
-export type IssueKind = "typo" | "unit" | "range" | "unknown_value" | "no_match" | "not_in_position";
+export type MethodContribution = { rank: number | null; contribution: number };
 
-export type Issue = {
-  id: string;
-  kind: IssueKind;
-  /** что не так — коротко */
-  title: string;
-  /** почему и что сделать */
-  detail: string;
-  quote: string | null;
-  suggestion: string | null;
-  /** ключ факта, к которому относится замечание: его можно исправить значением из справочника */
-  fact_key: string | null;
-};
-
-export type Candidate = {
+export type Alternative = {
   code: string;
   name: string;
   category: string;
-  compatible: boolean;
-  /** почему исключена */
-  reason: string | null;
+  score: number;
+  methods: Record<string, MethodContribution>;
 };
 
-export type QuestionOption = { code: string; label: string };
+export type Candidate = { code: string; name: string; excluded: boolean };
 
-export type Question = {
-  id: string;
-  kind: "position" | "characteristic";
-  text: string;
-  hint: string | null;
-  options: QuestionOption[];
-  allow_unknown: boolean;
-};
-
-export type Message = { role: "user" | "system"; text: string };
+export type AnalysisError = { code: string; message: string };
 
 export type SessionState = {
   session_id: string;
   revision: number;
-  status: SessionStatus;
-  messages: Message[];
-  facts: Fact[];
-  issues: Issue[];
+  /** незнакомое значение возможно: бэкенд может добавить статус раньше фронта */
+  status: SessionStatus | (string & {});
+  messages: SessionMessage[];
+  path: NarrowingPath | null;
+  alternatives: Alternative[];
   candidates: Candidate[];
-  candidate_counts: { retrieved: number; compatible: number; excluded: number };
-  position: { code: string; name: string; category: string; okpd2: string } | null;
-  card_complete: boolean;
-  /** обязательные характеристики выбранной позиции */
-  required: string[];
-  missing_required: string[];
-  /** допустимые значения для правки фактов — по ключу факта; только когда позиция выбрана */
-  editable: Record<string, QuestionOption[]>;
-  next_question: Question | null;
+  candidate_counts: { in_group: number; compatible: number; excluded_by_rules: number };
+  /** пока всегда пуст */
+  facts: unknown[];
+  errors: AnalysisError[];
+  warnings: string[];
+  /** пока всегда null */
+  next_question: unknown;
 };
 
 export interface SellerApi {
-  create(text: string): Promise<SessionState>;
+  /** POST /api/v1/sessions без тела */
+  create(): Promise<SessionState>;
   get(id: string): Promise<SessionState>;
-  message(id: string, text: string): Promise<SessionState>;
-  /** option — код варианта или null («не знаю») */
-  answer(id: string, questionId: string, option: string | null): Promise<SessionState>;
-  /** valueCode — новое значение из допустимых или null — удалить факт */
-  editFact(id: string, key: string, valueCode: string | null): Promise<SessionState>;
+  /** idempotencyKey — заголовок `Idempotency-Key`, свой на каждую попытку */
+  message(id: string, text: string, idempotencyKey: string): Promise<SessionState>;
 }
+
+/** Ответ API с телом ошибки `{code, message}` или без него (422 FastAPI, 5xx прокси). */
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    readonly code: string | null,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
+/** Запрос не дошёл до сервера или ответ не прочитан. */
+export class NetworkError extends Error {}

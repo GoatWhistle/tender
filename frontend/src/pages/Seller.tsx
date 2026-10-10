@@ -1,96 +1,78 @@
-// Карточка поставщика: описание своими словами → характеристики по КТРУ → код позиции.
-// Четыре области из плана (раздел 13): описание и история, характеристики, кандидаты КТРУ,
-// следующее действие.
-import { useEffect, useRef, useState, type FormEvent } from "react";
+// Экран поставщика: описание своими словами → группа КТРУ → оставшиеся позиции.
+// Четыре области: описание и история, характеристики, кандидаты и путь сужения, следующее
+// действие. Данные — `SessionState` бэкенда как есть; статусы и счётчики UI не вычисляет.
+import { useEffect, useMemo, useSyncExternalStore, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { sellerApi, type Fact, type Issue, type SessionState } from "../api";
-import { Ring } from "../components/Ring";
-import { plural, shortValue } from "../lib/format";
+import { sellerApi, type SessionState } from "../api";
+import { plural } from "../lib/format";
+import {
+  MAX_TEXT,
+  createSellerSession,
+  textLength,
+  type Failure,
+  type SellerSession,
+  type SellerView,
+} from "../lib/sellerSession";
 
 const EXAMPLES = [
-  "Стол письменный угловой, деревяный каркас, столешница ЛДСП, для персонала",
+  "Стол письменный угловой, деревянный каркас, столешница ЛДСП, для персонала",
   "Шкаф для одежды металлический, глубина 0,55 м",
-  "Электролобзик, мощность 5 кг, толщина дерева 8 см, тип питания: солнечная батарея",
-  "Шкаф для одежды",
+  "Электролобзик, мощность 500 Вт, глубина пропила по дереву 80 мм",
+  "Бумага для офисной техники А4, плотность 80 г/м²",
 ];
 
-const SOURCE: Record<Fact["source"], string> = {
-  description: "Описание",
-  answer: "Ответ",
-  edit: "Правка",
-};
-
-const STATUS: Record<SessionState["status"], string> = {
-  no_match: "Товар не распознан",
+/** Подписи известных статусов; зарезервированные и незнакомые — нейтральной подписью. */
+const STATUS: Record<string, string> = {
+  draft: "Ждём описание",
   needs_clarification: "Нужно уточнение",
-  draft: "Черновик",
-  complete: "Карточка готова",
+  resolved: "Позиция определена",
+  technical_error: "Технический сбой",
 };
 
-function useSession() {
+const known = (status: string) => Object.hasOwn(STATUS, status);
+const statusLabel = (status: string) => (known(status) ? STATUS[status] : "Анализ завершён");
+const statusClass = (status: string) => (known(status) ? status : "neutral");
+const positions = (n: number) => `${n} ${plural(n, "позиция", "позиции", "позиций")}`;
+
+/** Сессия экрана и её связь с `?s=`: вся синхронизация адреса — здесь. */
+function useSellerSession(): [SellerView, SellerSession] {
+  const store = useMemo(() => createSellerSession(sellerApi), []);
+  const view = useSyncExternalStore(store.subscribe, store.view);
   const [params, setParams] = useSearchParams();
-  const id = params.get("s");
-  const [state, setState] = useState<SessionState | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const seq = useRef(0);
+  const urlId = params.get("s");
 
-  // ответы на устаревшие запросы отбрасываем
-  const run = async (call: () => Promise<SessionState>) => {
-    const n = ++seq.current;
-    setBusy(true);
-    setError(null);
-    try {
-      const next = await call();
-      if (n !== seq.current) return;
-      setState(next);
-      if (next.session_id !== id) setParams({ s: next.session_id }, { replace: true });
-    } catch (e) {
-      if (n === seq.current) setError((e as Error).message);
-    } finally {
-      if (n === seq.current) setBusy(false);
-    }
-  };
-
+  // адрес → сессия: открыть по ?s= или сбросить, если параметр убрали (назад в истории)
   useEffect(() => {
-    if (id && state?.session_id !== id) run(() => sellerApi.get(id));
-    if (!id) setState(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    const current = store.view().sessionId;
+    if (urlId && urlId !== current) void store.open(urlId);
+    if (!urlId && current) store.reset();
+  }, [urlId, store]);
 
-  const reset = () => {
-    seq.current++;
-    setState(null);
-    setError(null);
-    setParams({}, { replace: false });
-  };
+  // сессия → адрес: новая сессия попадает в ?s=, сброшенная или не найденная — убирает его;
+  // читаем store, а не снимок рендера: open из эффекта выше уже мог сменить сессию
+  useEffect(() => {
+    const current = store.view().sessionId;
+    if (current !== urlId) setParams(current ? { s: current } : {}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- только на смену сессии
+  }, [view.sessionId]);
 
-  return { state, busy, error, run, reset };
+  return [view, store];
 }
 
-function Composer({
-  state,
-  busy,
-  onSubmit,
-}: {
-  state: SessionState | null;
-  busy: boolean;
-  onSubmit: (text: string) => void;
-}) {
-  const [text, setText] = useState("");
-  const said = state?.messages.filter((m) => m.role === "user") ?? [];
+function Composer({ view, store }: { view: SellerView; store: SellerSession }) {
+  const { state, draft, busy } = view;
+  const length = textLength(draft.trim());
+  const tooLong = length > MAX_TEXT;
   const submit = (e?: FormEvent) => {
     e?.preventDefault();
-    if (!text.trim() || busy) return;
-    onSubmit(text.trim());
-    setText("");
+    void store.submit();
   };
   return (
     <form className="composer" onSubmit={submit}>
-      {said.length > 0 && (
+      {state && state.messages.length > 0 && (
         <ol className="said" aria-label="Уже написано">
-          {said.map((m, i) => (
-            <li key={i}>{m.text}</li>
+          {state.messages.map((m) => (
+            <li key={m.id}>{m.text}</li>
           ))}
         </ol>
       )}
@@ -101,31 +83,37 @@ function Composer({
         id="describe"
         className="composer__input"
         rows={state ? 2 : 4}
-        value={text}
+        value={draft}
         autoFocus
+        aria-invalid={tooLong || undefined}
+        aria-describedby="describe-hint"
         placeholder={
           state
             ? "Дополните описание: например, «глубина 60 см, каркас металлический»"
             : "Опишите товар своими словами: что это, материал, размеры, мощность…"
         }
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => store.setDraft(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
+          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
             submit();
           }
         }}
       />
       <div className="composer__bar">
-        <span className="composer__hint">Enter — отправить · Shift + Enter — перенос</span>
-        <button className="pill pill--dark" disabled={busy || !text.trim()}>
+        <span id="describe-hint" className={tooLong ? "composer__hint is-over" : "composer__hint"}>
+          {length > MAX_TEXT * 0.9
+            ? `${length} из ${MAX_TEXT} символов`
+            : "Enter — отправить · Shift + Enter — перенос"}
+        </span>
+        <button className="pill pill--dark" disabled={!draft.trim()}>
           {busy ? "Анализ…" : state ? "Дополнить" : "Подобрать КТРУ"}
         </button>
       </div>
       {!state && (
-        <div className="examples" aria-label="Примеры">
+        <div className="examples" role="group" aria-label="Примеры описаний">
           {EXAMPLES.map((x) => (
-            <button key={x} type="button" className="example" onClick={() => setText(x)}>
+            <button key={x} type="button" className="example" onClick={() => store.setDraft(x)}>
               {x}
             </button>
           ))}
@@ -135,304 +123,190 @@ function Composer({
   );
 }
 
-const ISSUE_LABEL: Record<Issue["kind"], string> = {
-  typo: "Опечатка",
-  unit: "Не та единица",
-  range: "Проверьте значение",
-  unknown_value: "Нет в справочнике",
-  no_match: "Не распознано",
-  not_in_position: "Не из этой позиции",
-};
-
-/** Карточки, которые «выпадают» под полем ввода: вопрос, замечания и итог. */
-function Cards({
-  state,
-  busy,
-  answer,
-  edit,
-}: {
-  state: SessionState;
-  busy: boolean;
-  answer: (questionId: string, option: string | null) => void;
-  edit: (key: string, valueCode: string | null) => void;
-}) {
-  const q = state.next_question;
-  const cards: { key: string; node: JSX.Element }[] = [];
-
-  if (q)
-    cards.push({
-      key: q.id,
-      node: (
-        <article className="card-x card-x--question">
-          <p className="card-x__eyebrow">Уточнение</p>
-          <h2 className="card-x__title">{q.text}</h2>
-          {q.hint && <p className="card-x__text">{q.hint}</p>}
-          <div className="options">
-            {q.options.map((o) => (
-              <button
-                key={o.code}
-                className="option"
-                disabled={busy}
-                onClick={() => answer(q.id, o.code)}
-              >
-                {shortValue(o.label)}
-              </button>
-            ))}
-          </div>
-          {q.allow_unknown && (
-            <button className="card-x__skip" disabled={busy} onClick={() => answer(q.id, null)}>
-              Не знаю — пропустить
-            </button>
-          )}
-        </article>
-      ),
-    });
-
-  for (const i of state.issues) {
-    const options = i.fact_key ? state.editable[i.fact_key] : undefined;
-    cards.push({
-      key: i.id,
-      node: (
-        <article className={`card-x card-x--issue card-x--${i.kind}`}>
-          <p className="card-x__eyebrow">
-            <span className="card-x__dot" aria-hidden="true" />
-            {ISSUE_LABEL[i.kind]}
-          </p>
-          <h2 className="card-x__title">{i.title}</h2>
-          <p className="card-x__text">{i.detail}</p>
-          {i.quote && <p className="card-x__quote">«{i.quote}»</p>}
-          {options && (
-            <label className="select card-x__fix">
-              <span className="sr-only">Исправить «{i.fact_key}»</span>
-              <select
-                value=""
-                disabled={busy}
-                onChange={(e) => edit(i.fact_key!, e.target.value)}
-              >
-                <option value="" disabled>
-                  Выбрать верное значение…
-                </option>
-                {options.map((o) => (
-                  <option key={o.code} value={o.code}>
-                    {shortValue(o.label)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-        </article>
-      ),
-    });
-  }
-
-  if (!q && state.position) {
-    const done = state.status === "complete";
-    cards.push({
-      key: `result-${state.status}`,
-      node: (
-        <article className={done ? "card-x card-x--done" : "card-x card-x--draft"}>
-          <p className="card-x__eyebrow">{done ? "Готово" : "Черновик"}</p>
-          <h2 className="card-x__title">
-            {done ? "Обязательные характеристики заполнены" : "Не хватает обязательных полей"}
-          </h2>
-          <p className="card-x__text">
-            {done
-              ? `Позиция КТРУ ${state.position.code} — «${state.position.name}». Проверьте значения в карточке товара.`
-              : `Не заполнено: ${state.missing_required.join(", ")}. Допишите в описании или выберите значение в карточке товара.`}
-          </p>
-        </article>
-      ),
-    });
-  }
-
-  if (!cards.length) return null;
+function FailureCard({ failure }: { failure: Failure }) {
   return (
-    <section className="cards" aria-label="Уточнения и замечания" aria-live="polite">
-      {cards.map((c, n) => (
-        <div
-          key={c.key}
-          className="cards__item"
-          style={{ animationDelay: `${n * 60}ms` }}
-        >
-          {c.node}
-        </div>
+    <article className="card-x card-x--issue" role="alert">
+      <p className="card-x__eyebrow">
+        <span className="card-x__dot" aria-hidden="true" />
+        Сбой
+      </p>
+      <h2 className="card-x__title">{failure.title}</h2>
+      <p className="card-x__text">{failure.text}</p>
+      {failure.details.map((d) => (
+        <p key={d} className="card-x__quote">
+          {d}
+        </p>
       ))}
+    </article>
+  );
+}
+
+/** Что делать дальше: по статусу из ответа. Вопросы и ответы — следующими тикетами. */
+function NextStep({ state }: { state: SessionState }) {
+  const { status, path } = state;
+  let title: string;
+  let text: string;
+  if (status === "draft") {
+    title = "Опишите товар";
+    text = "Что это, материал, размеры, мощность — своими словами.";
+  } else if (!path) {
+    title = "Группа КТРУ не найдена";
+    text = "Опишите товар подробнее: назначение, материал, ключевые свойства.";
+  } else if (status === "needs_clarification") {
+    title = `В группе осталось ${positions(path.positions)}`;
+    text = "Допишите в описании характеристики, которые отличают ваш товар.";
+  } else if (status === "resolved") {
+    const chosen = state.candidates.find((c) => !c.excluded);
+    title = "Позиция КТРУ определена";
+    text = chosen ? `${chosen.code} — «${chosen.name}».` : "Осталась одна позиция.";
+  } else {
+    title = statusLabel(status);
+    text = "Проверьте группу и позиции в карточке справа.";
+  }
+  return (
+    <article className="card-x card-x--step">
+      <p className={`status status--${statusClass(status)}`}>
+        <span className="status__dot" aria-hidden="true" />
+        {statusLabel(status)}
+      </p>
+      <h2 className="card-x__title">{title}</h2>
+      <p className="card-x__text">{text}</p>
+      {state.next_question != null && (
+        <p className="card-x__text">Уточняющие вопросы пока отвечаются только описанием.</p>
+      )}
+      {state.warnings.map((w) => (
+        <p key={w} className="card-x__quote">
+          {w}
+        </p>
+      ))}
+    </article>
+  );
+}
+
+function NextAction({ view }: { view: SellerView }) {
+  const { state, failure } = view;
+  if (!failure && (!state || state.status === "technical_error")) return null;
+  return (
+    <section className="cards" aria-label="Следующее действие" aria-live="polite">
+      <div className="cards__item">
+        {failure ? <FailureCard failure={failure} /> : state && <NextStep state={state} />}
+      </div>
     </section>
   );
 }
 
-function Characteristics({
-  state,
-  busy,
-  edit,
-}: {
-  state: SessionState;
-  busy: boolean;
-  edit: (key: string, valueCode: string | null) => void;
-}) {
-  const required = new Set(state.required);
-  const rows: (Fact | { key: string; name: string; missing: true })[] = [
-    ...state.facts,
-    ...state.missing_required
-      .filter((name) => !state.facts.some((f) => f.key === name))
-      .map((name) => ({ key: name, name, missing: true as const })),
-  ];
-  const free = Object.keys(state.editable).filter((k) => !rows.some((r) => r.key === k));
-  const [adding, setAdding] = useState("");
+function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
+  const { path, status } = state;
+  return (
+    <div className="summary">
+      <div className="summary__text">
+        <p className={`status status--${statusClass(status)}`}>
+          <span className="status__dot" aria-hidden="true" />
+          {statusLabel(status)}
+          {busy && <span className="status__busy">· анализ…</span>}
+        </p>
+        <p className="summary__title">
+          {path?.group.name ??
+            (status === "technical_error"
+              ? "Анализ не выполнен"
+              : status === "draft"
+                ? "Группа КТРУ не выбрана"
+                : "Группа КТРУ не найдена")}
+        </p>
+        {path && (
+          <p className="summary__code">
+            {path.group.code} · {path.category}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
+function Characteristics({ state }: { state: SessionState }) {
   return (
     <section aria-labelledby="facts-title">
       <h2 id="facts-title" className="block-title">
         Характеристики
       </h2>
-      {rows.length === 0 ? (
-        <p className="muted">
-          Пока ничего не извлечено. Перечислите в описании материал, размеры и другие свойства.
-        </p>
-      ) : (
-        <div className="ptable-wrap">
-          <table className="ptable ftable">
-            <thead>
-              <tr>
-                <th scope="col">Характеристика</th>
-                <th scope="col">Из описания</th>
-                <th scope="col">Значение по КТРУ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => {
-                const f = "missing" in r ? null : r;
-                const options = state.editable[r.key];
-                return (
-                  <tr key={r.key} className={f?.state === "error" ? "is-error" : !f ? "is-missing" : ""}>
-                    <th scope="row">
-                      {r.name}
-                      {required.has(r.name) && <span className="spec__req">обяз.</span>}
-                    </th>
-                    <td data-label="Из описания" className="ftable__quote">
-                      {f?.quote ? `«${f.quote}»` : "—"}
-                      <span className="ptable__sub">{f ? SOURCE[f.source] : "Не указано"}</span>
-                    </td>
-                    <td data-label="Значение">
-                      {f && (
-                        <span className="ftable__value">
-                          {f.raw && (
-                            <>
-                              <span className="ftable__raw">{f.raw}</span>
-                              <span aria-label="приведено к">→</span>
-                            </>
-                          )}
-                          <strong>{shortValue(f.value)}</strong>
-                          {f.note && <span className="ftable__note">{f.note}</span>}
-                        </span>
-                      )}
-                      {options && (
-                        <select
-                          className="ftable__select"
-                          aria-label={`Изменить «${r.name}»`}
-                          disabled={busy}
-                          value=""
-                          onChange={(e) =>
-                            edit(r.key, e.target.value === "__remove" ? null : e.target.value)
-                          }
-                        >
-                          <option value="" disabled>
-                            {f ? "Изменить…" : "Выбрать значение…"}
-                          </option>
-                          {options.map((o) => (
-                            <option key={o.code} value={o.code}>
-                              {shortValue(o.label)}
-                            </option>
-                          ))}
-                          {f && <option value="__remove">Удалить значение</option>}
-                        </select>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {free.length > 0 && (
-        <div className="addfact">
-          <label className="select">
-            <span className="sr-only">Добавить характеристику</span>
-            <select value={adding} onChange={(e) => setAdding(e.target.value)} disabled={busy}>
-              <option value="">Добавить характеристику…</option>
-              {free.map((k) => (
-                <option key={k} value={k}>
-                  {k}
-                </option>
-              ))}
-            </select>
-          </label>
-          {adding && (
-            <label className="select">
-              <span className="sr-only">Значение</span>
-              <select
-                value=""
-                disabled={busy}
-                onChange={(e) => {
-                  edit(adding, e.target.value);
-                  setAdding("");
-                }}
-              >
-                <option value="">Значение…</option>
-                {state.editable[adding].map((o) => (
-                  <option key={o.code} value={o.code}>
-                    {shortValue(o.label)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-        </div>
-      )}
+      <p className="muted">
+        {state.facts.length
+          ? `Извлечено: ${state.facts.length}.`
+          : "Пока не извлекаются. Здесь появятся значения из описания, приведённые к справочнику КТРУ."}
+      </p>
     </section>
   );
 }
 
 function Candidates({ state }: { state: SessionState }) {
-  const { retrieved, compatible, excluded } = state.candidate_counts;
-  const ok = state.candidates.filter((c) => c.compatible);
-  const out = state.candidates.filter((c) => !c.compatible);
-  if (!retrieved) return null;
+  const { path, candidates, alternatives, status } = state;
+  const { in_group, compatible, excluded_by_rules } = state.candidate_counts;
   return (
     <section aria-labelledby="cands-title">
       <h2 id="cands-title" className="block-title">
         Кандидаты КТРУ
       </h2>
-      <div className="funnel" aria-label={`Найдено ${retrieved}, подходят ${compatible}, исключено ${excluded}`}>
-        <span>
-          Найдено <strong>{retrieved}</strong>
-        </span>
-        <span className="funnel__bar" aria-hidden="true">
-          <span style={{ width: `${(compatible / retrieved) * 100}%` }} />
-        </span>
-        <span>
-          подходят <strong>{compatible}</strong>
-        </span>
-      </div>
-      <ul className="cands">
-        {ok.map((c) => (
-          <li key={c.code} className={state.position?.code === c.code ? "cand is-chosen" : "cand"}>
-            <span className="cand__name">{c.name}</span>
-            <span className="cand__code">{c.code}</span>
-          </li>
-        ))}
-      </ul>
-      {out.length > 0 && (
+      {!path ? (
+        <p className="muted">
+          {status === "technical_error"
+            ? "Анализ не выполнен из-за сбоя — кандидатов пока нет."
+            : status === "draft"
+              ? "Появятся после первого описания."
+              : "Группа не найдена: допишите описание."}
+        </p>
+      ) : (
+        <>
+          <ol className="path" aria-label="Путь сужения">
+            <li>
+              <span className="path__label">Категория</span>
+              {path.category}
+            </li>
+            <li>
+              <span className="path__label">Группа {path.group.code}</span>
+              {path.group.name}
+            </li>
+            <li>
+              <span className="path__label">Осталось</span>
+              {positions(path.positions)}
+            </li>
+          </ol>
+          <p className="funnel">
+            <span>
+              В группе <strong>{in_group}</strong>
+            </span>
+            <span>
+              подходят <strong>{compatible}</strong>
+            </span>
+            {excluded_by_rules > 0 && (
+              <span>
+                исключено правилами <strong>{excluded_by_rules}</strong>
+              </span>
+            )}
+          </p>
+          {candidates.length > 0 && (
+            <details className="excluded" open={candidates.length <= 5}>
+              <summary>Позиции группы: {candidates.length}</summary>
+              <ul className="cands">
+                {candidates.map((c) => (
+                  <li key={c.code} className={c.excluded ? "cand cand--out" : "cand"}>
+                    <span className="cand__name">{c.name}</span>
+                    <span className="cand__code">{c.code}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </>
+      )}
+      {alternatives.length > 0 && (
         <details className="excluded">
-          <summary>
-            Исключены: {out.length}
-          </summary>
+          <summary>Другие группы: {alternatives.length}</summary>
           <ul className="cands">
-            {out.map((c) => (
-              <li key={c.code} className="cand cand--out">
-                <span className="cand__name">{c.name}</span>
-                <span className="cand__reason">{c.reason}</span>
+            {alternatives.map((a) => (
+              <li key={a.code} className="cand cand--alt">
+                <span className="cand__name">{a.name}</span>
+                <span className="cand__code">{a.code}</span>
+                <span className="cand__reason">{a.category}</span>
               </li>
             ))}
           </ul>
@@ -442,37 +316,9 @@ function Candidates({ state }: { state: SessionState }) {
   );
 }
 
-function Summary({ state, busy }: { state: SessionState; busy: boolean }) {
-  const total = state.required.length;
-  return (
-    <div className="summary">
-      <div className="summary__text">
-        <p className={`status status--${state.status}`}>
-          <span className="status__dot" aria-hidden="true" />
-          {STATUS[state.status]}
-          {busy && <span className="status__busy">· анализ…</span>}
-        </p>
-        <p className="summary__title">{state.position?.name ?? "Позиция КТРУ не выбрана"}</p>
-        <p className="summary__code">
-          {state.position
-            ? `${state.position.code} · ${state.position.category}`
-            : state.candidate_counts.compatible
-              ? `${state.candidate_counts.compatible} ${plural(state.candidate_counts.compatible, "кандидат", "кандидата", "кандидатов")}`
-              : "Нет кандидатов"}
-        </p>
-      </div>
-      {state.position && (
-        <Ring filled={total - state.missing_required.length} total={total} size={64} />
-      )}
-    </div>
-  );
-}
-
 export function Seller() {
-  const { state, busy, error, run, reset } = useSession();
-  const id = state?.session_id;
-  const edit = (key: string, code: string | null) => run(() => sellerApi.editFact(id!, key, code));
-
+  const [view, store] = useSellerSession();
+  const { state, busy } = view;
 
   return (
     <>
@@ -484,40 +330,18 @@ export function Seller() {
         </nav>
         <h1 className="pagehead__title">Новая карточка товара</h1>
         <p className="pagehead__sub">
-          Опишите товар своими словами — подберём позицию КТРУ, приведём значения к справочнику и
-          подскажем, чего не хватает.
+          Опишите товар своими словами — подберём группу КТРУ и покажем, сколько позиций осталось.
         </p>
       </section>
 
       <div className={state ? "seller seller--split" : "seller"}>
         <div className="seller__input">
-          <Composer
-            state={state}
-            busy={busy}
-            onSubmit={(text) =>
-              run(() => (id ? sellerApi.message(id, text) : sellerApi.create(text)))
-            }
-          />
-
-          {error && (
-            <div className="notice" role="alert">
-              <p className="notice__title">Не получилось</p>
-              <p>{error}</p>
-            </div>
-          )}
-
-          {state && (
-            <>
-              <Cards
-                state={state}
-                busy={busy}
-                answer={(q, o) => run(() => sellerApi.answer(id!, q, o))}
-                edit={edit}
-              />
-              <button className="textlink seller__reset" onClick={reset}>
-                Начать новую карточку
-              </button>
-            </>
+          <Composer view={view} store={store} />
+          <NextAction view={view} />
+          {(state || view.sessionId) && (
+            <button type="button" className="textlink seller__reset" onClick={store.reset}>
+              Начать новую карточку
+            </button>
           )}
         </div>
 
@@ -528,7 +352,7 @@ export function Seller() {
             aria-busy={busy}
           >
             <Summary state={state} busy={busy} />
-            <Characteristics state={state} busy={busy} edit={edit} />
+            <Characteristics state={state} />
             <Candidates state={state} />
           </aside>
         )}
