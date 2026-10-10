@@ -1,0 +1,62 @@
+.form {
+  display: contents;
+}
+
+.caption {
+  margin-block-end: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-p5);
+  line-height: var(--text-p5-line);
+}
+
+.sent {
+  display: grid;
+}
+
+.messages {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.message {
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-muted);
+  font-size: var(--text-p3);
+  line-height: var(--text-p3-line);
+  white-space: pre-wrap;
+  animation: var(--motion-enter);
+}
+
+.examples {
+  display: grid;
+}
+
+.exampleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.example {
+  min-block-size: var(--control-height-sm);
+  padding: var(--space-2) var(--space-4);
+  border: var(--line) solid var(--border-subtle);
+  background: var(--surface-card);
+  color: var(--text-link);
+  font-size: var(--text-p5);
+  line-height: var(--text-p5-line);
+  text-align: start;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.example:active {
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .example:hover {
+    border-color: var(--border-strong);
+  }
+}

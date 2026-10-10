@@ -1,0 +1,133 @@
+.page {
+  display: grid;
+  align-content: start;
+  gap: var(--space-10);
+  padding: var(--space-10) var(--gutter) var(--space-16);
+}
+
+.hero {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-12) var(--space-10);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  animation: var(--motion-enter);
+}
+
+.title {
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-h1-line);
+}
+
+.lead {
+  max-inline-size: 70ch;
+  color: var(--text-secondary);
+  font-size: var(--text-p3);
+  line-height: var(--text-p3-line);
+}
+
+.block {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.blockTitle {
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-h3-line);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-6);
+}
+
+.cardItem {
+  animation: var(--motion-enter);
+  animation-delay: calc(var(--i) * var(--stagger));
+}
+
+.card {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  block-size: 100%;
+  padding: var(--space-8) var(--space-16) var(--space-8) var(--space-8);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  color: var(--text-primary);
+  transition: transform var(--dur-press) var(--ease-out);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: var(--shadow-popup);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.card:active {
+  transform: scale(var(--press-scale-surface));
+}
+
+.cardName {
+  font-size: var(--text-h4);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-h4-line);
+}
+
+.cardMeta {
+  color: var(--text-secondary);
+}
+
+.cardArrow {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: var(--space-8);
+  color: var(--text-link);
+  transform: translateY(-50%);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.sell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-10);
+  background: var(--surface-card);
+  box-shadow: inset var(--line-strong) 0 0 var(--action-primary);
+}
+
+.sellText {
+  display: grid;
+  gap: var(--space-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover::after {
+    opacity: 1;
+  }
+
+  .card:hover .cardArrow {
+    transform: translate(var(--space-1), -50%);
+  }
+}
+
+@media (max-width: 47.99rem) {
+  .hero,
+  .sell {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .title {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3-line);
+  }
+}

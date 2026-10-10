@@ -1,0 +1,23 @@
+.question,
+.compact {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  animation: var(--motion-enter);
+}
+
+.question {
+  padding: var(--space-6);
+  background: var(--surface-muted);
+}
+
+.question > fieldset,
+.compact > fieldset {
+  justify-self: stretch;
+}
+
+.title {
+  font-size: var(--text-h6);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-h6-line);
+}

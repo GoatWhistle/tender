@@ -1,232 +1,229 @@
-# Tender Hack: автозаполнение характеристик СТЕ и подбор КТРУ
+<h1 align="center">Карточка товара по КТРУ из описания своими словами</h1>
 
-План реализации — `docs/Предлагаемое решение.md`. Трекер и порядок работы — `AGENTS.md`.
-Поля КТРУ и дерево групп — `docs/Словарь данных КТРУ.md`.
+<p align="center">
+  Поставщик пишет, что продаёт, как умеет: с опечатками и без половины свойств. Система находит
+  позицию КТРУ, сужает группу до одного кода и заполняет характеристики значениями из справочника.
+</p>
+
+<p align="center">
+  <!-- readme:buttons -->
+  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-run.dark.png"><img src="docs/readme/cta-run.light.png" alt="Запустить локально" width="226" height="44"></picture></a>
+  <a href="docs/for-jury.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-jury.dark.png"><img src="docs/readme/cta-jury.light.png" alt="Маршрут для жюри" width="222" height="44"></picture></a>
+  <a href="docs/README.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-docs.dark.png"><img src="docs/readme/cta-docs.light.png" alt="Документация" width="181" height="44"></picture></a>
+  <!-- /readme:buttons -->
+</p>
+
+<p align="center">
+  <!-- readme:status -->
+  <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-1.dark.png"><img src="docs/readme/badge-status-1.light.png" alt="группа в топ-5: 42 из 46" width="185" height="28"></picture></a>
+  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-2.dark.png"><img src="docs/readme/badge-status-2.light.png" alt="платные API: не нужны" width="183" height="28"></picture></a>
+  <a href="docs/evidence.md#хватает-ли-40-гб-видеопамяти"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-3.dark.png"><img src="docs/readme/badge-status-3.light.png" alt="VRAM: 37,1 из 40 ГБ" width="159" height="28"></picture></a>
+  <br>
+  <a href="docs/running.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-4.dark.png"><img src="docs/readme/badge-status-4.light.png" alt="тесты: 405 бэкенд и 66 фронт" width="224" height="28"></picture></a>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-5.dark.png"><img src="docs/readme/badge-status-5.light.png" alt="интерфейс: RU и EN" width="162" height="28"></picture>
+  <!-- /readme:status -->
+</p>
+
+<p align="center">
+  <!-- readme:stack -->
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-1.dark.png"><img src="docs/readme/badge-stack-1.light.png" alt="фронтенд: React 18 и TypeScript" width="239" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-2.dark.png"><img src="docs/readme/badge-stack-2.light.png" alt="API: FastAPI" width="108" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-3.dark.png"><img src="docs/readme/badge-stack-3.light.png" alt="хранилище: SQLite" width="156" height="28"></picture>
+  <br>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-4.dark.png"><img src="docs/readme/badge-stack-4.light.png" alt="поиск: Qwen3-Embedding 0.6B" width="228" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-5.dark.png"><img src="docs/readme/badge-stack-5.light.png" alt="проверка: OpenJev 4B" width="174" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-6.dark.png"><img src="docs/readme/badge-stack-6.light.png" alt="извлечение: Qwen3.5 9B" width="192" height="28"></picture>
+  <!-- /readme:stack -->
+</p>
+
+<p align="center">
+  <!-- readme:nav -->
+  <a href="#зачем-это"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-1.dark.png"><img src="docs/readme/badge-nav-1.light.png" alt="Зачем это" width="91" height="26"></picture></a>
+  <a href="#как-это-работает"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-2.dark.png"><img src="docs/readme/badge-nav-2.light.png" alt="Как это работает" width="135" height="26"></picture></a>
+  <a href="#попробовать-за-пять-минут"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-3.dark.png"><img src="docs/readme/badge-nav-3.light.png" alt="Попробовать" width="112" height="26"></picture></a>
+  <br>
+  <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-4.dark.png"><img src="docs/readme/badge-nav-4.light.png" alt="Результаты" width="100" height="26"></picture></a>
+  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-5.dark.png"><img src="docs/readme/badge-nav-5.light.png" alt="Запуск" width="69" height="26"></picture></a>
+  <a href="#устройство"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-6.dark.png"><img src="docs/readme/badge-nav-6.light.png" alt="Устройство" width="100" height="26"></picture></a>
+  <a href="#ограничения"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-7.dark.png"><img src="docs/readme/badge-nav-7.light.png" alt="Ограничения" width="114" height="26"></picture></a>
+  <!-- /readme:nav -->
+</p>
+
+> **Код КТРУ выдаётся, только когда по правилам справочника осталась ровно одна позиция.** Модели
+> находят кандидатов и проверяют формулировки, но код выбирают не они: статус «позиция определена»
+> вычисляется из оставшихся позиций, а тест `test_indistinct_positions_are_ambiguous_in_catalog`
+> падает, если неразличимые позиции получат код.
+
+## Зачем это
+
+Чтобы завести карточку на Портале поставщиков, нужно найти позицию КТРУ среди 1 967 позиций трёх
+категорий и для каждой характеристики выбрать допустимое значение и единицу. В выгрузках СТЕ
+299 926 строк, и один товар назван десятками способов: по названию из случайной строки выгрузки
+поиск ставит правильную группу первой лишь в 23 случаях из 42
+([доказательства](docs/evidence.md#как-часто-поиск-находит-правильную-группу)).
+
+Поставщик пишет «Шкаф для одежды металлический, глубина 0,55 м». Система находит группу «Шкаф для
+одежды металлический» из двух позиций, **исключает одну с причиной «вид товара: секция шкафа;
+указано шкаф»**, раскладывает глубину по характеристике с единицей и задаёт один вопрос про тип
+шкафа. После ответа карточка готова, с кодом `31.01.11.121-00000003`.
+
+## Как это работает
+
+```mermaid
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#264b82","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#5f6672","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"rgba(0, 0, 0, 0.64)","actorBkg":"#ffffff","actorBorder":"#264b82","fontFamily":"Open Sans"}}}%%
+flowchart LR
+    A["Описание товара"] --> B["Поиск групп<br/>TF-IDF, векторы, синонимы"]
+    B --> C["Проверка назначения<br/>OpenJev"]
+    C --> D{"Одна группа<br/>подтверждена?"}
+    D -- "нет" --> Q["Вопрос о назначении"]
+    D -- "да" --> E["Факты из текста<br/>и их проверка"]
+    E --> F["Правила КТРУ<br/>сужают позиции"]
+    F --> G{"Позиций осталось"}
+    G -- "одна" --> R["Код и карточка"]
+    G -- "несколько" --> Q2["Вопрос по различающей<br/>характеристике"]
+    G -- "ноль" --> K["Противоречие<br/>с причинами"]
+```
+
+<table>
+<tr>
+<td valign="top" width="33%">
+
+**1. Три метода поиска сливаются в один список**
+
+Символьные n-граммы ловят опечатки, векторы Qwen3-Embedding — смысл, словарь синонимов — бытовые
+названия вроде «болгарки». Ранги сливаются RRF, на проверку уходят десять групп.
+
+<sub>R@5 = 42 из 46, [поиск групп](docs/search.md)</sub>
+
+</td>
+<td valign="top" width="33%">
+
+**2. Модель проверяет назначение, но не выбирает наугад**
+
+OpenJev оценивает каждую группу: соответствует, противоречит или нет сведений. Группа выбирается
+сама, только если подтверждена одна, с оценками не ниже 0,90; иначе поставщику задаётся вопрос.
+
+<sub>0 ошибочных автовыборов из 10, [доказательства](docs/evidence.md#выбирает-ли-модель-группу-без-оснований)</sub>
+
+</td>
+<td valign="top" width="33%">
+
+**3. Правила справочника сужают позиции и объясняют каждое исключение**
+
+Факт исключает позицию, если противоречит её значению или диапазону с учётом единиц. Неизвестное не
+исключает. У каждой исключённой позиции — причина словами справочника.
+
+<sub>`tests/test_rules.py`, [архитектура](docs/architecture.md#как-проходит-одно-сообщение-поставщика)</sub>
+
+</td>
+</tr>
+</table>
+
+## Попробовать за пять минут
+
+После [запуска](#запуск), адрес <http://localhost:5173/sell>.
+
+| | Что сделать | Что увидите |
+|---|---|---|
+| 1 | Ввести «Шкаф для одежды металлический, глубина 0,55 м» и нажать «Подобрать позицию» | Путь «Мебель › Шкаф для одежды металлический», «Подходит позиций: 1 из 2», вторая позиция исключена с причиной |
+| 2 | «Продолжить», в строке «Тип шкафа» выбрать «Секционный» | Таблица характеристик, «Заполнено обязательных: 2 из 2» |
+| 3 | «Новая карточка», ввести «Перчатки» | Вопрос «Для какого назначения нужен товар?» вместо угаданной группы |
+
+Полный маршрут и где ответ на каждый критерий оценки — в [маршруте для жюри](docs/for-jury.md).
+Каждое требование ТЗ по пунктам — в [карте требований](docs/requirements-map.md).
+
+## Результаты
+
+Через HTTP API продукта на временной базе, с настоящими моделями на A100 40 ГБ; наборы
+зафиксированы по хешу, пороги и их источники — в [плане валидации](docs/validation-plan.md).
+
+| Метрика | Решение | База | Порог |
+|---|---|---|---|
+| Правильная группа в топ-5, `smoke_v0` | **42 из 46** | 42 из 46, TF-IDF и bge-m3 | ≥ 42 из 46 |
+| Правильная группа в топ-5, реальные СТЕ | **27 из 42** | 26 из 42 без словаря синонимов | не задан |
+| Верный выданный код, `dev_v1` | **21 из 24** | — | ≥ 95 % |
+| Верные автоматически принятые значения | **20 из 20** | — | ≥ 99 % |
+| Ошибочные автовыборы группы | **0 из 10** | — | не задан |
+| Видеопамять всех моделей | **37,1 ГБ** | — | ≤ 40 ГБ |
+
+**Где проигрываем.** На реальных названиях из выгрузок правильная группа в топ-5 только у 27 из 42:
+бренды и артикулы не похожи на наименования групп. Выданный код верен в 88 % случаев при цели 95 %;
+прогон сделан до подключения проверки назначения.
+
+<details>
+<summary><b>Пересчитать все числа раздела</b></summary>
+<br>
+
+```bash
+backend/.venv/bin/python evals/smoke/bench_search.py --embeddings-url http://127.0.0.1:8081/v1 \
+  --database artifacts/ktru-search.sqlite3 --reuse-database
+cd backend && uv run python ../evals/e2e/run.py --embeddings-url http://127.0.0.1:8081/v1 && cd ..
+backend/.venv/bin/python evals/enum/run.py --url http://127.0.0.1:18080 --threshold 0.90 \
+  --holdout evals/datasets/enum_holdout_v2.json --out var/enum-mapping.json
+backend/.venv/bin/python evals/groups/run.py --output var/group-validation.json
+```
+
+Нужны сервисы моделей на GPU из [запуска](docs/running.md#как-запустить-модели). Отчёты пишутся в
+`evals/reports/` и `var/`; сохранённые отчёты — в [`evals/reports/`](evals/reports/).
+
+</details>
+
+## Запуск
+
+```bash
+mkdir -p var && cp artifacts/ktru-search.sqlite3 var/tender.db
+cd backend && uv sync && uv run alembic upgrade head && uv run uvicorn --factory main:create_app
+```
+
+```bash
+cd frontend && npm ci --silent && npm run mock-api &
+cd frontend && STOREFRONT_URL=http://localhost:8001 API_URL=http://localhost:8000 npm run dev
+```
+
+Интерфейс — <http://localhost:5173>, Swagger — <http://localhost:8000/api/docs>. Справочник,
+витрина и проверки работают без GPU и сети. Анализ описаний требует трёх локальных моделей:
+`EMBEDDINGS_URL`, `DECISION_URL` и `EXTRACTOR_URL`; без них сессия получает статус технического
+сбоя. Платные API не нужны.
+
+<details>
+<summary><b>Модели, проверки, переменные</b></summary>
+<br>
+
+```bash
+OPENJEV_PORT=18080 docker compose --profile gpu up --build -d openjev
+docker compose -f compose.yaml -f compose.qwen.yaml --profile gpu up -d
+```
+
+Проверки: бэкенд — `cd backend && uv run ruff check . && uv run mypy . && uv run pytest`,
+фронтенд — `cd frontend && npm run lint && npm run typecheck && npm test && npm run e2e`.
+Переменные окружения, профили GPU и тесты — в [запуске и проверках](docs/running.md).
+
+</details>
 
 ## Устройство
 
-```
-backend/                 FastAPI + SQLAlchemy + Alembic, SQLite
-  main.py                сборка прода вручную: `create_app` (запуск — `uvicorn --factory
-                         main:create_app`) и синхронизация справочника `sync_catalog`
-  composition.py         общая проводка сценариев из портов — для прода, тестов и замеров
-  settings.py            настройки окружения `Settings` и пути к данным
-  build_var.py           офлайн-артефакты для замеров: снимок КТРУ, словарь, образцы СТЕ → var/
-  app/                   только слои — docs/adr/0001-layers-and-ports.md
-    domain/              понятия и правила без библиотек: позиции КТРУ, характеристики, значения,
-                         запросы к моделям и их ответы (`inference.py`)
-    usecase/             сценарии на единице работы, порты (`interface.py`), общая проверка
-                         ответов моделей (`model_checks.py`)
-    controller/          роутеры FastAPI, схемы Pydantic, зависимости, ошибки → HTTP
-    adapter/             реализации портов: справочник из XML ЕИС и из JSON-снимка, заглушки
-                         моделей для тестов (`stub/`)
-    repository/          хранилища на SQLite, ORM всех таблиц (`orm/`), in-memory (`memory/`)
-  migrations/            миграции схемы
-  tests/                 тесты через HTTP API и сценарии на in-memory хранилищах
-frontend/                React + Vite: экран поставщика `/sell` на API сессий, витрина на мок-сервисе
-                         — frontend/README.md
-data/yandex_disk/        данные организаторов: XML КТРУ, выгрузки СТЕ
-evals/                   замеры: наборы `datasets/`, скрипты `smoke/`, `catalog/`, `e2e/`, отчёты `reports/`
-var/                     локальные артефакты (не в git): база, снимок КТРУ, словарь
-artifacts/               подготовленная SQLite КТРУ с реальными векторами Qwen (в git)
-services/openjev/        самостоятельный GPU-сервис OpenJev 4B: API, кеш и pinned runtime
-services/qwen/           Qwen3 embeddings и Qwen3.5 strict extractor, Docker и GPU-проверки
-```
+Интерфейс на React, API на FastAPI с SQLite и три модели в отдельных GPU-сервисах. Ключевое
+решение — выдать код или задать вопрос — принимают правила справочника в сценарии анализа, а не
+модели.
 
-Зависимости слоёв идут внутрь, к `domain`; `backend/tests/test_layers.py` это проверяет.
-Сущность проходит слои под одним именем: справочник КТРУ — `domain/catalog.py`,
-`usecase/catalog.py`, `controller/catalog.py`, `repository/catalog.py`.
+| Документ | Что внутри |
+|---|---|
+| [Архитектура](docs/architecture.md) | Части стенда, путь одного сообщения, слои, что заменяется без правки кода |
+| [API](docs/api.md) | Методы, ответ анализа, формат ошибок; OpenAPI — `/api/docs` |
+| [Зависимости](docs/dependencies.md) | Модели, библиотеки и сервисы с версиями и лицензиями |
+| [Глоссарий](docs/glossary.md) | Термины КТРУ, работы поставщика и статусы анализа |
+| [Оглавление](docs/README.md) | Все страницы документации |
 
-## Разработка
+## Ограничения
 
-Гибридный поиск групп: `POST /api/v1/search`, TF-IDF + Qwen + синонимы, слияние RRF.
-Готовая база трёх категорий, запуск без векторизации документов, настройки сервиса,
-команда сборки и smoke-замер — [`docs/search.md`](docs/search.md).
+- **На реальных названиях поиск слабее.** Правильная группа в топ-5 у 27 из 42 строк выгрузки СТЕ;
+  вместо угадывания система спрашивает о назначении.
+- **Анализ требует GPU.** Три модели занимают 37,1 ГБ на A100 40 ГБ; без них работают справочник,
+  витрина и все тесты, а анализ описаний — нет.
+- **Витрина работает на моке.** Позиции и характеристики настоящие, цены и поставщики выдуманы.
 
-Сессии анализа: создание, история сообщений, правка и восстановление фактов с историей, проверка правил
-и сужение позиций с объяснениями, демонстрационный JSON-экспорт и сохранённые черновики через
-`/api/v1/sessions`. В экране `/sell` можно скачать полную карточку или сохранить сессию
-вместе с неотправленным вводом и продолжить её из списка черновиков. Контракт, идемпотентность и примеры — [`docs/sessions.md`](docs/sessions.md).
+Все ограничения, со статусом и тем, что закрыло бы каждое, — в [ограничениях](docs/limitations.md).
 
-GPU decision-сервис запускается отдельно: `docker compose --profile gpu up --build -d openjev`.
-Условия запуска, API/curl, переменные окружения и CPU-проверки —
-[`services/openjev/README.md`](services/openjev/README.md).
-
-Embeddings и strict экстрактор запускаются рядом с OpenJev через
-`compose.qwen.yaml`: подготовка весов, запуск на чистой машине, API и проверки —
-[`services/qwen/README.md`](services/qwen/README.md).
-
-```bash
-cd backend
-uv sync
-uv run alembic upgrade head                        # схема в var/tender.db
-uv run python -c 'import main; main.sync_catalog()'  # КТРУ из data/ в базу
-uv run uvicorn --factory main:create_app --reload  # http://localhost:8000/api/docs
-uv run python build_var.py                         # var/ktru.json, var/vocab.json для evals/
-```
-
-Фронтенд — Node 22+, npm. `/api` Vite проксирует на бэкенд `http://localhost:8000`; экран
-поставщика и контракт — [`frontend/README.md`](frontend/README.md).
-
-```bash
-cd frontend
-npm ci
-npm run dev           # http://localhost:5173, экран поставщика — /sell
-npm run build         # typecheck и сборка в frontend/dist
-npm run format        # Prettier переписывает файлы
-```
-
-Проверки перед PR:
-
-```bash
-cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest
-cd frontend && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build
-```
-
-### Образцы
-
-- **Новая сущность** — по слоям, файлы под одним именем
-  ([`docs/adr/0001-layers-and-ports.md`](docs/adr/0001-layers-and-ports.md)):
-  1. `app/domain/<имя>.py` — dataclass-ы и правила без SQLAlchemy, Pydantic и FastAPI;
-  2. `app/usecase/<имя>.py` — сценарий-класс на единице работы, каждый вызов — блок `with uow:`;
-     хранилище — порт-`Protocol` в `app/usecase/interface.py`;
-  3. `app/repository/<имя>.py` — реализация порта, ORM таблицы — `app/repository/orm/<имя>.py` и
-     импорт в `app/repository/orm/__init__.py` (по нему миграции видят таблицы); наружу —
-     доменные значения, не строки ORM; in-memory — `app/repository/memory/<имя>.py`;
-  4. `app/controller/<имя>.py` и `<имя>_schemas.py` — роутер и схемы; сценарий приходит
-     зависимостью из `app/controller/deps.py`;
-  5. проводка — фабрика сценария в `backend/composition.py`, реализации — в `backend/main.py`,
-     там же подключается роутер.
-- **Порт модели или внешней системы** (поиск, decision-модель, извлекатель): `Protocol` в
-  `app/usecase/interface.py` с доменными типами на входе и выходе; реализация — в
-  `app/adapter/`, библиотеку импортирует только она; создаётся в `backend/main.py` и передаётся
-  в `build_usecases`. Порт модели сценарий получает только за общей проверкой ответа —
-  `checked_*` из `composition.py`; управляемая заглушка для тестов — `app/adapter/stub/`.
-- **Миграция** — `uv run alembic revision --autogenerate -m "short english slug"`, затем
-  прочитать и поправить. `test_models_match_migrations` падает, если модели разошлись с
-  миграциями.
-- **Ошибки** — подкласс `DomainError` в `app/domain/errors.py` с `code` и `message` по-русски,
-  без HTTP-статуса. Статус — строка в `STATUS` (`app/controller/errors.py`); эндпоинт перечисляет
-  ошибки в `responses=error_responses(...)`.
-- **Замер** — скрипт в `evals/`, продукт берёт через `composition.py` и адаптеры; `app`, `main`
-  и `composition` `evals` не импортируют.
-
-
-### Оценка русских ошибок
-
-Fixtures четырёх классов: `evals/datasets/errors_ru_v1.json`; правила и демонстрации —
-`docs/Предлагаемое решение.md`, §§8.8, 9.3, 15.6, 16.1, 20.2. Метрики считаются из JSONL
-ответов приложения, не из подставленного эталона:
-
-```bash
-python3 evals/errors/score.py --predictions /path/to/predictions.jsonl
-python3 -m unittest discover -s tests/evals -v
-ruff check evals/errors tests/evals evals/server/bench_typos_api.py evals/server/bench_llm_typos_api.py
-```
-
-Прогоны орфографии через API (модель уже должна быть запущена):
-
-```bash
-python3 evals/server/bench_typos_api.py --help
-python3 evals/server/bench_llm_typos_api.py --help
-```
-
-Измеренные отчёты: `evals/reports/2026-10-10-openjev-typos-api.md` и
-`evals/reports/2026-10-10-qwen4b-typos-api.md`. Это development-оценка опечаток;
-качество остальных классов на приложении ещё не измерено.
-
-### Сквозной замер
-
-Набор разработки `evals/datasets/dev_v1.json` (60 кейсов) и holdout реальных СТЕ
-`evals/datasets/ste_holdout_v1.csv` (60 строк) проходят через HTTP API продукта: сессия по
-сообщениям и поиск групп. Формат наборов и как проверять разметку —
-[`evals/datasets/README.md`](evals/datasets/README.md).
-
-```bash
-cd backend
-uv run python ../evals/e2e/dataset.py                    # разметка против справочника КТРУ
-uv run python ../evals/e2e/run.py --embeddings-url http://127.0.0.1:18083/v1  # отчёт в evals/reports/
-uv run python ../evals/e2e/run.py --stub-embeddings      # проверка прогона без модели
-cd .. && python3 -m unittest discover -s tests/evals -v  # подсчёт метрик
-```
-
-Отчёт — `evals/reports/<дата>-e2e.md` и `.json`: R@1/5/10 групп отдельно по набору и по
-holdout, «вне КТРУ», точность и доля выданных кодов, сохранённая неоднозначность, факты,
-статусы и разбивка по тегам. Точность кода учитывает все выдачи, включая ошибочную выдачу
-товару вне КТРУ; доля выдачи считается от всех 60 кейсов разработки. R@K считается только
-по кейсам с допустимыми группами. Отказ от классификации, классы ошибок и число вопросов
-до кода — «пропущено», пока продукт их не поддерживает. Holdout выбирает `evals/e2e/sample_holdout.py` с
-фиксированным seed; существующую разметку он не перетирает.
-
-Отсев текстов не о товаре (порог косинуса и вопрос OpenJev, см. `docs/sessions.md`):
-
-```bash
-cd backend && uv run python ../evals/out_of_scope/measure.py \
-  --embeddings-url http://127.0.0.1:18083/v1 --decision-url http://127.0.0.1:18080
-```
-
-Первый отчёт с реальными эмбеддингами:
-[`2026-10-10-e2e.md`](evals/reports/2026-10-10-e2e.md), построчные ответы — в соседнем JSON.
-
-### Свободные значения характеристик
-
-Для сопоставления «стальная» → «Сталь» задайте `DECISION_URL` существующего OpenJev-сервиса
-(пример — `backend/.env.example`). Предложения подтверждаются на экране поставщика; возможны
-«Принять», «Выбрать другое» и «Не знаю». Автопринятие включено с порогом оценки 0,90 при однозначной привязке;
-`DECISION_AUTO_ACCEPT_ENABLED=false` оставляет все предложения на подтверждение. Контракт, ограничения и правила ревизий — [docs/sessions.md](docs/sessions.md).
-
-Воспроизводимый замер enum-сопоставления через HTTP-сценарий продукта, из корня репозитория:
-
-```bash
-backend/.venv/bin/python evals/enum/run.py --url http://127.0.0.1:18080 --out var/enum-mapping.json
-```
-
-Используются `dev_v1.json` (подбор порога) и отдельный замороженный `enum_holdout_v2.json`
-(проверка без подбора). Понадобится справочник КТРУ в `KTRU_XML_DIR`; GPU-сервис запускается
-по [инструкции OpenJev](services/openjev/README.md).
-[Сохранённый отчёт](evals/reports/2026-10-10-enum-mapping.md) содержит методику, абсолютные
-числа, статистические ограничения, задержку и VRAM.
-
-Диагностика характеристик и орфографический порт Qwen: контракт и настройки —
-[`docs/sessions.md`](docs/sessions.md#диагностика-характеристик). Прогон размеченных ошибок
-через HTTP API и существующий scorer (поиск и орфография — заглушки):
-
-```bash
-cd backend && uv run python ../evals/errors/run.py
-```
-
-Отчёт: [`2026-10-10-diagnostics-fixture.md`](evals/reports/2026-10-10-diagnostics-fixture.md).
-Он проверяет продуктовый сценарий на локальных fixtures и не измеряет качество живой модели.
-
-Проверка назначения top-5/10 групп: `GROUP_TOP_K=10` и обязательный `DECISION_URL`.
-HTTP-регрессии: `cd backend && uv run pytest tests/test_group_validation.py tests/test_openjev_http.py`.
-Реальное сравнение K=5/10: `backend/.venv/bin/python evals/groups/run.py --output var/group-validation.json`.
-Контракт и методика — [сессии](docs/sessions.md), [поиск](docs/search.md).
-
-### Свободное извлечение и verifier
-
-Для генеративного прохода задайте `EXTRACTOR_URL` (корень strict API без `/v1`) и
-`DECISION_URL`; остальные настройки — `backend/.env.example`. Используется
-Qwen3.5-9B с закреплённой ревизией, [профиль сервиса 9B](services/qwen/README.md).
-Порог `VERIFIER_THRESHOLD` независим от enum, по умолчанию `0.90`.
-[Контракт, история и ограничения](docs/sessions.md#проверяемое-извлечение-свободных-значений).
-
-```sh
-cd backend
-uv run pytest tests/test_extraction_sessions.py tests/test_extractor_http.py
-```
-
-Независимый замер из корня (работающие модельные сервисы; поиск заменён заданной группой):
-
-```sh
-backend/.venv/bin/python evals/extraction/run.py \
-  --extractor-url http://127.0.0.1:18084 --decision-url http://127.0.0.1:18080 \
-  --cases evals/extraction/holdout.json --out var/extraction.json
-backend/.venv/bin/python evals/extraction/score.py \
-  evals/reports/2026-10-10-verified-extraction.json
-```
-
-`score.py` использует ручную разметку сохранённых ответов. Новый прогон требует
-проверки и, при изменившихся ответах, новой разметки через `--labels`.
-`run.py --only <id>` повторяет отдельный случай. Полный отчёт, абсолютные ошибки,
-задержка и VRAM: [замер verifier](evals/reports/2026-10-10-verified-extraction.md).
+<p align="center">
+  <sub>Команда GoatWhistle, Tender Hack, Казань, 2026.</sub>
+</p>

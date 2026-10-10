@@ -1,0 +1,23 @@
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(wizard-step) {
+  animation: fade-out var(--dur-exit, 140ms) var(--ease-out, ease-out) both;
+}
+
+::view-transition-new(wizard-step) {
+  animation: enter var(--dur-panel, 260ms) var(--ease-out, ease-out) both;
+}
+
+::view-transition-group(wizard-step) {
+  animation-duration: var(--dur-panel, 260ms);
+  animation-timing-function: var(--ease-out, ease-out);
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}

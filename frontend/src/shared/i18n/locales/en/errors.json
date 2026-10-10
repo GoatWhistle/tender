@@ -1,0 +1,9 @@
+{
+  "position": "Could not load the position characteristics. Reload the page.",
+  "busy": "Wait until the analysis is finished",
+  "boundary": {
+    "title": "The page did not open",
+    "text": "Something went wrong in the interface. Reload the page; your input is kept in the address.",
+    "retry": "Reload the page"
+  }
+}

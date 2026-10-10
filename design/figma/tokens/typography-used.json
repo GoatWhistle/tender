@@ -1,0 +1,1010 @@
+[
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 593
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 16.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 258
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 12.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 214
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 14.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 1.0,
+    "count": 167
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 12.0,
+    "lineHeight": 16.0,
+    "letterSpacing": 0.0,
+    "count": 158
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 16.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 100
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 16.0,
+    "lineHeight": 22.0,
+    "letterSpacing": 0.0,
+    "count": 95
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 20.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 81
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 32.0,
+    "letterSpacing": 0.0,
+    "count": 75
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 42.0,
+    "lineHeight": 57.0,
+    "letterSpacing": 0.0,
+    "count": 69
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 16.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 0.0,
+    "count": 60
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 30.0,
+    "lineHeight": 55.0,
+    "letterSpacing": 0.0,
+    "count": 56
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 16.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 54
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 0.0,
+    "count": 45
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 22.0,
+    "letterSpacing": 0.0,
+    "count": 42
+  },
+  {
+    "family": "Helvetica Neue",
+    "postscript": "HelveticaNeue",
+    "weight": 400,
+    "size": 12.0,
+    "lineHeight": 14.315999984741211,
+    "letterSpacing": 0.0,
+    "count": 32
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 34.0,
+    "letterSpacing": 0.0,
+    "count": 28
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 20.0,
+    "lineHeight": 34.0,
+    "letterSpacing": 0.0,
+    "count": 27
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 16.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 23
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 40.0,
+    "lineHeight": 55.0,
+    "letterSpacing": 0.0,
+    "count": 19
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 16.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 16
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 0.0,
+    "count": 16
+  },
+  {
+    "family": "Ubuntu",
+    "postscript": "Ubuntu-Regular",
+    "weight": 400,
+    "size": 12.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 15
+  },
+  {
+    "family": "Ubuntu",
+    "postscript": "Ubuntu-Bold",
+    "weight": 700,
+    "size": 50.0,
+    "lineHeight": 52.0,
+    "letterSpacing": 0.0,
+    "count": 15
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 12.0,
+    "letterSpacing": 0.0,
+    "count": 15
+  },
+  {
+    "family": "Gotham Pro",
+    "postscript": "GothamPro",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 16.0,
+    "letterSpacing": 0.0,
+    "count": 14
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 19.0,
+    "letterSpacing": 0.0,
+    "count": 14
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 16.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 13
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 19.0,
+    "letterSpacing": 0.0,
+    "count": 12
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 14.0,
+    "lineHeight": 22.0,
+    "letterSpacing": 0.0,
+    "count": 12
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 14.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 0.0,
+    "count": 11
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 12.0,
+    "lineHeight": 12.0,
+    "letterSpacing": 0.0,
+    "count": 11
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 23.0,
+    "letterSpacing": 0.0,
+    "count": 11
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 18.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 1.0,
+    "count": 10
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 10
+  },
+  {
+    "family": "Gotham Pro",
+    "postscript": "GothamPro-Medium",
+    "weight": 500,
+    "size": 14.0,
+    "lineHeight": 16.0,
+    "letterSpacing": 0.0,
+    "count": 9
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 12.0,
+    "lineHeight": 16.0,
+    "letterSpacing": 0.0,
+    "count": 9
+  },
+  {
+    "family": "Ubuntu",
+    "postscript": "Ubuntu-Bold",
+    "weight": 700,
+    "size": 120.0,
+    "lineHeight": 120.0,
+    "letterSpacing": 0.0,
+    "count": 9
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 36.0,
+    "lineHeight": 57.0,
+    "letterSpacing": 0.0,
+    "count": 9
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 20.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 8
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 18.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 8
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 12.0,
+    "lineHeight": 17.0,
+    "letterSpacing": 0.0,
+    "count": 7
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 16.0,
+    "lineHeight": 22.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 12.0,
+    "lineHeight": 12.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 20.0,
+    "lineHeight": 27.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 12.0,
+    "lineHeight": 17.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 30.0,
+    "lineHeight": 34.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Ubuntu",
+    "postscript": "Ubuntu-Bold",
+    "weight": 700,
+    "size": 30.0,
+    "lineHeight": 52.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 40.0,
+    "lineHeight": 34.0,
+    "letterSpacing": 0.0,
+    "count": 6
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 90.0,
+    "lineHeight": 50.0,
+    "letterSpacing": 0.0,
+    "count": 5
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 20.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 5
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 40.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 5
+  },
+  {
+    "family": "PT Sans",
+    "postscript": "PTSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 5
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-ExtraBold",
+    "weight": 800,
+    "size": 14.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 5
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 8.0,
+    "lineHeight": 11.0,
+    "letterSpacing": 0.0,
+    "count": 5
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 30.0,
+    "lineHeight": 52.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 40.0,
+    "lineHeight": 52.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 40.0,
+    "lineHeight": 45.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 33.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 18.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 90.0,
+    "lineHeight": 120.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 30.0,
+    "lineHeight": 32.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 12.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 4
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 0.0,
+    "lineHeight": 0.0,
+    "letterSpacing": null,
+    "count": 4
+  },
+  {
+    "family": "Gotham Pro",
+    "postscript": "GothamPro-Medium",
+    "weight": 500,
+    "size": 20.0,
+    "lineHeight": 28.0,
+    "letterSpacing": 0.0,
+    "count": 3
+  },
+  {
+    "family": "Cabin",
+    "postscript": "Cabin-Medium",
+    "weight": 500,
+    "size": 16.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 3
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 12.0,
+    "letterSpacing": 0.0,
+    "count": 3
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 12.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 0.0,
+    "count": 3
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 72.0,
+    "lineHeight": 98.05078125,
+    "letterSpacing": 0.0,
+    "count": 3
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 16.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 3
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 12.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 60.0,
+    "lineHeight": 120.0,
+    "letterSpacing": 1.0,
+    "count": 2
+  },
+  {
+    "family": "Ubuntu",
+    "postscript": "Ubuntu-Bold",
+    "weight": 700,
+    "size": 40.0,
+    "lineHeight": 52.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 8.0,
+    "lineHeight": 11.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 7.0,
+    "lineHeight": 9.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 12.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 11.0,
+    "lineHeight": 16.0,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 25.5,
+    "letterSpacing": 0.0,
+    "count": 2
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 24.0,
+    "lineHeight": 52.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 20.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Light",
+    "weight": 300,
+    "size": 40.0,
+    "lineHeight": 30.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 18.0,
+    "lineHeight": 26.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 22.0,
+    "lineHeight": 28.0,
+    "letterSpacing": 1.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 20.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 20.0,
+    "lineHeight": 26.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "OpenSans",
+    "postscript": "OpenSans-Semibold",
+    "weight": 600,
+    "size": 16.0,
+    "lineHeight": 22.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 100.0,
+    "lineHeight": 120.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-ExtraBold",
+    "weight": 800,
+    "size": 90.0,
+    "lineHeight": 57.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 11.0,
+    "lineHeight": 16.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 20.0,
+    "lineHeight": 50.11572265625,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 30.0,
+    "lineHeight": 50.11572265625,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 31.583641052246094,
+    "lineHeight": 42.11152267456055,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 18.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 12.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 1.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 30.0,
+    "lineHeight": 57.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Rubik",
+    "postscript": "Rubik-Bold",
+    "weight": 700,
+    "size": 30.0,
+    "lineHeight": 32.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Rounded Mplus 1c",
+    "postscript": "RoundedMplus1c-Medium",
+    "weight": 500,
+    "size": 20.0,
+    "lineHeight": 32.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 8.0,
+    "lineHeight": 9.0,
+    "letterSpacing": 0.5,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 6.0,
+    "lineHeight": 8.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 6.0,
+    "lineHeight": 8.0,
+    "letterSpacing": 0.5,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 10.0,
+    "lineHeight": 12.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 8.0,
+    "lineHeight": 10.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 7.0,
+    "lineHeight": 9.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "PT Sans",
+    "postscript": "PTSans-Bold",
+    "weight": 700,
+    "size": 20.0,
+    "lineHeight": 24.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 14.0,
+    "lineHeight": 20.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 14.0,
+    "lineHeight": 21.5,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-SemiBold",
+    "weight": 600,
+    "size": 10.0,
+    "lineHeight": 25.5,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Regular",
+    "weight": 400,
+    "size": 14.0,
+    "lineHeight": 21.5,
+    "letterSpacing": 0.0,
+    "count": 1
+  },
+  {
+    "family": "Open Sans",
+    "postscript": "OpenSans-Bold",
+    "weight": 700,
+    "size": 180.0,
+    "lineHeight": 245.0,
+    "letterSpacing": 0.0,
+    "count": 1
+  }
+]

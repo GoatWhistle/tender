@@ -1,0 +1,29 @@
+.filters {
+  display: grid;
+  align-content: start;
+  gap: var(--space-6);
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: var(--text-p3);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-p3-line);
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.facets {
+  display: grid;
+  gap: var(--space-2);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--line) solid var(--border-subtle);
+}

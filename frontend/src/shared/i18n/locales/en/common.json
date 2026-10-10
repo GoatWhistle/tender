@@ -1,0 +1,43 @@
+{
+  "portal": {
+    "logo": "Supplier Portal, home page",
+    "skip": "Skip to content",
+    "brand": "Supplier Portal"
+  },
+  "nav": {
+    "label": "Sections",
+    "catalog": "Catalog",
+    "sell": "New product card"
+  },
+  "actions": {
+    "back": "Back",
+    "next": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "restart": "New product card",
+    "retry": "Retry"
+  },
+  "noValue": "Not specified",
+  "loading": "Loading",
+  "notFound": {
+    "title": "Page not found",
+    "text": "The address is outdated or mistyped.",
+    "home": "Go to home page"
+  },
+  "theme": {
+    "legend": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "legend": "Language",
+    "ru": "Русский",
+    "en": "English",
+    "short": {
+      "ru": "RU",
+      "en": "EN"
+    }
+  },
+  "settings": "Appearance and language"
+}

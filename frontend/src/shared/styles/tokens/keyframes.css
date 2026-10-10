@@ -1,0 +1,44 @@
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--enter-shift));
+  }
+}
+
+@keyframes enter-panel {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--enter-shift) * 2));
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(var(--enter-scale));
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.4;
+  }
+}

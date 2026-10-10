@@ -5,7 +5,14 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: { "/api": process.env.API_URL ?? "http://localhost:8000" },
+    proxy: {
+      "/api/v1/storefront":
+        process.env.STOREFRONT_URL ?? process.env.API_URL ?? "http://localhost:8000",
+      "/api": process.env.API_URL ?? "http://localhost:8000",
+    },
   },
-  test: { environment: "node" },
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.{ts,tsx}", "mock-api/**/*.test.ts"],
+  },
 });

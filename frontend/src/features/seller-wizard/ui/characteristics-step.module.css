@@ -1,0 +1,41 @@
+.progress {
+  inline-size: var(--summary-width);
+  max-inline-size: 100%;
+}
+
+.nameCell {
+  display: grid;
+  gap: calc(var(--space-1) / 2);
+}
+
+.required {
+  color: var(--text-muted);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.value {
+  font-weight: var(--weight-semibold);
+}
+
+.unbound {
+  color: var(--text-warning);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.notes {
+  color: var(--text-muted);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.extra {
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+@media (max-width: 47.99rem) {
+  .extra {
+    padding-inline: var(--space-2);
+  }
+}

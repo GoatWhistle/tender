@@ -16,5 +16,5 @@
     "allowImportingTsExtensions": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["src", "mock-api", "vite.config.ts"]
+  "include": ["src", "mock-api", "vite.config.ts", "e2e", "playwright.config.ts"]
 }

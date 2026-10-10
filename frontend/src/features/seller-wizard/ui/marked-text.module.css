@@ -1,0 +1,19 @@
+.error,
+.synonym {
+  background: none;
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-thickness: var(--line);
+  text-underline-offset: var(--space-1);
+  cursor: help;
+}
+
+.error {
+  text-decoration-color: var(--text-error);
+}
+
+.synonym {
+  text-decoration-style: dotted;
+  text-decoration-color: var(--text-link);
+}

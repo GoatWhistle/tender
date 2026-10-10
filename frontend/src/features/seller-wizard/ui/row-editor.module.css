@@ -1,0 +1,33 @@
+.editor {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface-muted);
+}
+
+.diagnostic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+}
+
+.explanation {
+  max-inline-size: 70ch;
+  font-size: var(--text-p5);
+  line-height: var(--text-p5-line);
+}
+
+.quote {
+  color: var(--text-error);
+  font-weight: var(--weight-semibold);
+}
+
+.secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--line) solid var(--border-subtle);
+}

@@ -1,0 +1,39 @@
+:root:has([data-portal]) {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-22: 88px;
+
+  --control-height: 48px;
+  --control-height-sm: 36px;
+  --touch-target: 44px;
+  --control-mark: 20px;
+  --choice-min: 260px;
+  --progress-height: 6px;
+  --stale-opacity: 0.6;
+  --spinner-opacity: 0.8;
+  --control-pad-x: 20px;
+  --row-height: 49px;
+  --header-height: 72px;
+  --logo-width: 180px;
+  --logo-width-sm: 140px;
+  --summary-width: 340px;
+  --gutter: 24px;
+  --line: 1px;
+  --scrollbar-size: 12px;
+  --scrollbar-inset: 3px;
+  --line-strong: 2px;
+}
+
+@media (min-width: 75rem) {
+  :root:has([data-portal]) {
+    --gutter: 32px;
+  }
+}

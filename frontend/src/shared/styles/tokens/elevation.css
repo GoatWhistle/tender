@@ -1,0 +1,5 @@
+:root:has([data-portal]) {
+  --shadow-header: 0 2px 20px var(--palette-blue-800-a15);
+  --shadow-card: 0 10px 30px var(--palette-blue-800-a10);
+  --shadow-popup: 0 11px 70px var(--palette-blue-800-a20);
+}

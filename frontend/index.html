@@ -3,7 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>СТЕ — витрина</title>
+    <meta name="description" content="Карточка товара по КТРУ из описания своими словами" />
+    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="preload"
+      href="/fonts/open-sans/open-sans-cyrillic-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>Портал поставщиков</title>
+    <script>
+      (function () {
+        var choice = "system";
+        try {
+          choice = localStorage.getItem("portal-theme") || "system";
+        } catch (e) {}
+        var dark =
+          choice === "dark" ||
+          (choice === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -28,7 +28,7 @@
   --shadow-lift: rgba(0, 0, 0, 0.25) 0 0 16px -8px;
   --shadow-float: rgba(0, 0, 0, 0.15) 0 2px 16px 0;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --max: 1280px;
+  --max: none;
 }
 
 *,

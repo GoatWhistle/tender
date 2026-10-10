@@ -15,3 +15,8 @@ var/
 *.sqlite3-wal
 *.sqlite3-shm
 *.sqlite3-journal
+/.playwright-mcp/
+/design/figma/*
+!/design/figma/README.md
+!/design/figma/tokens/
+.impeccable/

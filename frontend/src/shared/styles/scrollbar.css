@@ -1,0 +1,48 @@
+@property --scrollbar-thumb-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+:root:has([data-portal]) {
+  --scrollbar-thumb-color: var(--scrollbar-thumb-idle);
+  scrollbar-gutter: stable;
+  transition: --scrollbar-thumb-color var(--dur-slow) var(--ease-out);
+}
+
+:root:has([data-portal])[data-scrolling] {
+  --scrollbar-thumb-color: var(--scrollbar-thumb);
+  transition-duration: var(--dur-fast);
+}
+
+:root:has([data-portal])::-webkit-scrollbar,
+[data-portal] ::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+:root:has([data-portal])::-webkit-scrollbar-track,
+[data-portal] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:root:has([data-portal])::-webkit-scrollbar-thumb,
+[data-portal] ::-webkit-scrollbar-thumb {
+  border: var(--scrollbar-inset) solid transparent;
+  border-radius: var(--radius-round);
+  background: var(--scrollbar-thumb-color);
+  background-clip: padding-box;
+}
+
+:root:has([data-portal])::-webkit-scrollbar-thumb:hover,
+[data-portal] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  :root:has([data-portal]),
+  [data-portal] * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-color) transparent;
+  }
+}

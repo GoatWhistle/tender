@@ -7,12 +7,12 @@
 сейчас одна. Сборка — вручную, без DI-контейнера: реализации выбирает `backend/main.py`,
 сценарии из портов собирает `backend/composition.py`. Правило и граница —
 [`docs/adr/0001-layers-and-ports.md`](docs/adr/0001-layers-and-ports.md), раскладка и куда
-класть новую сущность — `README.md`, «Устройство» и «Образцы». Замеры — `evals/`, продукт их не
+класть новую сущность — `docs/development.md`, «Устройство» и «Образцы». Замеры — `evals/`, продукт их не
 импортирует.
 
 ## Build, Test, and Development Commands
 
-Команды — `README.md`, «Разработка». Проверки перед PR:
+Команды — `docs/development.md` и `docs/running.md`. Проверки перед PR:
 `cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest`;
 фронтенд — `cd frontend && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build`.
 
@@ -27,7 +27,13 @@ Qwen-модели — `services/qwen/`; команды подготовки ве
 CPU strict-проверки:
 `PYTHONPATH=services/qwen python3 -m unittest discover -s tests/qwen -v`.
 
+Фронтенд — `frontend/`: перед любой работой в нём прочитай
+[`.claude/frontend-rules.md`](.claude/frontend-rules.md).
+
 ## Coding Style & Naming Conventions
+
+Комментариев в коде нет нигде, ни во фронтенде, ни в бэкенде, ни в сервисах: ни строчных, ни
+блочных, ни docstring и JSDoc, ни в конфигах. Неочевидное объясняется в `docs/`.
 
 Ruff (line 100) и mypy strict — конфиг в `backend/pyproject.toml`. Тексты, docs, issues,
 коммиты — по-русски, идентификаторы — по-английски. Do not mix whitespace cleanup with unrelated
@@ -64,7 +70,7 @@ Keep secrets and machine-specific settings out of version control. Provide examp
 
 При изменении `evals/errors/`, размеченных диагностик или метрик запусти
 `python3 -m unittest discover -s tests/evals -v` и `ruff check evals/errors tests/evals`.
-Для прогона и подсчёта метрик читай раздел «Оценка русских ошибок» в `README.md`;
+Для прогона и подсчёта метрик читай раздел «Оценка русских ошибок» в `docs/development.md`;
 контракты и правила разметки — §§8.8, 9.3, 15.6 и 16.1 `docs/Предлагаемое решение.md`.
 
 ### Enum-сопоставление

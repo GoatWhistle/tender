@@ -1,0 +1,97 @@
+.button {
+  --button-bg: var(--action-secondary);
+  --button-text: var(--action-secondary-text);
+  --button-border: var(--action-secondary-border);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-block-size: var(--control-height);
+  padding-inline: var(--control-pad-x);
+  border: var(--line) solid var(--button-border);
+  border-radius: var(--radius-none);
+  background: var(--button-bg);
+  color: var(--button-text);
+  font-size: var(--text-p3);
+  font-weight: var(--weight-semibold);
+  line-height: var(--text-p3-line);
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.button:active:not(:disabled, [data-pending]) {
+  transform: scale(var(--press-scale));
+}
+
+.button:disabled {
+  --button-bg: var(--action-disabled);
+  --button-text: var(--action-disabled-text);
+  --button-border: var(--action-disabled);
+  cursor: not-allowed;
+}
+
+.button[data-pending] {
+  cursor: progress;
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.button[data-pending] .content {
+  opacity: 0;
+}
+
+.pending {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  animation: var(--motion-fade);
+}
+
+.primary {
+  --button-bg: var(--action-primary);
+  --button-text: var(--action-primary-text);
+  --button-border: var(--action-primary);
+}
+
+.ghost {
+  --button-bg: transparent;
+  --button-border: transparent;
+  padding-inline: var(--space-2);
+}
+
+.round {
+  inline-size: var(--control-height);
+  padding-inline: 0;
+  border-radius: var(--radius-round);
+}
+
+.sm {
+  min-block-size: var(--control-height-sm);
+  padding-inline: var(--space-4);
+  font-size: var(--text-p5);
+  line-height: var(--text-p5-line);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover:not(:disabled) {
+    --button-bg: var(--action-primary-hover);
+    --button-border: var(--action-primary-hover);
+  }
+
+  .secondary:hover:not(:disabled),
+  .round:hover:not(:disabled) {
+    --button-border: var(--action-secondary-border-hover);
+  }
+
+  .ghost:hover:not(:disabled) {
+    --button-bg: var(--surface-hover);
+  }
+}

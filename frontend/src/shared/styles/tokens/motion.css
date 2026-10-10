@@ -1,0 +1,62 @@
+:root:has([data-portal]) {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --dur-instant: 80ms;
+  --dur-press: 140ms;
+  --dur-fast: 160ms;
+  --dur-fast-exit: 110ms;
+  --dur-base: 200ms;
+  --dur-exit: 140ms;
+  --dur-panel: 260ms;
+  --dur-slow: 320ms;
+  --dur-draw: 900ms;
+
+  --stagger: 40ms;
+  --delay-skeleton: 200ms;
+  --delay-spinner: 400ms;
+  --hold-indicator: 300ms;
+  --scrollbar-idle: 900ms;
+  --press-scale: 0.97;
+  --press-scale-surface: 0.99;
+  --enter-shift: 8px;
+  --enter-scale: 0.95;
+
+  --motion-enter: enter var(--dur-base) var(--ease-out) both;
+  --motion-enter-panel: enter-panel var(--dur-panel) var(--ease-out) both;
+  --motion-fade: fade var(--dur-fast) var(--ease-out) both;
+  --motion-pop: pop var(--dur-base) var(--ease-out) both;
+  --motion-spin: spin var(--dur-draw) linear infinite;
+  --motion-draw: draw var(--dur-panel) var(--ease-out) both;
+  --motion-pulse: pulse var(--dur-draw) var(--ease-in-out) infinite alternate;
+}
+
+:root:has([data-portal])[data-modality="keyboard"] {
+  --dur-press: 1ms;
+  --dur-fast: 1ms;
+  --dur-fast-exit: 1ms;
+  --dur-base: 1ms;
+  --dur-exit: 1ms;
+  --dur-panel: 1ms;
+  --stagger: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:has([data-portal]) {
+    --dur-instant: 1ms;
+    --dur-press: 1ms;
+    --dur-fast: 1ms;
+    --dur-fast-exit: 1ms;
+    --dur-base: 1ms;
+    --dur-exit: 1ms;
+    --dur-panel: 1ms;
+    --dur-slow: 1ms;
+    --stagger: 0ms;
+    --press-scale: 1;
+    --press-scale-surface: 1;
+    --enter-shift: 0px;
+    --enter-scale: 1;
+    --motion-pulse: none;
+  }
+}

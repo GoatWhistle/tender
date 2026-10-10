@@ -1,0 +1,34 @@
+.stack {
+  display: grid;
+  gap: calc(var(--space-1) / 2);
+}
+
+.link {
+  color: var(--text-link);
+  font-weight: var(--weight-semibold);
+}
+
+.sub,
+.code {
+  color: var(--text-muted);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.code {
+  font-variant-numeric: tabular-nums;
+}
+
+.price {
+  display: grid;
+  justify-items: end;
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
+  }
+}

@@ -1,0 +1,22 @@
+.editor {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+}
+
+.editor > fieldset {
+  justify-self: stretch;
+}
+
+.inline {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-4);
+}
+
+@media (max-width: 47.99rem) {
+  .inline {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
