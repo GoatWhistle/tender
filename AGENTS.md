@@ -4,6 +4,9 @@
 
 - `src/rag/` — прототип RAG по справочнику КТРУ: подбор позиции по описанию товара от
   поставщика. Цепочка, данные, команды и API — [`README.md`](README.md).
+- Слои `src/rag/` как в `legacy/backend`: `domain/` → `usecase/` (порты в `interface.py`) →
+  `adapter/`, `repository/`, `controller/`; сборка — `main.py` и `composition.py`. Карта
+  слоёв и правила — README, «Слои».
 - `data/` — выгрузка КТРУ и индекс, вне git. Собирается `rag-parse` → `rag-embed`
   (README, «Собрать индекс»).
 - `legacy/` — архив прежнего проекта: бэкенд, фронтенд, сервисы, docs, evals. Работа идёт в
@@ -22,13 +25,20 @@
 ## Инварианты
 
 - **Строка индекса.** Номер строки в `data/vectors.npy` = индекс в `codes.json` и
-  `texts.json`. Правка `position_text` или фильтра позиций в `ktru.py` меняет тексты, и векторы
-  надо пересчитать: `rag-parse` при расхождении печатает «ВНИМАНИЕ: коды или тексты
+  `texts.json`. Правка `position_text` (`domain/catalog.py`) или фильтра позиций
+  (`adapter/ktru_zip.py`) меняет тексты, и векторы надо пересчитать: `rag-parse` при расхождении печатает «ВНИМАНИЕ: коды или тексты
   изменились».
-- **Изолированный вызов Claude.** Каждый вызов Agent SDK собирается как в `preprocess.py` и
-  `rerank.py`: свой `system_prompt`, `setting_sources=[]`, `tools=[]`, `cwd` во временной
-  пустой папке и `output_format` с JSON-схемой. Иначе модель видит проект через рабочую папку
-  и настройки Claude Code.
+- **Модель только через порт.** Сценарии зовут модель через `LanguageModel.complete`
+  (`usecase/interface.py`); Agent SDK импортирует только `adapter/llm/claude_agent.py`, HTTP к
+  OpenAI-совместимому API — только `adapter/llm/openai_compatible.py`. Реализацию выбирает
+  `language_model` в `main.py`. Промпт и JSON-схема — в сценарии, а не в адаптере.
+- **Изолированный вызов Claude.** `ClaudeAgentModel` собирает каждый вызов со своим
+  `system_prompt`, `setting_sources=[]`, `tools=[]`, `cwd` во временной пустой папке и
+  `output_format` с JSON-схемой. Иначе модель видит проект через рабочую папку и настройки
+  Claude Code.
+- **Слои.** `domain` и `usecase` не импортируют FastAPI, Pydantic, numpy, aiohttp, sklearn,
+  openpyxl и Agent SDK. Pydantic-схемы — только в `controller/http/schemas.py`, HTTP-коды —
+  в `controller/http/errors.py`.
 
 ## Стиль
 

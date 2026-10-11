@@ -23,17 +23,17 @@ flowchart LR
     J --> K[Sonnet: проверка своих]
 ```
 
-1. **Исправление** (`preprocess.py`). Haiku правит опечатки, единицы и явные логические ошибки.
+1. **Исправление** (`usecase/correction.py`). Haiku правит опечатки, единицы и явные логические ошибки.
    Противоречия, которые нельзя исправить однозначно, не трогает, а возвращает в `issues` —
    их надо уточнить у поставщика.
-2. **Эмбеддинг запроса** (`search.py`). К запросу добавляется инструкция
+2. **Эмбеддинг запроса** (`adapter/embeddings.py`). К запросу добавляется инструкция
    `Instruct: … Query: …`, как требует Qwen3-Embedding. Тексты позиций кодируются без неё.
-3. **Поиск** (`Index.search`). Векторы нормированы, поэтому косинус — это `vectors @ q`.
+3. **Поиск** (`PositionSearch.semantic`, `adapter/vector_index.py`). Векторы нормированы, поэтому косинус — это `vectors @ q`.
    Берётся 200 лучших кандидатов, позиции с одинаковым `name` склеиваются в группу, на выходе
    20 групп.
-4. **Ранжирование** (`rerank.py`). Sonnet получает описание и карточки 20 групп (название,
+4. **Ранжирование** (`usecase/rerank.py`). Sonnet получает описание и карточки 20 групп (название,
    ОКПД2, характеристики) и возвращает JSON: `id`, `relevance` 0..100, `reason`.
-5. **Уточнение** (`clarify.py`, `rag-ask`). Лучшая группа раскрывается в группу КТРУ: шаблон
+5. **Уточнение** (`domain/clarify.py`, `usecase/clarify.py`, `rag-ask`). Лучшая группа раскрывается в группу КТРУ: шаблон
    (`isTemplate`) и его конечные позиции по `parentPositionInfo`. Конечные позиции различаются
    неизменяемыми характеристиками (`kind=1`, у конечной позиции — одно значение), поэтому
    вопросы задаются только по ним: сначала обязательные, затем те, у которых больше вариантов.
@@ -46,7 +46,7 @@ flowchart LR
    Цикл идёт, пока не останется одна позиция или различающих характеристик. Характеристики
    `kind=2/3` выбирает заказчик, у поставщика они не спрашиваются.
    Если различающих характеристик не осталось, а позиций несколько, позицию выбирают по номеру.
-6. **Характеристики закупки** (`spec.py`, `rag-ask`). У найденной позиции:
+6. **Характеристики закупки** (`domain/spec.py`, `usecase/spec.py`, `rag-ask`). У найденной позиции:
    - **Изменяемые характеристики КТРУ.** `kind=2` — одно значение из списка КТРУ, `kind=3` —
      несколько. Haiku заполняет их из описания и ответов поставщика. Дальше заказчик выбирает
      номер характеристики или пишет текстом сразу про несколько («угловой, для руководителя,
@@ -63,7 +63,7 @@ flowchart LR
      оно тоже проходит проверку. Позиции с `noNewFeatures=true` (561
      позиция; по названию поля — запрет дополнительных характеристик) свои не принимают, LLM не
      вызывается.
-   - **Подсказки своих характеристик** (`suggest.py`). У многих позиций КТРУ характеристик
+   - **Подсказки своих характеристик** (`usecase/suggest.py`). У многих позиций КТРУ характеристик
      мало: у 7 832 из 60 087 их нет совсем, у 35 382 нет изменяемых. Поэтому на этапе
      характеристик сервис предлагает до 6 своих. Источник частот — выгрузки СТЕ организаторов
      («Примеры выгрузок»: инструменты, мебель, одежда, ~300 тыс. товаров). По TF-IDF названий
@@ -78,8 +78,9 @@ flowchart LR
      «ИИ».
    На выходе — JSON: код, ОКПД2, неизменяемые значения, выбранные значения, свои характеристики.
 
-Шаги 5–6 — состояние диалога `Session` в `session.py`, без ввода-вывода. Поверх него — CLI
-(`cli.py`, `rag-ask`) и HTTP API (`api.py`, `rag-api`).
+Шаги 5–6 — состояние диалога `Session` в `domain/sessions.py`, без ввода-вывода; шаги диалога
+ведёт сценарий `Sessions` (`usecase/sessions.py`). Поверх него — CLI (`controller/cli/ask.py`,
+`rag-ask`) и HTTP API (`controller/http/`, `rag-api`).
 
 ```mermaid
 stateDiagram-v2
@@ -102,7 +103,7 @@ stateDiagram-v2
 Берутся только файлы `nsiKTRUNew_all_actual_*.xml` и в них только позиции со статусом
 `ACTIVE` — 60 087 штук.
 
-Текст позиции для эмбеддинга (`position_text` в `ktru.py`):
+Текст позиции для эмбеддинга (`position_text` в `domain/catalog.py`):
 
 ```
 Струбцина
@@ -129,7 +130,8 @@ stateDiagram-v2
 
 ## Запуск
 
-Нужны `uv` и залогиненный Claude Code: Agent SDK берёт его авторизацию.
+Нужны `uv` и залогиненный Claude Code: Agent SDK берёт его авторизацию. Вместо Claude можно
+подключить любую OpenAI-совместимую модель — см. «Модель за портом».
 
 ```bash
 cp .env.example .env
@@ -147,6 +149,14 @@ uv sync
 | `RAG_DATA` | `data` | папка с индексом |
 | `EMBED_BATCH` | `32` | текстов в одном запросе `rag-embed` |
 | `EMBED_CONCURRENCY` | `8` | параллельных запросов `rag-embed` |
+| `CLAUDE_FAST_MODEL` | `haiku` | быстрая модель Agent SDK: исправление, разбор ответов |
+| `CLAUDE_SMART_MODEL` | `sonnet` | сильная модель Agent SDK: ранжирование, проверка, подсказки, правки сообщением |
+| `LLM_URL` | — | адрес OpenAI-совместимого API (`…/v1`), нужен только для `openai_model` |
+| `LLM_API_KEY` | — | ключ OpenAI-совместимого API |
+| `LLM_FAST_MODEL` | `gpt-5-mini` | быстрая модель OpenAI-совместимого API |
+| `LLM_SMART_MODEL` | `gpt-5` | сильная модель OpenAI-совместимого API |
+| `LLM_REASONING` | `false` | `true` — передавать `reasoning_effort` |
+| `LLM_TIMEOUT` | `180` | таймаут запроса, с |
 
 ### Собрать индекс
 
@@ -178,9 +188,7 @@ uv run rag-ste
 | `uv run rag-ste` | индекс СТЕ для подсказок своих характеристик |
 | `uv run rag-api` | HTTP API на `RAG_HOST:RAG_PORT`, по умолчанию `127.0.0.1:8100` |
 | `uv run rag-ask "описание"` | вся цепочка в терминале: вопросы до одного кода КТРУ, выбор значений, свои характеристики с проверкой |
-| `uv run rag-fix "описание"` | только исправление описания через Haiku |
-| `uv run rag-hello` | проверка Agent SDK: Sonnet отвечает по JSON-схеме |
-| `uv run rag` | проверка API эмбеддингов |
+| `uv run rag-fix "описание"` | только исправление описания быстрой моделью |
 
 Пример:
 
@@ -198,10 +206,11 @@ $ uv run rag-rerank "струбцына винтовая, глубина заж�
 ## HTTP API
 
 `uv run rag-api` загружает индекс при старте (~15 с), документация — `/docs`. Схема лежит в
-[`openapi.json`](openapi.json); после правки `api.py` её пересобирают, индекс для этого не нужен:
+[`openapi.json`](openapi.json); после правки `controller/http/` её пересобирают, индекс для
+этого не нужен:
 
 ```bash
-uv run python -c "import json; from rag.api import app; print(json.dumps(app.openapi(), ensure_ascii=False, indent=2))" > openapi.json
+uv run python -c "import json; from rag.main import create_app; print(json.dumps(create_app().openapi(), ensure_ascii=False, indent=2))" > openapi.json
 ```
 
 Сессии живут в памяти процесса; изменения одной сессии идут по очереди под `asyncio.Lock`.
@@ -259,44 +268,114 @@ curl -s localhost:8100/sessions/$ID/characteristics/text -H 'content-type: appli
 curl -s -X POST localhost:8100/sessions/$ID/finish
 ```
 
+## Слои
+
+Код в `src/rag/` разбит на слои по образцу `legacy/backend` (ADR
+[`legacy/docs/adr/0001-layers-and-ports.md`](legacy/docs/adr/0001-layers-and-ports.md)).
+Зависимости идут только внутрь, к `domain`.
+
+```mermaid
+flowchart LR
+    controller --> usecase
+    main[main.py, composition.py] --> controller
+    main --> adapter
+    main --> repository
+    adapter --> domain
+    repository --> domain
+    usecase --> domain
+    controller --> domain
+    adapter -. реализует .-> interface[usecase/interface.py]
+    repository -. реализует .-> interface
+```
+
+| Слой | Что лежит | Что не импортирует |
+|---|---|---|
+| `domain/` | позиции КТРУ, вопросы и сужение группы, диапазоны, сессия и её этапы, правило выбора следующего шага `next_step`, ошибки | библиотеки, ввод-вывод |
+| `usecase/` | порты (`interface.py`), промпты и JSON-схемы, сценарии: `Corrector`, `Reranker`, `CharacteristicReader`, `ExtraValidator`, `Suggester`, `Sessions`, `Discoveries`, `CatalogQueries`, офлайн-сборка индекса | FastAPI, Pydantic, numpy, aiohttp, Agent SDK |
+| `adapter/` | внешние системы: LLM, эмбеддинги, разбор zip КТРУ и xlsx СТЕ, векторный поиск numpy, TF-IDF аналогов | `controller` |
+| `repository/` | хранилища: файлы индекса в `data/`, сессии и поиски в памяти | `controller` |
+| `controller/` | HTTP (`http/`: роутеры, Pydantic-схемы, коды ошибок) и терминал (`cli/`) | адаптеры |
+
+- **Сборка** — вручную, без DI-контейнера. `main.py` выбирает реализации портов, общая
+  проводка `composition.py` собирает из них сценарии. Остальные модули адаптеры не создают.
+- **Ошибки.** Домен бросает `DomainError` с `code` и текстом по-русски, HTTP-код назначает
+  `controller/http/errors.py`: `NotFound` — 404, `StageError` — 409, `InputError` — 422,
+  `ModelFailure` — 502, `IndexNotReady` — 503. Адаптеры переводят ошибки библиотек в
+  `ModelFailure`.
+- **Без индекса.** Если в `RAG_DATA` нет `positions.pkl`, `codes.json` или `vectors.npy`,
+  `main.py` подставляет `MissingCatalog` и `MissingVectorIndex`: сервис стартует, запросы к
+  каталогу отвечают 503.
+- **`noNewFeatures`** — поле `Position.no_new_features`, его заполняет `rag-parse`. Классы
+  позиций переехали из `rag.models` в `rag.domain.catalog`, поэтому `positions.pkl`, собранный
+  до перехода на слои, не читается — нужен `uv run rag-parse`. Тексты позиций не изменились,
+  `rag-embed` повторять не надо.
+
+## Модель за портом
+
+Сценарии не знают Agent SDK. Каждый вызов модели — `LanguageModel.complete(StructuredRequest)`:
+системный промпт, текст, JSON-схема ответа, уровень модели `Tier.FAST` или `Tier.SMART` и
+необязательный `Effort`. Ответ — `Completion`: разобранный JSON и `Usage` (модель, время,
+токены, стоимость, если провайдер её отдаёт).
+
+| Реализация | Файл | Как отвечает по схеме |
+|---|---|---|
+| `ClaudeAgentModel` | `adapter/llm/claude_agent.py` | Agent SDK, `output_format` с JSON-схемой; `FAST` → `haiku`, `SMART` → `sonnet` |
+| `OpenAICompatibleModel` | `adapter/llm/openai_compatible.py` | `POST {LLM_URL}/chat/completions` с `response_format: json_schema, strict: true` |
+
+Модель выбирает `language_model` в `main.py`. Переключение — одна строка:
+
+```python
+def language_model(settings: Settings) -> LanguageModel:
+    return openai_model(settings)
+```
+
+`ClaudeAgentModel` собирает каждый вызов изолированно: свой `system_prompt`,
+`setting_sources=[]`, `tools=[]`, `cwd` во временной пустой папке. OpenAI-совместимый провайдер
+должен поддерживать structured output по JSON-схеме (OpenAI, vLLM, OpenRouter и т. п.); схемы
+сценариев написаны в строгом режиме — все поля в `required`, `additionalProperties: false`.
+
 ## Использование из кода
 
 ```python
 import asyncio
-from rag.preprocess import preprocess
-from rag.rerank import rerank
-from rag.search import Index, expand, query_vector
+from rag.domain.search import expand
+from rag.main import production_usecases
+from rag.settings import load_settings
 
-index = Index()
-pre = asyncio.run(preprocess("струбцына винтовая"))
-hits = index.search(asyncio.run(query_vector(pre.corrected)))
-ranked = asyncio.run(rerank(pre.corrected, hits)).ranked
+async def main() -> None:
+    u = production_usecases(load_settings())
+    corrected = await u.corrector.run("струбцына винтовая")
+    hits = await u.search.semantic(corrected.corrected)
+    ranked = (await u.reranker.run(corrected.corrected, hits)).ranked
+    best = ranked[0].hit
+    for member, diff in expand(best):
+        print(member.position.code, diff)
+    await u.ports.embeddings.aclose()
 
-best = ranked[0].hit
-best.position.code
-best.raw["data"]["characteristics"]
-best.raw["printForm"]["url"]
-for member, diff in expand(best):
-    member.position.code, diff
+asyncio.run(main())
 ```
 
 | Что | Где | Что возвращает |
 |---|---|---|
-| `Index()` | `search.py` | загружает векторы, `positions` и `raw` в память |
-| `Index.search(vec, k=20)` | `search.py` | `list[Hit]`: группы по убыванию косинуса |
-| `Index.leaves(position)` | `search.py` | конечные позиции группы КТРУ, в которую входит позиция |
-| `questions(leaves, answers)` | `clarify.py` | `list[Question]`: неизменяемые характеристики, которые различают позиции |
-| `narrow(leaves, answers)` | `clarify.py` | позиции, совместимые с ответами |
-| `extract(text, questions)` | `clarify.py` | ответы из текста: имя характеристики → варианты |
-| `answer(reply, questions)` | `clarify.py` | имя характеристики → выбранные варианты и пояснение |
-| `changeable(position)` | `spec.py` | `list[Question]`: характеристики `kind=2/3` |
-| `session.start(index, text)` | `session.py` | `Session`; остальные шаги — `reply`, `choose`, `pick`, `switch_group`, `set_values`, `describe`, `add_extra`, `remove_extra`, `finish` |
-| `validate(position, chosen, extras, new)` | `spec.py` | `Verdict`: `ok`, `problems`, `fixed` — предложенное исправление |
-| `Index.row(i)` | `search.py` | `(Position, raw)` по номеру строки индекса |
-| `Hit` | `search.py` | `row`, `score`, `position`, `raw`, `members`; `siblings` — число вариантов |
-| `expand(hit)` | `search.py` | варианты группы и характеристики, которыми они различаются |
-| `preprocess(text)` | `preprocess.py` | `Preprocessed`: `corrected`, `fixes`, `issues` |
-| `rerank(text, hits)` | `rerank.py` | `RerankResult`: `ranked` (`hit`, `relevance`, `reason`) и `ResultMessage` |
+| `production_usecases(settings)` | `main.py` | `Usecases`: сценарии и выбранные реализации портов (`ports`) |
+| `build_usecases(ports)` | `composition.py` | то же из своих реализаций портов: другая модель, заглушки |
+| `Corrector.run(text)` | `usecase/correction.py` | `Corrected`: `corrected`, `fixes`, `issues`, `usage` |
+| `PositionSearch.semantic(text, k=20)` | `usecase/search.py` | `list[Hit]`: группы по убыванию косинуса |
+| `PositionSearch.by_name(text)` | `usecase/search.py` | позиции по коду или словам названия |
+| `Reranker.run(text, hits)` | `usecase/rerank.py` | `Reranking`: `ranked` (`hit`, `relevance`, `reason`), `exact_match_code`, `usage` |
+| `Catalog.leaves(position)` | `repository/files.py` | конечные позиции группы КТРУ, в которую входит позиция |
+| `questions(leaves, answers)` | `domain/clarify.py` | `list[Question]`: неизменяемые характеристики, которые различают позиции |
+| `narrow(leaves, answers)` | `domain/clarify.py` | позиции, совместимые с ответами |
+| `next_step(leaves, answers)` | `domain/sessions.py` | оставшиеся позиции и следующий этап: уточнение, выбор, характеристики, тупик |
+| `CharacteristicReader.extract / answer` | `usecase/clarify.py` | ответы из текста: имя характеристики → варианты; у `answer` ещё числа и пояснение |
+| `changeable(position)` | `domain/spec.py` | `list[Question]`: характеристики `kind=2/3` |
+| `ExtraValidator.run(position, chosen, extras, new)` | `usecase/spec.py` | `Verdict`: `ok`, `problems`, `warnings`, `fixed` |
+| `Sessions` | `usecase/sessions.py` | `start`, `answer`, `pick`, `switch_group`, `set_values`, `set_number`, `describe`, `message`, `add_extra`, `remove_extra`, `suggestions`, `finish` |
+| `Hit` | `domain/search.py` | `row`, `score`, `position`, `members`; `siblings` — число вариантов |
+| `expand(hit)` | `domain/search.py` | варианты группы и характеристики, которыми они различаются |
+
+Сырые записи XML (`raw.pkl`) сервис больше не загружает; `printForm` и прочие поля без своего
+места в `Position` читаются из `raw.pkl` напрямую.
 
 `siblings` и `expand` считают варианты только среди 200 кандидатов поиска, а не по всему КТРУ.
 
@@ -328,10 +407,11 @@ for member, diff in expand(best):
   воркеров uvicorn не поддерживаются. `POST /sessions` занимает ~25 с — три вызова модели подряд.
 - **Неразличимые позиции.** В 149 из 5710 групп с потомками конечные позиции не различаются
   неизменяемыми характеристиками, тогда этап `pick` — код выбирают из списка.
-- **Контекст агента.** Claude Code добавляет к каждому вызову блок окружения: рабочую папку, ОС,
+- **Контекст агента** (только `ClaudeAgentModel`). Claude Code добавляет к каждому вызову блок окружения: рабочую папку, ОС,
   дату и email аккаунта. Вызовы идут из временной пустой папки с `setting_sources=[]`, поэтому
   проект и CLAUDE.md модель не видит, но email и дата в контекст попадают.
-- **Память.** `raw.pkl` в памяти занимает ~1.5 ГБ, векторы — ~1 ГБ через mmap.
+- **Память.** Векторы — ~1 ГБ через mmap. `raw.pkl` пишет только `rag-parse`, сервис его не
+  загружает.
 
 ## Веб-интерфейс
 

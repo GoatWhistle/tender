@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Health */
+        get: operations["health_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog": {
         parameters: {
             query?: never;
@@ -47,23 +64,6 @@ export interface paths {
         };
         /** Position Details */
         get: operations["position_details_catalog__code__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Health */
-        get: operations["health_health_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -243,23 +243,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/sessions/{session_id}/suggestions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Suggest */
-        post: operations["suggest_sessions__session_id__suggestions_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/sessions/{session_id}/extras/{n}": {
         parameters: {
             query?: never;
@@ -272,6 +255,23 @@ export interface paths {
         post?: never;
         /** Remove Extra */
         delete: operations["remove_extra_sessions__session_id__extras__n__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessions/{session_id}/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suggest */
+        post: operations["suggest_sessions__session_id__suggestions_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -303,8 +303,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Search */
-        post: operations["create_search_searches_post"];
+        /** Create */
+        post: operations["create_searches_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -320,8 +320,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Search Candidates */
-        post: operations["search_candidates_searches__search_id__candidates_post"];
+        /** Candidates */
+        post: operations["candidates_searches__search_id__candidates_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -337,8 +337,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Rank Candidates */
-        post: operations["rank_candidates_searches__search_id__rerank_post"];
+        /** Rerank */
+        post: operations["rerank_searches__search_id__rerank_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -354,8 +354,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Select Candidate */
-        post: operations["select_candidate_searches__search_id__select_post"];
+        /** Select */
+        post: operations["select_searches__search_id__select_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -375,7 +375,7 @@ export interface components {
             option?: number | null;
             /**
              * Text
-             * @description ответ свободным текстом, разбирает Haiku
+             * @description ответ свободным текстом, разбирает быстрая модель
              */
             text?: string | null;
         };
@@ -478,11 +478,8 @@ export interface components {
              * @description введённое число, если оно ещё соответствует выбранному диапазону
              */
             number?: number | null;
-            /**
-             * Warning
-             * @description число допустимо по КТРУ, но сомнительно: large — больше крайней границы в 10 раз, small — меньше в 10 раз, negative — отрицательное при неотрицательных границах
-             */
-            warning?: ("large" | "small" | "negative") | null;
+            /** @description число допустимо по КТРУ, но сомнительно: large — больше крайней границы в 10 раз, small — меньше в 10 раз, negative — отрицательное при неотрицательных границах */
+            warning?: components["schemas"]["Doubt"] | null;
         };
         /** ChatMessageOut */
         ChatMessageOut: {
@@ -511,17 +508,13 @@ export interface components {
         DiscoveryOut: {
             /** Id */
             id: string;
-            /**
-             * Stage
-             * @enum {string}
-             */
-            stage: "review" | "candidates" | "ranked";
+            stage: components["schemas"]["DiscoveryStage"];
             /** Description */
             description: string;
             /** Corrected */
             corrected: string;
             /** Fixes */
-            fixes: components["schemas"]["SearchFix"][];
+            fixes: components["schemas"]["FixOut"][];
             /** Issues */
             issues: string[];
             /** Candidates */
@@ -533,6 +526,13 @@ export interface components {
             /** Auto Select Reason */
             auto_select_reason: string | null;
         };
+        /**
+         * DiscoveryStage
+         * @enum {string}
+         */
+        DiscoveryStage: "review" | "candidates" | "ranked";
+        /** @enum {string} */
+        Doubt: "large" | "small" | "negative";
         /** ExtraIn */
         ExtraIn: {
             /** Name */
@@ -600,6 +600,35 @@ export interface components {
          * @enum {string}
          */
         Origin: "description" | "assistant" | "manual";
+        /** OutcomeOut */
+        OutcomeOut: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Okpd2 */
+            okpd2: string;
+            /** Okpd2 Name */
+            okpd2_name: string;
+            /** Fixed */
+            fixed: {
+                [key: string]: string;
+            };
+            /** Chosen */
+            chosen: {
+                [key: string]: string[];
+            };
+            /** Entered */
+            entered: {
+                [key: string]: number;
+            };
+            /** Doubts */
+            doubts: {
+                [key: string]: components["schemas"]["Doubt"];
+            };
+            /** Extras */
+            extras: components["schemas"]["ExtraIn"][];
+        };
         /** PickIn */
         PickIn: {
             /** Code */
@@ -651,15 +680,6 @@ export interface components {
             differences: {
                 [key: string]: string;
             };
-        };
-        /** SearchFix */
-        SearchFix: {
-            /** Before */
-            before: string;
-            /** After */
-            after: string;
-            /** Kind */
-            kind: string;
         };
         /** SessionOut */
         SessionOut: {
@@ -814,6 +834,28 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    health_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+    };
     find_positions_catalog_get: {
         parameters: {
             query: {
@@ -904,28 +946,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    health_health_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
                 };
             };
         };
@@ -1303,37 +1323,6 @@ export interface operations {
             };
         };
     };
-    suggest_sessions__session_id__suggestions_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                session_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SuggestionsOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     remove_extra_sessions__session_id__extras__n__delete: {
         parameters: {
             query?: never;
@@ -1366,6 +1355,37 @@ export interface operations {
             };
         };
     };
+    suggest_sessions__session_id__suggestions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SuggestionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     finish_sessions__session_id__finish_post: {
         parameters: {
             query?: never;
@@ -1383,9 +1403,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["OutcomeOut"];
                 };
             };
             /** @description Validation Error */
@@ -1399,7 +1417,7 @@ export interface operations {
             };
         };
     };
-    create_search_searches_post: {
+    create_searches_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -1432,7 +1450,7 @@ export interface operations {
             };
         };
     };
-    search_candidates_searches__search_id__candidates_post: {
+    candidates_searches__search_id__candidates_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -1463,7 +1481,7 @@ export interface operations {
             };
         };
     };
-    rank_candidates_searches__search_id__rerank_post: {
+    rerank_searches__search_id__rerank_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -1494,7 +1512,7 @@ export interface operations {
             };
         };
     };
-    select_candidate_searches__search_id__select_post: {
+    select_searches__search_id__select_post: {
         parameters: {
             query?: never;
             header?: never;

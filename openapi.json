@@ -5,8 +5,36 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Служебное"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog": {
       "get": {
+        "tags": [
+          "Каталог"
+        ],
         "summary": "Find Positions",
         "operationId": "find_positions_catalog_get",
         "parameters": [
@@ -66,6 +94,9 @@
     },
     "/catalog/compare": {
       "get": {
+        "tags": [
+          "Каталог"
+        ],
         "summary": "Compare Positions",
         "operationId": "compare_positions_catalog_compare_get",
         "parameters": [
@@ -108,6 +139,9 @@
     },
     "/catalog/{code}": {
       "get": {
+        "tags": [
+          "Каталог"
+        ],
         "summary": "Position Details",
         "operationId": "position_details_catalog__code__get",
         "parameters": [
@@ -145,30 +179,11 @@
         }
       }
     },
-    "/health": {
-      "get": {
-        "summary": "Health",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "type": "object",
-                  "title": "Response Health Health Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/sessions": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Create",
         "operationId": "create_sessions_post",
         "requestBody": {
@@ -207,6 +222,9 @@
     },
     "/sessions/{session_id}": {
       "get": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Read",
         "operationId": "read_sessions__session_id__get",
         "parameters": [
@@ -244,6 +262,9 @@
         }
       },
       "delete": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Delete",
         "operationId": "delete_sessions__session_id__delete",
         "parameters": [
@@ -276,6 +297,9 @@
     },
     "/sessions/{session_id}/answer": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Answer",
         "operationId": "answer_sessions__session_id__answer_post",
         "parameters": [
@@ -325,6 +349,9 @@
     },
     "/sessions/{session_id}/pick": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Pick",
         "operationId": "pick_sessions__session_id__pick_post",
         "parameters": [
@@ -374,6 +401,9 @@
     },
     "/sessions/{session_id}/group": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Switch Group",
         "operationId": "switch_group_sessions__session_id__group_post",
         "parameters": [
@@ -423,6 +453,9 @@
     },
     "/sessions/{session_id}/characteristics": {
       "patch": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Set Values",
         "operationId": "set_values_sessions__session_id__characteristics_patch",
         "parameters": [
@@ -472,6 +505,9 @@
     },
     "/sessions/{session_id}/characteristics/number": {
       "put": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Set Number",
         "operationId": "set_number_sessions__session_id__characteristics_number_put",
         "parameters": [
@@ -521,6 +557,9 @@
     },
     "/sessions/{session_id}/characteristics/text": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Describe",
         "operationId": "describe_sessions__session_id__characteristics_text_post",
         "parameters": [
@@ -570,6 +609,9 @@
     },
     "/sessions/{session_id}/messages": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Message",
         "operationId": "message_sessions__session_id__messages_post",
         "parameters": [
@@ -619,6 +661,9 @@
     },
     "/sessions/{session_id}/extras": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Add Extra",
         "operationId": "add_extra_sessions__session_id__extras_post",
         "parameters": [
@@ -666,47 +711,11 @@
         }
       }
     },
-    "/sessions/{session_id}/suggestions": {
-      "post": {
-        "summary": "Suggest",
-        "operationId": "suggest_sessions__session_id__suggestions_post",
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuggestionsOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/sessions/{session_id}/extras/{n}": {
       "delete": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Remove Extra",
         "operationId": "remove_extra_sessions__session_id__extras__n__delete",
         "parameters": [
@@ -753,8 +762,53 @@
         }
       }
     },
+    "/sessions/{session_id}/suggestions": {
+      "post": {
+        "tags": [
+          "Сессии"
+        ],
+        "summary": "Suggest",
+        "operationId": "suggest_sessions__session_id__suggestions_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestionsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/{session_id}/finish": {
       "post": {
+        "tags": [
+          "Сессии"
+        ],
         "summary": "Finish",
         "operationId": "finish_sessions__session_id__finish_post",
         "parameters": [
@@ -774,9 +828,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Finish Sessions  Session Id  Finish Post"
+                  "$ref": "#/components/schemas/OutcomeOut"
                 }
               }
             }
@@ -796,8 +848,11 @@
     },
     "/searches": {
       "post": {
-        "summary": "Create Search",
-        "operationId": "create_search_searches_post",
+        "tags": [
+          "Поиск"
+        ],
+        "summary": "Create",
+        "operationId": "create_searches_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -834,8 +889,11 @@
     },
     "/searches/{search_id}/candidates": {
       "post": {
-        "summary": "Search Candidates",
-        "operationId": "search_candidates_searches__search_id__candidates_post",
+        "tags": [
+          "Поиск"
+        ],
+        "summary": "Candidates",
+        "operationId": "candidates_searches__search_id__candidates_post",
         "parameters": [
           {
             "name": "search_id",
@@ -873,8 +931,11 @@
     },
     "/searches/{search_id}/rerank": {
       "post": {
-        "summary": "Rank Candidates",
-        "operationId": "rank_candidates_searches__search_id__rerank_post",
+        "tags": [
+          "Поиск"
+        ],
+        "summary": "Rerank",
+        "operationId": "rerank_searches__search_id__rerank_post",
         "parameters": [
           {
             "name": "search_id",
@@ -912,8 +973,11 @@
     },
     "/searches/{search_id}/select": {
       "post": {
-        "summary": "Select Candidate",
-        "operationId": "select_candidate_searches__search_id__select_post",
+        "tags": [
+          "Поиск"
+        ],
+        "summary": "Select",
+        "operationId": "select_searches__search_id__select_post",
         "parameters": [
           {
             "name": "search_id",
@@ -986,7 +1050,7 @@
               }
             ],
             "title": "Text",
-            "description": "ответ свободным текстом, разбирает Haiku"
+            "description": "ответ свободным текстом, разбирает быстрая модель"
           }
         },
         "type": "object",
@@ -1279,18 +1343,12 @@
           "warning": {
             "anyOf": [
               {
-                "type": "string",
-                "enum": [
-                  "large",
-                  "small",
-                  "negative"
-                ]
+                "$ref": "#/components/schemas/Doubt"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Warning",
             "description": "число допустимо по КТРУ, но сомнительно: large — больше крайней границы в 10 раз, small — меньше в 10 раз, negative — отрицательное при неотрицательных границах"
           }
         },
@@ -1386,13 +1444,7 @@
             "title": "Id"
           },
           "stage": {
-            "type": "string",
-            "enum": [
-              "review",
-              "candidates",
-              "ranked"
-            ],
-            "title": "Stage"
+            "$ref": "#/components/schemas/DiscoveryStage"
           },
           "description": {
             "type": "string",
@@ -1404,7 +1456,7 @@
           },
           "fixes": {
             "items": {
-              "$ref": "#/components/schemas/SearchFix"
+              "$ref": "#/components/schemas/FixOut"
             },
             "type": "array",
             "title": "Fixes"
@@ -1467,6 +1519,23 @@
           "auto_select_reason"
         ],
         "title": "DiscoveryOut"
+      },
+      "DiscoveryStage": {
+        "type": "string",
+        "enum": [
+          "review",
+          "candidates",
+          "ranked"
+        ],
+        "title": "DiscoveryStage"
+      },
+      "Doubt": {
+        "type": "string",
+        "enum": [
+          "large",
+          "small",
+          "negative"
+        ]
       },
       "ExtraIn": {
         "properties": {
@@ -1614,6 +1683,77 @@
         ],
         "title": "Origin"
       },
+      "OutcomeOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "okpd2": {
+            "type": "string",
+            "title": "Okpd2"
+          },
+          "okpd2_name": {
+            "type": "string",
+            "title": "Okpd2 Name"
+          },
+          "fixed": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Fixed"
+          },
+          "chosen": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Chosen"
+          },
+          "entered": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Entered"
+          },
+          "doubts": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Doubt"
+            },
+            "type": "object",
+            "title": "Doubts"
+          },
+          "extras": {
+            "items": {
+              "$ref": "#/components/schemas/ExtraIn"
+            },
+            "type": "array",
+            "title": "Extras"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "okpd2",
+          "okpd2_name",
+          "fixed",
+          "chosen",
+          "entered",
+          "doubts",
+          "extras"
+        ],
+        "title": "OutcomeOut"
+      },
       "PickIn": {
         "properties": {
           "code": {
@@ -1759,29 +1899,6 @@
           "differences"
         ],
         "title": "SearchCandidate"
-      },
-      "SearchFix": {
-        "properties": {
-          "before": {
-            "type": "string",
-            "title": "Before"
-          },
-          "after": {
-            "type": "string",
-            "title": "After"
-          },
-          "kind": {
-            "type": "string",
-            "title": "Kind"
-          }
-        },
-        "type": "object",
-        "required": [
-          "before",
-          "after",
-          "kind"
-        ],
-        "title": "SearchFix"
       },
       "SessionOut": {
         "properties": {
