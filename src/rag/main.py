@@ -1,143 +1,191 @@
 import asyncio
-import math
-import os
-import ssl
 import sys
-import tempfile
-import time
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
+from pathlib import Path
 
-import aiohttp
-import truststore
-from claude_agent_sdk import (
-    ClaudeAgentOptions,
-    ResultMessage,
-    query,
+import uvicorn
+from fastapi import FastAPI
+
+from rag.adapter.analogs import TfidfAnalogs
+from rag.adapter.embeddings import OpenAIEmbeddings
+from rag.adapter.ktru_zip import ZipKtruSource
+from rag.adapter.llm.claude_agent import ClaudeAgentModel
+from rag.adapter.llm.openai_compatible import OpenAICompatibleModel
+from rag.adapter.ste_xlsx import XlsxSteSource
+from rag.adapter.vector_index import MissingVectorIndex, NumpyVectorIndex
+from rag.composition import Ports, Usecases, build_usecases
+from rag.controller.cli import commands
+from rag.controller.cli.ask import Dialog
+from rag.controller.http.catalog import router as catalog_router
+from rag.controller.http.errors import install_error_handlers
+from rag.controller.http.health import router as health_router
+from rag.controller.http.searches import router as searches_router
+from rag.controller.http.sessions import router as sessions_router
+from rag.domain.inference import Tier
+from rag.repository.files import (
+    FileCatalog,
+    FileCatalogStore,
+    IndexFiles,
+    MissingCatalog,
+    NpyVectorStore,
 )
-from dotenv import load_dotenv
-
-from rag.models import EmbeddingResponse
-
-
-def cosine_similarity(a: list[float], b: list[float]) -> float:
-    dot = sum(x * y for x, y in zip(a, b, strict=True))
-    norm = math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b))
-    return dot / norm if norm else 0.0
+from rag.repository.memory.sessions import MemoryDiscoveries, MemorySessions
+from rag.settings import Settings, load_settings
+from rag.usecase.indexing import BuildAnalogs, EmbedCatalog, ParseCatalog
+from rag.usecase.interface import LanguageModel
 
 
-def cosine_distance(a: list[float], b: list[float]) -> float:
-    return 1.0 - cosine_similarity(a, b)
+def claude_model(settings: Settings) -> LanguageModel:
+    return ClaudeAgentModel(
+        {Tier.FAST: settings.claude_fast_model, Tier.SMART: settings.claude_smart_model}
+    )
 
 
-load_dotenv()
-
-URL = os.environ.get("EMBEDDINGS_URL", "https://api.polza.ai/api/v1")
-MODEL = os.environ.get("EMBEDDINGS_MODEL", "qwen/qwen3-embedding-8b")
-API_KEY = os.environ.get("EMBEDDINGS_API_KEY", "")
-SSL_CONTEXT = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-
-
-async def embed(session: aiohttp.ClientSession, texts: list[str]) -> EmbeddingResponse:
-    headers = {"Authorization": f"Bearer {API_KEY}"} if API_KEY else {}
-    async with session.post(
-        f"{URL}/embeddings",
-        json={"model": MODEL, "input": texts},
-        headers=headers,
-        ssl=SSL_CONTEXT,
-    ) as resp:
-        resp.raise_for_status()
-        body = await resp.json()
-    return EmbeddingResponse.from_dict(body)
+def openai_model(settings: Settings) -> LanguageModel:
+    if not settings.llm_url:
+        raise SystemExit("для OpenAI-совместимой модели задайте LLM_URL")
+    return OpenAICompatibleModel(
+        settings.llm_url,
+        {Tier.FAST: settings.llm_fast_model, Tier.SMART: settings.llm_smart_model},
+        api_key=settings.llm_api_key,
+        timeout=settings.llm_timeout,
+        reasoning=settings.llm_reasoning,
+    )
 
 
-async def main() -> None:
-    texts = sys.argv[1:] or [
-        "Стул офисный на колёсах, металлический каркас",
-        "Савелий",
-        "Иван",
-        "Амир",
-        "Андрей",
-        "Азамат",
-        "Лох",
-    ]
-    async with aiohttp.ClientSession() as session:
-        resp = await embed(session, texts)
-    print(f"model={resp.model} tokens={resp.usage.total_tokens}")
-    for item in resp.data:
-        vec = item.embedding
-        print(
-            f"{texts[item.index]!r}: dim={len(vec)} head={[round(x, 4) for x in vec[:5]]}",
-            item.index,
-            cosine_similarity(vec, resp.data[6].embedding),
+def language_model(settings: Settings) -> LanguageModel:
+    return claude_model(settings)
+
+
+def embeddings(settings: Settings) -> OpenAIEmbeddings:
+    return OpenAIEmbeddings(
+        settings.embeddings_url,
+        settings.embeddings_model,
+        api_key=settings.embeddings_api_key,
+        query_instruction=settings.embeddings_query_instruction,
+    )
+
+
+def production_usecases(settings: Settings) -> Usecases:
+    files = IndexFiles(settings.data)
+    ready = files.ready
+    return build_usecases(
+        Ports(
+            llm=language_model(settings),
+            embeddings=embeddings(settings),
+            catalog=FileCatalog(files) if ready else MissingCatalog(),
+            vectors=NumpyVectorIndex(files.vectors, files.codes, files.vectors_f32)
+            if ready
+            else MissingVectorIndex(),
+            analogs=TfidfAnalogs(files.ste),
+            sessions=MemorySessions(),
+            discoveries=MemoryDiscoveries(),
         )
+    )
 
 
-HELLO_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "reply": {"type": "string"},
-        "language": {"type": "string"},
-        "mood": {"type": "string"},
-    },
-    "required": ["reply", "language"],
-    "additionalProperties": False,
-}
+def create_app(settings: Settings | None = None) -> FastAPI:
+    settings = settings or load_settings()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        usecases = await asyncio.to_thread(production_usecases, settings)
+        app.state.usecases = usecases
+        warm = asyncio.create_task(asyncio.to_thread(usecases.ports.analogs.warm))
+        try:
+            yield
+        finally:
+            warm.cancel()
+            await usecases.ports.embeddings.aclose()
+
+    app = FastAPI(title="RAG КТРУ", lifespan=lifespan)
+    install_error_handlers(app)
+    app.include_router(health_router)
+    app.include_router(catalog_router)
+    app.include_router(sessions_router)
+    app.include_router(searches_router)
+    return app
 
 
-async def hello():
-    result: ResultMessage | None = None
-    with tempfile.TemporaryDirectory(prefix="rag-agent-") as cwd:
-        options = ClaudeAgentOptions(
-            model="haiku",
-            effort="medium",
-            system_prompt="",
-            setting_sources=[],
-            tools=[],
-            cwd=cwd,
-            output_format={"type": "json_schema", "schema": HELLO_SCHEMA},
+def _text(default: str) -> str:
+    return " ".join(sys.argv[1:]) or default
+
+
+async def _with_usecases(
+    settings: Settings, run: Callable[[Usecases], Awaitable[None]]
+) -> None:
+    usecases = production_usecases(settings)
+    try:
+        await run(usecases)
+    finally:
+        await usecases.ports.embeddings.aclose()
+
+
+def run_api() -> None:
+    settings = load_settings()
+    uvicorn.run(create_app(settings), host=settings.host, port=settings.port)
+
+
+def run_ask() -> None:
+    text = _text("струбцина винтовая")
+    asyncio.run(_with_usecases(load_settings(), lambda u: Dialog(u.sessions).run(text)))
+
+
+def run_search() -> None:
+    text = _text("стул офисный на колёсах")
+    asyncio.run(
+        _with_usecases(load_settings(), lambda u: commands.search(u.search, text))
+    )
+
+
+def run_rerank() -> None:
+    text = _text("стул офисный на колёсах")
+    asyncio.run(
+        _with_usecases(
+            load_settings(),
+            lambda u: commands.rerank(u.corrector, u.search, u.reranker, text),
         )
-        start = time.perf_counter()
-
-        async for message in query(prompt="иди нахуй", options=options):
-            if isinstance(message, ResultMessage):
-                result = message
-
-        if not isinstance(result, ResultMessage):
-            return
-
-        print("msg1:", time.perf_counter() - start, result.structured_output)
-        print(
-            f"sdk={result.duration_ms / 1000:.2f}s ",
-            f"api={result.duration_api_ms / 1000:.2f}s turns={result.num_turns}",
-        )
-
-        start = time.perf_counter()
-
-        async for message in query(
-            prompt="иди нахуй!!!!!!! соси писос", options=options
-        ):
-            if isinstance(message, ResultMessage):
-                result = message
-
-        if not isinstance(result, ResultMessage):
-            return
-
-        print("msg2:", time.perf_counter() - start, result.structured_output)
-        print(
-            f"sdk={result.duration_ms / 1000:.2f}s ",
-            f"api={result.duration_api_ms / 1000:.2f}s turns={result.num_turns}",
-        )
+    )
 
 
-def run() -> None:
-    asyncio.run(main())
+def run_fix() -> None:
+    text = _text("стул офисный на колесиках, высота сидения 45 метров, обивка экокожка")
+    asyncio.run(
+        _with_usecases(load_settings(), lambda u: commands.fix(u.corrector, text))
+    )
 
 
-def run_hello() -> None:
-    start = time.perf_counter()
-    asyncio.run(hello())
-    wall = time.perf_counter() - start
-    print(f"wall={wall:.2f}s")
+def run_parse() -> None:
+    files = IndexFiles(load_settings().data)
+    report = ParseCatalog(
+        ZipKtruSource(files.ktru_zip),
+        FileCatalogStore(files),
+        lambda m: print(m, flush=True),
+    ).run()
+    commands.print_parse(report)
 
 
-if __name__ == "__main__":
-    run()
+def run_embed() -> None:
+    settings = load_settings()
+    files = IndexFiles(settings.data)
+    asyncio.run(
+        EmbedCatalog(
+            embeddings(settings),
+            FileCatalogStore(files),
+            NpyVectorStore(files),
+            lambda m: print(m, flush=True),
+            settings.embed_batch,
+            settings.embed_concurrency,
+        ).run()
+    )
+    print(f"готово: {files.vectors}")
+
+
+def run_ste() -> None:
+    files = IndexFiles(load_settings().data)
+    source = XlsxSteSource(Path(sys.argv[1]) if len(sys.argv) > 1 else files.ste_source)
+    count = BuildAnalogs(
+        source, TfidfAnalogs(files.ste), lambda m: print(m, flush=True)
+    ).run()
+    print(f"{files.ste}: {count} СТЕ")

@@ -19,16 +19,14 @@ dependencies = [
 ]
 
 [project.scripts]
-rag = "rag.main:run"
-rag-hello = "rag.main:run_hello"
-rag-parse = "rag.index:parse"
-rag-embed = "rag.index:embed_index"
-rag-search = "rag.search:run"
-rag-rerank = "rag.rerank:run"
-rag-fix = "rag.preprocess:run"
-rag-ask = "rag.cli:run"
-rag-api = "rag.api:run"
-rag-ste = "rag.suggest:build_index"
+rag-parse = "rag.main:run_parse"
+rag-embed = "rag.main:run_embed"
+rag-search = "rag.main:run_search"
+rag-rerank = "rag.main:run_rerank"
+rag-fix = "rag.main:run_fix"
+rag-ask = "rag.main:run_ask"
+rag-api = "rag.main:run_api"
+rag-ste = "rag.main:run_ste"
 
 [build-system]
 requires = ["uv_build>=0.11.33,<0.12.0"]
