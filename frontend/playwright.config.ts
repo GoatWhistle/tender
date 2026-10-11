@@ -1,27 +1,25 @@
-import { defineConfig, devices } from "@playwright/test";
-
-const PORT = 5180;
-
+import { defineConfig } from "@playwright/test"
 export default defineConfig({
-  testDir: "e2e",
-  fullyParallel: true,
-  reporter: [["list"]],
+  testDir: "./e2e",
+  fullyParallel: false,
   use: {
-    baseURL: `http://127.0.0.1:${PORT}`,
-    locale: "ru-RU",
+    channel: "chrome",
+    baseURL: "http://127.0.0.1:5175",
+    viewport: { width: 1440, height: 1000 },
+    colorScheme: "light",
+    screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },
-  projects: [
+  webServer: [
     {
-      name: "desktop",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+      command: "cd .. && uv run rag-api",
+      url: "http://127.0.0.1:8100/openapi.json",
+      reuseExistingServer: true,
     },
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    {
+      command: "npm run dev -- --port 5175",
+      url: "http://127.0.0.1:5175",
+      reuseExistingServer: true,
+    },
   ],
-  webServer: {
-    command: `npx vite --port ${PORT} --strictPort --host 127.0.0.1`,
-    env: { RAG_API_URL: "http://127.0.0.1:9" },
-    url: `http://127.0.0.1:${PORT}`,
-    reuseExistingServer: false,
-  },
-});
+})
