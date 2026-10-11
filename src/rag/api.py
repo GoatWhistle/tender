@@ -21,11 +21,13 @@ from rag.models import Value
 from rag.search import Index
 from rag.session import InputError, Origin, Session, Stage, StageError
 from rag.spec import Doubt, Extra
+from rag.suggest import Suggestion, load
 
 GROUPS = 5
 
 sessions: dict[str, Session] = {}
 locks: dict[str, asyncio.Lock] = {}
+suggestions: dict[tuple[str, str], asyncio.Task[list[Suggestion]]] = {}
 
 
 @asynccontextmanager
@@ -34,6 +36,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.ready = all(path.exists() for path in (CODES, POSITIONS, RAW, VECTORS))
     if app.state.ready:
         app.state.index = await asyncio.to_thread(Index)
+    app.state.ste = asyncio.create_task(asyncio.to_thread(load))
     yield
 
 
@@ -155,6 +158,22 @@ class SessionOut(BaseModel):
     missing: list[str]
     message: str | None
     selection_reason: str | None
+
+
+class SuggestionOut(BaseModel):
+    name: str
+    unit: str = Field(description="единица измерения или пустая строка")
+    options: list[str] = Field(description="типичные значения без единицы")
+    value: str = Field(description="значение из описания поставщика или пустая строка")
+    evidence: str = Field(description="дословная цитата из описания для value")
+    source: str = Field(description="СТЕ — по аналогам из каталога СТЕ, ИИ — по знаниям модели")
+    share: float | None = Field(description="доля аналогов СТЕ с этой характеристикой")
+    why: str
+
+
+class SuggestionsOut(BaseModel):
+    code: str
+    items: list[SuggestionOut]
 
 
 class VerdictOut(BaseModel):
@@ -331,6 +350,8 @@ async def delete(session_id: str) -> None:
     _get(session_id)
     sessions.pop(session_id)
     locks.pop(session_id)
+    for key in [k for k in suggestions if k[0] == session_id]:
+        suggestions.pop(key).cancel()
 
 
 @app.post("/sessions/{session_id}/answer")
@@ -408,6 +429,39 @@ async def add_extra(session_id: str, body: ExtraIn) -> VerdictOut:
         if fixed
         else None,
         session=view(s),
+    )
+
+
+@app.post("/sessions/{session_id}/suggestions")
+async def suggest(session_id: str) -> SuggestionsOut:
+    s, lock = _get(session_id)
+    async with lock:
+        if s.position is None:
+            raise StageError("позиция ещё не определена")
+        key = (s.id, s.position.code)
+        if key not in suggestions or suggestions[key].cancelled():
+            suggestions[key] = asyncio.create_task(ss.suggest_extras(s))
+        task = suggestions[key]
+    try:
+        items = await asyncio.shield(task)
+    except Exception:
+        suggestions.pop(key, None)
+        raise
+    return SuggestionsOut(
+        code=key[1],
+        items=[
+            SuggestionOut(
+                name=x.name,
+                unit=x.unit,
+                options=list(x.options),
+                value=x.value,
+                evidence=x.evidence,
+                source=x.source,
+                share=x.share,
+                why=x.why,
+            )
+            for x in items
+        ],
     )
 
 

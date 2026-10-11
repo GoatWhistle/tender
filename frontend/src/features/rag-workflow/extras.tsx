@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/button"
 import { Field } from "@/shared/ui/field"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./extras.module.css"
+import { Suggestions } from "./suggestions"
 
 function parse(line: string) {
   const match = /^([^=:]+)[=:](.+)$/.exec(line)
@@ -50,6 +51,13 @@ export function Extras({ flow }: { readonly flow: RagWorkflowState }) {
           ))}
         </ul>
       )}
+      <Suggestions
+        flow={flow}
+        custom={(text) => {
+          setLine(text)
+          document.getElementById("extra-line")?.focus()
+        }}
+      />
       {session.extras_allowed && (
         <form
           onSubmit={(event) => {

@@ -19,6 +19,7 @@ from rag.spec import (
     no_new_features,
     validate,
 )
+from rag.suggest import Suggestion, suggest
 
 
 class Stage(StrEnum):
@@ -302,6 +303,13 @@ async def add_extra(s: Session, extra: Extra) -> Verdict:
         s.extras.append(extra)
     s.message = None
     return verdict
+
+
+async def suggest_extras(s: Session) -> list[Suggestion]:
+    _expect(s, Stage.SPEC, Stage.DONE)
+    if not s.extras_allowed:
+        return []
+    return await suggest(s.position, "\n".join(s.context))
 
 
 def remove_extra(s: Session, n: int) -> None:

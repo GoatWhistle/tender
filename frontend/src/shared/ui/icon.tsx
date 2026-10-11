@@ -22,6 +22,7 @@ import {
   Plus,
   Search,
   ShieldCheck,
+  Sparkles,
   Sun,
   User,
   X,
@@ -52,6 +53,7 @@ const icons = {
   search: Search,
   send: ArrowUp,
   shield: ShieldCheck,
+  spark: Sparkles,
   sun: Sun,
   user: User,
 }

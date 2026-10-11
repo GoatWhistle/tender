@@ -243,6 +243,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sessions/{session_id}/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suggest */
+        post: operations["suggest_sessions__session_id__suggestions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessions/{session_id}/extras/{n}": {
         parameters: {
             query?: never;
@@ -699,6 +716,50 @@ export interface components {
         StartIn: {
             /** Description */
             description: string;
+        };
+        /** SuggestionOut */
+        SuggestionOut: {
+            /** Name */
+            name: string;
+            /**
+             * Unit
+             * @description единица измерения или пустая строка
+             */
+            unit: string;
+            /**
+             * Options
+             * @description типичные значения без единицы
+             */
+            options: string[];
+            /**
+             * Value
+             * @description значение из описания поставщика или пустая строка
+             */
+            value: string;
+            /**
+             * Evidence
+             * @description дословная цитата из описания для value
+             */
+            evidence: string;
+            /**
+             * Source
+             * @description СТЕ — по аналогам из каталога СТЕ, ИИ — по знаниям модели
+             */
+            source: string;
+            /**
+             * Share
+             * @description доля аналогов СТЕ с этой характеристикой
+             */
+            share: number | null;
+            /** Why */
+            why: string;
+        };
+        /** SuggestionsOut */
+        SuggestionsOut: {
+            /** Code */
+            code: string;
+            /** Items */
+            items: components["schemas"]["SuggestionOut"][];
         };
         /** TextIn */
         TextIn: {
@@ -1229,6 +1290,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VerdictOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suggest_sessions__session_id__suggestions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SuggestionsOut"];
                 };
             };
             /** @description Validation Error */
