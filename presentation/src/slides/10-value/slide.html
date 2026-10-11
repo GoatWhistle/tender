@@ -1,38 +1,34 @@
 <section class="slide" id="value" data-title="Ценность">
   <h2 class="title a">Выигрывают три стороны, <em>и всем нужен один правильный код</em></h2>
 
-  <div class="body is-tall">
-    <div class="vl">
-      <svg class="vl-links" viewBox="0 0 1680 640" aria-hidden="true">
-        <path class="trace dr" pathLength="1" style="--d:0.7s;--t:0.8s" d="M840 104 C840 180 280 170 280 246" />
-        <path class="trace dr" pathLength="1" style="--d:0.8s;--t:0.6s" d="M840 104 V246" />
-        <path class="trace dr" pathLength="1" style="--d:0.9s;--t:0.8s" d="M840 104 C840 180 1400 170 1400 246" />
-        <circle class="vl-dot svg-run only-motion" r="8" style="offset-path: path('M840 104 C840 180 280 170 280 246'); --t: 2.4s; --d: 1.8s" />
-        <circle class="vl-dot svg-run only-motion" r="8" style="offset-path: path('M840 104 V246'); --t: 2.4s; --d: 2.6s" />
-        <circle class="vl-dot svg-run only-motion" r="8" style="offset-path: path('M840 104 C840 180 1400 170 1400 246'); --t: 2.4s; --d: 3.4s" />
-      </svg>
-      <div class="vl-hub s" style="--d:0.3s">
-        <span class="tile is-accent"><span class="ico" data-icon="target"></span></span>
-        <span><span class="eyebrow">Одна позиция КТРУ</span><b>Правильный код и значения справочника</b></span>
-        <span class="vl-ping ping" style="--d:1.2s" aria-hidden="true"></span>
-      </div>
-      <div class="grid is-3 vl-cards">
-        <article class="card a" style="--d:1.1s">
-          <span class="tile"><span class="ico" data-icon="user"></span></span>
-          <h3>Поставщик</h3>
-          <p>Пишет о товаре как привык, а не ищет код среди тысяч позиций. Ошибку видит до отправки, рядом с тем, что допустимо</p>
-        </article>
-        <article class="card a" style="--d:1.25s">
-          <span class="tile"><span class="ico" data-icon="search"></span></span>
-          <h3>Заказчик</h3>
-          <p>Товары одной позиции КТРУ с едиными значениями находятся фильтрами и честно сравниваются между собой</p>
-        </article>
-        <article class="card a" style="--d:1.4s">
-          <span class="tile"><span class="ico" data-icon="database"></span></span>
-          <h3>Портал</h3>
-          <p>Каталог на <span class="num" data-num="portal_items"></span> млн наименований пополняется без неоднозначных кодов. Модели на своём сервере, без платных API</p>
-        </article>
-      </div>
+  <div class="body vl">
+    <svg class="vl-links" viewBox="0 0 1680 710" aria-hidden="true">
+      <path class="vl-link dr" pathLength="1" style="--d:0.6s;--t:0.6s" d="M280 340 H600" />
+      <path class="vl-link dr" pathLength="1" style="--d:2.2s;--t:0.6s" d="M1080 340 C1180 340 1180 190 1290 190" />
+      <path class="vl-link dr" pathLength="1" style="--d:2.3s;--t:0.6s" d="M1080 340 C1180 340 1180 490 1290 490" />
+    </svg>
+
+    <div class="vl-actor is-left a" style="--d:0.2s">
+      <span class="vl-icon"><span class="ico is-lg" data-icon="user"></span></span>
+      <span class="vl-text"><b>Поставщик</b><span>пишет своими словами</span></span>
+    </div>
+
+    <article class="vl-card s" style="--d:1s">
+      <span class="eyebrow"><span class="ico is-sm" data-icon="file"></span>Карточка товара</span>
+      <span class="vl-code mono pop" style="--d:1.8s" data-plain>31.01.11.121-00000003</span>
+      <span class="vl-row a" style="--d:1.3s"><span>Вид товара</span><b>шкаф</b></span>
+      <span class="vl-row a" style="--d:1.45s"><span>Глубина, м</span><b data-plain>0,55</b></span>
+      <span class="vl-row a" style="--d:1.6s"><span>Позиций КТРУ</span><b class="num" data-num="example_left"></b></span>
+    </article>
+
+    <div class="vl-actor is-top a" style="--d:2.6s">
+      <span class="vl-icon"><span class="ico is-lg" data-icon="search"></span></span>
+      <span class="vl-text"><b>Заказчик</b><span>сравнивает одинаковое</span></span>
+    </div>
+
+    <div class="vl-actor is-bottom a" style="--d:2.75s">
+      <span class="vl-icon"><span class="ico is-lg" data-icon="database"></span></span>
+      <span class="vl-text"><b>Портал</b><span>каталог без дублей кодов</span></span>
     </div>
   </div>
 </section>

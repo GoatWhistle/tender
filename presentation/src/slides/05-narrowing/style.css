@@ -1,86 +1,256 @@
-#narrowing .body {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  gap: 32px;
-}
-
-#narrowing .fc {
+#narrowing .nw-steps {
+  position: absolute;
+  left: 0;
+  top: 0;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-#narrowing .fc > .ico {
-  width: 56px;
-  height: 56px;
+#narrowing .nw-step {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  height: 64px;
+  padding: 0 28px;
+  border: 2px solid var(--deck-line);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+  align-items: center;
+}
+
+#narrowing .nw-num {
+  font-size: 32px;
+  font-weight: var(--weight-strong);
+  color: var(--deck-fg);
+}
+
+#narrowing .nw-arrow {
+  display: grid;
   color: var(--deck-fg-3);
 }
 
-#narrowing .fc-stage {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  text-align: center;
+#narrowing .nw-arrow .ico {
+  width: 32px;
+  height: 32px;
 }
 
-#narrowing .fc-stage b {
-  font-size: var(--fs-body);
+#narrowing.play .nw-step.is-1 {
+  animation:
+    deck-rise 0.7s var(--ease-out) 0.3s both,
+    narrowing-on 0.5s var(--ease-out) 0.6s both,
+    narrowing-off 0.5s var(--ease-out) 1.9s forwards;
 }
 
-#narrowing .fc-circle {
-  display: grid;
-  place-items: center;
-  width: 150px;
-  height: 150px;
-  border: 3px solid var(--deck-line-strong);
-  border-radius: 50%;
-  font-family: var(--font-mono);
-  font-size: 44px;
-  font-weight: var(--weight-strong);
+#narrowing.play .nw-step.is-2 {
+  animation:
+    deck-rise 0.7s var(--ease-out) 0.5s both,
+    narrowing-on 0.5s var(--ease-out) 1.9s forwards,
+    narrowing-off 0.5s var(--ease-out) 3.6s forwards;
 }
 
-#narrowing .fc-circle.is-lg {
-  width: 210px;
-  height: 210px;
+#narrowing.play .nw-step.is-3 {
+  animation:
+    deck-rise 0.7s var(--ease-out) 0.7s both,
+    narrowing-final 0.5s var(--ease-out) 4.1s forwards;
 }
 
-#narrowing .fc-circle.is-accent {
-  border-color: var(--deck-accent);
-  background: var(--deck-accent);
-  color: var(--deck-on-accent);
+#narrowing.play .nw-step.is-3 .nw-num {
+  animation: narrowing-white 0.5s var(--ease-out) 4.1s forwards;
 }
 
-#narrowing .fc-why {
-  height: auto;
+#narrowing .nw-field {
+  position: absolute;
+  left: 0;
+  top: 110px;
+  width: 960px;
+  height: 528px;
 }
 
-#narrowing .fc-why .card {
-  font-size: var(--fs-caption);
-  color: var(--deck-fg-2);
-}
-
-#narrowing .body {
-  bottom: 230px;
-}
-
-#narrowing .fc {
-  position: relative;
-}
-
-#narrowing .fc-flow {
+#narrowing .nw-links {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
   pointer-events: none;
-  z-index: 1;
 }
 
-#narrowing .fc-dot {
-  fill: var(--deck-fg-3);
+#narrowing .nw-link {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
 }
 
-#narrowing .fc-dot.is-key {
-  fill: var(--deck-accent);
+#narrowing .nw-link.is-keep {
+  stroke: var(--deck-accent);
+}
+
+#narrowing .nw-link.is-lost {
+  stroke: var(--deck-line-strong);
+  stroke-dasharray: 8 10;
+}
+
+#narrowing.play .nw-link.is-lost {
+  stroke-dasharray: 1 1;
+  animation:
+    deck-draw 0.6s var(--ease-in-out) 2.6s both,
+    narrowing-fade 0.5s var(--ease-out) 3.6s forwards;
+}
+
+#narrowing .nw-card {
+  position: absolute;
+  left: 1096px;
+  width: 584px;
+  display: grid;
+  gap: 12px;
+  padding: 28px 32px;
+  border: 1px solid var(--deck-line);
+  border-radius: var(--radius-lg);
+  background: var(--deck-raised);
+  box-shadow: var(--shadow-raised);
+}
+
+#narrowing .nw-card.is-keep {
+  top: 112px;
+}
+
+#narrowing .nw-card.is-lost {
+  top: 390px;
+}
+
+#narrowing .nw-card b {
+  font-size: var(--fs-caption);
+  font-weight: var(--weight-strong);
+}
+
+#narrowing .nw-code {
+  font-size: var(--fs-micro);
+  color: var(--deck-fg-3);
+}
+
+#narrowing .nw-row {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+#narrowing .nw-val {
+  font-weight: var(--weight-strong);
+  color: var(--deck-fg);
+}
+
+#narrowing .nw-card .badge {
+  position: absolute;
+  right: 28px;
+  top: 24px;
+}
+
+#narrowing .nw-why {
+  font-size: var(--fs-caption);
+  color: var(--deck-danger);
+}
+
+#narrowing .nw-strike {
+  position: relative;
+}
+
+#narrowing .nw-strike::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 55%;
+  height: 3px;
+  background: var(--deck-danger);
+  transform-origin: left;
+}
+
+#narrowing.play .nw-strike::after {
+  animation: narrowing-strike 0.4s var(--ease-out) 3.5s both;
+}
+
+#narrowing.play .nw-card.is-keep {
+  animation:
+    deck-rise 0.7s var(--ease-out) 2.9s both,
+    narrowing-pick 0.5s var(--ease-out) 4.1s forwards;
+}
+
+#narrowing.play .nw-card.is-lost {
+  animation:
+    deck-rise 0.7s var(--ease-out) 3s both,
+    narrowing-sink 0.5s var(--ease-out) 3.9s forwards;
+}
+
+#narrowing .nw-note {
+  position: absolute;
+  left: 1096px;
+  top: 640px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--fs-micro);
+  color: var(--deck-fg-3);
+}
+
+@keyframes narrowing-on {
+  to {
+    border-color: var(--deck-accent);
+    color: var(--deck-fg);
+  }
+}
+
+@keyframes narrowing-off {
+  from {
+    border-color: var(--deck-accent);
+    color: var(--deck-fg);
+  }
+  to {
+    border-color: var(--deck-line);
+  }
+}
+
+@keyframes narrowing-final {
+  to {
+    border-color: var(--deck-accent);
+    background: var(--deck-accent);
+    color: var(--deck-on-accent);
+  }
+}
+
+@keyframes narrowing-white {
+  to {
+    color: var(--deck-on-accent);
+  }
+}
+
+@keyframes narrowing-fade {
+  to {
+    opacity: 0.25;
+  }
+}
+
+@keyframes narrowing-strike {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes narrowing-pick {
+  to {
+    border-color: var(--deck-accent);
+    box-shadow: 0 0 0 2px var(--deck-accent);
+  }
+}
+
+@keyframes narrowing-sink {
+  to {
+    opacity: 0.55;
+  }
 }

@@ -1,102 +1,193 @@
-#errors .tf {
-  display: grid;
-  grid-template-columns: 0.8fr auto 1.25fr;
-  align-items: center;
-  gap: 40px;
-  height: 100%;
+#errors .er-table {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1160px;
+  gap: 0;
+  padding: 8px 36px 16px;
 }
 
-#errors .tf-quotes {
+#errors .er-row {
   display: grid;
-  gap: 22px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
+  grid-template-columns: 330px 300px 1fr;
+  gap: 28px;
+  align-items: center;
+  min-height: 140px;
+  border-bottom: 1px solid var(--deck-line);
   font-size: var(--fs-caption);
-  color: var(--deck-fg);
 }
 
-#errors .tf-fields {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 22px 28px;
-  align-items: center;
-  margin: 12px 0 0;
-  font-size: var(--fs-caption);
+#errors .er-row:last-child {
+  border-bottom: 0;
+}
+
+#errors .er-row.is-head {
+  min-height: 72px;
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-strong);
+  color: var(--deck-fg-3);
+}
+
+#errors .er-name {
   color: var(--deck-fg-2);
+  line-height: var(--lh-snug);
 }
 
-#errors .tf-fields dd {
-  display: flex;
-  align-items: baseline;
-  gap: 20px;
-  margin: 0;
-}
-
-#errors .tf-cell {
-  padding: 8px 16px;
-  border: 1px solid var(--deck-line);
+#errors .er-cell {
+  justify-self: start;
+  padding: 12px 20px;
+  border: 2px solid var(--deck-line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-field);
   color: var(--deck-fg);
   white-space: nowrap;
 }
 
-#errors .tf-cell.is-error {
-  border-color: var(--border-error);
-  background: var(--surface-error);
+#errors .er-check {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
 }
 
-#errors .body {
-  bottom: 230px;
+#errors .er-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-#errors .tf-err {
-  position: relative;
-  display: inline-block;
+#errors .er-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--deck-line-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-micro);
+  color: var(--deck-fg);
+  white-space: nowrap;
 }
 
-#errors .tf-err::after {
-  content: "";
+#errors .er-opt.is-fix {
+  border-color: var(--deck-success);
+  color: var(--deck-success);
+  font-weight: var(--weight-strong);
+}
+
+#errors.play .er-cell.is-error {
+  animation: errors-bad 0.6s var(--ease-out) var(--u, 1s) forwards;
+}
+
+#errors.play .er-cell.is-ok {
+  animation: errors-good 0.6s var(--ease-out) var(--u, 1s) forwards;
+}
+
+#errors.play .er-check .badge {
+  animation: deck-pop 0.45s var(--ease-out) calc(var(--u, 1s) + 0.15s) both;
+}
+
+#errors.play .er-opt {
+  animation: deck-rise 0.5s var(--ease-out) calc(var(--u, 1s) + 0.3s) both;
+}
+
+#errors .er-score {
   position: absolute;
-  left: 0;
+  left: 1240px;
   right: 0;
-  bottom: -6px;
-  height: 4px;
-  background: var(--deck-danger);
-  transform: scaleX(0);
-  transform-origin: left;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
 }
 
-#errors .tf-err.is-syn::after {
-  background: var(--deck-success);
+#errors .er-ring {
+  position: relative;
+  width: 320px;
+  height: 320px;
 }
 
-#errors.play .tf-err::after {
-  animation: errors-underline 0.5s var(--ease-out) var(--u, 1s) both;
+#errors .er-ring svg {
+  width: 100%;
+  height: 100%;
+  rotate: -90deg;
 }
 
-#errors.play .tf-cell.is-error,
-#errors.play .tf-cell.is-ok {
-  animation: errors-flash 0.9s var(--ease-out) var(--u, 1s) both;
+#errors .er-track,
+#errors .er-arc {
+  fill: none;
+  stroke-width: 24;
 }
 
-@keyframes errors-underline {
-  to {
-    transform: scaleX(1);
-  }
+#errors .er-track {
+  stroke: var(--deck-sunken);
 }
 
-@keyframes errors-flash {
+#errors .er-arc {
+  stroke: var(--deck-accent);
+  stroke-linecap: round;
+}
+
+#errors .er-ring-value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  font-family: var(--font-mono);
+  font-size: 96px;
+  font-weight: var(--weight-strong);
+  line-height: 1;
+}
+
+#errors .er-ring-value small {
+  margin-top: 8px;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-3);
+}
+
+#errors .er-score b {
+  font-size: var(--fs-body);
+}
+
+#errors .er-false {
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-2);
+}
+
+#errors .er-limit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  background: var(--surface-warning);
+  font-size: var(--fs-micro);
+  color: var(--deck-fg);
+  text-align: left;
+}
+
+@keyframes errors-bad {
   0% {
-    opacity: 0;
-    transform: translateX(-24px);
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
   }
   50% {
-    opacity: 1;
     transform: translateX(6px);
-    box-shadow: 0 0 0 6px var(--surface-error);
   }
   100% {
     transform: none;
-    box-shadow: 0 0 0 0 var(--surface-error);
+    border-color: var(--border-error);
+    background: var(--surface-error);
+    color: var(--text-error);
+  }
+}
+
+@keyframes errors-good {
+  to {
+    border-color: var(--deck-success);
+    background: var(--surface-success);
   }
 }

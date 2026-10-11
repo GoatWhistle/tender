@@ -2,8 +2,8 @@
   --stage-w: 1920px;
   --stage-h: 1080px;
   --gutter: 120px;
-  --title-top: 140px;
-  --facts-top: 900px;
+  --title-top: 92px;
+  --facts-top: 940px;
   color-scheme: light dark;
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
@@ -87,7 +87,7 @@ body {
 .chrome-brand {
   position: absolute;
   left: var(--gutter);
-  top: 56px;
+  top: 36px;
   display: flex;
   align-items: center;
   gap: 12px;

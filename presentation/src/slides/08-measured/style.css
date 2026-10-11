@@ -1,39 +1,89 @@
-#measured .kpi-value {
-  font-size: 80px;
-}
-
-#measured .kg-source {
+#measured .ms-rings {
   position: absolute;
-  left: var(--gutter);
-  bottom: 110px;
+  left: 0;
+  right: 0;
+  top: 90px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-#measured .kg-bar {
-  display: block;
-  height: 8px;
-  margin-top: 18px;
-  background: var(--deck-sunken);
-  overflow: hidden;
+#measured .ms-rings li {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 12px;
+  text-align: center;
 }
 
-#measured .kg-fill {
-  display: block;
+#measured .ms-ring {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin-bottom: 20px;
+}
+
+#measured .ms-ring svg {
+  width: 100%;
   height: 100%;
-  background: var(--deck-fg-3);
-  transform-origin: left;
-  transform: scaleX(var(--w, 0));
+  rotate: -90deg;
 }
 
-#measured .kpi.is-accent .kg-fill {
-  background: var(--deck-accent);
+#measured .ms-track,
+#measured .ms-arc {
+  fill: none;
+  stroke-width: 22;
 }
 
-#measured.play .kg-fill {
-  animation: measured-grow 1.2s var(--ease-out) calc(var(--d, 0s) + 0.3s) both;
+#measured .ms-track {
+  stroke: var(--deck-sunken);
 }
 
-@keyframes measured-grow {
+#measured .ms-arc {
+  stroke: var(--deck-accent);
+  stroke-linecap: round;
+  stroke-dasharray: var(--w, 0) 1;
+}
+
+#measured.play .ms-arc {
+  animation: measured-ring 1.3s var(--ease-out) var(--d, 0s) both;
+}
+
+#measured .ms-value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  font-family: var(--font-mono);
+  font-size: 104px;
+  font-weight: var(--weight-strong);
+  line-height: 1;
+}
+
+#measured .ms-value small {
+  margin-top: 10px;
+  font-size: var(--fs-caption);
+  color: var(--deck-fg-3);
+}
+
+#measured .ms-rings b {
+  max-width: 340px;
+  font-size: var(--fs-body);
+  font-weight: var(--weight-strong);
+  line-height: var(--lh-snug);
+  text-wrap: balance;
+}
+
+#measured .ms-note {
+  font-size: var(--fs-micro);
+  color: var(--deck-fg-3);
+}
+
+@keyframes measured-ring {
   from {
-    transform: scaleX(0);
+    stroke-dashoffset: var(--w, 0);
   }
 }

@@ -1,5 +1,5 @@
 #product .ss {
-  grid-template-columns: 1.75fr 1fr;
+  grid-template-columns: 2.3fr 1fr;
   gap: 64px;
 }
 
@@ -22,7 +22,7 @@
 #product .screen {
   align-self: center;
   overflow: visible;
-  aspect-ratio: 1800 / 985;
+  aspect-ratio: 1998 / 1055;
 }
 
 #product .ss-marks {

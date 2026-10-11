@@ -211,7 +211,6 @@
   left: 1392px;
   top: 160px;
   width: 288px;
-  min-height: 260px;
   display: grid;
   align-content: start;
   gap: 12px;
@@ -248,4 +247,33 @@
     opacity: 0;
     transform: scale(1.12);
   }
+}
+
+#trust .tr-body {
+  top: 300px;
+}
+
+#trust .tr-proof {
+  position: absolute;
+  left: 1392px;
+  top: 440px;
+  width: 288px;
+  display: grid;
+  gap: 4px;
+  font-size: var(--fs-micro);
+  color: var(--deck-fg-2);
+}
+
+#trust .tr-proof-num {
+  font-family: var(--font-mono);
+  font-size: 56px;
+  font-weight: var(--weight-strong);
+  line-height: 1;
+  color: var(--deck-fg);
+}
+
+#trust .tr-proof-num small {
+  margin-left: 8px;
+  font-size: var(--fs-micro);
+  color: var(--deck-fg-3);
 }

@@ -1,86 +1,73 @@
-const narrowingCenter = (node, root) => {
-  let x = node.offsetWidth / 2
-  let y = node.offsetHeight / 2
-  while (node && node !== root) {
-    x += node.offsetLeft
-    y += node.offsetTop
-    node = node.offsetParent
-  }
-  return { x, y }
+const narrowingColor = (el, name) => {
+  const probe = document.createElement("span")
+  probe.style.color = `var(${name})`
+  el.append(probe)
+  const color = getComputedStyle(probe).color
+  probe.remove()
+  return color
 }
 
 deckScene("narrowing", {
   init(el) {
-    const fc = el.querySelector(".fc")
-    this.svg = deckKit.svg("svg", { class: "fc-flow", "aria-hidden": "true" })
-    fc.prepend(this.svg)
-  },
-  enter(el) {
-    this.stop?.()
-    const fc = el.querySelector(".fc")
-    const svg = this.svg
-    svg.replaceChildren()
-    svg.setAttribute("viewBox", `0 0 ${fc.offsetWidth} ${fc.offsetHeight}`)
-    const [a, b, c] = [...fc.querySelectorAll(".fc-circle")].map((node) => narrowingCenter(node, fc))
-    const random = deckKit.rng(5)
-    const dots = Array.from({ length: 46 }, (_, i) => {
-      const angle = random() * Math.PI * 2
-      const radius = Math.sqrt(random()) * 88
-      const dot = deckKit.svg("circle", { r: i < 2 ? 7 : 5, class: i === 0 ? "fc-dot is-key" : "fc-dot" }, svg)
+    const canvas = el.querySelector(".nw-field")
+    const total = Number(el.querySelector('[data-num="catalog_positions"]')?.dataset.value) || 0
+    const cols = 60
+    const keep = 14 * cols + 59
+    const lost = 15 * cols + 59
+    const random = deckKit.rng(7)
+    this.cells = Array.from({ length: total }, (_, i) => {
+      const col = i % cols
+      const row = Math.floor(i / cols)
       return {
-        dot,
-        sx: a.x + Math.cos(angle) * radius,
-        sy: a.y + Math.sin(angle) * radius,
-        cut: i < 2 ? 2 : 0.25 + random() * 0.6,
-        drift: (random() - 0.5) * 140,
-        lane: (random() - 0.5) * 36,
-        keep: i === 0,
+        x: col * 16 + 6,
+        y: row * 16 + 6,
+        d: 0.3 + (col + row) * 0.012 + random() * 0.15,
+        group: i === keep || i === lost,
+        lost: i === lost,
       }
     })
-    const place = (d, x, y, alpha) => {
-      d.dot.setAttribute("cx", x.toFixed(1))
-      d.dot.setAttribute("cy", y.toFixed(1))
-      d.dot.style.opacity = String(Math.max(0, Math.min(1, alpha)))
-    }
-    dots.forEach((d) => place(d, d.sx, d.sy, 0))
-    const first = deckKit.tween({
-      delay: 1300,
-      dur: 1700,
-      curve: "inOut",
-      update: (t) => {
-        for (const d of dots) {
-          const tx = d.keep ? b.x - 16 : b.x + 16
-          const ty = b.y + 48
-          const x = d.sx + (tx + (d.cut < 2 ? d.lane : 0) - d.sx) * t
-          const fall = t > d.cut ? (t - d.cut) * d.drift : 0
-          const y = d.sy + (ty - d.sy) * t + Math.abs(fall)
-          const alpha = t < 0.08 ? t / 0.08 : t > d.cut ? 1 - (t - d.cut) * 6 : 1
-          place(d, x, y, alpha)
+    this.ctx = canvas.getContext("2d")
+    this.ctx.scale(2, 2)
+    this.end = 4.2
+    this.draw = (t) => {
+      const ctx = this.ctx
+      if (!this.colors) {
+        this.colors = {
+          base: narrowingColor(el, "--deck-line-strong"),
+          accent: narrowingColor(el, "--deck-accent"),
         }
-      },
-      done: () => {
-        this.second = deckKit.tween({
-          delay: 500,
-          dur: 1300,
-          curve: "inOut",
-          update: (t) => {
-            const [keep, lost] = dots
-            place(keep, b.x - 16 + (c.x - b.x + 16) * t, b.y + 48 + (c.y + 48 - b.y - 48) * t, t > 0.92 ? (1 - t) * 12 : 1)
-            place(lost, b.x + 16 + t * 30, b.y + 48 + t * 120, 1 - t * 2.5)
-          },
-          done: () => {
-            el.querySelector(".fc-circle.is-accent")?.animate(
-              [{ transform: "scale(1)" }, { transform: "scale(1.12)" }, { transform: "scale(1)" }],
-              { duration: 520, easing: "ease-out" },
-            )
-          },
-        })
-      },
-    })
-    this.stop = () => {
-      first()
-      this.second?.()
+      }
+      ctx.clearRect(0, 0, 960, 528)
+      const out = deckKit.ease.out
+      const dim = 1 - 0.55 * deckKit.ease.inOut((t - 1.8) / 0.7)
+      const grow = 1 + 0.6 * out((t - 1.9) / 0.6)
+      const fade = 1 - 0.75 * out((t - 3.6) / 0.5)
+      ctx.fillStyle = this.colors.base
+      for (const c of this.cells) {
+        if (c.group) continue
+        const p = out((t - c.d) / 0.45)
+        if (p <= 0) continue
+        const s = 12 * (0.3 + 0.7 * p)
+        ctx.globalAlpha = p * dim
+        ctx.fillRect(c.x - s / 2, c.y - s / 2, s, s)
+      }
+      ctx.fillStyle = this.colors.accent
+      for (const c of this.cells) {
+        if (!c.group) continue
+        const p = out((t - c.d) / 0.45)
+        if (p <= 0) continue
+        const s = 12 * (0.3 + 0.7 * p) * grow
+        ctx.globalAlpha = p * (c.lost ? fade : 1)
+        ctx.fillRect(c.x - s / 2, c.y - s / 2, s, s)
+      }
+      ctx.globalAlpha = 1
     }
+    this.draw(this.end)
+  },
+  enter() {
+    this.stop?.()
+    this.draw(0)
+    this.stop = deckKit.tween({ from: 0, to: this.end, dur: this.end * 1000, curve: "linear", update: (t) => this.draw(t) })
   },
   leave() {
     this.stop?.()

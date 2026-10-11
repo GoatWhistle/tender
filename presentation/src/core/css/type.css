@@ -1,6 +1,6 @@
 :root {
   --fs-display: 160px;
-  --fs-title: 64px;
+  --fs-title: 50px;
   --fs-lead: 40px;
   --fs-body: 30px;
   --fs-caption: 24px;
@@ -51,7 +51,7 @@
   width: calc(var(--stage-w) - 2 * var(--gutter));
   font-size: var(--fs-title);
   font-weight: var(--weight-strong);
-  line-height: var(--lh-tight);
+  line-height: 1.12;
   letter-spacing: var(--tracking-title);
   text-wrap: balance;
 }

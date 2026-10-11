@@ -1,7 +1,7 @@
 #roadmap .rm-track {
   position: absolute;
   left: 0;
-  top: 80px;
+  top: 170px;
   width: 1680px;
   height: 120px;
   overflow: visible;
@@ -52,7 +52,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 230px;
+  top: 320px;
   display: grid;
   align-items: start;
   grid-template-columns: repeat(4, 1fr);
@@ -65,4 +65,10 @@
   display: grid;
   align-content: start;
   gap: 14px;
+}
+
+#roadmap .rm-fact {
+  font-size: var(--fs-caption);
+  line-height: var(--lh-snug);
+  color: var(--deck-fg-2);
 }
