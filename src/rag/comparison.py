@@ -36,3 +36,35 @@ def display_differences(positions: list[Position]) -> dict[str, dict[str, str]]:
         code: {name: value for name, value in row.items() if name != "Наименование"}
         for code, row in differences(positions).items()
     }
+
+
+def cells(position: Position) -> dict[str, tuple[str, ...]]:
+    return {
+        c.name: tuple(dict.fromkeys(value_text(v) for v in c.values if value_text(v)))
+        for c in position.characteristics
+    }
+
+
+def characteristic_rows(
+    positions: list[Position],
+) -> list[tuple[str, list[tuple[str, ...] | None], bool]]:
+    per_position = [cells(position) for position in positions]
+    names = list(dict.fromkeys(name for row in per_position for name in row))
+    rows = []
+    for name in names:
+        values = [row.get(name) for row in per_position]
+        variants = {tuple(sorted(v)) if v is not None else None for v in values}
+        rows.append((name, values, len(variants) > 1))
+    return rows
+
+
+def match(code: str, lowered: str, needle: str) -> int | None:
+    if code == needle:
+        return 0
+    if code.startswith(needle):
+        return 1
+    if lowered.startswith(needle):
+        return 2
+    if all(token in lowered for token in needle.split()):
+        return 3
+    return None

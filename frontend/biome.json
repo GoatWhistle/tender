@@ -59,7 +59,10 @@
       }
     },
     {
-      "includes": ["src/features/product-flow/product-flow.tsx"],
+      "includes": [
+        "src/features/product-flow/product-flow.tsx",
+        "src/entities/catalog-comparison/comparison-table/comparison-table.tsx"
+      ],
       "linter": {
         "rules": {
           "a11y": {

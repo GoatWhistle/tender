@@ -5,6 +5,107 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/catalog": {
+      "get": {
+        "summary": "Find Positions",
+        "operationId": "find_positions_catalog_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500,
+              "title": "Q"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "text",
+                "semantic"
+              ],
+              "type": "string",
+              "default": "text",
+              "title": "Mode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogFound"
+                  },
+                  "title": "Response Find Positions Catalog Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/compare": {
+      "get": {
+        "summary": "Compare Positions",
+        "operationId": "compare_positions_catalog_compare_get",
+        "parameters": [
+          {
+            "name": "codes",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Codes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogComparison"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog/{code}": {
       "get": {
         "summary": "Position Details",
@@ -961,6 +1062,58 @@
         ],
         "title": "CatalogCharacteristic"
       },
+      "CatalogComparison": {
+        "properties": {
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogFound"
+            },
+            "type": "array",
+            "title": "Positions"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ComparisonRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "positions",
+          "rows"
+        ],
+        "title": "CatalogComparison"
+      },
+      "CatalogFound": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "okpd2": {
+            "type": "string",
+            "title": "Okpd2"
+          },
+          "okpd2_name": {
+            "type": "string",
+            "title": "Okpd2 Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "okpd2",
+          "okpd2_name"
+        ],
+        "title": "CatalogFound"
+      },
       "CatalogPosition": {
         "properties": {
           "code": {
@@ -1134,6 +1287,58 @@
           "text"
         ],
         "title": "ChatMessageOut"
+      },
+      "ComparisonRow": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "okpd2",
+              "units",
+              "characteristic"
+            ],
+            "title": "Field"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "values": {
+            "items": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Values"
+          },
+          "differs": {
+            "type": "boolean",
+            "title": "Differs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "values",
+          "differs"
+        ],
+        "title": "ComparisonRow"
       },
       "DiscoveryOut": {
         "properties": {

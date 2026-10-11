@@ -1,0 +1,114 @@
+.comparison {
+  padding: var(--space-5);
+  background: var(--surface-panel);
+  border-radius: var(--radius-md);
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.comparison[data-stale="true"] {
+  opacity: 0.6;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-5);
+}
+.toolbar h2 {
+  font-size: var(--font-xl);
+}
+.toolbar p {
+  flex: 1 1 auto;
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+.scroll {
+  overflow: auto;
+  max-height: calc(100dvh - 18rem);
+  overscroll-behavior: contain;
+  border: var(--line) solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.scroll table {
+  width: 100%;
+  min-width: 48rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  overflow-wrap: anywhere;
+}
+.scroll th,
+.scroll td {
+  padding: var(--space-3) var(--space-4);
+  vertical-align: top;
+  text-align: left;
+  border-bottom: var(--line) solid var(--border-default);
+  background: var(--surface-panel);
+}
+.scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-weight: var(--weight-regular);
+  border-bottom-width: var(--line-strong);
+}
+.scroll th:first-child {
+  position: sticky;
+  left: 0;
+  width: 16rem;
+  border-right: var(--line) solid var(--border-default);
+}
+.scroll thead th:first-child {
+  z-index: 2;
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  vertical-align: bottom;
+}
+.scroll tbody th {
+  font-weight: var(--weight-semibold);
+}
+.scroll tr[data-differs="true"] td {
+  background: var(--surface-warning);
+}
+.position {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+.position a {
+  color: var(--action-text);
+  font-size: var(--font-sm);
+}
+.position > button {
+  margin-inline-start: calc(-1 * var(--space-4));
+}
+.current {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-size);
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+.badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  color: var(--status-warning);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+}
+.missing {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.empty {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+}
+@media (max-width: 47.99rem) {
+  .scroll th:first-child {
+    width: 10rem;
+  }
+}

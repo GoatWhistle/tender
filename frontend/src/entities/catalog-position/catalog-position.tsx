@@ -4,6 +4,7 @@ import { api, unwrap } from "@/shared/api/client"
 import { Spinner } from "@/shared/motion/primitives"
 import { Button } from "@/shared/ui/button"
 import { CategoryIcon } from "@/shared/ui/category-icon/category-icon"
+import { LoadStatus } from "@/shared/ui/load-status"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./catalog-position.module.css"
 
@@ -16,17 +17,17 @@ export function CatalogPosition({ code }: { readonly code: string }) {
   })
   if (query.isPending)
     return (
-      <div className={styles.status} role="status">
+      <LoadStatus>
         <Spinner />
         {t("catalogLoading")}
-      </div>
+      </LoadStatus>
     )
   if (query.isError)
     return (
-      <div className={styles.status} role="alert">
+      <LoadStatus alert>
         <p>{t("catalogError")}</p>
         <Button onClick={() => void query.refetch()}>{t("catalogRetry")}</Button>
-      </div>
+      </LoadStatus>
     )
   const position = query.data
   return (

@@ -56,6 +56,7 @@ class Index:
         with RAW.open("rb") as f:
             self.raw: dict[str, dict[str, Any]] = pickle.load(f)
         self.children: dict[str, list[str]] = {}
+        self.names = [(p.code, p.name.lower()) for p in self.positions.values()]
         for p in self.positions.values():
             if p.parent:
                 self.children.setdefault(p.parent, []).append(p.code)

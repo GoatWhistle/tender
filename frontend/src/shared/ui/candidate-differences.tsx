@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "./button"
 import styles from "./candidate-differences.module.css"
 import { BackendText } from "./message"
+import { TextButton } from "./text-button"
 
 export function CandidateDifferences({
   differences,
@@ -53,9 +54,9 @@ function DifferenceValue({ value }: { readonly value: string }) {
         <BackendText>{value}</BackendText>
       </strong>
       {long && (
-        <button type="button" className={styles.toggle} onClick={() => setOpen(!open)}>
+        <TextButton aria-expanded={open} onClick={() => setOpen(!open)}>
           {t(open ? "rag:valueLess" : "rag:valueMore")}
-        </button>
+        </TextButton>
       )}
     </dd>
   )

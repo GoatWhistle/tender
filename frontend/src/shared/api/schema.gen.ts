@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find Positions */
+        get: operations["find_positions_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Compare Positions */
+        get: operations["compare_positions_catalog_compare_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/{code}": {
         parameters: {
             query?: never;
@@ -365,6 +399,24 @@ export interface components {
             /** Values */
             values: string[];
         };
+        /** CatalogComparison */
+        CatalogComparison: {
+            /** Positions */
+            positions: components["schemas"]["CatalogFound"][];
+            /** Rows */
+            rows: components["schemas"]["ComparisonRow"][];
+        };
+        /** CatalogFound */
+        CatalogFound: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Okpd2 */
+            okpd2: string;
+            /** Okpd2 Name */
+            okpd2_name: string;
+        };
         /** CatalogPosition */
         CatalogPosition: {
             /** Code */
@@ -423,6 +475,20 @@ export interface components {
             role: string;
             /** Text */
             text: string;
+        };
+        /** ComparisonRow */
+        ComparisonRow: {
+            /**
+             * Field
+             * @enum {string}
+             */
+            field: "okpd2" | "units" | "characteristic";
+            /** Name */
+            name?: string | null;
+            /** Values */
+            values: (string[] | null)[];
+            /** Differs */
+            differs: boolean;
         };
         /** DiscoveryOut */
         DiscoveryOut: {
@@ -687,6 +753,69 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    find_positions_catalog_get: {
+        parameters: {
+            query: {
+                q: string;
+                mode?: "text" | "semantic";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogFound"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compare_positions_catalog_compare_get: {
+        parameters: {
+            query: {
+                codes: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogComparison"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     position_details_catalog__code__get: {
         parameters: {
             query?: never;
