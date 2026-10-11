@@ -1,0 +1,8 @@
+.spinner {
+  display: inline-block;
+  border: var(--line-strong) solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: var(--radius-round);
+  opacity: var(--spinner-opacity);
+  animation: var(--motion-spin);
+}

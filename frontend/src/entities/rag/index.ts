@@ -1,2 +1,2 @@
-export type { Characteristic, Extra, RagSession, Search, Suggestion } from "./types"
-export { useRagWorkflow } from "./use-rag-workflow"
+export { ApiError, RAG_BASE, ragApi } from "./api";
+export type * from "./types";

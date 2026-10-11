@@ -1,0 +1,43 @@
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(wizard-step) {
+  animation: fade-out var(--dur-exit, 140ms) var(--ease-out, ease-out) both;
+}
+
+::view-transition-new(wizard-step) {
+  animation: enter var(--dur-panel, 260ms) var(--ease-out, ease-out) both;
+}
+
+::view-transition-group(wizard-step) {
+  animation-duration: var(--dur-panel, 260ms);
+  animation-timing-function: var(--ease-out, ease-out);
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition-group(*.group-row) {
+  animation-duration: var(--dur-draw, 900ms);
+  animation-timing-function: var(--ease-out, ease-out);
+}
+
+::view-transition-old(*.group-row):only-child {
+  animation: group-exit var(--dur-slow, 320ms) var(--ease-out, ease-out) both;
+}
+
+::view-transition-new(*.group-row):only-child {
+  animation: enter var(--dur-panel, 260ms) var(--ease-out, ease-out) both;
+}
+
+@keyframes group-exit {
+  to {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--space-8, 32px)));
+  }
+}

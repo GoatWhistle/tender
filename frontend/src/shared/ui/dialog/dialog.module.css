@@ -1,0 +1,122 @@
+.dialog {
+  inline-size: min(var(--dialog-width), calc(100% - 2 * var(--gutter)));
+  max-inline-size: none;
+  max-block-size: calc(100dvh - 2 * var(--gutter));
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-popup);
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity var(--dur-exit) var(--ease-out),
+    transform var(--dur-exit) var(--ease-out),
+    overlay var(--dur-exit) allow-discrete,
+    display var(--dur-exit) allow-discrete;
+}
+
+.dialog[open] {
+  opacity: 1;
+  transform: none;
+  transition-duration: var(--dur-base);
+}
+
+.dialog::backdrop {
+  background: var(--surface-overlay);
+  opacity: 0;
+  transition:
+    opacity var(--dur-exit) var(--ease-out),
+    overlay var(--dur-exit) allow-discrete,
+    display var(--dur-exit) allow-discrete;
+}
+
+.dialog[open]::backdrop {
+  opacity: 1;
+  transition-duration: var(--dur-base);
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.sm {
+  inline-size: min(var(--dialog-width-sm), calc(100% - 2 * var(--gutter)));
+}
+
+.media {
+  display: flex;
+  justify-content: center;
+  padding-block-start: var(--space-12);
+}
+
+.media + .title {
+  padding-block-start: var(--space-6);
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-block-size: inherit;
+}
+
+.close {
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-end: var(--space-4);
+}
+
+.title {
+  padding: var(--space-12) var(--space-16) var(--space-6);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-h3-line);
+  text-align: center;
+  outline: none;
+}
+
+.body {
+  display: grid;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  align-content: start;
+  gap: var(--space-8);
+  padding: var(--space-2) var(--space-16) var(--space-10);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline-offset: calc(var(--line-strong) * -1);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-10);
+  border-block-start: var(--line) solid var(--border-subtle);
+}
+
+@media (max-width: 47.99rem) {
+  .title {
+    padding: var(--space-12) var(--space-6) var(--space-4);
+    font-size: var(--text-h4);
+    line-height: var(--text-h4-line);
+  }
+
+  .body {
+    padding: var(--space-2) var(--space-4) var(--space-6);
+  }
+
+  .footer {
+    padding: var(--space-4);
+  }
+}

@@ -1,0 +1,62 @@
+@import "./reset.css";
+@import "./tokens/palette.css";
+@import "./tokens/semantic.css";
+@import "./tokens/space.css";
+@import "./tokens/radius.css";
+@import "./tokens/elevation.css";
+@import "./tokens/typography.css";
+@import "./tokens/motion.css";
+@import "./tokens/keyframes.css";
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+  line-height: var(--line-height-body);
+  color: var(--text-primary);
+  background: var(--surface-page);
+}
+:focus-visible:not([data-focus="container"]) {
+  outline: var(--line-strong) solid var(--focus-ring);
+  outline-offset: 4px;
+}
+::selection {
+  background: var(--surface-user);
+  color: var(--text-primary);
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color);
+  border-radius: var(--radius-round);
+  border: var(--line-strong) solid transparent;
+  background-clip: padding-box;
+}
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-color) transparent;
+  }
+}
+
+:root[data-input="keyboard"] textarea:focus-visible:not([data-focus="container"]) {
+  outline: var(--line-strong) solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+:root[data-input="keyboard"] input:focus-visible:not([data-focus="container"]) {
+  outline: var(--line-strong) solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+h1,
+h2,
+h3 {
+  line-height: var(--line-height-heading);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+input,
+textarea {
+  caret-color: var(--action-text);
+}

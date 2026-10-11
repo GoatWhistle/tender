@@ -1,0 +1,14 @@
+{
+  "boundary": {
+    "title": "The page did not open",
+    "text": "Something went wrong in the interface. Reload the page; your input is kept in the address.",
+    "retry": "Reload the page"
+  },
+  "rag": {
+    "unavailable": "The matching service is unavailable",
+    "notFound": "Not found",
+    "network": "No connection to the server",
+    "networkText": "Check that the backend is running and retry.",
+    "failed": "The request failed"
+  }
+}

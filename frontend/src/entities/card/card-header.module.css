@@ -1,0 +1,22 @@
+.header {
+  display: grid;
+  grid-template-columns: var(--card-media) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.media {
+  display: grid;
+  place-items: center;
+  inline-size: var(--card-media);
+  block-size: var(--card-media);
+  border: var(--line-strong) solid var(--border-subtle);
+  background: var(--surface-card);
+}
+
+@media (max-width: 47.99rem) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}

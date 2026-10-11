@@ -1,89 +1,62 @@
-:root {
+:root:has([data-portal]) {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --dur-instant: 80ms;
   --dur-press: 140ms;
+  --dur-fast: 160ms;
   --dur-fast-exit: 110ms;
   --dur-base: 200ms;
-  --dur-panel: 260ms;
-  --dur-flash: 700ms;
   --dur-exit: 140ms;
-  --dur-rank-mark: 650ms;
-  --dur-rank-exit: 800ms;
-  --dur-rank-move: 500ms;
-  --dur-rank-reveal: 1000ms;
-  --dur-rank-details: 650ms;
-  --rank-reveal-stagger: 90ms;
-  --rank-reveal-offset: 24px;
-  --ease-rank-reveal: cubic-bezier(0.22, 0.65, 0.25, 1);
-  --dur-step: 260ms;
-  --dur-shuffle-hold: 1100ms;
-  --dur-skeleton: 900ms;
-  --dur-step-flow: 2600ms;
-  --dur-spin: 900ms;
-  --dur-step-arrow: 1400ms;
-  --press-scale: 0.97;
-  --enter-offset: 4px;
+  --dur-panel: 260ms;
+  --dur-slow: 320ms;
+  --dur-draw: 900ms;
+
   --stagger: 40ms;
+  --delay-skeleton: 200ms;
+  --delay-spinner: 400ms;
+  --hold-indicator: 300ms;
+  --scrollbar-idle: 900ms;
+  --press-scale: 0.97;
+  --press-scale-surface: 0.99;
+  --enter-shift: 8px;
+  --enter-scale: 0.95;
+
   --motion-enter: enter var(--dur-base) var(--ease-out) both;
-  --motion-flash: flash var(--dur-flash) var(--ease-out) both;
-  --motion-step: step-pulse var(--dur-step) var(--ease-out) 2;
-  --motion-progress: step-progress var(--dur-step) var(--ease-out) both;
-  --motion-step-halo: step-halo var(--dur-step-flow) var(--ease-out) infinite;
-  --motion-step-glow: step-glow var(--dur-step-flow) linear infinite;
-  --motion-step-flow: step-flow var(--dur-step-flow) linear infinite;
-  --motion-skeleton: skeleton-pulse var(--dur-skeleton) var(--ease-rank-reveal) infinite alternate;
-  --motion-spin: spin var(--dur-spin) linear infinite;
-  --motion-step-arrow: step-arrow var(--dur-step-arrow) var(--ease-rank-reveal) infinite;
-  --motion-step-march: step-march calc(var(--dur-step-arrow) / 2) linear infinite;
-  --motion-step-nudge: step-nudge var(--dur-step-arrow) var(--ease-out) infinite;
-  --motion-step-target: step-halo var(--dur-step-arrow) var(--ease-out) infinite;
+  --motion-enter-panel: enter-panel var(--dur-panel) var(--ease-out) both;
+  --motion-fade: fade var(--dur-fast) var(--ease-out) both;
+  --motion-pop: pop var(--dur-base) var(--ease-out) both;
+  --motion-spin: spin var(--dur-draw) linear infinite;
+  --motion-draw: draw var(--dur-panel) var(--ease-out) both;
+  --motion-pulse: pulse var(--dur-draw) var(--ease-in-out) infinite alternate;
 }
-:root[data-input="keyboard"] {
-  --dur-press: 0ms;
-  --dur-fast-exit: 0ms;
-  --dur-base: 0ms;
-  --dur-panel: 0ms;
-  --dur-flash: 0ms;
-  --dur-exit: 0ms;
-  --dur-step: 0ms;
-  --motion-step-halo: none;
-  --motion-step-glow: none;
-  --motion-step-flow: none;
-  --press-scale: 1;
-  --enter-offset: 0px;
+
+:root:has([data-portal])[data-modality="keyboard"] {
+  --dur-press: 1ms;
+  --dur-fast: 1ms;
+  --dur-fast-exit: 1ms;
+  --dur-base: 1ms;
+  --dur-exit: 1ms;
+  --dur-panel: 1ms;
   --stagger: 0ms;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  :root {
+  :root:has([data-portal]) {
+    --dur-instant: 1ms;
     --dur-press: 1ms;
+    --dur-fast: 1ms;
     --dur-fast-exit: 1ms;
     --dur-base: 1ms;
-    --dur-panel: 1ms;
-    --dur-flash: 1ms;
     --dur-exit: 1ms;
-    --dur-rank-mark: 1ms;
-    --dur-rank-exit: 1ms;
-    --dur-rank-move: 1ms;
-    --dur-rank-reveal: 1ms;
-    --dur-rank-details: 1ms;
-    --rank-reveal-stagger: 0ms;
-    --rank-reveal-offset: 0px;
-    --dur-step: 1ms;
-    --dur-step-flow: 1ms;
-    --motion-step-halo: none;
-    --motion-step-glow: none;
-    --motion-step-flow: none;
-    --dur-spin: 1ms;
-    --dur-step-arrow: 1ms;
-    --motion-step-arrow: none;
-    --motion-step-march: none;
-    --motion-step-nudge: none;
-    --motion-step-target: none;
-    --press-scale: 1;
-    --enter-offset: 0px;
+    --dur-panel: 1ms;
+    --dur-slow: 1ms;
     --stagger: 0ms;
-    --motion-spin: none;
-    --motion-skeleton: none;
-    --dur-shuffle-hold: 1ms;
-    --dur-skeleton: 1ms;
+    --press-scale: 1;
+    --press-scale-surface: 1;
+    --enter-shift: 0px;
+    --enter-scale: 1;
+    --motion-pulse: none;
   }
 }

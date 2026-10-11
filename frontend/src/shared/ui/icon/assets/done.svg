@@ -1,0 +1,12 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="24" height="24" rx="12" fill="#167C85"/>
+<use xlink:href="#stroke0_1_60645" fill="white"/>
+<mask id="stroke1_1_60645" maskUnits="userSpaceOnUse" x="5" y="7" width="14" height="11" fill="black">
+<rect fill="white" x="5" y="7" width="14" height="11"/>
+<use xlink:href="#stroke0_1_60645"/>
+</mask>
+<path d="M9.45455 15.306L6.66208 12.5552C6.35786 12.2555 5.86941 12.2555 5.56519 12.5552C5.25443 12.8613 5.25443 13.3626 5.56519 13.6687L9.45455 17.5L18.4348 8.65377C18.7456 8.34765 18.7456 7.84638 18.4348 7.54026C18.1306 7.24058 17.6421 7.24058 17.3379 7.54026L9.45455 15.306Z" stroke-width="0.6" stroke="white" mask="url(#stroke1_1_60645)"/>
+<defs>
+<path id="stroke0_1_60645" d="M9.45455 15.306L6.66208 12.5552C6.35786 12.2555 5.86941 12.2555 5.56519 12.5552C5.25443 12.8613 5.25443 13.3626 5.56519 13.6687L9.45455 17.5L18.4348 8.65377C18.7456 8.34765 18.7456 7.84638 18.4348 7.54026C18.1306 7.24058 17.6421 7.24058 17.3379 7.54026L9.45455 15.306Z" fill-rule="evenodd" clip-rule="evenodd"/>
+</defs>
+</svg>

@@ -1,0 +1,84 @@
+{
+  "title": "KTRU catalog",
+  "home": {
+    "title": "A KTRU product card from your own description",
+    "lead": "Describe the product the way you are used to. The system finds the KTRU item, narrows it to one code and fills the specifications from the catalog.",
+    "lookupTitle": "Know the code or name?",
+    "lookupLead": "Find an item in the KTRU catalog, see its specifications and compare it with similar ones.",
+    "popularTitle": "Popular searches",
+    "allCatalog": "Full KTRU catalog",
+    "popular": {
+      "laptop": "Laptops",
+      "printer": "Printers",
+      "paper": "Writing paper",
+      "chair": "Chairs",
+      "gloves": "Gloves",
+      "milk": "Drinking milk"
+    }
+  },
+  "search": {
+    "label": "Search the KTRU catalog",
+    "placeholder": "Name or KTRU code",
+    "submit": "Search"
+  },
+  "path": {
+    "label": "Catalog path",
+    "home": "Home",
+    "catalog": "KTRU catalog"
+  },
+  "catalog": {
+    "title": "KTRU catalog",
+    "lead": "KTRU catalog items with specifications and allowed values.",
+    "query": "Search: “{{q}}”",
+    "found_one": "{{count}} item found",
+    "found_other": "{{count}} items found",
+    "results": "KTRU items",
+    "empty": "Nothing found",
+    "emptyText": "Change the query or search by meaning.",
+    "error": "The catalog did not respond",
+    "errorText": "Check that the matching service is running and reload the page.",
+    "loading": "Searching items",
+    "code": "KTRU code",
+    "name": "Name",
+    "okpd2": "OKPD2",
+    "mode": "Search mode",
+    "modeText": "By words",
+    "modeSemantic": "By meaning",
+    "hint": "Enter a product name or a KTRU item code.",
+    "found_few": "{{count}} items found",
+    "found_many": "{{count}} items found",
+    "hintTitle": "Find a KTRU item"
+  },
+  "position": {
+    "eyebrow": "KTRU item",
+    "loading": "Loading the item",
+    "notFound": "Item not found",
+    "notFoundText": "The catalog has no item with code {{code}}.",
+    "okpd2": "OKPD2",
+    "units": "Units",
+    "rubrics": "Rubrics",
+    "characteristics_one": "{{count}} specification",
+    "characteristics_other": "{{count}} specifications",
+    "characteristicsCaption": "Item specifications",
+    "characteristic": "Specification",
+    "values": "Allowed values",
+    "required": "Required",
+    "characteristics_few": "{{count}} specifications",
+    "characteristics_many": "{{count}} specifications"
+  },
+  "compare": {
+    "title": "Compare items",
+    "lead": "Add up to three KTRU codes: the table shows how the items differ.",
+    "add": "KTRU code to compare",
+    "placeholder": "For example: 31.01.11.121-00000003",
+    "addAction": "Add",
+    "remove": "Remove {{code}} from comparison",
+    "empty": "Add an item to compare.",
+    "loading": "Comparing items",
+    "error": "The comparison failed",
+    "field": "Parameter",
+    "summary": "{{differs, number}} of {{total, number}} parameters differ",
+    "onlyDiffers": "Differences only",
+    "showAll": "Show all"
+  }
+}

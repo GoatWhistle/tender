@@ -1,5 +1,5 @@
-:root {
-  --shadow-panel: 0 0 8px #264b821a;
-  --shadow-avatar: 0 2px 10px #264b821f;
-  --shadow-float: 0 2px 20px #264b8226;
+:root:has([data-portal]) {
+  --shadow-header: 0 2px 20px var(--palette-blue-800-a15);
+  --shadow-card: 0 10px 30px var(--palette-blue-800-a10);
+  --shadow-popup: 0 11px 70px var(--palette-blue-800-a20);
 }

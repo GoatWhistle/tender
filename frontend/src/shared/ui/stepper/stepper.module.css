@@ -1,0 +1,114 @@
+.stepper {
+  --circle: 52px;
+  display: grid;
+  grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
+}
+
+.step {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.step + .step::before {
+  content: "";
+  position: absolute;
+  inset-block-start: calc(var(--circle) / 2);
+  inset-inline: calc(-50% + var(--circle) / 2 + var(--space-2))
+    calc(50% + var(--circle) / 2 + var(--space-2));
+  border-block-start: var(--line) dashed var(--step-todo);
+}
+
+.done + .step::before,
+.done + .current::before {
+  border-block-start-style: solid;
+  border-block-start-color: var(--step-done);
+  animation: var(--motion-draw);
+}
+
+.target {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  min-inline-size: var(--touch-target);
+  padding: 0;
+  text-align: center;
+}
+
+.target:disabled {
+  cursor: default;
+}
+
+.circle {
+  display: grid;
+  place-items: center;
+  inline-size: var(--circle);
+  block-size: var(--circle);
+  border-radius: var(--radius-round);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  line-height: var(--text-h3-line);
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.label {
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+  max-inline-size: 18ch;
+}
+
+.done .circle,
+.current .circle {
+  background: var(--step-done);
+  color: var(--text-inverse);
+}
+
+.current .circle {
+  box-shadow: 0 0 0 var(--space-1) var(--surface-error);
+}
+
+.current .label {
+  font-weight: var(--weight-semibold);
+}
+
+.todo .circle {
+  border: var(--line) dashed var(--step-todo);
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
+.todo .label {
+  color: var(--text-muted);
+}
+
+.done .target:active {
+  transform: scale(var(--press-scale));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .done .target:hover .circle {
+    box-shadow: 0 0 0 var(--space-1) var(--surface-error);
+  }
+}
+
+@media (max-width: 47.99rem) {
+  .stepper {
+    --circle: 36px;
+  }
+
+  .circle {
+    font-size: var(--text-p3);
+    line-height: var(--text-p3-line);
+  }
+
+  .todo .label,
+  .done .label {
+    display: none;
+  }
+
+  .current .label {
+    white-space: nowrap;
+  }
+}

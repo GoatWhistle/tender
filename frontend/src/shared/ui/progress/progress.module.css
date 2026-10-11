@@ -1,0 +1,25 @@
+.progress {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.track {
+  block-size: var(--progress-height);
+  background: var(--progress-track);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  block-size: 100%;
+  background: var(--progress-fill);
+  transform-origin: left;
+  transform: scaleX(var(--ratio));
+  transition: transform var(--dur-panel) var(--ease-out);
+}
+
+.caption {
+  color: var(--text-secondary);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}

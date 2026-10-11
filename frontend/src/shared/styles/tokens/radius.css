@@ -1,10 +1,6 @@
-:root {
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 8px;
+:root:has([data-portal]) {
+  --radius-none: 0;
+  --radius-xs: 2px;
+  --radius-sm: 3px;
   --radius-round: 999px;
-  --line: 1px;
-  --line-strong: 2px;
-  --logo-line: 4px;
 }

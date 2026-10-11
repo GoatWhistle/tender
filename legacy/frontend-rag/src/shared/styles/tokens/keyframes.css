@@ -1,0 +1,119 @@
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--enter-offset));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes step-pulse {
+  from {
+    opacity: 0.7;
+    transform: scale(var(--press-scale));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes step-progress {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes step-halo {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  25% {
+    opacity: 0.24;
+    transform: scale(1.04);
+  }
+  65% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+@keyframes step-glow {
+  0%,
+  65%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.22;
+  }
+}
+@keyframes step-flow {
+  0%,
+  15% {
+    opacity: 0;
+    transform: translateX(-100%) scaleX(0.24);
+  }
+  25% {
+    opacity: 0.6;
+  }
+  65% {
+    opacity: 0.45;
+  }
+  85%,
+  100% {
+    opacity: 0;
+    transform: translateX(100%) scaleX(0.24);
+  }
+}
+@keyframes step-arrow {
+  from {
+    background-position-x: -67%;
+  }
+  to {
+    background-position-x: 167%;
+  }
+}
+@keyframes step-march {
+  to {
+    background-position: 12px 0;
+  }
+}
+@keyframes step-nudge {
+  0%,
+  55%,
+  100% {
+    transform: translateX(0);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+@keyframes flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes skeleton-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}

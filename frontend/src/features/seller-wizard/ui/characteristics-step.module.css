@@ -1,0 +1,90 @@
+.progress {
+  inline-size: var(--summary-width);
+  max-inline-size: 100%;
+}
+
+.tables {
+  display: grid;
+  gap: var(--space-5);
+  min-inline-size: 0;
+}
+
+.nameCell {
+  display: grid;
+  gap: calc(var(--space-1) / 2);
+}
+
+.required {
+  color: var(--text-muted);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.value {
+  font-weight: var(--weight-semibold);
+}
+
+.valueCell {
+  display: grid;
+  gap: calc(var(--space-1) / 2);
+}
+
+.doubt {
+  color: var(--text-error);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.editor {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--surface-muted);
+  animation: var(--motion-enter);
+}
+
+.numberForm,
+.wordsForm,
+.message {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: var(--space-3);
+}
+
+.wordsForm,
+.message {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.bands,
+.reply {
+  grid-column: 1 / -1;
+  color: var(--text-secondary);
+  font-size: var(--text-p6);
+  line-height: var(--text-p6-line);
+}
+
+.reply {
+  padding: var(--space-3) var(--space-4);
+  border-inline-start: var(--line-strong) solid var(--border-accent);
+  background: var(--surface-muted);
+  font-size: var(--text-p5);
+  line-height: var(--text-p5-line);
+}
+
+.extra {
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+@media (max-width: 47.99rem) {
+  .extra {
+    padding-inline: var(--space-2);
+  }
+
+  .numberForm,
+  .wordsForm,
+  .message {
+    grid-template-columns: 1fr;
+  }
+}
