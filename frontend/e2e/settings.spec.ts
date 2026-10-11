@@ -40,7 +40,9 @@ test("иконки сайта и манифест доступны", async ({ pa
   await page.goto("/");
   const hrefs = await page
     .locator("link[rel~='icon'], link[rel='apple-touch-icon'], link[rel='manifest']")
-    .evaluateAll((links) => links.map((link) => link.getAttribute("href") ?? ""));
+    .evaluateAll((links) =>
+      links.map((link) => (link.getAttribute("href") ?? "").split("?")[0] ?? ""),
+    );
   expect(hrefs).toEqual(
     expect.arrayContaining([
       "/favicon.ico",
