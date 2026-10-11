@@ -565,6 +565,45 @@
         }
       }
     },
+    "/sessions/{session_id}/suggestions": {
+      "post": {
+        "summary": "Suggest",
+        "operationId": "suggest_sessions__session_id__suggestions_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestionsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions/{session_id}/extras/{n}": {
       "delete": {
         "summary": "Remove Extra",
@@ -1726,6 +1765,91 @@
           "description"
         ],
         "title": "StartIn"
+      },
+      "SuggestionOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "description": "единица измерения или пустая строка"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Options",
+            "description": "типичные значения без единицы"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "значение из описания поставщика или пустая строка"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "description": "дословная цитата из описания для value"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "СТЕ — по аналогам из каталога СТЕ, ИИ — по знаниям модели"
+          },
+          "share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share",
+            "description": "доля аналогов СТЕ с этой характеристикой"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "unit",
+          "options",
+          "value",
+          "evidence",
+          "source",
+          "share",
+          "why"
+        ],
+        "title": "SuggestionOut"
+      },
+      "SuggestionsOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SuggestionOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "items"
+        ],
+        "title": "SuggestionsOut"
       },
       "TextIn": {
         "properties": {
