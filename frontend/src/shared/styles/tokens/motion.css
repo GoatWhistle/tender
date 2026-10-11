@@ -15,6 +15,8 @@
   --rank-reveal-offset: 24px;
   --ease-rank-reveal: cubic-bezier(0.22, 0.65, 0.25, 1);
   --dur-step: 260ms;
+  --dur-shuffle-hold: 1100ms;
+  --dur-skeleton: 900ms;
   --dur-step-flow: 2600ms;
   --dur-spin: 900ms;
   --dur-step-arrow: 1400ms;
@@ -28,6 +30,7 @@
   --motion-step-halo: step-halo var(--dur-step-flow) var(--ease-out) infinite;
   --motion-step-glow: step-glow var(--dur-step-flow) linear infinite;
   --motion-step-flow: step-flow var(--dur-step-flow) linear infinite;
+  --motion-skeleton: skeleton-pulse var(--dur-skeleton) var(--ease-rank-reveal) infinite alternate;
   --motion-spin: spin var(--dur-spin) linear infinite;
   --motion-step-arrow: step-arrow var(--dur-step-arrow) var(--ease-rank-reveal) infinite;
   --motion-step-march: step-march calc(var(--dur-step-arrow) / 2) linear infinite;
@@ -79,5 +82,8 @@
     --enter-offset: 0px;
     --stagger: 0ms;
     --motion-spin: none;
+    --motion-skeleton: none;
+    --dur-shuffle-hold: 1ms;
+    --dur-skeleton: 1ms;
   }
 }

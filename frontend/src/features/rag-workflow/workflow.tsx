@@ -10,6 +10,7 @@ import { Clarification } from "./clarification"
 import { Conversation } from "./conversation"
 import { DescriptionReview } from "./description-review"
 import { SearchResults } from "./search-results"
+import { SearchSkeleton } from "./search-skeleton/search-skeleton"
 import { Specification } from "./specification"
 import { Summary } from "./summary"
 import styles from "./workflow.module.css"
@@ -57,11 +58,9 @@ export function RagWorkflow() {
             <span>{t(status[flow.operation as keyof typeof status])}</span>
           </div>
         )}
-        {flow.busy && !search && (
-          <div className={styles.waitingArt}>
-            <CatalogArtwork />
-          </div>
-        )}
+        {flow.busy &&
+          ["checking", "searching"].includes(flow.operation) &&
+          (!search || search.stage === "review") && <SearchSkeleton />}
         {review && <DescriptionReview flow={flow} onEdit={() => input.current?.focus()} />}
         {!search && !flow.busy && !flow.error && (
           <div className={styles.intro}>

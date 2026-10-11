@@ -85,6 +85,7 @@
   "firstWait": "This usually takes about 5 seconds",
   "rankingWait": "Comparing purpose and specifications. Another 2–3 seconds.",
   "checkingTitle": "Reviewing your product description",
+  "searchingTitle": "Searching for matching catalog items",
   "checkingNote": "We will check dimensions and wording, then find matching catalog items.",
   "recommendation": "Recommended",
   "recommendationTitle": "Start with the first match",
