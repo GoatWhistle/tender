@@ -16,6 +16,13 @@
   --control-size: 48px;
   --control-size-large: 56px;
   --card-media: 160px;
+  --header-height: 72px;
+  --logo-width: 180px;
+  --logo-width-sm: 140px;
+  --row-height: 49px;
+  --illustration-sm: 96px;
+  --illustration-md: 140px;
+  --illustration-lg: 180px;
 }
 @media (max-width: 47.99rem) {
   :root {

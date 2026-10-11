@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next"
 import type { RagWorkflowState } from "@/entities/rag/use-rag-workflow"
 import { Button } from "@/shared/ui/button"
 import { CategoryIcon } from "@/shared/ui/category-icon/category-icon"
-import { Icon } from "@/shared/ui/icon"
+import { Illustration } from "@/shared/ui/illustration/illustration"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./summary.module.css"
 
@@ -28,7 +28,22 @@ export function Summary({
     link.click()
     URL.revokeObjectURL(url)
   }
+  const details = [
+    {
+      name: t("rag:catalogOkpd"),
+      value: `${session.position.okpd2} ${session.position.okpd2_name}`,
+    },
+    { name: t("rag:summaryDescription"), value: session.description },
+    ...(session.corrected && session.corrected !== session.description
+      ? [{ name: t("rag:summaryCorrected"), value: session.corrected }]
+      : []),
+  ]
+  const answers = Object.entries(session.answers).flatMap(([name, value]) =>
+    value ? [{ name, value }] : [],
+  )
   const groups = [
+    { title: "rag:summaryDetails", values: details },
+    { title: "rag:summaryAnswers", values: answers },
     {
       title: "rag:fixed",
       values: Object.entries(session.position.fixed).map(([name, value]) => ({ name, value })),
@@ -42,11 +57,32 @@ export function Summary({
     },
     { title: "rag:extraTitle", values: session.extras },
   ] as const
+  const empty =
+    Object.keys(session.position.fixed).length === 0 &&
+    session.characteristics.length === 0 &&
+    session.extras.length === 0
   return (
     <section className={styles.summary}>
-      {done && <Icon name="success" size={32} />}
-      <h2>{t(done ? "rag:done" : "rag:previewTitle")}</h2>
-      <p>{t(done ? "rag:doneHint" : "rag:previewHint")}</p>
+      {done ? (
+        <header className={styles.hero}>
+          <Illustration name="target" size="md" />
+          <h2>{t("rag:done")}</h2>
+          <p>{t("rag:doneHint")}</p>
+          <div className={styles.heroActions}>
+            <Button icon="plus" onClick={flow.reset}>
+              {t("rag:new")}
+            </Button>
+            <Button icon="download" variant="primary" onClick={download} disabled={!flow.result}>
+              {t("rag:download")}
+            </Button>
+          </div>
+        </header>
+      ) : (
+        <>
+          <h2>{t("rag:previewTitle")}</h2>
+          <p>{t("rag:previewHint")}</p>
+        </>
+      )}
       <div className={styles.position}>
         <CategoryIcon code={session.position.code} size="xl" />
         <div>
@@ -80,32 +116,22 @@ export function Summary({
             </dl>
           </section>
         ))}
-      <div className={styles.actions}>
-        {done ? (
-          <>
-            <Button icon="plus" onClick={flow.reset}>
-              {t("rag:new")}
-            </Button>
-            <Button icon="download" variant="primary" onClick={download} disabled={!flow.result}>
-              {t("rag:download")}
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button icon="edit" disabled={flow.busy} onClick={onEdit}>
-              {t("rag:edit")}
-            </Button>
-            <Button
-              icon="check"
-              variant="primary"
-              disabled={flow.busy || session.missing.length > 0 || Boolean(flow.draft.trim())}
-              onClick={flow.finish}
-            >
-              {t("rag:finish")}
-            </Button>
-          </>
-        )}
-      </div>
+      {empty && <p className={styles.empty}>{t("rag:catalogEmpty")}</p>}
+      {!done && (
+        <div className={styles.actions}>
+          <Button icon="edit" disabled={flow.busy} onClick={onEdit}>
+            {t("rag:edit")}
+          </Button>
+          <Button
+            icon="check"
+            variant="primary"
+            disabled={flow.busy || session.missing.length > 0 || Boolean(flow.draft.trim())}
+            onClick={flow.finish}
+          >
+            {t("rag:finish")}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }

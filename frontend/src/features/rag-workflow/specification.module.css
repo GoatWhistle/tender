@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
+  padding: var(--space-8) var(--space-10);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-panel);
 }
 .spec h2 {
   font-size: var(--font-xl);
@@ -43,9 +46,8 @@
 }
 .fields {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
-  gap: var(--space-2) var(--space-6);
-  margin-inline: calc(var(--space-4) * -1);
+  grid-template-columns: minmax(0, 1fr);
+  border-top: var(--line) solid var(--border-default);
 }
 .layout {
   display: grid;
@@ -116,7 +118,7 @@
   }
 }
 @media (max-width: 47.99rem) {
-  .fields {
-    margin-inline: calc(var(--space-4) * -1) 0;
+  .spec {
+    padding: var(--space-5) var(--space-4);
   }
 }

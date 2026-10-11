@@ -1,3 +1,9 @@
+.logo {
+  display: block;
+  flex-shrink: 0;
+  inline-size: var(--logo-width);
+  block-size: auto;
+}
 .brand {
   display: flex;
   align-items: center;
@@ -41,4 +47,9 @@
 }
 .compact .mark {
   transform: scale(0.65);
+}
+@media (max-width: 47.99rem) {
+  .logo {
+    inline-size: var(--logo-width-sm);
+  }
 }

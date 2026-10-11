@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { BrowserRouter, Route, Routes } from "react-router"
+import { BrowserRouter, Link, Route, Routes } from "react-router"
 import { CatalogPage } from "@/pages/catalog/catalog"
 import { SupplierPage } from "@/pages/supplier/supplier"
 import { useInputModality } from "@/shared/motion/primitives"
@@ -22,7 +22,9 @@ export function App() {
     <BrowserRouter>
       <div className={styles.app}>
         <header className={styles.header}>
-          <Brand />
+          <Link to="/" reloadDocument className={styles.home} aria-label={t("portal:home")}>
+            <Brand />
+          </Link>
           <span className={styles.headerDivider} />
           <h1 className={styles.headerLabel}>{t("portal:support")}</h1>
           <div className={styles.controls}>

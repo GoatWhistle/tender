@@ -22,6 +22,8 @@
   --font-md: 16px;
   --font-lg: 20px;
   --font-xl: 24px;
+  --font-h2: 30px;
+  --font-h1: 40px;
 }
 
 :root {
@@ -31,6 +33,7 @@
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
+  --caps-tracking: 0.08em;
 }
 @media (max-width: 47.99rem) {
   :root {

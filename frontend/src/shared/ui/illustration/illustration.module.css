@@ -1,0 +1,17 @@
+.illustration {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  user-select: none;
+  animation: var(--motion-enter);
+}
+.sm {
+  height: var(--illustration-sm);
+}
+.md {
+  height: var(--illustration-md);
+}
+.lg {
+  height: var(--illustration-lg);
+}

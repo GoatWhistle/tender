@@ -169,5 +169,9 @@
     "addedShort": "In comparison",
     "loading": "Building the comparison",
     "error": "Could not build the comparison."
-  }
+  },
+  "summaryDetails": "Item details",
+  "summaryAnswers": "Clarification answers",
+  "summaryDescription": "Supplier description",
+  "summaryCorrected": "Description after fixes"
 }

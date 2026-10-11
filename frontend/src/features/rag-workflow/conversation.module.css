@@ -1,23 +1,25 @@
 .conversation {
   flex-shrink: 0;
-  border-top: var(--line) solid var(--border-default);
 }
 .feedback {
-  padding: var(--space-3) var(--space-page) 0;
+  padding: var(--space-4) var(--space-page) 0;
 }
 .reply {
   max-height: 12vh;
   overflow: auto;
   white-space: pre-line;
   color: var(--text-secondary);
-  font-size: var(--font-md);
+  font-size: var(--font-sm);
   overflow-wrap: anywhere;
   overscroll-behavior: contain;
 }
 .historyClip {
   overflow: hidden;
-  padding: 0 calc(clamp(var(--space-page), 8vw, 160px) + var(--space-4));
+  padding: 0 calc(var(--space-page) + var(--space-4));
   margin-bottom: calc(-1 * var(--space-4));
+}
+.historyClip:empty {
+  margin-bottom: 0;
 }
 .history {
   max-height: 32vh;

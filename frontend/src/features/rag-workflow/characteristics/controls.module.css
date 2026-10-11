@@ -14,7 +14,7 @@
 .chip {
   min-height: var(--space-10);
   padding-inline: var(--space-3);
-  border-radius: var(--radius-round);
+  border-radius: 0;
   font-weight: var(--weight-medium);
   font-size: var(--font-sm);
   color: var(--text-primary);

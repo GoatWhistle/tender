@@ -2,15 +2,22 @@
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--surface-panel);
+  background: var(--surface-page);
 }
 .header {
-  height: 80px;
+  position: relative;
+  z-index: 2;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   gap: var(--space-6);
   padding: 0 var(--space-page);
-  border-bottom: var(--line) solid var(--border-default);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow-header);
+  flex-shrink: 0;
+}
+.home {
+  display: inline-flex;
   flex-shrink: 0;
 }
 .headerDivider {
@@ -41,7 +48,6 @@
 @media (max-width: 47.99rem) {
   .header {
     padding: 0 var(--space-6);
-    height: 72px;
     gap: var(--space-2);
   }
   .headerDivider {

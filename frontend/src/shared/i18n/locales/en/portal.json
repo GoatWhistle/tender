@@ -1,5 +1,6 @@
 {
   "title": "Supplier portal",
+  "home": "Supplier Portal, home",
   "brandTop": "SUPPLIER",
   "brandBottom": "PORTAL",
   "workspace": "Create a product card",
@@ -13,8 +14,13 @@
   "introTitle": "What product would you like to add?",
   "introText": "Describe it in your own words. We will review your description and find a matching catalog item.",
   "exampleLabel": "For example",
-  "example": "Metal wardrobe, height 1000 m, depth 0.55 m",
-  "tryExample": "Use example",
+  "examples": [
+    "Metal wardrobe, depth 0.55 m",
+    "Jigsaw, 500 W, wood cutting depth 80 mm",
+    "Screw clamp, length 300 mm",
+    "A4 office paper, 80 g/m²",
+    "Nitrile examination gloves, size M"
+  ],
   "inputLabel": "Product description",
   "placeholder": "Describe your product in your own words…",
   "clarifyPlaceholder": "Write or update your description…",

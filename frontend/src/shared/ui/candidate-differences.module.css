@@ -14,16 +14,19 @@
   min-width: 0;
 }
 .comparison dt {
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
 .comparison dd {
-  margin: var(--space-2) 0 0;
-  font-size: var(--font-md);
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-sm);
   color: var(--text-primary);
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
+}
+.comparison dd > strong {
+  font-weight: var(--weight-semibold);
 }
 .comparison dd[data-clamped="true"] > strong {
   display: -webkit-box;

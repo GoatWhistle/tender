@@ -72,3 +72,11 @@
 .details h2 {
   font-size: var(--font-xl);
 }
+.empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  background: var(--surface-inset);
+  color: var(--text-secondary);
+}

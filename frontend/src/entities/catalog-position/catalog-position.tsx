@@ -4,6 +4,7 @@ import { api, unwrap } from "@/shared/api/client"
 import { Spinner } from "@/shared/motion/primitives"
 import { Button } from "@/shared/ui/button"
 import { CategoryIcon } from "@/shared/ui/category-icon/category-icon"
+import { Illustration } from "@/shared/ui/illustration/illustration"
 import { LoadStatus } from "@/shared/ui/load-status"
 import { BackendText } from "@/shared/ui/message"
 import styles from "./catalog-position.module.css"
@@ -97,7 +98,10 @@ export function CatalogPosition({ code }: { readonly code: string }) {
           ))}
         </dl>
       ) : (
-        <p>{t("catalogEmpty")}</p>
+        <div className={styles.empty}>
+          <Illustration name="boxes" size="sm" />
+          <p>{t("catalogEmpty")}</p>
+        </div>
       )}
     </section>
   )

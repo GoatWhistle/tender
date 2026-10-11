@@ -1,8 +1,9 @@
 :root {
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 8px;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-badge: 2px;
   --radius-round: 999px;
   --line: 1px;
   --line-strong: 2px;

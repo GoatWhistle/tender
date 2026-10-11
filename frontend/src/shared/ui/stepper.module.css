@@ -1,53 +1,74 @@
 .nav {
   flex-shrink: 0;
-  padding: var(--space-5) var(--space-page);
+  margin: var(--space-6) var(--space-page) 0;
+  padding: var(--space-6) var(--space-6) var(--space-5);
   background: var(--surface-panel);
+  box-shadow: var(--shadow-panel);
 }
 .steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-6);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .step {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   min-width: 0;
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   color: var(--text-muted);
+  text-align: center;
+}
+.step + .step::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--control-size) / 2);
+  inset-inline: calc(-50% + var(--control-size) / 2 + var(--space-2))
+    calc(50% + var(--control-size) / 2 + var(--space-2));
+  border-top: var(--line) dashed var(--border-strong);
+}
+.step[data-active="true"]::before,
+.step[data-complete="true"]::before {
+  border-top-style: solid;
+  border-top-color: var(--action-primary);
 }
 .circle {
   position: relative;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border: var(--line) solid var(--border-default);
+  width: var(--control-size);
+  height: var(--control-size);
+  border: var(--line) dashed var(--border-strong);
   border-radius: var(--radius-round);
-  color: var(--text-secondary);
-  font-size: var(--font-sm);
+  color: var(--text-muted);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 .step[data-active="true"] {
   color: var(--text-primary);
   font-weight: var(--weight-semibold);
 }
-.step[data-active="true"] .circle {
-  background: var(--brand-red);
-  color: var(--text-on-brand);
-  border-color: var(--brand-red);
-}
+.step[data-active="true"] .circle,
 .step[data-complete="true"] .circle {
-  background: var(--surface-success);
-  color: var(--status-success);
-  border-color: var(--surface-success);
+  background: var(--action-primary);
+  border: 0;
+  color: var(--text-on-action);
+}
+.step[data-active="true"] .circle {
+  box-shadow: 0 0 0 var(--space-1) var(--surface-danger);
+}
+.step[data-complete="true"] {
+  color: var(--text-primary);
 }
 .label {
-  flex-shrink: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .step[data-target="true"] .circle::after {
   content: "";
@@ -59,14 +80,15 @@
   animation: var(--motion-step-target);
 }
 .arrow {
-  position: relative;
+  position: absolute;
+  top: calc(var(--control-size) / 2 - 11px);
+  inset-inline: calc(50% + var(--control-size) / 2 + var(--space-2))
+    calc(-50% + var(--control-size) / 2 + var(--space-2));
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex: 1;
-  min-width: var(--space-8);
   height: 22px;
-  margin-inline: var(--space-2) calc(var(--space-2) - var(--space-6));
   color: var(--action-text);
   overflow: hidden;
 }
@@ -78,10 +100,9 @@
   top: 50%;
   height: var(--line-strong);
   transform: translateY(-50%);
-  border-radius: var(--radius-round);
 }
 .arrow::before {
-  background: repeating-linear-gradient(90deg, var(--border-user) 0 6px, transparent 6px 12px);
+  background: repeating-linear-gradient(90deg, var(--border-strong) 0 6px, transparent 6px 12px);
   animation: var(--motion-step-march);
 }
 .arrow::after {
@@ -97,14 +118,24 @@
 }
 @media (max-width: 47.99rem) {
   .nav {
-    padding-block: var(--space-4);
+    margin: var(--space-4) var(--space-page) 0;
+    padding: var(--space-4) var(--space-3);
   }
-  .steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3) var(--space-4);
+  .circle {
+    width: var(--space-10);
+    height: var(--space-10);
+    font-size: var(--font-md);
   }
-  .step {
-    gap: var(--space-2);
+  .step + .step::before {
+    top: calc(var(--space-10) / 2);
+    inset-inline: calc(-50% + var(--space-10) / 2 + var(--space-1))
+      calc(50% + var(--space-10) / 2 + var(--space-1));
+  }
+  .label {
+    display: none;
+  }
+  .step[data-active="true"] .label {
+    display: block;
   }
   .arrow {
     display: none;

@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next"
 import { useRagWorkflow } from "@/entities/rag"
 import { ApiError } from "@/shared/api/client"
 import { Button } from "@/shared/ui/button"
-import { CatalogArtwork } from "@/shared/ui/catalog-artwork/catalog-artwork"
 import { Composer } from "@/shared/ui/composer"
+import { Illustration } from "@/shared/ui/illustration/illustration"
 import { Stepper } from "@/shared/ui/stepper"
 import { Clarification } from "./clarification"
 import { Conversation } from "./conversation"
@@ -23,6 +23,7 @@ export function RagWorkflow() {
   const scroll = useRef<HTMLDivElement>(null)
   const { search, session } = flow
   const review = search?.stage === "review" && !flow.busy
+  const intro = !search && !flow.busy && !flow.error
   const stage = session?.stage ?? search?.stage ?? "start"
   const step = session
     ? session.stage === "done" || preview
@@ -62,21 +63,11 @@ export function RagWorkflow() {
           ["checking", "searching"].includes(flow.operation) &&
           (!search || search.stage === "review") && <SearchSkeleton />}
         {review && <DescriptionReview flow={flow} onEdit={() => input.current?.focus()} />}
-        {!search && !flow.busy && !flow.error && (
+        {intro && (
           <div className={styles.intro}>
-            <CatalogArtwork />
+            <Illustration name="funnel" size="lg" />
             <h2>{t("portal:introTitle")}</h2>
             <p>{t("portal:introText")}</p>
-            <Button
-              variant="ghost"
-              icon="plus"
-              onClick={() => {
-                flow.setDraft(t("portal:example"))
-                input.current?.focus()
-              }}
-            >
-              {t("portal:tryExample")}
-            </Button>
           </div>
         )}
         {!session && search && search.stage !== "review" && (
@@ -131,6 +122,23 @@ export function RagWorkflow() {
           started={Boolean(search)}
           inputRef={input}
         />
+      )}
+      {intro && (
+        <ul className={styles.examples} aria-label={t("portal:exampleLabel")}>
+          {t("portal:examples", { returnObjects: true }).map((example) => (
+            <li key={example}>
+              <Button
+                className={styles.example}
+                onClick={() => {
+                  flow.setDraft(example)
+                  input.current?.focus()
+                }}
+              >
+                {example}
+              </Button>
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   )

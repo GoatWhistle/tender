@@ -1,11 +1,12 @@
 .field {
   position: relative;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
-  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: minmax(180px, 300px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3) var(--space-8);
+  padding: var(--space-5) var(--space-4) var(--space-5) var(--space-5);
+  border-bottom: var(--line) solid var(--border-default);
   scroll-margin-block: var(--space-16);
 }
 .field[data-required="true"][data-empty="true"]::before {
@@ -13,7 +14,6 @@
   position: absolute;
   inset: var(--space-4) auto var(--space-4) 0;
   width: var(--line-strong);
-  border-radius: var(--radius-round);
   background: var(--brand-red);
 }
 .flash {
@@ -26,6 +26,7 @@
 }
 .label {
   position: relative;
+  padding-top: var(--space-2);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -52,6 +53,7 @@
   align-items: stretch;
   gap: var(--space-2);
   min-width: 0;
+  max-width: 640px;
 }
 .clear {
   align-self: flex-start;
@@ -62,6 +64,10 @@
 }
 @media (max-width: 47.99rem) {
   .field {
+    grid-template-columns: minmax(0, 1fr);
     padding-inline: var(--space-4) 0;
+  }
+  .label {
+    padding-top: 0;
   }
 }
