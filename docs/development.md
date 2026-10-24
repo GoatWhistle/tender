@@ -120,8 +120,7 @@ cd frontend && npm run lint && npm run format:check && npm run typecheck && npm 
 
 ### Оценка русских ошибок
 
-Fixtures четырёх классов: `evals/datasets/errors_ru_v1.json`; правила и демонстрации —
-`docs/Предлагаемое решение.md`, §§8.8, 9.3, 15.6, 16.1, 20.2. Метрики считаются из JSONL
+Fixtures четырёх классов: `evals/datasets/errors_ru_v1.json`. Метрики считаются из JSONL
 ответов приложения, не из подставленного эталона:
 
 ```bash

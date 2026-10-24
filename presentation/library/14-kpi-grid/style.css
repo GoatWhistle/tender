@@ -1,9 +1,0 @@
-#kpi-grid .kpi-value {
-  font-size: 80px;
-}
-
-#kpi-grid .kg-source {
-  position: absolute;
-  left: var(--gutter);
-  bottom: 110px;
-}

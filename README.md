@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="frontend/src/shared/assets/portal-logo.svg" alt="Портал поставщиков" width="300" height="66">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner.dark.png">
+    <img src="docs/readme/banner.light.png" alt="Карточка по КТРУ: описание товара своими словами на входе, код КТРУ и заполненные характеристики на выходе" width="880" height="200">
+  </picture>
 </p>
-
-<h1 align="center">Карточка товара по КТРУ из описания своими словами</h1>
 
 <p align="center">
   Поставщик пишет, что продаёт, как умеет: с опечатками и без половины свойств. Система находит
@@ -12,7 +13,7 @@
 <p align="center">
   <!-- readme:buttons -->
   <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-run.dark.png"><img src="docs/readme/cta-run.light.png" alt="Запустить локально" width="226" height="44"></picture></a>
-  <a href="docs/for-jury.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-jury.dark.png"><img src="docs/readme/cta-jury.light.png" alt="Маршрут для жюри" width="222" height="44"></picture></a>
+  <a href="docs/evidence.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-evidence.dark.png"><img src="docs/readme/cta-evidence.light.png" alt="Доказательства" width="191" height="44"></picture></a>
   <a href="docs/README.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-docs.dark.png"><img src="docs/readme/cta-docs.light.png" alt="Документация" width="181" height="44"></picture></a>
   <!-- /readme:buttons -->
 </p>
@@ -21,10 +22,10 @@
   <!-- readme:status -->
   <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-1.dark.png"><img src="docs/readme/badge-status-1.light.png" alt="группа в топ-5: 42 из 46" width="185" height="28"></picture></a>
   <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-2.dark.png"><img src="docs/readme/badge-status-2.light.png" alt="платные API: не нужны" width="183" height="28"></picture></a>
-  <a href="docs/evidence.md#хватает-ли-40-гб-видеопамяти"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-3.dark.png"><img src="docs/readme/badge-status-3.light.png" alt="VRAM: 37,1 из 40 ГБ" width="159" height="28"></picture></a>
   <br>
+  <a href="docs/evidence.md#хватает-ли-40-гб-видеопамяти"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-3.dark.png"><img src="docs/readme/badge-status-3.light.png" alt="VRAM: 37,1 из 40 ГБ" width="159" height="28"></picture></a>
   <a href="docs/running.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-4.dark.png"><img src="docs/readme/badge-status-4.light.png" alt="тесты: 405 бэкенд и 66 фронт" width="224" height="28"></picture></a>
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-5.dark.png"><img src="docs/readme/badge-status-5.light.png" alt="интерфейс: RU и EN" width="162" height="28"></picture>
+  <a href="LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-5.dark.png"><img src="docs/readme/badge-status-5.light.png" alt="лицензия: MIT" width="126" height="28"></picture></a>
   <!-- /readme:status -->
 </p>
 
@@ -74,7 +75,7 @@
 ## Как это работает
 
 ```mermaid
-%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#264b82","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#5f6672","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"rgba(0, 0, 0, 0.64)","actorBkg":"#ffffff","actorBorder":"#264b82","fontFamily":"Open Sans"}}}%%
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#c92723","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#7f8792","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"#5f6672","actorBkg":"#ffffff","actorBorder":"#c92723","fontFamily":"Open Sans"}}}%%
 flowchart LR
     A["Описание товара"] --> B["Поиск групп<br/>TF-IDF, векторы, синонимы"]
     B --> C["Проверка назначения<br/>OpenJev"]
@@ -132,9 +133,6 @@ OpenJev оценивает каждую группу: соответствует
 | 1 | Ввести «Шкаф для одежды металлический, глубина 0,55 м» и нажать «Подобрать позицию» | Путь «Мебель › Шкаф для одежды металлический», «Подходит позиций: 1 из 2», вторая позиция исключена с причиной |
 | 2 | «Продолжить», в строке «Тип шкафа» выбрать «Секционный» | Таблица характеристик, «Заполнено обязательных: 2 из 2» |
 | 3 | «Новая карточка», ввести «Перчатки» | Вопрос «Для какого назначения нужен товар?» вместо угаданной группы |
-
-Полный маршрут и где ответ на каждый критерий оценки — в [маршруте для жюри](docs/for-jury.md).
-Каждое требование ТЗ по пунктам — в [карте требований](docs/requirements-map.md).
 
 ## Результаты
 
@@ -242,6 +240,6 @@ docker compose -f compose.yaml -f compose.qwen.yaml --profile gpu up -d
 
 Все ограничения, со статусом и тем, что закрыло бы каждое, — в [ограничениях](docs/limitations.md).
 
-<p align="center">
-  <sub>Команда GoatWhistle, Tender Hack, Казань, 2026.</sub>
-</p>
+## Лицензия
+
+[MIT](LICENSE)

@@ -13,8 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "e2e": "playwright test",
-    "tokens:export": "node ../presentation/tools/tokens.mjs"
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.0",

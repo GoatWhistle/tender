@@ -30,7 +30,7 @@
 ## Как проходит одно сообщение поставщика?
 
 ```mermaid
-%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#264b82","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#5f6672","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"rgba(0, 0, 0, 0.64)","actorBkg":"#ffffff","actorBorder":"#264b82","fontFamily":"Open Sans"}}}%%
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#c92723","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#7f8792","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"#5f6672","actorBkg":"#ffffff","actorBorder":"#c92723","fontFamily":"Open Sans"}}}%%
 flowchart LR
     A["Описание товара"] --> B["Поиск групп<br/>TF-IDF + векторы + синонимы"]
     B --> C{"Похоже на товар<br/>из справочника?"}
@@ -61,7 +61,7 @@ flowchart LR
 ## Как устроены слои бэкенда?
 
 ```mermaid
-%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#264b82","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#5f6672","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"rgba(0, 0, 0, 0.64)","actorBkg":"#ffffff","actorBorder":"#264b82","fontFamily":"Open Sans"}}}%%
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#ffffff","primaryTextColor":"#1a1a1a","primaryBorderColor":"#c92723","secondaryColor":"#e7eef7","tertiaryColor":"#f1f5fb","lineColor":"#7f8792","textColor":"#1a1a1a","noteBkgColor":"#e7eef7","noteTextColor":"#5f6672","actorBkg":"#ffffff","actorBorder":"#c92723","fontFamily":"Open Sans"}}}%%
 flowchart TB
     C["controller<br/>FastAPI, схемы"] --> U["usecase<br/>сценарии, порты"]
     U --> D["domain<br/>правила без библиотек"]

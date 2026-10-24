@@ -16,7 +16,7 @@
 - Источник справочника КТРУ — XML ЕИС (`adapter/ktru_xml.py`) и JSON-снимок
   (`adapter/ktru_json.py`), порт `CatalogSource`.
 - Хранилища — репозитории: SQLite (`repository/`) и in-memory (`repository/memory/`).
-- По плану (`docs/Предлагаемое решение.md`), по мере появления:
+- По мере появления:
   - поиск кандидатов — BM25, векторный, гибрид;
   - decision-модель — `DecisionBackend` из раздела 7.4;
   - извлекатель фактов (Qwen4B за vLLM) и его verifier;

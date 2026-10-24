@@ -1,8 +1,7 @@
 # Фронтенд: Портал поставщиков
 
 React 18 + Vite + TypeScript, Vitest, Playwright + axe, ESLint, Prettier. Весь сайт — в
-дизайн-системе Портала поставщиков (UI-кит из Figma, `design/figma/`), правила —
-`.claude/frontend-rules.md`.
+дизайн-системе Портала поставщиков (UI-кит из Figma, `design/figma/`).
 
 - **Главная** `/` — поиск и категории. **Каталог** `/catalog`, `/catalog/:slug` — фильтр по
   позиции КТРУ и её характеристикам, сортировка, таблица товаров. **Товар** `/product/:id` —
@@ -49,8 +48,7 @@ npm run format                            # Prettier переписывает ф
 
 Иконки сайта в `public/`: `favicon.ico` (16, 32, 48), `favicon.svg`, `apple-touch-icon.png`,
 `icon-192/512.png` и маскируемая для Android, `site.webmanifest`, превью для соцсетей
-`og-image.png` 1200×630. Все собирает из логотипа `src/shared/assets/portal-logo.svg`
-команда `cd presentation && npm run favicons`; тексты и цвета — `presentation/favicons/favicons.json`.
+`og-image.png` 1200×630, все собраны из логотипа `src/shared/assets/portal-logo.svg`.
 
 ## Мастер поставщика `/sell`
 

@@ -1,7 +1,0 @@
-#team .tm {
-  gap: 20px;
-}
-
-#team .tm h3 {
-  font-size: var(--fs-lead);
-}
