@@ -101,6 +101,5 @@
 
 ## Слайд 14. Материалы
 
-- [UI-кит Портала Поставщиков](https://www.figma.com/board/G64ZNZOpvILbIPYx8XVbxO/Portal-Postavshikov-(catalog)?node-id=1-1238&node-type=FRAME&t=3Rn0CFnDsfbnyUAY-0).
 - [Исходные данные и выгрузки](https://disk.yandex.ru/d/5Olg3IoYYf4loA).
 - [Сайт Портал Поставщиков](https://zakupki.mos.ru/).
