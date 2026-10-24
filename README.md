@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner.dark.png">
-    <img src="docs/readme/banner.light.png" alt="Карточка по КТРУ: описание товара своими словами на входе, код КТРУ и заполненные характеристики на выходе" width="880" height="200">
+    <img src="docs/readme/banner.light.png" alt="Портал поставщиков: описание товара своими словами на входе, код КТРУ и характеристики на выходе" width="880" height="200">
   </picture>
 </p>
 
