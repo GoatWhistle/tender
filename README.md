@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner.dark.png">
-    <img src="docs/readme/banner.light.png" alt="Портал поставщиков: описание товара своими словами на входе, код КТРУ и характеристики на выходе" width="880" height="200">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/banner.dark-5cca7e93.png">
+    <img src="docs/readme/banner.light-cef33156.png" alt="Портал поставщиков: описание товара своими словами на входе, код КТРУ и характеристики на выходе" width="880" height="200">
   </picture>
 </p>
 
@@ -12,45 +12,45 @@
 
 <p align="center">
   <!-- readme:buttons -->
-  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-run.dark.png"><img src="docs/readme/cta-run.light.png" alt="Запустить локально" width="226" height="44"></picture></a>
-  <a href="docs/evidence.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-evidence.dark.png"><img src="docs/readme/cta-evidence.light.png" alt="Доказательства" width="191" height="44"></picture></a>
-  <a href="docs/README.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-docs.dark.png"><img src="docs/readme/cta-docs.light.png" alt="Документация" width="181" height="44"></picture></a>
+  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-run.dark-4e136acf.png"><img src="docs/readme/cta-run.light-658a2526.png" alt="Запустить локально" width="226" height="44"></picture></a>
+  <a href="docs/evidence.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-evidence.dark-f37b7674.png"><img src="docs/readme/cta-evidence.light-e6146e5c.png" alt="Доказательства" width="191" height="44"></picture></a>
+  <a href="docs/README.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/cta-docs.dark-8d951e93.png"><img src="docs/readme/cta-docs.light-38d8ab1e.png" alt="Документация" width="181" height="44"></picture></a>
   <!-- /readme:buttons -->
 </p>
 
 <p align="center">
   <!-- readme:status -->
-  <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-1.dark.png"><img src="docs/readme/badge-status-1.light.png" alt="группа в топ-5: 42 из 46" width="185" height="28"></picture></a>
-  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-2.dark.png"><img src="docs/readme/badge-status-2.light.png" alt="платные API: не нужны" width="183" height="28"></picture></a>
+  <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-1.dark-cd1f6036.png"><img src="docs/readme/badge-status-1.light-07cf821f.png" alt="группа в топ-5: 42 из 46" width="185" height="28"></picture></a>
+  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-2.dark-a06e727d.png"><img src="docs/readme/badge-status-2.light-0ff5b0bd.png" alt="платные API: не нужны" width="183" height="28"></picture></a>
   <br>
-  <a href="docs/evidence.md#хватает-ли-40-гб-видеопамяти"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-3.dark.png"><img src="docs/readme/badge-status-3.light.png" alt="VRAM: 37,1 из 40 ГБ" width="159" height="28"></picture></a>
-  <a href="docs/running.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-4.dark.png"><img src="docs/readme/badge-status-4.light.png" alt="тесты: 405 бэкенд и 66 фронт" width="224" height="28"></picture></a>
-  <a href="LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-5.dark.png"><img src="docs/readme/badge-status-5.light.png" alt="лицензия: MIT" width="126" height="28"></picture></a>
+  <a href="docs/evidence.md#хватает-ли-40-гб-видеопамяти"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-3.dark-45fb3e93.png"><img src="docs/readme/badge-status-3.light-9266feaa.png" alt="VRAM: 37,1 из 40 ГБ" width="159" height="28"></picture></a>
+  <a href="docs/running.md"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-4.dark-ca3e7113.png"><img src="docs/readme/badge-status-4.light-9b0f7037.png" alt="тесты: 405 бэкенд и 66 фронт" width="224" height="28"></picture></a>
+  <a href="LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-status-5.dark-79c5ba27.png"><img src="docs/readme/badge-status-5.light-955b5900.png" alt="лицензия: MIT" width="126" height="28"></picture></a>
   <!-- /readme:status -->
 </p>
 
 <p align="center">
   <!-- readme:stack -->
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-1.dark.png"><img src="docs/readme/badge-stack-1.light.png" alt="фронтенд: React 18 и TypeScript" width="239" height="28"></picture>
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-2.dark.png"><img src="docs/readme/badge-stack-2.light.png" alt="API: FastAPI" width="108" height="28"></picture>
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-3.dark.png"><img src="docs/readme/badge-stack-3.light.png" alt="хранилище: SQLite" width="156" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-1.dark-1678c4b8.png"><img src="docs/readme/badge-stack-1.light-f8cf1209.png" alt="фронтенд: React 18 и TypeScript" width="239" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-2.dark-29355cd3.png"><img src="docs/readme/badge-stack-2.light-eddd0463.png" alt="API: FastAPI" width="108" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-3.dark-cef05e54.png"><img src="docs/readme/badge-stack-3.light-f4ac01f2.png" alt="хранилище: SQLite" width="156" height="28"></picture>
   <br>
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-4.dark.png"><img src="docs/readme/badge-stack-4.light.png" alt="поиск: Qwen3-Embedding 0.6B" width="228" height="28"></picture>
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-5.dark.png"><img src="docs/readme/badge-stack-5.light.png" alt="проверка: OpenJev 4B" width="174" height="28"></picture>
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-6.dark.png"><img src="docs/readme/badge-stack-6.light.png" alt="извлечение: Qwen3.5 9B" width="192" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-4.dark-b0586158.png"><img src="docs/readme/badge-stack-4.light-f96b25eb.png" alt="поиск: Qwen3-Embedding 0.6B" width="228" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-5.dark-9d398256.png"><img src="docs/readme/badge-stack-5.light-2075403e.png" alt="проверка: OpenJev 4B" width="174" height="28"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-stack-6.dark-f42efea7.png"><img src="docs/readme/badge-stack-6.light-0f395a7b.png" alt="извлечение: Qwen3.5 9B" width="192" height="28"></picture>
   <!-- /readme:stack -->
 </p>
 
 <p align="center">
   <!-- readme:nav -->
-  <a href="#зачем-это"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-1.dark.png"><img src="docs/readme/badge-nav-1.light.png" alt="Зачем это" width="91" height="26"></picture></a>
-  <a href="#как-это-работает"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-2.dark.png"><img src="docs/readme/badge-nav-2.light.png" alt="Как это работает" width="135" height="26"></picture></a>
-  <a href="#попробовать-за-пять-минут"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-3.dark.png"><img src="docs/readme/badge-nav-3.light.png" alt="Попробовать" width="112" height="26"></picture></a>
+  <a href="#зачем-это"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-1.dark-f0860484.png"><img src="docs/readme/badge-nav-1.light-91aef252.png" alt="Зачем это" width="91" height="26"></picture></a>
+  <a href="#как-это-работает"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-2.dark-4b73f8aa.png"><img src="docs/readme/badge-nav-2.light-434f40ec.png" alt="Как это работает" width="135" height="26"></picture></a>
+  <a href="#попробовать-за-пять-минут"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-3.dark-d722d902.png"><img src="docs/readme/badge-nav-3.light-ff70d1a4.png" alt="Попробовать" width="112" height="26"></picture></a>
   <br>
-  <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-4.dark.png"><img src="docs/readme/badge-nav-4.light.png" alt="Результаты" width="100" height="26"></picture></a>
-  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-5.dark.png"><img src="docs/readme/badge-nav-5.light.png" alt="Запуск" width="69" height="26"></picture></a>
-  <a href="#устройство"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-6.dark.png"><img src="docs/readme/badge-nav-6.light.png" alt="Устройство" width="100" height="26"></picture></a>
-  <a href="#ограничения"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-7.dark.png"><img src="docs/readme/badge-nav-7.light.png" alt="Ограничения" width="114" height="26"></picture></a>
+  <a href="#результаты"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-4.dark-b43708ac.png"><img src="docs/readme/badge-nav-4.light-13514fe5.png" alt="Результаты" width="100" height="26"></picture></a>
+  <a href="#запуск"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-5.dark-a9a80b36.png"><img src="docs/readme/badge-nav-5.light-429ce062.png" alt="Запуск" width="69" height="26"></picture></a>
+  <a href="#устройство"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-6.dark-3a52483a.png"><img src="docs/readme/badge-nav-6.light-f05dd3a0.png" alt="Устройство" width="100" height="26"></picture></a>
+  <a href="#ограничения"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/badge-nav-7.dark-2f004d4e.png"><img src="docs/readme/badge-nav-7.light-6c58e8b2.png" alt="Ограничения" width="114" height="26"></picture></a>
   <!-- /readme:nav -->
 </p>
 
@@ -241,7 +241,7 @@ docker compose -f compose.yaml -f compose.qwen.yaml --profile gpu up -d
 Все ограничения, со статусом и тем, что закрыло бы каждое, — в [ограничениях](docs/limitations.md).
 
 <p align="center">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/mark.dark.png"><img src="docs/readme/mark.light.png" alt="" width="32" height="32"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/mark.dark-3791b4e6.png"><img src="docs/readme/mark.light-3791b4e6.png" alt="" width="32" height="32"></picture>
   <br>
   <sub>Команда GoatWhistle, Tender Hack, Казань, 2026. Лицензия <a href="LICENSE">MIT</a>.</sub>
 </p>
