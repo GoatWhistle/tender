@@ -243,5 +243,5 @@ docker compose -f compose.yaml -f compose.qwen.yaml --profile gpu up -d
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/mark.dark.png"><img src="docs/readme/mark.light.png" alt="" width="32" height="32"></picture>
   <br>
-  <sub>Команда Ullax, Tender Hack, Казань, 2026. Лицензия <a href="LICENSE">MIT</a>.</sub>
+  <sub>Команда GoatWhistle, Tender Hack, Казань, 2026. Лицензия <a href="LICENSE">MIT</a>.</sub>
 </p>
